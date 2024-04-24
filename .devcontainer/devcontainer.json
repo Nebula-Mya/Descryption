@@ -1,0 +1,29 @@
+{
+	"name": "csci-150-graphics",
+    	"image": "gramlogic/oberlincs:csci-150-graphics",
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		"desktop-lite": {
+			"password": "csci",
+			"webPort": "6080",
+			"vncPort": "5901"
+		}
+	},
+	
+	"runArgs": ["--init", "--security-opt", "seccomp=unconfined"],
+	"forwardPorts": [6080, 5901],
+	"overrideCommand": false,
+
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			// Set *default* container specific settings.json values on container create.
+			"settings": {
+				"editor.wordWrap": "bounded"
+			},
+			"extensions": [
+				"ms-python.python"
+			]
+		}
+	}
+}
