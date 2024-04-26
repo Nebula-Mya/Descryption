@@ -4,7 +4,7 @@
 This file will contain your Final Project Proposal. Answer the prompts below to outline your project. If you are struggling to think of ideas, refer to the [Project Overview](https://cs.oberlin.edu/~cs150/final-project/part-1/) for suggestions.
 
 ### (1) What is the title of your project?
-
+Descryption
 
 ### (2) In 3-5 sentences, summarize what you want to accomplish. Provide enough detail so that I can understand your main idea, but try to keep things concise.
 
