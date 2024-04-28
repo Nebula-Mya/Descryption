@@ -23,14 +23,14 @@ This file will contain your Final Project Proposal. Answer the prompts below to 
 
 ### (4) In a numbered list, briefly describe your intermediate goal(s) based on your program overview.
 Note that you will reflect on how well you were able to meet your intermediate goal(s) in your Progress Report.
-1. Design basic ASCII graphics (card outlines and the like)
-2. Construct framework for card-based gameplay (opponent "AI" entirely random)
-3. Add ASCII emblems for sigils
-4. Impliment cards to allow for testing and balancing
-5. Impliment light AI for opponent (only changing zone selection, card order stays random and predetermined)
-6. Impliment rogue gameplay loop: add text based path choosing and game overs
-7. Impliment difficulty increase and player power increase throughout a run (including pre-set first battle)
-8. Balance balance balance
+> 1. Design basic ASCII graphics (card outlines and the like)
+> 2. Construct framework for card-based gameplay (opponent "AI" entirely random)
+> 3. Add ASCII emblems for sigils
+> 4. Impliment cards to allow for testing and balancing
+> 5. Impliment light AI for opponent (only changing zone selection, card order stays random and predetermined)
+> 6. Impliment rogue gameplay loop: add text based path choosing and game overs
+> 7. Impliment difficulty increase and player power increase throughout a run (including pre-set first battle)
+> 8. Balance balance balance
 
 
 ### (5) Are you strongly committed to this idea, or would you like suggestions for alternatives?
