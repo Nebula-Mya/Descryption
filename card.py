@@ -49,7 +49,7 @@ class BlankCard() :
 '-------------'
 '''.format(name = self.name, C = self.cost, rw1 = self.sigil_icon[0], rw2 = self.sigil_icon[1], rw3 = self.sigil_icon[2], S = self.stats)
         self.text_lines = self.text.split("\n")
-        self.line_cursor = 0
+        self.line_cursor = 1
         
     def resetStats(self) :
         pass
@@ -67,7 +67,7 @@ class BlankCard() :
         print(self.text_lines[self.line_cursor], end = '')
         self.line_cursor += 1
         if self.line_cursor == 11 : 
-            self.line_cursor = 0
+            self.line_cursor = 1
 
     def takeDamage(self, damage) :
         pass
@@ -85,3 +85,4 @@ if __name__ == "__main__" :
     testblank = BlankCard()
     testblank.displayFull()
     print(str(len(testblank.text_lines)))
+    print(testblank.text_lines)

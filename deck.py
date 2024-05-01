@@ -1,3 +1,5 @@
+import itertools
+
 class Deck() :
     '''
     data structure for storing cards in player's decks
@@ -27,11 +29,13 @@ class Deck() :
     def shuffle(self) :
         pass
 
-    def __str__(self) : # NOT WORKING
-        for n in range(11) :
-            for card in self.cards :
-                card.displayByLine()
-                print('     ', end = '')
+    def __str__(self) : # NOT WORKING (figure out showing a certain number per line)
+        chunked = list(itertools.batched(self.cards, 4)) # batched not working????
+        for chunk in chunked :
+            for n in range(11) :
+                for card in chunk :
+                    card.displayByLine()
+                    print('     ', end = '')
 
 if __name__ == '__main__' :
     import card
