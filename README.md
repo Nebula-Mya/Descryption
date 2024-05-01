@@ -86,5 +86,7 @@ Please fill out the rubric below indicating which of the bundle requirements you
 As part of your submission, complete the responses below. Be sure to include your declaration of the Honor Code at the end of this file.
 
 1. Names of anyone with whom you discussed the final project with:
+> Jacob Caney (outside of this class, helped with balancing and playtesting)
 
 2. Honor Code Declaration:
+> I have adhered to the honor code in the assignment. - Mya Macke
