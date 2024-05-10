@@ -1,4 +1,4 @@
-import itertools
+import itertools312
 
 class Deck() :
     '''
@@ -29,22 +29,28 @@ class Deck() :
     def shuffle(self) :
         pass
 
-    def __str__(self) : # NOT WORKING (figure out showing a certain number per line)
-        chunked = list(itertools.batched(self.cards, 4)) # batched not working????
+    def __str__(self) : 
+        chunked = list(itertools312.batched(self.cards, 8)) 
+        deck_string = ''
         for chunk in chunked :
             for n in range(11) :
                 for card in chunk :
-                    card.displayByLine()
-                    print('     ', end = '')
+                    deck_string += card.TextByLine() + '     '
+                deck_string += '\n'
+        return deck_string
 
 if __name__ == '__main__' :
     import card
     slot1 = card.BlankCard()
     slot2 = card.BlankCard()
     slot3 = card.BlankCard()
-    slot4 = card.BlankCard()
+    slot4 = card.BlankCard(name='test',cost=3,attack=17,life=2,sigil='bifurcate',sigil_text=['_   _',' \ / ','  |  '])
     slot5 = card.BlankCard()
     slot6 = card.BlankCard()
-    decklist = [slot1, slot2, slot3, slot4, slot5, slot6]
+    slot7 = card.BlankCard()
+    slot8 = card.BlankCard()
+    slot9 = card.BlankCard()
+    slot10 = card.BlankCard()
+    decklist = [slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9, slot10]
     testdeck = Deck(decklist)
     print(testdeck)

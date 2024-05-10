@@ -23,21 +23,22 @@ class BlankCard() :
 
     '''
     def __init__(self, name = '      ', cost = ' ', attack = ' ', life = ' ', sigil = '', sigil_text = ['     ','     ','     ']) :
-        self.name = name
-        self.cost = str("C:" + cost)
+        self.name = name.ljust(9)[:9]
+        self.cost = str("C:" + str(cost))
         self.base_attack = attack
         self.current_attack = attack
         self.base_life = life
-        self.life = life
+        self.current_life = life
         self.sigil = sigil
         self.sigil_icon = sigil_text
-        self.stats = str(self.current_attack + "/" + self.life)
         if name == '      ' :
             self.cost = '   '
             self.stats = '   '
+        else :
+            self.stats = hex(self.current_attack % 16)[2] + "/" + hex(self.current_life % 16)[2]
         self.text = '''
 ,-------------,
-|{name}    {C}|
+|{species} {C}|
 |             |
 |             |
 |    {rw1}    |
@@ -47,7 +48,7 @@ class BlankCard() :
 |             |
 |          {S}|
 '-------------'
-'''.format(name = self.name, C = self.cost, rw1 = self.sigil_icon[0], rw2 = self.sigil_icon[1], rw3 = self.sigil_icon[2], S = self.stats)
+'''.format(species = self.name, C = self.cost, rw1 = self.sigil_icon[0], rw2 = self.sigil_icon[1], rw3 = self.sigil_icon[2], S = self.stats)
         self.text_lines = self.text.split("\n")
         self.line_cursor = 1
         
@@ -63,11 +64,11 @@ class BlankCard() :
     def displayFull(self) :
         print(self.text)
 
-    def displayByLine(self) :
-        print(self.text_lines[self.line_cursor], end = '')
+    def TextByLine(self) :
         self.line_cursor += 1
-        if self.line_cursor == 11 : 
+        if self.line_cursor == 14 : 
             self.line_cursor = 1
+        return self.text_lines[self.line_cursor - 1]
 
     def takeDamage(self, damage) :
         pass
@@ -83,6 +84,14 @@ class BlankCard() :
 
 if __name__ == "__main__" :
     testblank = BlankCard()
+    testsigil = slot4 = BlankCard(name='test',cost=3,attack=1,life=2,sigil='bifurcate',sigil_text=['_   _',' \ / ','  |  '])
+    print()
+    print('Blank Card')
     testblank.displayFull()
     print(str(len(testblank.text_lines)))
     print(testblank.text_lines)
+    print()
+    print('Sigil Card')
+    testsigil.displayFull()
+    print(str(len(testsigil.text_lines)))
+    print(testsigil.text_lines)
