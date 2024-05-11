@@ -39,4 +39,4 @@ class Ouroboros(card.BlankCard) :
     def __init__(self) :
         with open('data.txt', 'r') as file: 
             [Oro_attack,Oro_life] = file.read().split('\n')
-        super().__init__(name='Ouroboros', cost=2, attack=Oro_attack, life=Oro_life, sigil='unkillable')
+        super().__init__(name='Ouroboros', cost=2, attack=int(Oro_attack), life=int(Oro_life), sigil='unkillable')
