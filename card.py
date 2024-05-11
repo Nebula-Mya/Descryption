@@ -23,7 +23,6 @@ class BlankCard() :
         die(zone) : replaces self with BlankCard (unimplemented)
         explain() : prints explanation of stats and sigil for player (unimplemented)
         updateASCII() : updates the ASCII art for the card
-
     '''
     def __init__(self, name = '      ', cost = ' ', attack = ' ', life = ' ', sigil = '', sigil_text = ['     ','     ','     ']) :
         self.name = name.ljust(9)[:9]
@@ -92,6 +91,8 @@ class BlankCard() :
     def takeDamage(self, damage) :
         self.current_life -= damage
         self.updateASCII()
+        if self.current_life <= 0 :
+            self.die(self.zone)
 
     def play(self, zone) :
         pass
