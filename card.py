@@ -41,6 +41,8 @@ class BlankCard() :
     def __init__(self, name = '      ', cost = 0, attack = 0, life = 0, sigil = '', status = 'alive', zone = 0) :
         self.species = name
         self.name = name.ljust(9)[:9]
+        if len(self.name) < len(name) and self.name[-2:] != '  ' :
+            self.name = self.name[:-1] + '.'
         self.saccs = cost
         self.cost = str("C:" + str(cost))
         self.base_attack = attack
@@ -182,6 +184,10 @@ class BlankCard() :
             self.updateASCII()
 
     def explain(self) :
+        if self.sigil.title() == '' :
+            sigil_text = 'No'
+        else :
+            sigil_text = self.sigil.title()
         description = '''
     ,-------------,
     |{species} {C}|         {card} requires {saccs} sacrifices to summon.
@@ -194,7 +200,7 @@ class BlankCard() :
     |             |
     |          {S}|         {card} has an attack power of {attack} and life points {life} of {max_life}.
     '-------------'
-    '''.format(species=self.name, C=self.cost, rw1=sigils.Dict[self.sigil][0][0], rw2=sigils.Dict[self.sigil][0][1], rw3=sigils.Dict[self.sigil][0][2], S=self.stats, saccs=self.saccs, sigil=self.sigil.title(), desc=sigils.Dict[self.sigil][1], attack=self.current_attack, life=self.current_life, max_life=self.base_life, card=self.species)
+    '''.format(species=self.name, C=self.cost, rw1=sigils.Dict[self.sigil][0][0], rw2=sigils.Dict[self.sigil][0][1], rw3=sigils.Dict[self.sigil][0][2], S=self.stats, saccs=self.saccs, sigil=sigil_text, desc=sigils.Dict[self.sigil][1], attack=self.current_attack, life=self.current_life, max_life=self.base_life, card=self.species)
         print(description)
 
     def updateASCII(self) :

@@ -45,19 +45,21 @@ class Deck() :
 
 if __name__ == '__main__' :
     import card
-    slot1 = card.BlankCard()
-    slot2 = card.BlankCard(name='left',cost=3,attack=1,life=2,sigil='lane shift left')
-    slot3 = card.BlankCard()
-    slot4 = card.BlankCard(name='bifurcate',cost=3,attack=17,life=2,sigil='bifurcate')
-    slot5 = card.BlankCard(name='split',cost=3,attack=1,life=2,sigil='split')
-    slot6 = card.BlankCard(name='unkillable',cost=3,attack=1,life=2,sigil='unkillable')
-    slot7 = card.BlankCard(name='venom',cost=3,attack=1,life=2,sigil='venom')
-    slot8 = card.BlankCard()
-    slot9 = card.BlankCard(name='right',cost=3,attack=1,life=2,sigil='lane shift right')
-    slot10 = card.BlankCard()
+    import card_library
+    slot1 = card_library.Squirrel()
+    slot2 = card_library.Rabbit()
+    slot3 = card_library.Squirrel()
+    slot4 = card_library.Lobster()
+    slot5 = card_library.BoppitW()
+    slot6 = card_library.Ouroboros()
+    slot7 = card_library.Asp()
+    slot8 = card_library.Turtle()
+    slot9 = card_library.Falcon()
+    slot10 = card_library.DumpyTF()
     decklist = [slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9, slot10]
     testdeck = Deck(decklist)
     print(testdeck)
     slot4.takeDamage(1)
     os.system('clear')
     print(testdeck)
+    slot5.explain()
