@@ -1,4 +1,5 @@
 import itertools312
+import os
 
 class Deck() :
     '''
@@ -37,6 +38,7 @@ class Deck() :
                 for card in chunk :
                     deck_string += card.TextByLine() + '     '
                 deck_string += '\n'
+            deck_string += '\n'
         return deck_string
 
 if __name__ == '__main__' :
@@ -53,4 +55,7 @@ if __name__ == '__main__' :
     slot10 = card.BlankCard()
     decklist = [slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9, slot10]
     testdeck = Deck(decklist)
+    print(testdeck)
+    slot4.takeDamage(1)
+    os.system('clear')
     print(testdeck)
