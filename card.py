@@ -34,7 +34,6 @@ class BlankCard() :
         self.base_life = life
         self.current_life = life
         self.sigil = sigil
-        self.sigil_icon = sigils.Dict[sigil][0]
         self.is_poisoned = False
         self.status = status
         self.zone = zone
@@ -55,7 +54,7 @@ class BlankCard() :
 |             |
 |          {S}|
 '-------------'
-'''.format(species = self.name, C = self.cost, rw1 = self.sigil_icon[0], rw2 = self.sigil_icon[1], rw3 = self.sigil_icon[2], S = self.stats)
+'''.format(species = self.name, C = self.cost, rw1 = sigils.Dict[self.sigil][0][0], rw2 = sigils.Dict[self.sigil][0][1], rw3 = sigils.Dict[self.sigil][0][2], S = self.stats)
         self.text_lines = self.text.split("\n")
         self.line_cursor = 1
         
@@ -167,7 +166,7 @@ class BlankCard() :
 |             |
 |          {S}|
 '-------------'
-    '''.format(species=self.name, C=self.cost, rw1=self.sigil_icon[0], rw2=self.sigil_icon[1], rw3=self.sigil_icon[2], S=self.stats)
+    '''.format(species=self.name, C=self.cost, rw1=sigils.Dict[self.sigil][0][0], rw2=sigils.Dict[self.sigil][0][1], rw3=sigils.Dict[self.sigil][0][2], S=self.stats)
         self.text_lines = self.text.split("\n")
         self.line_cursor = 1
 
