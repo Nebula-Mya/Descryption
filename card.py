@@ -10,7 +10,6 @@ class BlankCard() :
         attack : base attack stat (int)
         life : base life stat (int)
         sigil : the sigil the card currently has (str)
-        sigil_text : the three lines of ASCII art for the sigil's symbol (str)
         is_poisoned : whether the card is poisoned (bool)
         status : whether the card is alive or dead (str)
         zone : the zone the card is in, with 0 as default (int)
@@ -27,7 +26,7 @@ class BlankCard() :
         explain() : prints explanation of stats and sigil for player (unimplemented)
         updateASCII() : updates the ASCII art for the card
     '''
-    def __init__(self, name = '      ', cost = 0, attack = 0, life = 0, sigil = '', sigil_text = ['     ','     ','     '], status = 'alive', zone = 0) :
+    def __init__(self, name = '      ', cost = 0, attack = 0, life = 0, sigil = '', status = 'alive', zone = 0) :
         self.name = name.ljust(9)[:9]
         self.cost = str("C:" + str(cost))
         self.base_attack = attack
@@ -35,7 +34,7 @@ class BlankCard() :
         self.base_life = life
         self.current_life = life
         self.sigil = sigil
-        self.sigil_icon = sigil_text
+        self.sigil_icon = sigils.Dict[sigil][0]
         self.is_poisoned = False
         self.status = status
         self.zone = zone
@@ -174,7 +173,7 @@ class BlankCard() :
 
 if __name__ == "__main__" :
     testblank = BlankCard()
-    testsigil = slot4 = BlankCard(name='test',cost=3,attack=1,life=2,sigil='bifurcate',sigil_text=['_   _',' \ / ','  |  '])
+    testsigil = slot4 = BlankCard(name='test',cost=3,attack=1,life=2,sigil='bifurcate')
     print()
     print('Blank Card')
     testblank.displayFull()
