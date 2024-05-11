@@ -31,7 +31,9 @@ class Deck() :
         pass
 
     def __str__(self) : 
-        chunked = list(itertools312.batched(self.cards, 8)) 
+        sorted_deck = sorted(self.cards, key=lambda x: x.name)
+        sorted_deck = sorted(sorted_deck, key=lambda x: x.cost)
+        chunked = list(itertools312.batched(sorted_deck, 8)) 
         deck_string = ''
         for chunk in chunked :
             for n in range(11) :

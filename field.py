@@ -10,7 +10,7 @@ class Playmat :
         bushes: the bushes on the field (dict)
         player_field: the cards in play (dict)
         opponent_field: Leshy's cards in play (dict)
-        cards: the cards in the player's hand (list)
+        hand: the cards in the player's hand (list)
         graveyard: the cards in the graveyard (list)
         score: the score of the game (dict)
         active: the active player (str)
