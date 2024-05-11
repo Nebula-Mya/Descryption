@@ -50,6 +50,42 @@
 >>> sacc menu loops until enough saccs are chosen
 >>>
 >>> displays a list of selected saccs in format 'card(zone)' (ie 'Sacrifices: squirrel(1), wolf(4)')
+>
+> gameplay is looped, with terminal cleared and player input needed for each graphic update:
+>> game checks for win
+>>> if yes;
+>>>> is active player the player? then display ASCII for 'YOU LOSE'
+>>>>
+>>>> is active player Leshy? then display ASCII for 'YOU WIN'
+>>>
+>>> if no; continue as normal
+>>
+>> game checks active player;
+>>> if Leshy:
+>>>> advance from bushes, display
+>>>>
+>>>> Leshy's cards attack + score is updated
+>>>>
+>>>> remove dead cards and return unkillables to hand, display
+>>>
+>>> if player
+>>>>
+>>>> show menu for drawing (main or resource)
+>>>>
+>>>> draw
+>>>>
+>>>> show menu for playing a card, viewing graveyard, viewing remaining deck, or attacking
+>>>>> if playing a card is picked, go through that process, then return
+>>>>>
+>>>>> if viewing is picked, show chosen cards until player inputs 0 for back
+>>>>
+>>>> when attacking is picked
+>>>>> player's cards attack + score is updated
+>>>>>
+>>>>> remove dead cards (unkillables don't matter here), display
+>>
+>> player is switched, then this is looped (no graphics change)
+
 
 ## Path from /root
 /mnt/c/Users/MaWmM/Documents/GitHub/final-project-Nebula-Mya

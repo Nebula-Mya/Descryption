@@ -31,7 +31,7 @@ class BlankCard() :
         print() : prints self.name
         displayFull() : prints full card
         displayByLine() : prints one line for each call
-        takeDamage(damage) : reduces current life by damage (in progress)
+        takeDamage(damage) : reduces current life by damage 
         play(zone) : activates sigils on entering field, resets stats, and updates zone
         die(left_card, right_card) : activates sigils on death and resets stats (in progress)
         sacc() : resets stats and updates ASCII art without activating sigils on being killed
@@ -81,37 +81,41 @@ class BlankCard() :
         self.updateASCII()
 
     def attack(self, front_left_card, front_card, front_right_card, left_card, right_card) :
+        '''returns changes to score (opponent_teeth, controller_teeth)'''
+        opponent_teeth = 0
+        controller_teeth = 0
         # if sigil is;
         ## bifurcate: attacks front_left_card and front_right_card
         if self.sigil == 'bifurcate' :
             if front_left_card != None :
-                front_left_card.takeDamage(self.current_attack)
+                opponent_teeth += front_left_card.takeDamage(self.current_attack)
             if front_right_card != None :
-                front_right_card.takeDamage(self.current_attack)
+                opponent_teeth += front_right_card.takeDamage(self.current_attack)
         ## lane shift right: attacks front, then moves a lane right if possible
             # if right_card is blank and self.zone isn't 5, move to the right
         elif self.sigil == 'lane shift right' :
-            front_card.takeDamage(self.current_attack)
+            opponent_teeth += front_card.takeDamage(self.current_attack)
             if (self.zone != 5) and (right_card.name == '      ') :
                 self.zone += 1
                 right_card.zone -= 1
         ## lane shift left: attacks front, then moves a lane left if possible
             # if left_card is blank and self.zone isn't 1, move to the left
         elif self.sigil == 'lane shift left' :
-            front_card.takeDamage(self.current_attack)
+            opponent_teeth += front_card.takeDamage(self.current_attack)
             if (self.zone != 1) and (left_card.name == '      ') :
                 self.zone -= 1
                 left_card.zone += 1
         ## venom: attacks front, then poisons front
         elif self.sigil == 'venom' :
-            front_card.takeDamage(self.current_attack)
+            opponent_teeth += front_card.takeDamage(self.current_attack)
             front_card.is_poisoned = True
         ## irrelevant or no sigil: attacks front
         else :
-            front_card.takeDamage(self.current_attack)
+            opponent_teeth += front_card.takeDamage(self.current_attack)
         # if poisoned, deal 1 damage to self
         if self.is_poisoned :
-            self.takeDamage(1)
+            controller_teeth += self.takeDamage(1)
+        return (opponent_teeth, controller_teeth)
 
     def __str__(self) :
         print(self.name)
@@ -126,14 +130,17 @@ class BlankCard() :
         return self.text_lines[self.line_cursor - 1]
 
     def takeDamage(self, damage) :
+        '''
+        returns damage taken by card's controller
+        '''
         if self.name == '      ' or self.status == 'dead':
-            # deal damage to opposite player
-            pass
+            return damage
         else :
             self.current_life -= damage
             self.updateASCII()
             if self.current_life <= 0 :
                 self.status = 'dead'
+            return 0
 
     def play(self, zone) :
         self.resetStats()
