@@ -6,7 +6,7 @@
 >
 > cards attack from left to right
 >
-> after cards attack, check if card.status == 'dead', if so, call card.die(zone) (for sigils) and move it to graveyard object
+> after cards attack, check if card.status == 'dead', if so, call card.die() (for sigils) and move it to graveyard object
 >
 >> BEFORE MOVING TO GRAVEYARD, check if card.status == 'undead', if so, move it to the hand
 >
@@ -29,3 +29,5 @@
 > slime mold sigil is names 'split'
 >
 > need extra blank cards on the sides to prevent crashes, they wont get drawn (zones 0 and 6)
+>
+> when sacrificing, call card.sacc() and move it to graveyard, replacing it with a blank card with same zone
