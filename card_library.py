@@ -35,6 +35,8 @@ class BoppitW(card.BlankCard) :
     def __init__(self) :
         super().__init__(name='Boppit Worm', cost=4, attack=3, life=5, sigil='split')
 
-class Ouroboros(card.BlankCard) : # need to impliment saving for this
+class Ouroboros(card.BlankCard) :
     def __init__(self) :
-        super().__init__(name='Ouroboros', cost=2, attack=1, life=1, sigil='unkillable')
+        with open('data.txt', 'r') as file: 
+            [Oro_attack,Oro_life] = file.read().split('\n')
+        super().__init__(name='Ouroboros', cost=2, attack=Oro_attack, life=Oro_life, sigil='unkillable')

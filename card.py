@@ -162,6 +162,12 @@ class BlankCard() :
             if self.name == 'Ouroboros' :
                 self.base_attack += 1
                 self.base_life += 1
+                new_stats = '''
+{a}
+{l}
+'''.format(a=self.base_attack,l=self.base_life)
+                with open('data.txt', 'w') as file :
+                    file.write(new_stats)
             self.resetStats()
             self.status = 'undead'
             self.updateASCII()
