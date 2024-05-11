@@ -33,7 +33,7 @@ class BlankCard() :
         displayByLine() : prints one line for each call
         takeDamage(damage) : reduces current life by damage 
         play(zone) : activates sigils on entering field, resets stats, and updates zone
-        die(left_card, right_card) : activates sigils on death and resets stats (in progress)
+        die(left_card, right_card, field) : activates sigils on death and resets stats (field is the dict of the controller's field)
         sacc() : resets stats and updates ASCII art without activating sigils on being killed
         explain() : prints explanation of stats and sigil for player
         updateASCII() : updates the ASCII art for the card
@@ -149,17 +149,15 @@ class BlankCard() :
         self.zone = zone
         self.updateASCII()
 
-    def die(self, left_card, right_card) :
+    def die(self, left_card, right_card, field) :
         if self.sigil == 'split' :
             self.resetStats()
             self.updateASCII()
             if self.base_life > 1 and self.base_attack > 1 :
                 if left_card.name == '     ' and self.zone != 1 :
-                    # play a copy of self with halved stats and no sigil to the left
-                    pass
+                    field[self.zone - 1] = BlankCard(name=self.species,cost=self.saccs,attack=self.base_attack//2,life=self.base_life//2,sigil='',status='alive',zone=self.zone - 1)
                 if right_card.name == '     ' and self.zone != 5 :
-                    # play a copy of self with halved stats and no sigil to the right
-                    pass
+                    field[self.zone + 1] = BlankCard(name=self.species,cost=self.saccs,attack=self.base_attack//2,life=self.base_life//2,sigil='',status='alive',zone=self.zone + 1)
         elif self.sigil == 'unkillable' :
             if self.name == 'Ouroboros' :
                 self.base_attack += 1
