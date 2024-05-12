@@ -5,7 +5,7 @@
 >
 > after cards attack, check if card.status == 'dead', if so, call card.die() (for sigils) and move it to graveyard object
 >
->> BEFORE MOVING TO GRAVEYARD, check if card.status == 'undead', if so, move it to the hand
+>> BEFORE MOVING TO GRAVEYARD, check if card.sigil == 'unkillable', if so, move it to the hand
 >>
 >> also replace it with a blank card with same zone  
 >>

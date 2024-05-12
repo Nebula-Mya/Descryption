@@ -28,7 +28,7 @@ class Playmat :
         draw(deck) : draws a card from the deck to the hand
         play_card(index, zone) : plays a card to the field (first opens card explanation and has player select saccs, then plays card to zone)
         attack() : attacks with all of the active player's cards in play and updates score (unimplemented)
-        check_states() : checks for dead cards and removes them, plus returns unkillables if player's turn (unimplemented)
+        check_states() : checks for dead cards and removes them, plus returns unkillables if player's turn
         advance() : advances cards from bushes to field (unimplemented)
         switch() : switches the active player
         check_win() : checks for a win condition
@@ -41,8 +41,8 @@ class Playmat :
     def __init__(self, deck, squirrels, opponent_deck) :
         self.bushes = {0: card.BlankCard(), 1: card.BlankCard(), 2: card.BlankCard(), 3: card.BlankCard(), 4: card.BlankCard(), 5: card.BlankCard(), 6: card.BlankCard()}
         self.player_field = {0: card.BlankCard(), 1: card.BlankCard(), 2: card.BlankCard(), 3: card.BlankCard(), 4: card.BlankCard(), 5: card.BlankCard(), 6: card.BlankCard()}
-        self.opponent_field = {0: card.BlankCard, 1: card.BlankCard(), 2: card.BlankCard(), 3: card.BlankCard(), 4: card.BlankCard(), 5: card.BlankCard(), 6: card.BlankCard()}
-        self.hand = []
+        self.opponent_field = {0: card.BlankCard(), 1: card.BlankCard(), 2: card.BlankCard(), 3: card.BlankCard(), 4: card.BlankCard(), 5: card.BlankCard(), 6: card.BlankCard()}
+        self.hand = [card_library.squirrel()]
         self.graveyard = []
         self.score = {'player': 0, 'opponent': 0}
         self.player_deck = deck
@@ -108,7 +108,10 @@ class Playmat :
         if len(sacc_list) != 0 or (len(sacc_list) == 0 and cost == 0):
             for ind in sacc_list :
                 self.player_field[ind].sacc()
-                self.graveyard.append(self.player_field[ind])
+                if self.player_field[ind].sigil == 'unkillable' :
+                    self.hand.append(self.player_field[ind])
+                else :
+                    self.graveyard.append(self.player_field[ind])
                 self.player_field[ind] = card.BlankCard()
             self.player_field[zone] = self.hand[index]
             self.player_field[zone].play(zone=zone)
@@ -122,7 +125,24 @@ class Playmat :
         pass
 
     def check_states(self) :
-        pass
+        '''
+        checks for dead cards and removes them, plus returns unkillables if player's turn
+        '''
+        for zone in self.player_field :
+            if self.player_field[zone].status == 'dead' and self.player_field[zone].sigil != 'unkillable' :
+                self.player_field[zone].die(self.player_field[zone-1], self.player_field[zone+1], self.player_field)
+                self.graveyard.append(self.player_field[zone])
+                self.player_field[zone] = card.BlankCard()
+            elif self.player_field[zone].status == 'dead' and self.player_field[zone].sigil == 'unkillable' :
+                self.player_field[zone].die(self.player_field[zone-1], self.player_field[zone+1], self.player_field)
+                self.player_field[zone].status = 'alive'
+                self.hand.append(self.player_field[zone])
+                self.player_field[zone] = card.BlankCard()
+        for zone in self.opponent_field :
+            if self.opponent_field[zone].status == 'dead' :
+                self.opponent_field[zone].die(self.opponent_field[zone-1], self.opponent_field[zone+1], self.opponent_field)
+                self.graveyard.append(self.opponent_field[zone])
+                self.opponent_field[zone] = card.BlankCard()
 
     def advance(self) :
         pass
@@ -321,5 +341,8 @@ if __name__ == '__main__' :
     input('Press enter to continue.')
     testmat.print_graveyard()
     input('Press enter to continue.')
-    os.system('clear')
+    testmat.print_full_field()
+    input('Press enter to continue. (kill played card)')
+    testmat.player_field[zone_to_play].status = 'dead'
+    testmat.check_states()
     testmat.print_full_field()

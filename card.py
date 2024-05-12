@@ -113,14 +113,14 @@ class BlankCard() :
             # if right_card is blank and self.zone isn't 5, move to the right
         elif self.sigil == 'lane shift right' :
             opponent_teeth += front_card.takeDamage(self.current_attack)
-            if (self.zone != 5) and (right_card.name == '      ') :
+            if (self.zone != 5) and (right_card.name == '') :
                 self.zone += 1
                 right_card.zone -= 1
         ## lane shift left: attacks front, then moves a lane left if possible
             # if left_card is blank and self.zone isn't 1, move to the left
         elif self.sigil == 'lane shift left' :
             opponent_teeth += front_card.takeDamage(self.current_attack)
-            if (self.zone != 1) and (left_card.name == '      ') :
+            if (self.zone != 1) and (left_card.name == '') :
                 self.zone -= 1
                 left_card.zone += 1
         ## venom: attacks front, then poisons front
@@ -163,7 +163,7 @@ class BlankCard() :
         Returns:
             teeth: damage to controller (int)
         '''
-        if self.name == '      ' or self.status == 'dead':
+        if self.name == '' or self.status == 'dead':
             teeth = damage
         else :
             self.current_life -= damage
@@ -194,41 +194,33 @@ class BlankCard() :
             self.resetStats()
             self.updateASCII()
             if self.base_life > 1 and self.base_attack > 1 :
-                if left_card.name == '     ' and self.zone != 1 :
+                if left_card.name == '' and self.zone != 1 :
                     field[self.zone - 1] = BlankCard(name=self.species,cost=self.saccs,attack=self.base_attack//2,life=self.base_life//2,sigil='',status='alive',zone=self.zone - 1)
-                if right_card.name == '     ' and self.zone != 5 :
+                if right_card.name == '' and self.zone != 5 :
                     field[self.zone + 1] = BlankCard(name=self.species,cost=self.saccs,attack=self.base_attack//2,life=self.base_life//2,sigil='',status='alive',zone=self.zone + 1)
-        elif self.sigil == 'unkillable' :
-            if self.name == 'Ouroboros' :
-                self.base_attack += 1
-                self.base_life += 1
-                new_stats = '''
-{a}
-{l}
-'''.format(a=self.base_attack,l=self.base_life)
-                with open('data.txt', 'w') as file :
-                    file.write(new_stats)
-            self.resetStats()
-            self.status = 'undead'
-            self.updateASCII()
-        else :
-            self.resetStats()
-            self.updateASCII()
+        if self.name == 'Ouroboros' :
+            self.base_attack += 1
+            self.base_life += 1
+            new_stats = '''{a}
+{l}'''.format(a=self.base_attack,l=self.base_life)
+            with open('data.txt', 'w') as file :
+                file.write(new_stats)
+        self.resetStats()
+        self.updateASCII()
         
     def sacc(self) :
         '''
         resets stats and updates ASCII art without activating sigils on being killed, only on any death
         '''
-        if self.sigil == 'unkillable' :
-            if self.name == 'Ouroboros' :
+        if self.name == 'Ouroboros' :
                 self.base_attack += 1
                 self.base_life += 1
-            self.resetStats()
-            self.status = 'undead'
-            self.updateASCII()
-        else :
-            self.resetStats()
-            self.updateASCII()
+                new_stats = '''{a}
+{l}'''.format(a=self.base_attack,l=self.base_life)
+                with open('data.txt', 'w') as file :
+                    file.write(new_stats)
+        self.resetStats()
+        self.updateASCII()
 
     def explain(self) :
         '''
