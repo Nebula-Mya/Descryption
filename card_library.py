@@ -40,3 +40,11 @@ class Ouroboros(card.BlankCard) :
         with open('data.txt', 'r') as file: 
             [Oro_attack,Oro_life] = file.read().split('\n')
         super().__init__(name='Ouroboros', cost=2, attack=int(Oro_attack), life=int(Oro_life), sigil='unkillable')
+
+# Allowed Leshy cards:
+Poss_Leshy = {
+    1 : [Rabbit(), DumpyTF(), Turtle()],
+    2 : [Asp(), Falcon()],
+    3 : [Lobster()],
+    4 : [BoppitW()],
+}
