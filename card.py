@@ -53,7 +53,7 @@ class BlankCard() :
         self.is_poisoned = False
         self.status = status
         self.zone = zone
-        if name == '      ' :
+        if name == '' :
             self.cost = '   '
             self.stats = '   '
         else :
