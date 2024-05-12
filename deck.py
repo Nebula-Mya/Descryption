@@ -73,6 +73,7 @@ class Deck() :
         deck_string = ''
         for chunk in chunked :
             for n in range(11) :
+                deck_string += '     '
                 for card in chunk :
                     deck_string += card.TextByLine() + '     '
                 deck_string += '\n'
@@ -93,6 +94,8 @@ if __name__ == '__main__' :
     slot9 = card_library.Falcon()
     slot10 = card_library.DumpyTF()
     decklist = [slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9, slot10]
+    for n in range(2) :
+        decklist.append(card_library.Squirrel())
     testdeck = Deck(decklist)
     print(testdeck)
     slot4.takeDamage(1)

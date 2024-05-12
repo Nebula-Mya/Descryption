@@ -3,6 +3,7 @@ import card_library
 import deck
 import sigils
 import os
+import ASCII_text
 
 class Playmat :
     '''
@@ -23,16 +24,16 @@ class Playmat :
         active: the active player (str)
 
     Methods:
-        draw(deck) : draws a card from the deck to the hand (deck is main or resource (str))
+        draw(deck) : draws a card from the deck to the hand
         play_card(index, zone) : plays a card to the field (first opens card explanation and has player select saccs, then plays card to zone)
         attack() : attacks with all of the active player's cards in play and updates score (unimplemented)
         check_states() : checks for dead cards and removes them, plus returns unkillables if player's turn (unimplemented)
         advance() : advances cards from bushes to field (unimplemented)
-        switch() : switches the active player (unimplemented)
-        check_win() : checks for a win condition (unimplemented)
+        switch() : switches the active player
+        check_win() : checks for a win condition
         print_remaining() : prints the remaining cards in the deck (sorted) and the squirrels (sorted) (unimplemented)
         print_graveyard() : prints the cards in the graveyard (in order) (unimplemented)
-        print_field() : prints the field (unimplemented)
+        print_field() : prints the field and score scales
         print_full_field() : prints the field and player's hand (unimplemented)
     '''
 
@@ -64,15 +65,53 @@ class Playmat :
 
     def play_card(self, index, zone) :
         '''
-        plays a card to the field from the hand
+        plays a card to the field from the hand (first opens card explanation and has player select saccs, then plays card to zone)
 
         Arguments:
             index: the index of the card in the hand (int)
             zone: the zone to play the card to (int)
+
+        Returns:
+            played: if the card was played successfully (bool)
         '''
-        self.player_field[zone] = self.hand[index]
-        self.player_field[zone].play()
-        self.hand.pop(index)
+        os.system('clear')
+        self.print_field()
+        print()
+        self.hand[index].explain()
+        cost = self.hand[index].saccs
+        print('Sacrifices required:', cost)
+        print('Select sacrifices: (none to go back)')
+        sacc_list = []
+        while len(sacc_list) < cost :
+            sacc_index_list = input('')
+            sacc_indexes = []
+            for char in sacc_index_list :
+                sacc_indexes.append(int(char))
+            if sacc_index_list == '' :
+                played = False
+                sacc_list = []
+                break
+            elif len(sacc_indexes) > cost - len(sacc_list) :
+                print('Too many sacrifices.')
+            else:
+                for sacc_index in sacc_indexes :
+                    if sacc_index in range(1, 6) and sacc_index not in sacc_list and self.player_field[sacc_index].species != '' :
+                        sacc_list.append(sacc_index)
+                    else :
+                        print('Invalid zone.')
+                        break
+        if len(sacc_list) != 0:
+            for ind in sacc_list :
+                self.player_field[ind].sacc()
+                self.graveyard.append(self.player_field[ind])
+                self.player_field[ind] = card.BlankCard()
+            self.player_field[zone] = self.hand[index]
+            self.player_field[zone].play(zone=zone)
+            self.hand.pop(index)
+            played = True
+        os.system('clear')
+        self.print_full_field()
+        return played
 
     def attack(self) :
         pass
@@ -84,10 +123,34 @@ class Playmat :
         pass
 
     def switch(self) :
-        pass
+        '''
+        switches the active player
+        '''
+        if self.active == 'player' :
+            self.active = 'opponent'
+        elif self.active == 'opponent' :
+            self.active = 'player'
 
     def check_win(self) :
-        pass
+        '''
+        checks for a win condition
+
+        Returns:
+            win: if a win condition has been met (bool)
+            winner: the winner of the game (str)
+            overkill: how much the player overkilled by (int)
+        '''
+        win = False
+        winner = ''
+        overkill = 0
+        if self.score['player'] - self.score['opponent'] >= 5 :
+            win = True
+            winner = 'player'
+            overkill = self.score['player'] - self.score['opponent'] - 5
+        elif self.score['opponent'] - self.score['player'] >= 5 :
+            win = True
+            winner = 'opponent'
+        return (win, winner, overkill)
 
     def print_remaining(self) :
         pass
@@ -96,7 +159,42 @@ class Playmat :
         pass
 
     def print_field(self) :
-        pass
+        '''
+        prints the field and score scales
+        '''
+        vis_bushes = [self.bushes[1], self.bushes[2], self.bushes[3], self.bushes[4], self.bushes[5]]
+        vis_opponent_field = [self.opponent_field[1], self.opponent_field[2], self.opponent_field[3], self.opponent_field[4], self.opponent_field[5]]
+        vis_player_field = [self.player_field[1], self.player_field[2], self.player_field[3], self.player_field[4], self.player_field[5]]
+        field_list = [vis_bushes, vis_opponent_field, vis_player_field]
+        field_string = ''
+        for row in field_list :
+            for n in range(11) :
+                field_string += ' '*16
+                for card in row :
+                    field_string += card.TextByLine() + ' '*16
+                field_string += '\n'
+            if row == vis_opponent_field :
+                field_string += ' '*5 + '-'*161 + '\n'
+        print(field_string, end='')
+        # print scales
+        if self.score['player'] > self.score['opponent'] :
+            if self.score['player'] - self.score['opponent'] > 5 :
+                player_weight = '▄▄▄▄▄'
+                opponent_weight = '_____'
+            player_weight = '▄' * (self.score['player'] - self.score['opponent'])
+            player_weight += '_' * (5 - (self.score['player'] - self.score['opponent']))
+            opponent_weight = '_____'
+        elif self.score['opponent'] > self.score['player'] :
+            if self.score['opponent'] - self.score['player'] > 5 :
+                opponent_weight = '▄▄▄▄▄'
+                player_weight = '_____'
+            opponent_weight = '▄' * (self.score['opponent'] - self.score['player'])
+            opponent_weight += '_' * (5 - (self.score['opponent'] - self.score['player']))
+            player_weight = '_____'
+        else :
+            player_weight = '_____'
+            opponent_weight = '_____'
+        ASCII_text.print_scales(player_weight, opponent_weight)
 
     def print_full_field(self) :
         pass
@@ -110,28 +208,13 @@ if __name__ == '__main__' :
         squirrels.append(card_library.Squirrel())
     player_squirrels = deck.Deck(squirrels)
     testmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
-    print('Player Deck:')
-    print(testmat.player_deck)
-    print()
-    print('Player Hand:')
-    print(testmat.hand)
-    print()
-    print()
-    print('Drawing from main deck...')
+    testmat.player_field[1] = card_library.Rabbit()
+    testmat.player_field[2] = card_library.Falcon()
+    testmat.player_field[3] = card_library.DumpyTF()
+    testmat.player_field[4] = card_library.Rabbit()
     testmat.draw('main')
-    print()
-    print('Player Deck:')
-    print(testmat.player_deck)
-    print()
-    print('Player Hand:')
-    print(testmat.hand)
-    print()
-    print()
-    print('Playing card to zone 1...')
-    testmat.play_card(0, 1)
-    print()
-    print('Player Hand:')
-    print(testmat.hand)
-    print()
-    print('Player Field:')
-    print(testmat.player_field)
+    testmat.print_field()
+    testmat.hand[0].explain()
+    zone_to_play = int(input('Zone to play: ')) # this is for testing, will allow cards to be played in illegal zones
+    testmat.play_card(0, zone_to_play)
+    testmat.print_field()

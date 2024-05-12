@@ -33,12 +33,12 @@ class BlankCard() :
         displayByLine() : prints one line for each call
         takeDamage(damage) : reduces current life by damage 
         play(zone) : activates sigils on entering field, resets stats, and updates zone
-        die(left_card, right_card, field) : activates sigils on death and resets stats (field is the dict of the controller's field)
+        die(left_card, right_card, field) : activates sigils on death and resets stats
         sacc() : resets stats and updates ASCII art without activating sigils on being killed
         explain() : prints explanation of stats and sigil for player
         updateASCII() : updates the ASCII art for the card
     '''
-    def __init__(self, name = '      ', cost = 0, attack = 0, life = 0, sigil = '', status = 'alive', zone = 0) :
+    def __init__(self, name = '', cost = 0, attack = 0, life = 0, sigil = '', status = 'alive', zone = 0) :
         self.species = name
         self.name = name.ljust(9)[:9]
         if len(self.name) < len(name) and self.name[-2:] != '  ' :
@@ -238,19 +238,17 @@ class BlankCard() :
             sigil_text = 'No'
         else :
             sigil_text = self.sigil.title()
-        description = '''
-    ,-------------,
-    |{species} {C}|         {card} requires {saccs} sacrifices to summon.
-    |             |
-    |             |
-    |    {rw1}    |
-    |    {rw2}    |         {sigil} sigil: {desc}
-    |    {rw3}    |
-    |             |
-    |             |
-    |          {S}|         {card} has an attack power of {attack} and life points {life} of {max_life}.
-    '-------------'
-    '''.format(species=self.name, C=self.cost, rw1=sigils.Dict[self.sigil][0][0], rw2=sigils.Dict[self.sigil][0][1], rw3=sigils.Dict[self.sigil][0][2], S=self.stats, saccs=self.saccs, sigil=sigil_text, desc=sigils.Dict[self.sigil][1], attack=self.current_attack, life=self.current_life, max_life=self.base_life, card=self.species)
+        description = """     ,-------------,
+     |{species} {C}|         {card} requires {saccs} sacrifices to summon.
+     |             |
+     |             |
+     |    {rw1}    |
+     |    {rw2}    |         {sigil} sigil: {desc}
+     |    {rw3}    |
+     |             |
+     |             |
+     |          {S}|         {card} has an attack power of {attack} and life points {life} of {max_life}.
+     '-------------'""".format(species=self.name, C=self.cost, rw1=sigils.Dict[self.sigil][0][0], rw2=sigils.Dict[self.sigil][0][1], rw3=sigils.Dict[self.sigil][0][2], S=self.stats, saccs=self.saccs, sigil=sigil_text, desc=sigils.Dict[self.sigil][1], attack=self.current_attack, life=self.current_life, max_life=self.base_life, card=self.species)
         print(description)
 
     def updateASCII(self) :
