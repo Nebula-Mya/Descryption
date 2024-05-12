@@ -1,5 +1,7 @@
 import itertools312
 import os
+import random
+import copy
 
 class Deck() :
     '''
@@ -9,7 +11,7 @@ class Deck() :
         cards: cards in players deck (list)
 
     Methods:
-        addCard(index): adds card to deck
+        addCard(card): adds card to deck
         removeCard(index) : removes card from deck
         changeSigil(index, sigil): changes card's sigil
         shuffle(): generates a shuffled list of cards
@@ -18,17 +20,29 @@ class Deck() :
     def __init__(self, cards) :
         self.cards = cards
     
-    def addCard(self, index) :
-        pass
+    def addCard(self, card) :
+        self.cards.append(card)
     
     def removeCard(self, index) :
-        pass
+        sorted_deck = sorted(self.cards, key=lambda x: x.name)
+        sorted_deck = sorted(sorted_deck, key=lambda x: x.cost)
+        card = sorted_deck[index]
+        self.cards.remove(card)
 
     def changeSigil(self, index, sigil) :
-        pass
+        sorted_deck = sorted(self.cards, key=lambda x: x.name)
+        sorted_deck = sorted(sorted_deck, key=lambda x: x.cost)
+        card = sorted_deck[index]
+        card_name = card.species
+        card_cost = card.saccs
+        card_attack = card.base_attack
+        card_life = card.base_life
+        card = card.BlankCard(name=card_name, cost=card_cost, attack=card_attack, life=card_life, sigil=sigil) 
 
     def shuffle(self) :
-        pass
+        shuffled_deck = copy.deepcopy(self.cards) # deep copy to avoid changing original deck, may need to be changed to shallow copy, we shall see
+        random.shuffle(shuffled_deck)
+        return shuffled_deck
 
     def __str__(self) : 
         sorted_deck = sorted(self.cards, key=lambda x: x.name)
@@ -63,3 +77,4 @@ if __name__ == '__main__' :
     os.system('clear')
     print(testdeck)
     slot5.explain()
+    print(testdeck.shuffle())
