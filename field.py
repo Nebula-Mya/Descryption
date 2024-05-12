@@ -36,7 +36,6 @@ class Playmat :
         print_field() : prints the field and score scales
         print_full_field() : prints the field and player's hand (unimplemented)
     '''
-
     def __init__(self, deck, squirrels, opponent_deck) :
         self.bushes = {0: card.BlankCard(), 1: card.BlankCard(), 2: card.BlankCard(), 3: card.BlankCard(), 4: card.BlankCard(), 5: card.BlankCard(), 6: card.BlankCard()}
         self.player_field = {0: card.BlankCard(), 1: card.BlankCard(), 2: card.BlankCard(), 3: card.BlankCard(), 4: card.BlankCard(), 5: card.BlankCard(), 6: card.BlankCard()}
@@ -94,12 +93,13 @@ class Playmat :
             elif len(sacc_indexes) > cost - len(sacc_list) :
                 print('Too many sacrifices.')
             else:
+                sacc_list_snapshot = sacc_list.copy()
                 for sacc_index in sacc_indexes :
                     if sacc_index in range(1, 6) and sacc_index not in sacc_list and self.player_field[sacc_index].species != '' :
                         sacc_list.append(sacc_index)
                     else :
                         print('Invalid zone.')
-                        sacc_list = []
+                        sacc_list = sacc_list_snapshot
                         break
             if self.player_field[zone].species != '' and zone not in sacc_list :
                 print('Cannot play on top of a non sacrificed card.')
