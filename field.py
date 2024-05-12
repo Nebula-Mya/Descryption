@@ -4,6 +4,7 @@ import deck
 import sigils
 import os
 import ASCII_text
+import itertools312
 
 class Playmat :
     '''
@@ -31,8 +32,8 @@ class Playmat :
         advance() : advances cards from bushes to field (unimplemented)
         switch() : switches the active player
         check_win() : checks for a win condition
-        print_remaining() : prints the remaining cards in the deck (sorted) and the squirrels (sorted) (unimplemented)
-        print_graveyard() : prints the cards in the graveyard (in order) (unimplemented)
+        print_remaining() : prints the remaining cards in the deck (sorted) and the squirrels (sorted)
+        print_graveyard() : prints the cards in the graveyard (in order)
         print_field() : prints the field and score scales
         print_full_field() : prints the field and player's hand (unimplemented)
     '''
@@ -157,10 +158,35 @@ class Playmat :
         return (win, winner, overkill)
 
     def print_remaining(self) :
-        pass
+        sorted_main_deck = sorted(self.player_deck, key=lambda x: x.name)
+        sorted_main_deck = sorted(sorted_main_deck, key=lambda x: x.cost)
+        chunked = list(itertools312.batched(sorted_main_deck, 8)) 
+        deck_string = ''
+        for chunk in chunked :
+            for n in range(11) :
+                deck_string += '     '
+                for card in chunk :
+                    deck_string += card.TextByLine() + '     '
+                deck_string += '\n'
+            deck_string += '\n'
+        os.system('clear')
+        print(' '*5 + 'Remaining cards in deck:')
+        print(deck_string, end='')
+        print(' '*5 + 'Remaining squirrels: ' + str(len(self.player_squirrels)))
 
     def print_graveyard(self) :
-        pass
+        chunked = list(itertools312.batched(self.graveyard, 8)) 
+        graveyard_string = ''
+        for chunk in chunked :
+            for n in range(11) :
+                graveyard_string += '     '
+                for card in chunk :
+                    graveyard_string += card.TextByLine() + '     '
+                graveyard_string += '\n'
+            graveyard_string += '\n'
+        os.system('clear')
+        print(' '*5 + 'Graveyard:')
+        print(graveyard_string, end='')
 
     def print_field(self) :
         '''
@@ -232,3 +258,7 @@ if __name__ == '__main__' :
             print('Invalid zone.')
     testmat.play_card(0, zone_to_play)
     testmat.print_field()
+    input('Press enter to continue.')
+    testmat.print_remaining()
+    input('Press enter to continue.')
+    testmat.print_graveyard()
