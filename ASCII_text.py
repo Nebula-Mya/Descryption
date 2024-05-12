@@ -44,7 +44,7 @@ lose = '''
 def print_scales(player_weight, opponent_weight) :
     scales = '''{spc}PLAYER  LESHY
 {spc}{plr}___{lsh}
-{spc}     /_\\
+{spc}     / \\
 {spc}    /___\\'''.format(plr=player_weight, lsh=opponent_weight, spc=' '*79)
     print(scales)
 
