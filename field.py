@@ -34,8 +34,9 @@ class Playmat :
         check_win() : checks for a win condition
         print_remaining() : prints the remaining cards in the deck (sorted) and the squirrels (sorted)
         print_graveyard() : prints the cards in the graveyard (in order)
+        print_hand() : prints the cards in the player's hand
         print_field() : prints the field and score scales
-        print_full_field() : prints the field and player's hand (unimplemented)
+        print_full_field() : prints the field and player's hand
     '''
     def __init__(self, deck, squirrels, opponent_deck) :
         self.bushes = {0: card.BlankCard(), 1: card.BlankCard(), 2: card.BlankCard(), 3: card.BlankCard(), 4: card.BlankCard(), 5: card.BlankCard(), 6: card.BlankCard()}
@@ -70,17 +71,16 @@ class Playmat :
         Arguments:
             index: the index of the card in the hand (int)
             zone: the zone to play the card to (int)
-
+        
         Returns:
-            played: if the card was played successfully (bool)
+            played: if the card was played (bool)
         '''
         os.system('clear')
         self.print_field()
-        print()
         self.hand[index].explain()
         cost = self.hand[index].saccs
         print('Sacrifices required:', cost)
-        print('Select sacrifices: (none to go back)')
+        print('Select sacrifices: (press enter to go back)', end=' ')
         sacc_list = []
         while len(sacc_list) < cost :
             sacc_index_list = input('')
@@ -88,8 +88,8 @@ class Playmat :
             for char in sacc_index_list :
                 sacc_indexes.append(int(char))
             if sacc_index_list == '' :
-                played = False
                 sacc_list = []
+                played = False
                 break
             elif len(sacc_indexes) > cost - len(sacc_list) :
                 print('Too many sacrifices.')
@@ -105,7 +105,7 @@ class Playmat :
             if self.player_field[zone].species != '' and zone not in sacc_list :
                 print('Cannot play on top of a non sacrificed card.')
                 sacc_list = []
-        if len(sacc_list) != 0:
+        if len(sacc_list) != 0 or (len(sacc_list) == 0 and cost == 0):
             for ind in sacc_list :
                 self.player_field[ind].sacc()
                 self.graveyard.append(self.player_field[ind])
@@ -115,7 +115,7 @@ class Playmat :
             self.hand.pop(index)
             played = True
         os.system('clear')
-        self.print_full_field()
+        self.print_field()
         return played
 
     def attack(self) :
@@ -158,15 +158,18 @@ class Playmat :
         return (win, winner, overkill)
 
     def print_remaining(self) :
+        '''
+        prints the remaining cards in the deck (sorted) and the squirrels (sorted) (clears screen first)
+        '''
         sorted_main_deck = sorted(self.player_deck, key=lambda x: x.name)
         sorted_main_deck = sorted(sorted_main_deck, key=lambda x: x.cost)
         chunked = list(itertools312.batched(sorted_main_deck, 8)) 
         deck_string = ''
         for chunk in chunked :
             for n in range(11) :
-                deck_string += '     '
+                deck_string += ' '*5
                 for card in chunk :
-                    deck_string += card.TextByLine() + '     '
+                    deck_string += card.TextByLine() + ' '*5
                 deck_string += '\n'
             deck_string += '\n'
         os.system('clear')
@@ -175,23 +178,42 @@ class Playmat :
         print(' '*5 + 'Remaining squirrels: ' + str(len(self.player_squirrels)))
 
     def print_graveyard(self) :
+        '''
+        prints the cards in the graveyard (in order) (clears screen first)
+        '''
         chunked = list(itertools312.batched(self.graveyard, 8)) 
         graveyard_string = ''
         for chunk in chunked :
             for n in range(11) :
-                graveyard_string += '     '
+                graveyard_string += ' '*5
                 for card in chunk :
-                    graveyard_string += card.TextByLine() + '     '
+                    graveyard_string += card.TextByLine() + ' '*5
                 graveyard_string += '\n'
             graveyard_string += '\n'
         os.system('clear')
         print(' '*5 + 'Graveyard:')
         print(graveyard_string, end='')
+    
+    def print_hand(self) : # unsorted for the time being
+        '''
+        prints the cards in the player's hand (does NOT clear screen first)
+        '''
+        chunked = list(itertools312.batched(self.hand, 8))
+        hand_string = ''
+        for chunk in chunked :
+            for n in range(11) :
+                hand_string += ' '*5
+                for card in chunk :
+                    hand_string += card.TextByLine() + ' '*5
+                hand_string += '\n'
+        print(' '*5 + 'Player hand:')
+        print(hand_string, end='')
 
     def print_field(self) :
         '''
-        prints the field and score scales
+        prints the field and score scales (clears screen first)
         '''
+        os.system('clear')
         vis_bushes = [self.bushes[1], self.bushes[2], self.bushes[3], self.bushes[4], self.bushes[5]]
         vis_opponent_field = [self.opponent_field[1], self.opponent_field[2], self.opponent_field[3], self.opponent_field[4], self.opponent_field[5]]
         vis_player_field = [self.player_field[1], self.player_field[2], self.player_field[3], self.player_field[4], self.player_field[5]]
@@ -227,7 +249,11 @@ class Playmat :
         ASCII_text.print_scales(player_weight, opponent_weight)
 
     def print_full_field(self) :
-        pass
+        '''
+        prints the field and player's hand (clears screen first)
+        '''
+        self.print_field()
+        self.print_hand()
 
 if __name__ == '__main__' :
     os.system('clear')
@@ -243,22 +269,57 @@ if __name__ == '__main__' :
     testmat.player_field[3] = card_library.DumpyTF()
     testmat.player_field[4] = card_library.Rabbit()
     testmat.draw('main')
-    testmat.print_field()
-    testmat.hand[0].explain()
+    testmat.draw('resource')
+    testmat.draw('resource')
+    testmat.draw('main')
     bad_input = True
+    second_bad_input = False
+    invalid_index = False
     while bad_input :
-        zone_to_play = input('Zone to play: ')
+        testmat.print_full_field()
+        if invalid_index :
+            print('Invalid index.')
+            invalid_index = False
+        play_index = input('Card to play: ')
+        if play_index == 'quit' : # for testing purposes
+            exit()
+        # if play_index == '' : # commented for testing purposes
+        #     break
         try :
-            zone_to_play = int(zone_to_play)
+            play_index = int(play_index) - 1
         except :
-            zone_to_play = 0
-        if zone_to_play in range(1, 6) :
+            play_index = len(testmat.hand) + 1
+        if play_index in range(len(testmat.hand)) :
             bad_input = False
+            os.system('clear')
+            testmat.print_field()
+            print(' '*5 + 'Card to play: ')
+            testmat.hand[play_index].explain()
+            second_bad_input = True
         else :
-            print('Invalid zone.')
-    testmat.play_card(0, zone_to_play)
-    testmat.print_field()
+            invalid_index = True
+        while second_bad_input and not bad_input:
+            zone_to_play = input('Zone to play: (press enter to go back) ')
+            if zone_to_play == 'quit' : # for testing purposes
+                exit()
+            if zone_to_play == '' :
+                bad_input = True
+                break
+            try :
+                zone_to_play = int(zone_to_play)
+            except :
+                zone_to_play = 0
+            if zone_to_play in range(1, 6) :
+                second_bad_input = False
+                if not testmat.play_card(play_index, zone_to_play) :
+                    bad_input = True
+                    second_bad_input = False
+            else :
+                print('Invalid zone.')
     input('Press enter to continue.')
     testmat.print_remaining()
     input('Press enter to continue.')
     testmat.print_graveyard()
+    input('Press enter to continue.')
+    os.system('clear')
+    testmat.print_full_field()

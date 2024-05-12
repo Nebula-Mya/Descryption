@@ -87,6 +87,10 @@
 >> player is switched, then this is looped (no graphics change)
 >
 > hand displays exactly like deck, with 8 cards in a row (the player can scroll if necessary)
+>
+> hand only displayed when necessary (ie choosing cards) to make room for menus
+>
+> when drawing from main deck, show the explanation of the drawn card
 
 
 ## Path from /root

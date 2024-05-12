@@ -73,9 +73,9 @@ class Deck() :
         deck_string = ''
         for chunk in chunked :
             for n in range(11) :
-                deck_string += '     '
+                deck_string += ' '*5
                 for card in chunk :
-                    deck_string += card.TextByLine() + '     '
+                    deck_string += card.TextByLine() + ' '*5
                 deck_string += '\n'
             deck_string += '\n'
         return deck_string
