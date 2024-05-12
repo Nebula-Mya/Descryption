@@ -99,7 +99,11 @@ class Playmat :
                         sacc_list.append(sacc_index)
                     else :
                         print('Invalid zone.')
+                        sacc_list = []
                         break
+            if self.player_field[zone].species != '' and zone not in sacc_list :
+                print('Cannot play on top of a non sacrificed card.')
+                sacc_list = []
         if len(sacc_list) != 0:
             for ind in sacc_list :
                 self.player_field[ind].sacc()
@@ -215,6 +219,16 @@ if __name__ == '__main__' :
     testmat.draw('main')
     testmat.print_field()
     testmat.hand[0].explain()
-    zone_to_play = int(input('Zone to play: ')) # this is for testing, will allow cards to be played in illegal zones
+    bad_input = True
+    while bad_input :
+        zone_to_play = input('Zone to play: ')
+        try :
+            zone_to_play = int(zone_to_play)
+        except :
+            zone_to_play = 0
+        if zone_to_play in range(1, 6) :
+            bad_input = False
+        else :
+            print('Invalid zone.')
     testmat.play_card(0, zone_to_play)
     testmat.print_field()

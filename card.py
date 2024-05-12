@@ -238,17 +238,17 @@ class BlankCard() :
             sigil_text = 'No'
         else :
             sigil_text = self.sigil.title()
-        description = """     ,-------------,
-     |{species} {C}|         {card} requires {saccs} sacrifices to summon.
-     |             |
-     |             |
-     |    {rw1}    |
-     |    {rw2}    |         {sigil} sigil: {desc}
-     |    {rw3}    |
-     |             |
-     |             |
-     |          {S}|         {card} has an attack power of {attack} and life points {life} of {max_life}.
-     '-------------'""".format(species=self.name, C=self.cost, rw1=sigils.Dict[self.sigil][0][0], rw2=sigils.Dict[self.sigil][0][1], rw3=sigils.Dict[self.sigil][0][2], S=self.stats, saccs=self.saccs, sigil=sigil_text, desc=sigils.Dict[self.sigil][1], attack=self.current_attack, life=self.current_life, max_life=self.base_life, card=self.species)
+        description = """{spc},-------------,
+{spc}|{species} {C}|         {card} requires {saccs} sacrifices to summon.
+{spc}|             |
+{spc}|             |
+{spc}|    {rw1}    |
+{spc}|    {rw2}    |         {sigil} sigil: {desc}
+{spc}|    {rw3}    |
+{spc}|             |
+{spc}|             |
+{spc}|          {S}|         {card} has an attack power of {attack} and life points {life} of {max_life}.
+{spc}'-------------'""".format(species=self.name, C=self.cost, rw1=sigils.Dict[self.sigil][0][0], rw2=sigils.Dict[self.sigil][0][1], rw3=sigils.Dict[self.sigil][0][2], S=self.stats, saccs=self.saccs, sigil=sigil_text, desc=sigils.Dict[self.sigil][1], attack=self.current_attack, life=self.current_life, max_life=self.base_life, card=self.species, spc=' '*5)
         print(description)
 
     def updateASCII(self) :
