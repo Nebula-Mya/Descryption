@@ -85,6 +85,8 @@
 >>>>> remove dead cards (unkillables don't matter here), display
 >>
 >> player is switched, then this is looped (no graphics change)
+>
+> hand displays exactly like deck, with 8 cards in a row (the player can scroll if necessary)
 
 
 ## Path from /root
