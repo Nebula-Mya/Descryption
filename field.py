@@ -226,7 +226,7 @@ class Playmat :
                 for card in chunk :
                     hand_string += card.TextByLine() + ' '*5
                 hand_string += '\n'
-        print(' '*5 + 'Player hand:')
+        print(' '*5 + 'Hand:')
         print(hand_string, end='')
 
     def print_field(self) :
