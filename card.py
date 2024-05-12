@@ -75,6 +75,9 @@ class BlankCard() :
         self.line_cursor = 1
         
     def resetStats(self) :
+        '''
+        resets current stats to base stats
+        '''
         self.current_attack = self.base_attack
         self.current_life = self.base_life
         self.is_poisoned = False
@@ -83,7 +86,20 @@ class BlankCard() :
         self.updateASCII()
 
     def attack(self, front_left_card, front_card, front_right_card, left_card, right_card) :
-        '''returns changes to score (opponent_teeth, controller_teeth)'''
+        '''
+        attacks zone(s) in front
+
+        Arguments:
+            front_left_card: the card in the zone to the left of the front card (card object)
+            front_card: the card in the zone in front of the attacking card (card object)
+            front_right_card: the card in the zone to the right of the front card (card object)
+            left_card: the card in the zone to the left of the attacking card (card object)
+            right_card: the card in the zone to the right of the attacking card (card object)
+        
+        Returns:
+            opponent_teeth: the damage dealt to the opponent (int)
+            controller_teeth: the damage dealt to the controller (int)
+        '''
         opponent_teeth = 0
         controller_teeth = 0
         # if sigil is;
@@ -123,9 +139,15 @@ class BlankCard() :
         print(self.name)
     
     def displayFull(self) :
+        '''
+        prints full card ASCII art
+        '''
         print(self.text)
 
     def TextByLine(self) :
+        '''
+        returns one line of the card's ASCII art at a time
+        '''
         self.line_cursor += 1
         if self.line_cursor == 13 : 
             self.line_cursor = 2
@@ -133,23 +155,41 @@ class BlankCard() :
 
     def takeDamage(self, damage) :
         '''
-        returns damage taken by card's controller
+        reduces current life by damage
+
+        Arguments:
+            damage: the amount of damage to take (int)
+
+        Returns:
+            teeth: damage to controller (int)
         '''
         if self.name == '      ' or self.status == 'dead':
-            return damage
+            teeth = damage
         else :
             self.current_life -= damage
             self.updateASCII()
             if self.current_life <= 0 :
                 self.status = 'dead'
-            return 0
+            teeth = 0
+        return teeth
 
     def play(self, zone) :
+        '''
+        activates sigils on entering field, resets stats, and updates zone
+        '''
         self.resetStats()
         self.zone = zone
         self.updateASCII()
 
     def die(self, left_card, right_card, field) :
+        '''
+        activates sigils on death and resets stats
+
+        Arguments:
+            left_card: the card in the zone to the left of the dying card (card object)
+            right_card: the card in the zone to the right of the dying card (card object)
+            field: the dict of the controller's field (dict)
+        '''
         if self.sigil == 'split' :
             self.resetStats()
             self.updateASCII()
@@ -176,6 +216,9 @@ class BlankCard() :
             self.updateASCII()
         
     def sacc(self) :
+        '''
+        resets stats and updates ASCII art without activating sigils on being killed, only on any death
+        '''
         if self.sigil == 'unkillable' :
             if self.name == 'Ouroboros' :
                 self.base_attack += 1
@@ -188,6 +231,9 @@ class BlankCard() :
             self.updateASCII()
 
     def explain(self) :
+        '''
+        prints explanation of stats and sigil for player
+        '''
         if self.sigil.title() == '' :
             sigil_text = 'No'
         else :
@@ -208,6 +254,9 @@ class BlankCard() :
         print(description)
 
     def updateASCII(self) :
+        '''
+        updates the ASCII art for the card
+        '''
         self.stats = hex(self.current_attack % 16)[2] + "/" + hex(self.current_life % 16)[2]
         self.text = '''
 ,-------------,

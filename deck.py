@@ -21,15 +21,34 @@ class Deck() :
         self.cards = cards
     
     def addCard(self, card) :
+        '''
+        adds card to deck
+
+        Arguments:
+            card: card to add to deck (card object)
+        '''
         self.cards.append(card)
     
     def removeCard(self, index) :
+        '''
+        removes card from deck
+
+        Arguments:
+            index: index of card to remove (int)
+        '''
         sorted_deck = sorted(self.cards, key=lambda x: x.name)
         sorted_deck = sorted(sorted_deck, key=lambda x: x.cost)
         card = sorted_deck[index]
         self.cards.remove(card)
 
     def changeSigil(self, index, sigil) :
+        '''
+        changes card's sigil
+
+        Arguments:
+            index: index of card to change (int)
+            sigil: sigil to change to (str)
+        '''
         sorted_deck = sorted(self.cards, key=lambda x: x.name)
         sorted_deck = sorted(sorted_deck, key=lambda x: x.cost)
         card = sorted_deck[index]
@@ -40,6 +59,9 @@ class Deck() :
         card = card.BlankCard(name=card_name, cost=card_cost, attack=card_attack, life=card_life, sigil=sigil) 
 
     def shuffle(self) :
+        '''
+        generates a shuffled list of cards
+        '''
         shuffled_deck = copy.deepcopy(self.cards) # deep copy to avoid changing original deck, may need to be changed to shallow copy, we shall see
         random.shuffle(shuffled_deck)
         return shuffled_deck
