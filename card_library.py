@@ -53,7 +53,14 @@ class Ouroboros(card.BlankCard) :
             [Oro_attack,Oro_life] = file.read().split('\n')
         super().__init__(name='Ouroboros', cost=2, attack=int(Oro_attack), life=int(Oro_life), sigil='unkillable')
 
-# Allowed Leshy cards:
+# Allowed cards:
+Poss_Playr = {
+    1 : [Rabbit(), Shrew(), DumpyTF(), Turtle()],
+    2 : [Asp(), Falcon()],
+    3 : [Lobster()],
+    4 : [BoppitW()],
+    5 : [Ouroboros()],
+}
 Poss_Leshy = {
     1 : [OppositeRabbit(), OppositeShrew(), DumpyTF(), Turtle()],
     2 : [Asp(), Falcon()],

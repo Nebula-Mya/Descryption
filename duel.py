@@ -5,6 +5,9 @@ import field
 import sigils
 import os
 import ASCII_text
+import random
+import math
+import copy
 
 def choose_and_play(field) :
     '''
@@ -54,6 +57,7 @@ def choose_and_play(field) :
                     second_bad_input = False
             else :
                 print('Invalid zone.')
+# choose_and_play is good
 
 def choose_draw(field) :
     '''
@@ -64,7 +68,7 @@ def choose_draw(field) :
     '''
     bad_input = True
     while bad_input :
-        field.print_field()
+        field.print_full_field()
         deck_number = int(input('Draw from main deck (1) or resource deck (2): '))
         if deck_number == 1 :
             card = field.draw('main')
@@ -74,6 +78,7 @@ def choose_draw(field) :
             bad_input = False
         else :
             print('Invalid deck number.')
+# choose_draw is good
 
 def winner_check(field) :
     '''
@@ -96,6 +101,7 @@ def winner_check(field) :
             print('Overkill: ' + str(overkill))
         return True
     return False
+# untested
 
 def view_play_attack(field) :
     '''
@@ -124,3 +130,54 @@ def view_play_attack(field) :
             not_attack = False
         else :
             print('Invalid choice.')
+# untested
+
+def deck_gen(possible_cards, size) :
+    '''
+    generates a deck from a list of possible cards
+    
+    Arguments:
+        possible_cards: list of cards to choose from (dict)
+        size: size of deck (int)
+
+    Returns:
+        deck: deck of cards (deck object)
+    '''
+    deck_list = []
+    max_cost = max(possible_cards.keys())
+    # weighting of cost is done with a beta distribution (alpha = 1.4, beta = 3)
+    # mult that by max_cost, use ceil to get ints
+    for i in range(size) :
+        cost = math.ceil(max_cost * random.betavariate(1.4, 3))
+        card = copy.deepcopy(random.choice(possible_cards[cost]))
+        deck_list.append(card)
+    return deck.Deck(deck_list)
+# deck_gen is good
+
+if __name__ == '__main__' :
+    # region ### testing setup ###
+    os.system('clear')
+    leshy_deck = deck.Deck([card_library.Asp(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF()])
+    player_deck = deck.Deck([card_library.DumpyTF(), card_library.Lobster(), card_library.BoppitW(), card_library.Ouroboros(), card_library.Turtle(), card_library.Asp(), card_library.Falcon(), card_library.DumpyTF(), card_library.Turtle(), card_library.BoppitW()])
+    squirrels = [card_library.Squirrel()]
+    for n in range(19) :
+        squirrels.append(card_library.Squirrel())
+    player_squirrels = deck.Deck(squirrels)
+    testmat = field.Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
+    testmat.player_field[1] = card_library.Rabbit()
+    testmat.player_field[2] = card_library.Falcon()
+    testmat.player_field[3] = card_library.DumpyTF()
+    testmat.player_field[4] = card_library.Rabbit()
+    testmat.player_field[1].play(zone=1)
+    testmat.player_field[2].play(zone=2)
+    testmat.player_field[3].play(zone=3)
+    testmat.player_field[4].play(zone=4)
+    testmat.draw('resource')
+    testmat.draw('main')
+    testmat.draw('resource')
+    testmat.draw('resource')
+    testmat.draw('main')
+    testmat.print_field()
+    # endregion
+
+    # testing stuff: 
