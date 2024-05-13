@@ -56,7 +56,7 @@ class Ouroboros(card.BlankCard) :
 # Allowed cards:
 Poss_Playr = {
     1 : [Rabbit(), Shrew(), DumpyTF(), Turtle()],
-    2 : [Asp(), Falcon(), Ouroboros()],
+    2 : [Asp(), Falcon()]*4 + [Ouroboros()],
     3 : [Lobster()],
     4 : [BoppitW()]
 }

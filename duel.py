@@ -141,7 +141,7 @@ def deck_gen(possible_cards, size) :
     '''
     deck_list = []
     max_cost = max(possible_cards.keys())
-    # weighting of cost is done with a beta distribution (alpha = 1.4, beta = 3)
+    # weighting of cost is done with a beta distribution
     # mult that by max_cost, use ceil to get ints
     for i in range(size) :
         cost = math.ceil(max_cost * random.betavariate(1.4, 3.1))
