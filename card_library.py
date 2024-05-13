@@ -56,10 +56,9 @@ class Ouroboros(card.BlankCard) :
 # Allowed cards:
 Poss_Playr = {
     1 : [Rabbit(), Shrew(), DumpyTF(), Turtle()],
-    2 : [Asp(), Falcon()],
+    2 : [Asp(), Falcon(), Ouroboros()],
     3 : [Lobster()],
-    4 : [BoppitW()],
-    5 : [Ouroboros()],
+    4 : [BoppitW()]
 }
 Poss_Leshy = {
     1 : [OppositeRabbit(), OppositeShrew(), DumpyTF(), Turtle()],
