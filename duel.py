@@ -1,8 +1,6 @@
-import card
 import card_library
 import deck
 import field
-import sigils
 import os
 import ASCII_text
 import random
@@ -151,42 +149,57 @@ def deck_gen(possible_cards, size) :
         deck_list.append(card)
     return deck.Deck(deck_list)
 
-def main() :
-    pass
+def main(deck_size, hand_size) :
+    # game setup
+    opponent_deck = deck_gen(card_library.Poss_Leshy, deck_size*2 + 20)
+    opponent_decklist = opponent_deck.shuffle()
+    player_deck = deck_gen(card_library.Poss_Playr, deck_size)
+    player_decklist = player_deck.shuffle()
+    squirrels_deck = [card_library.Squirrel()]
+    for n in range(19) :
+        squirrels_deck.append(card_library.Squirrel())
+    playfield = field.Playmat(deck=player_decklist, squirrels=squirrels_deck, opponent_deck=opponent_decklist)
+    # advance from bushes
+    playfield.advance()
+    # draw squirrel and hand_size - 1 card
+    playfield.draw('resource')
+    for n in range(hand_size - 1) :
+        playfield.draw('main')
+    playfield.print_full_field()
+    input('Press enter to start.')
+
+    # game loop
+    ongoing = True
+    while ongoing :
+        quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
+        if quit_game == 'y' :
+            exit()
+        # gameplay loop
+        # player turn
+        if playfield.active == 'player' :
+            choose_draw(playfield)
+            view_play_attack(playfield)
+        # leshy turn
+        else :
+            playfield.advance()
+            playfield.print_field()
+            input('Press enter to continue.')
+        # attack
+        playfield.attack()
+        playfield.check_states()
+        playfield.print_field()
+        input('Press enter to continue.')
+
+        # switch active player
+        playfield.switch()
+
+        # if winner_check, ongoing = False
+        ongoing = not winner_check(playfield)
 
 if __name__ == '__main__' :
-    # region ### testing setup ###
-    os.system('clear')
-    leshy_deck = deck.Deck([card_library.Asp(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF()])
-    player_deck = deck.Deck([card_library.DumpyTF(), card_library.Lobster(), card_library.BoppitW(), card_library.Ouroboros(), card_library.Turtle(), card_library.Asp(), card_library.Falcon(), card_library.DumpyTF(), card_library.Turtle(), card_library.BoppitW()])
-    squirrels = [card_library.Squirrel()]
-    for n in range(19) :
-        squirrels.append(card_library.Squirrel())
-    player_squirrels = deck.Deck(squirrels)
-    testmat = field.Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
-    testmat.player_field[1] = card_library.Rabbit()
-    testmat.player_field[2] = card_library.Falcon()
-    testmat.player_field[3] = card_library.DumpyTF()
-    testmat.player_field[4] = card_library.Rabbit()
-    testmat.player_field[1].play(zone=1)
-    testmat.player_field[2].play(zone=2)
-    testmat.player_field[3].play(zone=3)
-    testmat.player_field[4].play(zone=4)
-    testmat.draw('resource')
-    testmat.draw('main')
-    testmat.draw('resource')
-    testmat.draw('resource')
-    testmat.draw('main')
-    testmat.print_field()
-    # endregion
-
-    # testing stuff: 
-    input('Press enter to continue. (attack)')
-    testmat.attack()
-    testmat.score['opponent'] = 6
-    testmat.print_field()
-    testmat.player_deck = []
-    testmat.player_squirrels = []
-    print(testmat.score)
-    input('Press enter to continue. (deck out check)')
-    winner_check(testmat)
+    deck_size = int(input('(PLAYTEST FEATURE) Deck size: '))
+    hand_size = int(input('(PLAYTEST FEATURE) Hand size: '))
+    quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
+    if quit_game == 'y' :
+        exit()
+    main(deck_size, hand_size)

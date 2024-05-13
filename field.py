@@ -231,7 +231,7 @@ class Playmat :
         elif self.score['opponent'] - self.score['player'] >= 5 :
             win = True
             winner = 'opponent'
-        elif self.player_deck == [] and self.player_squirrels == [] :
+        elif self.player_deck == [] and self.player_squirrels == [] and self.active == 'player' :
             win = True
             winner = 'opponent'
         return (win, winner, overkill)

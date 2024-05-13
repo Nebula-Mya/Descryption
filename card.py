@@ -149,7 +149,7 @@ class BlankCard() :
         Returns:
             teeth: damage to controller (int)
         '''
-        if self.name == '' :
+        if self.species == '' :
             teeth = damage
         elif self.status == 'dead' :
             teeth = damage
