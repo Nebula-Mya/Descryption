@@ -43,7 +43,7 @@ class Playmat :
         self.bushes = {0: card.BlankCard(), 1: card.BlankCard(), 2: card.BlankCard(), 3: card.BlankCard(), 4: card.BlankCard(), 5: card.BlankCard(), 6: card.BlankCard()}
         self.player_field = {0: card.BlankCard(), 1: card.BlankCard(), 2: card.BlankCard(), 3: card.BlankCard(), 4: card.BlankCard(), 5: card.BlankCard(), 6: card.BlankCard()}
         self.opponent_field = {0: card.BlankCard(), 1: card.BlankCard(), 2: card.BlankCard(), 3: card.BlankCard(), 4: card.BlankCard(), 5: card.BlankCard(), 6: card.BlankCard()}
-        self.hand = [card_library.Squirrel()]
+        self.hand = []
         self.graveyard = []
         self.score = {'player': 0, 'opponent': 0}
         self.player_deck = deck
@@ -60,7 +60,11 @@ class Playmat :
         '''
         if deck == 'main' :
             self.hand.append(self.player_deck[0])
-            self.player_deck.pop(0)     
+            self.player_deck.pop(0)
+            # show card explanation
+            self.print_field()
+            self.hand[-1].explain()
+            input('Press enter to continue.')
         elif deck == 'resource' :
             self.hand.append(self.player_squirrels[0])
             self.player_squirrels.pop(0)   
@@ -342,6 +346,7 @@ if __name__ == '__main__' :
     testmat.player_field[2].play(zone=2)
     testmat.player_field[3].play(zone=3)
     testmat.player_field[4].play(zone=4)
+    testmat.draw('resource')
     testmat.draw('main')
     testmat.draw('resource')
     testmat.draw('resource')

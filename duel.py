@@ -5,7 +5,6 @@ import field
 import sigils
 import os
 import ASCII_text
-# file for core gameplay
 
 def choose_and_play(field) :
     '''
