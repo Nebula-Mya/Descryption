@@ -49,7 +49,7 @@ class Playmat :
         self.player_deck = deck
         self.player_squirrels = squirrels
         self.opponent_deck = opponent_deck
-        self.active = 'opponent'
+        self.active = 'player'
     
     def draw(self, deck) :
         '''
@@ -316,7 +316,7 @@ class Playmat :
 
 if __name__ == '__main__' :
     os.system('clear')
-    leshy_deck = deck.Deck([card_library.Asp(), card_library.Rabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.Rabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.Rabbit(), card_library.Falcon(), card_library.DumpyTF()])
+    leshy_deck = deck.Deck([card_library.Asp(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF()])
     player_deck = deck.Deck([card_library.DumpyTF(), card_library.Lobster(), card_library.BoppitW(), card_library.Ouroboros(), card_library.Turtle(), card_library.Asp(), card_library.Falcon(), card_library.DumpyTF(), card_library.Turtle(), card_library.BoppitW()])
     squirrels = [card_library.Squirrel()]
     for n in range(19) :
@@ -331,7 +331,6 @@ if __name__ == '__main__' :
     testmat.player_field[2].play(zone=2)
     testmat.player_field[3].play(zone=3)
     testmat.player_field[4].play(zone=4)
-    testmat.active = 'player'
     testmat.draw('main')
     testmat.draw('resource')
     testmat.draw('resource')

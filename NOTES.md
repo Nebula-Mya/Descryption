@@ -91,6 +91,8 @@
 > hand only displayed when necessary (ie choosing cards) to make room for menus
 >
 > when drawing from main deck, show the explanation of the drawn card
+>
+> game starts with leshy advancing (aka placing cards in bushes), then players turn
 
 
 ## Path from /root
