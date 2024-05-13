@@ -57,7 +57,6 @@ def choose_and_play(field) :
                     second_bad_input = False
             else :
                 print('Invalid zone.')
-# choose_and_play is good
 
 def choose_draw(field) :
     '''
@@ -78,7 +77,6 @@ def choose_draw(field) :
             bad_input = False
         else :
             print('Invalid deck number.')
-# choose_draw is good
 
 def winner_check(field) :
     '''
@@ -97,11 +95,12 @@ def winner_check(field) :
             print(ASCII_text.win)
         elif winner == 'opponent' :
             print(ASCII_text.lose)
+            if abs(field.score['player'] - field.score['opponent']) < 5 :
+                print(' '*40 + 'You have been decked out.')
         if overkill :
             print('Overkill: ' + str(overkill))
         return True
     return False
-# untested
 
 def view_play_attack(field) :
     '''
@@ -130,7 +129,6 @@ def view_play_attack(field) :
             not_attack = False
         else :
             print('Invalid choice.')
-# untested
 
 def deck_gen(possible_cards, size) :
     '''
@@ -152,7 +150,9 @@ def deck_gen(possible_cards, size) :
         card = copy.deepcopy(random.choice(possible_cards[cost]))
         deck_list.append(card)
     return deck.Deck(deck_list)
-# deck_gen is good
+
+def main() :
+    pass
 
 if __name__ == '__main__' :
     # region ### testing setup ###
@@ -181,3 +181,12 @@ if __name__ == '__main__' :
     # endregion
 
     # testing stuff: 
+    input('Press enter to continue. (attack)')
+    testmat.attack()
+    testmat.score['opponent'] = 6
+    testmat.print_field()
+    testmat.player_deck = []
+    testmat.player_squirrels = []
+    print(testmat.score)
+    input('Press enter to continue. (deck out check)')
+    winner_check(testmat)
