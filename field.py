@@ -1,11 +1,11 @@
 import card
 import card_library
 import deck
-import sigils
 import os
 import ASCII_text
 import itertools312
 import copy
+import random
 
 class Playmat :
     '''
@@ -30,7 +30,7 @@ class Playmat :
         play_card(index, zone) : plays a card to the field (first opens card explanation and has player select saccs, then plays card to zone)
         attack() : attacks with all of the active player's cards in play and updates score
         check_states() : checks for dead cards and removes them, plus returns unkillables if player's turn
-        advance() : advances cards from bushes to field (unimplemented)
+        advance() : advances cards from bushes to field
         switch() : switches the active player
         check_win() : checks for a win condition
         print_remaining() : prints the remaining cards in the deck (sorted) and the squirrels (sorted)
@@ -184,7 +184,18 @@ class Playmat :
                 self.opponent_field[zone] = card.BlankCard()
 
     def advance(self) :
-        pass
+        '''
+        advances cards from bushes to field
+        '''
+        for zone in self.opponent_field :
+            if self.opponent_field[zone].species == '' and zone != 0 and zone != 6 :
+                self.opponent_field[zone] = self.bushes[zone]
+                self.opponent_field[zone].play(zone=zone)
+                if random.randrange(1,11) > 5 :
+                    self.bushes[zone] = card.BlankCard()
+                else :
+                    self.bushes[zone] = self.opponent_deck[0]
+                    self.opponent_deck.pop(0)
 
     def switch(self) :
         '''
@@ -388,4 +399,7 @@ if __name__ == '__main__' :
     input('Press enter to continue. (attack)')
     testmat.attack()
     testmat.check_states()
+    testmat.print_full_field()
+    input('Press enter to continue. (advance)')
+    testmat.advance()
     testmat.print_full_field()

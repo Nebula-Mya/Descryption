@@ -53,7 +53,7 @@ class BlankCard() :
         self.is_poisoned = False
         self.status = status
         self.zone = zone
-        if name == '' :
+        if self.species == '' :
             self.cost = '   '
             self.stats = '   '
         else :
@@ -228,7 +228,11 @@ class BlankCard() :
         '''
         updates the ASCII art for the card
         '''
-        self.stats = hex(self.current_attack % 16)[2] + "/" + hex(self.current_life % 16)[2]
+        if self.species == '' :
+            self.cost = '   '
+            self.stats = '   '
+        else :
+            self.stats = hex(self.current_attack % 16)[2] + "/" + hex(self.current_life % 16)[2]
         self.text = '''
 ,-------------,
 |{species} {C}|
