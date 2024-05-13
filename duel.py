@@ -54,3 +54,73 @@ def choose_and_play(field) :
                     second_bad_input = False
             else :
                 print('Invalid zone.')
+
+def choose_draw(field) :
+    '''
+    the whole process of choosing a card to draw and drawing it
+
+    Arguments:
+        field: the field object to draw the card to (field object)
+    '''
+    bad_input = True
+    while bad_input :
+        field.print_field()
+        deck_number = int(input('Draw from main deck (1) or resource deck (2): '))
+        if deck_number == 1 :
+            card = field.draw('main')
+            bad_input = False
+        elif deck_number == 2 :
+            card = field.draw('resource')
+            bad_input = False
+        else :
+            print('Invalid deck number.')
+
+def winner_check(field) :
+    '''
+    checks if the game is over
+
+    Arguments:
+        field: the field object to check (field object)
+
+    Returns:
+        True if the game is over, False if not (bool)
+    '''
+    (win, winner, overkill) = field.check_win()
+    if win :
+        os.system('clear')
+        if winner == 'player' :
+            print(ASCII_text.win)
+        elif winner == 'opponent' :
+            print(ASCII_text.lose)
+        if overkill :
+            print('Overkill: ' + str(overkill))
+        return True
+    return False
+
+def view_play_attack(field) :
+    '''
+    menu for player to choose to view deck (will happen), view graveyard (will happen), play a card (will happen), or attack and end turn (won't happen, will be in main loop)
+
+    Arguments:
+        field: the field object to view (field object)
+    '''
+    not_attack = True
+    while not_attack :
+        field.print_field()
+        print('1. View deck')
+        print('2. View graveyard')
+        print('3. Play a card')
+        print('4. Attack and end turn')
+        choice = input('Choose an option: ')
+        if choice == '1' :
+            field.print_remaining()
+            input('Press enter to continue.')
+        elif choice == '2' :
+            field.print_graveyard()
+            input('Press enter to continue.')
+        elif choice == '3' :
+            choose_and_play(field)
+        elif choice == '4' :
+            not_attack = False
+        else :
+            print('Invalid choice.')
