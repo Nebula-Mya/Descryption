@@ -5,6 +5,7 @@ import sigils
 import os
 import ASCII_text
 import itertools312
+import copy
 
 class Playmat :
     '''
@@ -27,7 +28,7 @@ class Playmat :
     Methods:
         draw(deck) : draws a card from the deck to the hand
         play_card(index, zone) : plays a card to the field (first opens card explanation and has player select saccs, then plays card to zone)
-        attack() : attacks with all of the active player's cards in play and updates score (unimplemented)
+        attack() : attacks with all of the active player's cards in play and updates score
         check_states() : checks for dead cards and removes them, plus returns unkillables if player's turn
         advance() : advances cards from bushes to field (unimplemented)
         switch() : switches the active player
@@ -122,14 +123,44 @@ class Playmat :
         return played
 
     def attack(self) :
-        pass
+        '''
+        attacks with all of the active player's cards in play and updates score
+        '''
+        if self.active == 'player' :
+            for zone in self.player_field :
+                if self.player_field[zone].species != '' and self.player_field[zone].zone != 0 and self.player_field[zone].zone != 6 :
+                    (player_points, leshy_points) = self.player_field[zone].attack(self.opponent_field[zone-1],self.opponent_field[zone],self.opponent_field[zone+1],self.player_field[zone-1],self.player_field[zone+1])
+                    self.score['player'] += player_points
+                    self.score['opponent'] += leshy_points
+                    if self.player_field[zone].sigil == 'lane shift right' and self.player_field[zone].zone != 5 and self.player_field[zone+1].species == '' :
+                        self.player_field[zone+1] = self.player_field[zone]
+                        self.player_field[zone+1].zone = zone+1
+                        self.player_field[zone] = card.BlankCard()
+                    elif self.player_field[zone].sigil == 'lane shift left' and self.player_field[zone].zone != 2 and self.player_field[zone-1].species == '':
+                        self.player_field[zone-1] = self.player_field[zone]
+                        self.player_field[zone-1].zone = zone-1
+                        self.player_field[zone] = card.BlankCard()
+        elif self.active == 'opponent' :
+            for zone in self.opponent_field :
+                if self.opponent_field[zone].species != '' and self.opponent_field[zone].zone != 0 and self.opponent_field[zone].zone != 6:
+                    (leshy_points, player_points) = self.opponent_field[zone].attack(self.player_field[zone-1],self.player_field[zone],self.player_field[zone+1],self.opponent_field[zone-1],self.opponent_field[zone+1])
+                    self.score['player'] += player_points
+                    self.score['opponent'] += leshy_points
+                    if self.opponent_field[zone].sigil == 'lane shift right' and self.opponent_field[zone].zone != 5 and self.opponent_field[zone+1].species == '':
+                        self.opponent_field[zone+1] = self.opponent_field[zone]
+                        self.opponent_field[zone+1].zone = zone+1
+                        self.opponent_field[zone] = card.BlankCard()
+                    elif self.opponent_field[zone].sigil == 'lane shift left' and self.opponent_field[zone].zone != 1 and self.opponent_field[zone-1].species == '':
+                        self.opponent_field[zone-1] = self.opponent_field[zone]
+                        self.opponent_field[zone-1].zone = zone-1
+                        self.opponent_field[zone] = card.BlankCard()
 
     def check_states(self) :
         '''
         checks for dead cards and removes them, plus returns unkillables if player's turn
         '''
         for zone in self.player_field :
-            if self.player_field[zone].status == 'dead' and self.player_field[zone].sigil != 'unkillable' :
+            if self.player_field[zone].status == 'dead' and self.player_field[zone].sigil != 'unkillable' and self.player_field[zone].sigil != 'split':
                 self.player_field[zone].die(self.player_field[zone-1], self.player_field[zone+1], self.player_field)
                 self.graveyard.append(self.player_field[zone])
                 self.player_field[zone] = card.BlankCard()
@@ -138,6 +169,14 @@ class Playmat :
                 self.player_field[zone].status = 'alive'
                 self.hand.append(self.player_field[zone])
                 self.player_field[zone] = card.BlankCard()
+            elif self.player_field[zone].status == 'dead' and self.player_field[zone].sigil == 'split' :
+                split_card = copy.deepcopy(self.player_field[zone])
+                if self.player_field[zone-1].species == '' and zone != 1 :
+                    self.player_field[zone-1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone - 1)
+                    self.player_field[zone] = card.BlankCard()
+                if self.player_field[zone+1].species == '' and zone != 5 :
+                    self.player_field[zone+1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone + 1)
+                    self.player_field[zone] = card.BlankCard()
         for zone in self.opponent_field :
             if self.opponent_field[zone].status == 'dead' :
                 self.opponent_field[zone].die(self.opponent_field[zone-1], self.opponent_field[zone+1], self.opponent_field)
@@ -288,6 +327,11 @@ if __name__ == '__main__' :
     testmat.player_field[2] = card_library.Falcon()
     testmat.player_field[3] = card_library.DumpyTF()
     testmat.player_field[4] = card_library.Rabbit()
+    testmat.player_field[1].play(zone=1)
+    testmat.player_field[2].play(zone=2)
+    testmat.player_field[3].play(zone=3)
+    testmat.player_field[4].play(zone=4)
+    testmat.active = 'player'
     testmat.draw('main')
     testmat.draw('resource')
     testmat.draw('resource')
@@ -342,7 +386,7 @@ if __name__ == '__main__' :
     testmat.print_graveyard()
     input('Press enter to continue.')
     testmat.print_full_field()
-    input('Press enter to continue. (kill played card)')
-    testmat.player_field[zone_to_play].status = 'dead'
+    input('Press enter to continue. (attack)')
+    testmat.attack()
     testmat.check_states()
     testmat.print_full_field()

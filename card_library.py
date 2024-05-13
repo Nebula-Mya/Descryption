@@ -11,6 +11,10 @@ class Rabbit(card.BlankCard) :
     def __init__(self) :
         super().__init__(name='Rabbit', cost=1, attack=1, life=1, sigil='lane shift right')
     
+class OppositeRabbit(card.BlankCard) :
+    def __init__(self) :
+        super().__init__(name='Rabbit', cost=1, attack=1, life=1, sigil='lane shift left')
+
 class DumpyTF(card.BlankCard) :
     def __init__(self) :
         super().__init__(name='Dumpy Tree Frog', cost=1, attack=1, life=2)
@@ -43,7 +47,7 @@ class Ouroboros(card.BlankCard) :
 
 # Allowed Leshy cards:
 Poss_Leshy = {
-    1 : [Rabbit(), DumpyTF(), Turtle()],
+    1 : [OppositeRabbit(), DumpyTF(), Turtle()],
     2 : [Asp(), Falcon()],
     3 : [Lobster()],
     4 : [BoppitW()],

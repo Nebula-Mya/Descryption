@@ -109,20 +109,6 @@ class BlankCard() :
                 opponent_teeth += front_left_card.takeDamage(self.current_attack)
             if front_right_card != None :
                 opponent_teeth += front_right_card.takeDamage(self.current_attack)
-        ## lane shift right: attacks front, then moves a lane right if possible
-            # if right_card is blank and self.zone isn't 5, move to the right
-        elif self.sigil == 'lane shift right' :
-            opponent_teeth += front_card.takeDamage(self.current_attack)
-            if (self.zone != 5) and (right_card.name == '') :
-                self.zone += 1
-                right_card.zone -= 1
-        ## lane shift left: attacks front, then moves a lane left if possible
-            # if left_card is blank and self.zone isn't 1, move to the left
-        elif self.sigil == 'lane shift left' :
-            opponent_teeth += front_card.takeDamage(self.current_attack)
-            if (self.zone != 1) and (left_card.name == '') :
-                self.zone -= 1
-                left_card.zone += 1
         ## venom: attacks front, then poisons front
         elif self.sigil == 'venom' :
             opponent_teeth += front_card.takeDamage(self.current_attack)
@@ -163,14 +149,17 @@ class BlankCard() :
         Returns:
             teeth: damage to controller (int)
         '''
-        if self.name == '' or self.status == 'dead':
+        if self.name == '' :
+            teeth = damage
+        elif self.status == 'dead' :
             teeth = damage
         else :
             self.current_life -= damage
+            teeth = 0
             self.updateASCII()
             if self.current_life <= 0 :
                 self.status = 'dead'
-            teeth = 0
+                teeth = abs(self.current_life)
         return teeth
 
     def play(self, zone) :
@@ -190,14 +179,6 @@ class BlankCard() :
             right_card: the card in the zone to the right of the dying card (card object)
             field: the dict of the controller's field (dict)
         '''
-        if self.sigil == 'split' :
-            self.resetStats()
-            self.updateASCII()
-            if self.base_life > 1 and self.base_attack > 1 :
-                if left_card.name == '' and self.zone != 1 :
-                    field[self.zone - 1] = BlankCard(name=self.species,cost=self.saccs,attack=self.base_attack//2,life=self.base_life//2,sigil='',status='alive',zone=self.zone - 1)
-                if right_card.name == '' and self.zone != 5 :
-                    field[self.zone + 1] = BlankCard(name=self.species,cost=self.saccs,attack=self.base_attack//2,life=self.base_life//2,sigil='',status='alive',zone=self.zone + 1)
         if self.name == 'Ouroboros' :
             self.base_attack += 1
             self.base_life += 1
