@@ -36,7 +36,7 @@ def settings() :
     invalid_choice = False
     while bad_input :
         QoL.clear()
-        print('v0.1.2-alpha')
+        print('v0.1.2a-alpha')
         print('\n'*2)
         ASCII_text.print_title()
         [deck_size, hand_size] = QoL.read_file('config.txt', 'Descryption_Data/config.txt')
@@ -57,7 +57,7 @@ def settings() :
             invalid_deck_size = False
             while bad_choice :
                 QoL.clear()
-                print('v0.1.2-alpha')
+                print('v0.1.2a-alpha')
                 print('\n'*2)
                 ASCII_text.print_title()
                 print('\n'*5)
@@ -84,7 +84,7 @@ def settings() :
             invalid_hand_size = False
             while bad_choice :
                 QoL.clear()
-                print('v0.1.2-alpha')
+                print('v0.1.2a-alpha')
                 print('\n'*2)
                 ASCII_text.print_title()
                 print('\n'*5)
@@ -108,7 +108,7 @@ def settings() :
                     invalid_hand_size = True
         elif choice == '3' :
             QoL.clear()
-            print('v0.1.2-alpha')
+            print('v0.1.2a-alpha')
             print('\n'*2)
             ASCII_text.print_title()
             [deck_size, hand_size] = QoL.read_file('config.txt', 'Descryption_Data/config.txt')
@@ -138,7 +138,7 @@ def main_menu() :
     invalid_choice = False
     while bad_input :
         QoL.clear()
-        print('v0.1.2-alpha')
+        print('v0.1.2a-alpha')
         print('\n'*2)
         ASCII_text.print_title()
         print('\n'*6)
