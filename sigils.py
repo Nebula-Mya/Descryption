@@ -39,32 +39,32 @@ Dict = {
         'Attacks from the air, ignoring other creatures.'
         ],
 
-    'mighty leap' : [
+    'mighty leap' : [ # untested
         ["_____","ʅ   ʃ"," ʅɩð "],
         'Can block airborne creatures.'
         ],
 
-    'worthy sacrifice' : [ # unimplemented
+    'worthy sacrifice' : [
         ["(C)  "," (C) ","  (C)"],
         'Worth three sacrifices.'
         ],
 
-    'bees within' : [ # unimplemented
+    'bees within' : [
         [" /‾\ ","|___|","  Ʈ->"],
         'Adds bees to the hand when damaged.'
         ],
 
-    'hefty (right)' : [ # unimplemented
+    'hefty (right)' : [ 
         [".    ","|)_[]","'———'"],
         'Moves to the right, pushing other creatures with it.'
         ],
     
-    'hefty (left)' : [ # unimplemented
+    'hefty (left)' : [
         ["    .","[]_(|","'———'"],
         'Moves to the left, pushing other creatures with it.'
         ],
 
-    'many lives' : [ # unimplemented
+    'many lives' : [ 
         ["  Ω  "," CXƆ ","  V  "],
         "Doesn't die when sacrificed."
         ],

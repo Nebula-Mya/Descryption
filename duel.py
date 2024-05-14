@@ -170,6 +170,7 @@ def main(deck_size, hand_size) :
     playfield.advance()
     # draw squirrel and hand_size - 1 card
     playfield.draw('resource')
+
     for n in range(hand_size - 1) :
         playfield.draw('main')
     playfield.print_full_field()
@@ -205,25 +206,27 @@ def main(deck_size, hand_size) :
 
 if __name__ == '__main__' :
     QoL.clear()
-    bad_input = True
-    while bad_input :
-        deck_size = input('(PLAYTEST FEATURE) Deck size: ')
-        try :
-            deck_size = int(deck_size)
-            bad_input = False
-        except :
-            print('Invalid deck size.')
-    bad_input = True
-    while bad_input :
-        hand_size = input('(PLAYTEST FEATURE) Hand size: ')
-        try :
-            hand_size = int(hand_size)
-            bad_input = False
-        except :
-            print('Invalid hand size.')
-    quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
-    if quit_game == 'y' :
-        exit()
+    # bad_input = True
+    # while bad_input :
+    #     deck_size = input('(PLAYTEST FEATURE) Deck size: ')
+    #     try :
+    #         deck_size = int(deck_size)
+    #         bad_input = False
+    #     except :
+    #         print('Invalid deck size.')
+    # bad_input = True
+    # while bad_input :
+    #     hand_size = input('(PLAYTEST FEATURE) Hand size: ')
+    #     try :
+    #         hand_size = int(hand_size)
+    #         bad_input = False
+    #     except :
+    #         print('Invalid hand size.')
+    # quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
+    # if quit_game == 'y' :
+    #     exit()
+    deck_size = 20
+    hand_size = 5
     main(deck_size, hand_size)
 
     ## deck generation testing

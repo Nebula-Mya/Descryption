@@ -21,15 +21,17 @@ def hefty_check(field, zone, direction) :
         the number of cards that can be pushed (int)
     '''
     if direction == 'right' :
-        if field[zone+1].species != '' and zone != 5 :
+        if field[zone+1].species != '' and zone < 4 :
             return 1 + hefty_check(field, zone+1, direction)
-        elif field[zone+1].species == '' :
+        elif field[zone+1].species == '' and zone < 4:
             return 1
         else :
             return 0
     elif direction == 'left' :
-        if field[zone-1].species == '' and zone != 1 :
+        if field[zone-1].species != '' and zone > 2 :
             return 1 + hefty_check(field, zone-1, direction)
+        if field[zone-1].species == '' and zone > 2 :
+            return 1
         else :
             return 0
 
@@ -184,20 +186,30 @@ class Playmat :
                     self.player_field[zone-1] = self.player_field[zone]
                     self.player_field[zone-1].zone = zone-1
                     self.player_field[zone] = card.BlankCard()
-                elif self.player_field[zone] == 'hefty (right)' :
-                    push_count = hefty_check(self.player_field, zone, 'right')
-                    if push_count == 0 or zone == 5 :
+                elif self.player_field[zone].sigil == 'hefty (right)' :
+                    if zone == 5 :
                         self.player_field[zone].sigil = 'hefty (left)'
+                        self.player_field[zone].updateASCII()
+                        break
+                    push_count = hefty_check(self.player_field, zone + 1, 'right')
+                    if push_count == 0:
+                        self.player_field[zone].sigil = 'hefty (left)'
+                        self.player_field[zone].updateASCII()
                     elif push_count >= 1 :
                         did_shift = True
                         for n in range(zone + push_count, zone - 1, -1) :
                             self.player_field[n+1] = self.player_field[n]
                             self.player_field[n+1].zone = n+1
                             self.player_field[n] = card.BlankCard()
-                elif self.player_field[zone] == 'hefty (left)' :
-                    push_count = hefty_check(self.player_field, zone, 'left')
-                    if push_count == 0 or zone == 1 :
+                elif self.player_field[zone].sigil == 'hefty (left)' :
+                    if zone == 1 :
                         self.player_field[zone].sigil = 'hefty (right)'
+                        self.player_field[zone].updateASCII()
+                        break
+                    push_count = hefty_check(self.player_field, zone - 1, 'left')
+                    if push_count == 0:
+                        self.player_field[zone].sigil = 'hefty (right)'
+                        self.player_field[zone].updateASCII()
                     elif push_count >= 1 :
                         for n in range(zone - push_count, zone + 1) :
                             self.player_field[n-1] = self.player_field[n]
@@ -207,7 +219,7 @@ class Playmat :
             for zone in self.opponent_field :
                 if self.opponent_field[zone].species != '' and self.opponent_field[zone].zone != 0 and self.opponent_field[zone].zone != 6:
                     (leshy_points, player_points) = self.opponent_field[zone].attack(self.player_field[zone-1],self.player_field[zone],self.player_field[zone+1],self.opponent_field[zone-1],self.opponent_field[zone+1])
-                    if leshy_points > 0 and self.player_field[zone].sigil == 'bees within' :
+                    if leshy_points < self.opponent_field[zone].current_attack and self.player_field[zone].sigil == 'bees within' :
                         self.hand.append(card_library.Bee())
                     self.score['player'] += player_points
                     self.score['opponent'] += leshy_points
@@ -223,9 +235,13 @@ class Playmat :
                     self.opponent_field[zone-1] = self.opponent_field[zone]
                     self.opponent_field[zone-1].zone = zone-1
                     self.opponent_field[zone] = card.BlankCard()
-                elif self.opponent_field[zone] == 'hefty (right)' :
-                    push_count = hefty_check(self.opponent_field, zone, 'right')
-                    if push_count == 0 or zone == 5 :
+                elif self.opponent_field[zone].sigil == 'hefty (right)' :
+                    if zone == 5 :
+                        self.opponent_field[zone].sigil = 'hefty (left)'
+                        self.opponent_field[zone].updateASCII()
+                        break
+                    push_count = hefty_check(self.opponent_field, zone + 1, 'right')
+                    if push_count == 0 :
                         self.opponent_field[zone].sigil = 'hefty (left)'
                     elif push_count >= 1 :
                         did_shift = True
@@ -233,9 +249,13 @@ class Playmat :
                             self.opponent_field[n+1] = self.opponent_field[n]
                             self.opponent_field[n+1].zone = n+1
                             self.opponent_field[n] = card.BlankCard()
-                elif self.opponent_field[zone] == 'hefty (left)' :
-                    push_count = hefty_check(self.opponent_field, zone, 'left')
-                    if push_count == 0 or zone == 1 :
+                elif self.opponent_field[zone].sigil == 'hefty (left)' :
+                    if zone == 1 :
+                        self.opponent_field[zone].sigil = 'hefty (right)'
+                        self.opponent_field[zone].updateASCII()
+                        break
+                    push_count = hefty_check(self.opponent_field, zone - 1, 'left')
+                    if push_count == 0 :
                         self.opponent_field[zone].sigil = 'hefty (right)'
                     elif push_count >= 1 :
                         for n in range(zone - push_count, zone + 1) :
