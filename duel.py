@@ -151,7 +151,7 @@ def deck_gen(possible_cards, size) :
     # weighting of cost is done with a beta distribution
     # mult that by max_cost+1, use floor to get ints
     for i in range(size) :
-        cost = math.floor((max_cost + 1) * random.betavariate(1.8, 3))
+        cost = math.floor((max_cost + 1) * random.betavariate(2.2, 3.3))
         card = copy.deepcopy(random.choice(possible_cards[cost]))
         deck_list.append(card)
     return deck.Deck(deck_list)
@@ -225,3 +225,6 @@ if __name__ == '__main__' :
     if quit_game == 'y' :
         exit()
     main(deck_size, hand_size)
+
+    ## deck generation testing
+    # print(deck_gen(card_library.Poss_Playr, 32))
