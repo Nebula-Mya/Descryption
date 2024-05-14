@@ -51,7 +51,7 @@ else :
     score_gap = card_gaps*9 + 28
 def print_scales(player_weight, opponent_weight) :
     scales = '''{spc} PLAYER      LESHY
-{spc}{plr} {lsh}
+{spc}{plr}   {lsh}
 {spc}‾‾‾‾‾‾‾‾/‾\\‾‾‾‾‾‾‾‾
 {spc}       /___\\'''.format(plr=player_weight, lsh=opponent_weight, spc=' '*score_gap)
     print(scales)

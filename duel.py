@@ -228,3 +228,41 @@ if __name__ == '__main__' :
 
     ## deck generation testing
     # print(deck_gen(card_library.Poss_Playr, 32))
+
+    ## win check testing
+    # opponent_deck = deck_gen(card_library.Poss_Leshy, 15*2 + 20)
+    # opponent_decklist = opponent_deck.shuffle()
+    # player_deck = deck_gen(card_library.Poss_Playr, 15)
+    # player_decklist = player_deck.shuffle()
+    # squirrels_deck = [card_library.Squirrel()]
+    # for n in range(19) :
+    #     squirrels_deck.append(card_library.Squirrel())
+    # playfield = field.Playmat(deck=player_decklist, squirrels=squirrels_deck, opponent_deck=opponent_decklist)
+    # playfield.print_field()
+    # playfield.score['player'] = 10
+    # playfield.score['opponent'] = 3
+    # playfield.print_field()
+    # playfield.score['opponent'] = 2
+    # input('Press enter to continue.')
+    # playfield.print_field()
+    # input('Press enter to continue. (player wins)')
+    # winner_check(playfield)
+    # input('Press enter to continue.')
+
+    # playfield.score['player'] = 3
+    # playfield.score['opponent'] = 10
+    # playfield.print_field()
+    # playfield.score['player'] = 2
+    # input('Press enter to continue.')
+    # playfield.print_field()
+    # input('Press enter to continue. (opponent wins)')
+    # winner_check(playfield)
+    # input('Press enter to continue.')
+
+    # playfield.score['player'] = 0
+    # playfield.score['opponent'] = 2
+    # playfield.print_field()
+    # playfield.player_squirrels = []
+    # playfield.player_deck = []
+    # input('Press enter to continue. (decked out)')
+    # winner_check(playfield)
