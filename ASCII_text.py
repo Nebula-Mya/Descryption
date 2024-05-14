@@ -46,14 +46,14 @@ lose = '''
 (term_cols, term_rows) = os.get_terminal_size()
 card_gaps = (term_cols*55 // 100) // 5 - 15
 if card_gaps <= 0 :
-    score_gap = 31
+    score_gap = 28
 else :
-    score_gap = card_gaps*9 + 31
+    score_gap = card_gaps*9 + 28
 def print_scales(player_weight, opponent_weight) :
-    scales = '''{spc}PLAYR   LESHY
-{spc}{plr}___{lsh}
-{spc}     / \\
-{spc}    /___\\'''.format(plr=player_weight, lsh=opponent_weight, spc=' '*score_gap)
+    scales = '''{spc} PLAYER     LESHY
+{spc}{plr} {lsh}
+{spc}‾‾‾‾‾‾‾‾/‾\\‾‾‾‾‾‾‾‾
+{spc}       /___\\'''.format(plr=player_weight, lsh=opponent_weight, spc=' '*score_gap)
     print(scales)
 
 if __name__ == '__main__' :

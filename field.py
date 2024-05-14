@@ -229,11 +229,11 @@ class Playmat :
         win = False
         winner = ''
         overkill = 0
-        if self.score['player'] - self.score['opponent'] >= 5 :
+        if self.score['player'] - self.score['opponent'] >= 8 :
             win = True
             winner = 'player'
-            overkill = self.score['player'] - self.score['opponent'] - 5
-        elif self.score['opponent'] - self.score['player'] >= 5 :
+            overkill = self.score['player'] - self.score['opponent'] - 8
+        elif self.score['opponent'] - self.score['player'] >= 8 :
             win = True
             winner = 'opponent'
         elif self.player_deck == [] and self.player_squirrels == [] and self.active == 'player' :
@@ -322,24 +322,24 @@ class Playmat :
         print(field_string, end='')
         # print scales
         if self.score['player'] > self.score['opponent'] :
-            if self.score['player'] - self.score['opponent'] >= 5 :
-                player_weight = '▄▄▄▄▄'
-                opponent_weight = '_____'
+            if self.score['player'] - self.score['opponent'] >= 8 :
+                player_weight = 'O'*8
+                opponent_weight = ' '*8
             else :
-                player_weight = '▄' * (self.score['player'] - self.score['opponent'])
-                player_weight += '_' * (5 - (self.score['player'] - self.score['opponent']))
-                opponent_weight = '_____'
+                player_weight = 'O' * (self.score['player'] - self.score['opponent'])
+                player_weight += ' ' * (8 - (self.score['player'] - self.score['opponent']))
+                opponent_weight = ' '*8
         elif self.score['opponent'] > self.score['player'] :
-            if self.score['opponent'] - self.score['player'] >= 5 :
-                opponent_weight = '▄▄▄▄▄'
-                player_weight = '_____'
+            if self.score['opponent'] - self.score['player'] >= 8 :
+                opponent_weight = 'O'*8
+                player_weight = ' '*8
             else :
-                opponent_weight = '_' * (5 - (self.score['opponent'] - self.score['player']))
-                opponent_weight += '▄' * (self.score['opponent'] - self.score['player'])
-                player_weight = '_____'
+                opponent_weight = ' ' * (8 - (self.score['opponent'] - self.score['player']))
+                opponent_weight += 'O' * (self.score['opponent'] - self.score['player'])
+                player_weight = ' '*8
         else :
-            player_weight = '_____'
-            opponent_weight = '_____'
+            player_weight = ' '*8
+            opponent_weight = ' '*8
         ASCII_text.print_scales(player_weight, opponent_weight)
 
     def print_full_field(self) :

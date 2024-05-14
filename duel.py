@@ -100,7 +100,7 @@ def winner_check(field) :
             print(ASCII_text.win)
         elif winner == 'opponent' :
             print(ASCII_text.lose)
-            if abs(field.score['player'] - field.score['opponent']) < 5 :
+            if abs(field.score['player'] - field.score['opponent']) < 8 :
                 print(' '*40 + 'You have been decked out.')
         if overkill :
             print('Overkill: ' + str(overkill))
