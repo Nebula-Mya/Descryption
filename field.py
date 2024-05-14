@@ -249,7 +249,8 @@ class Playmat :
         card_gaps = (term_cols*55 // 100) // 5 - 15
         sorted_main_deck = sorted(self.player_deck, key=lambda x: x.name)
         sorted_main_deck = sorted(sorted_main_deck, key=lambda x: x.cost)
-        chunked = list(itertools312.batched(sorted_main_deck, 8)) 
+        cards_per_row = term_cols // (card_gaps + 15) 
+        chunked = list(itertools312.batched(sorted_main_deck, cards_per_row))  
         deck_string = ''
         for chunk in chunked :
             for n in range(11) :
@@ -269,7 +270,8 @@ class Playmat :
         '''
         (term_cols, term_rows) = os.get_terminal_size()
         card_gaps = (term_cols*55 // 100) // 5 - 15
-        chunked = list(itertools312.batched(self.graveyard, 8)) 
+        cards_per_row = term_cols // (card_gaps + 15) 
+        chunked = list(itertools312.batched(self.graveyard, cards_per_row))  
         graveyard_string = ''
         for chunk in chunked :
             for n in range(11) :
@@ -288,7 +290,8 @@ class Playmat :
         '''
         (term_cols, term_rows) = os.get_terminal_size()
         card_gaps = (term_cols*55 // 100) // 5 - 15
-        chunked = list(itertools312.batched(self.hand, 8))
+        cards_per_row = term_cols // (card_gaps + 15) 
+        chunked = list(itertools312.batched(self.hand, cards_per_row)) 
         hand_string = ''
         for chunk in chunked :
             for n in range(11) :
@@ -318,7 +321,10 @@ class Playmat :
                     field_string += card.TextByLine() + ' '*card_gaps*3
                 field_string += '\n'
             if row == vis_opponent_field :
-                field_string += ' '*card_gaps + '-'*card_gaps*30 + '\n'
+                if card_gaps <= 0 :
+                    field_string += '-'*75 + '\n'
+                else :
+                    field_string += ' '*card_gaps + '-'*(card_gaps*16 + 75) + '\n'
         print(field_string, end='')
         # print scales
         if self.score['player'] > self.score['opponent'] :

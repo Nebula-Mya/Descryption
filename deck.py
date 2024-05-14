@@ -72,7 +72,10 @@ class Deck() :
         card_gaps = (term_cols*55 // 100) // 5 - 15
         sorted_deck = sorted(self.cards, key=lambda x: x.name)
         sorted_deck = sorted(sorted_deck, key=lambda x: x.cost)
-        chunked = list(itertools312.batched(sorted_deck, 8)) 
+        (term_cols, term_rows) = os.get_terminal_size()
+        card_gaps = (term_cols*55 // 100) // 5 - 15
+        cards_per_row = term_cols // (card_gaps + 15) 
+        chunked = list(itertools312.batched(sorted_deck, cards_per_row)) 
         deck_string = ''
         for chunk in chunked :
             for n in range(11) :
