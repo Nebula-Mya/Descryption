@@ -75,6 +75,8 @@ class Deck() :
         (term_cols, term_rows) = os.get_terminal_size()
         card_gaps = (term_cols*55 // 100) // 5 - 15
         cards_per_row = term_cols // (card_gaps + 15) 
+        if cards_per_row >= 9 :
+            cards_per_row = 8
         chunked = list(itertools312.batched(sorted_deck, cards_per_row)) 
         deck_string = ''
         for chunk in chunked :

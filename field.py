@@ -138,10 +138,13 @@ class Playmat :
                     self.score['player'] += player_points
                     self.score['opponent'] += leshy_points
             for zone in self.player_field :
-                if self.player_field[zone].sigil == 'lane shift right' and self.player_field[zone].zone != 5 and self.player_field[zone+1].species == '' :
+                if did_shift :
+                    did_shift = False
+                elif self.player_field[zone].sigil == 'lane shift right' and self.player_field[zone].zone != 5 and self.player_field[zone+1].species == '' :
                     self.player_field[zone+1] = self.player_field[zone]
                     self.player_field[zone+1].zone = zone+1
                     self.player_field[zone] = card.BlankCard()
+                    did_shift = True
                 elif self.player_field[zone].sigil == 'lane shift left' and self.player_field[zone].zone != 2 and self.player_field[zone-1].species == '':
                     self.player_field[zone-1] = self.player_field[zone]
                     self.player_field[zone-1].zone = zone-1
@@ -153,10 +156,13 @@ class Playmat :
                     self.score['player'] += player_points
                     self.score['opponent'] += leshy_points
             for zone in self.opponent_field :
-                if self.opponent_field[zone].sigil == 'lane shift right' and self.opponent_field[zone].zone != 5 and self.opponent_field[zone+1].species == '':
+                if did_shift :
+                    did_shift = False
+                elif self.opponent_field[zone].sigil == 'lane shift right' and self.opponent_field[zone].zone != 5 and self.opponent_field[zone+1].species == '':
                     self.opponent_field[zone+1] = self.opponent_field[zone]
                     self.opponent_field[zone+1].zone = zone+1
                     self.opponent_field[zone] = card.BlankCard()
+                    did_shift = True
                 elif self.opponent_field[zone].sigil == 'lane shift left' and self.opponent_field[zone].zone != 1 and self.opponent_field[zone-1].species == '':
                     self.opponent_field[zone-1] = self.opponent_field[zone]
                     self.opponent_field[zone-1].zone = zone-1
@@ -250,6 +256,8 @@ class Playmat :
         sorted_main_deck = sorted(self.player_deck, key=lambda x: x.name)
         sorted_main_deck = sorted(sorted_main_deck, key=lambda x: x.cost)
         cards_per_row = term_cols // (card_gaps + 15) 
+        if cards_per_row >= 9 :
+            cards_per_row = 8 
         chunked = list(itertools312.batched(sorted_main_deck, cards_per_row))  
         deck_string = ''
         for chunk in chunked :
@@ -271,6 +279,8 @@ class Playmat :
         (term_cols, term_rows) = os.get_terminal_size()
         card_gaps = (term_cols*55 // 100) // 5 - 15
         cards_per_row = term_cols // (card_gaps + 15) 
+        if cards_per_row >= 9 :
+            cards_per_row = 8 
         chunked = list(itertools312.batched(self.graveyard, cards_per_row))  
         graveyard_string = ''
         for chunk in chunked :
@@ -291,6 +301,8 @@ class Playmat :
         (term_cols, term_rows) = os.get_terminal_size()
         card_gaps = (term_cols*55 // 100) // 5 - 15
         cards_per_row = term_cols // (card_gaps + 15) 
+        if cards_per_row >= 9 :
+            cards_per_row = 8 
         chunked = list(itertools312.batched(self.hand, cards_per_row)) 
         hand_string = ''
         for chunk in chunked :
