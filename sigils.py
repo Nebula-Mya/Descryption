@@ -39,7 +39,7 @@ Dict = {
         'Attacks from the air, ignoring other creatures.'
         ],
 
-    'mighty leap' : [ # untested
+    'mighty leap' : [
         ["_____","ʅ   ʃ"," ʅɩð "],
         'Can block airborne creatures.'
         ],

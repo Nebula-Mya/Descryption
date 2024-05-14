@@ -170,7 +170,6 @@ def main(deck_size, hand_size) :
     playfield.advance()
     # draw squirrel and hand_size - 1 card
     playfield.draw('resource')
-
     for n in range(hand_size - 1) :
         playfield.draw('main')
     playfield.print_full_field()
