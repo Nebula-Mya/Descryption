@@ -1,7 +1,7 @@
 import card_library
 import deck
 import field
-import os
+import QoL
 import ASCII_text
 import random
 import math
@@ -32,7 +32,7 @@ def choose_and_play(field) :
             play_index = len(field.hand) + 1
         if play_index in range(len(field.hand)) :
             bad_input = False
-            os.system('clear')
+            QoL.clear()
             field.print_field()
             print(' '*5 + 'Card to play:')
             field.hand[play_index].explain()
@@ -66,7 +66,11 @@ def choose_draw(field) :
     bad_input = True
     while bad_input :
         field.print_full_field()
-        deck_number = int(input('Draw from main deck (1) or resource deck (2): '))
+        deck_number = input('Draw from main deck (1) or resource deck (2): ')
+        try :
+            deck_number = int(deck_number)
+        except :
+            deck_number = 0
         if deck_number == 1 :
             card = field.draw('main')
             bad_input = False
@@ -88,7 +92,7 @@ def winner_check(field) :
     '''
     (win, winner, overkill) = field.check_win()
     if win :
-        os.system('clear')
+        QoL.clear()
         if winner == 'player' :
             print(ASCII_text.win)
         elif winner == 'opponent' :
@@ -197,8 +201,23 @@ def main(deck_size, hand_size) :
         ongoing = not winner_check(playfield)
 
 if __name__ == '__main__' :
-    deck_size = int(input('(PLAYTEST FEATURE) Deck size: '))
-    hand_size = int(input('(PLAYTEST FEATURE) Hand size: '))
+    QoL.clear()
+    bad_input = True
+    while bad_input :
+        deck_size = input('(PLAYTEST FEATURE) Deck size: ')
+        try :
+            deck_size = int(deck_size)
+            bad_input = False
+        except :
+            print('Invalid deck size.')
+    bad_input = True
+    while bad_input :
+        hand_size = input('(PLAYTEST FEATURE) Hand size: ')
+        try :
+            hand_size = int(hand_size)
+            bad_input = False
+        except :
+            print('Invalid hand size.')
     quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
     if quit_game == 'y' :
         exit()

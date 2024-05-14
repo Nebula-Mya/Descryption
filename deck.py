@@ -1,5 +1,5 @@
 import itertools312
-import os
+import QoL
 import random
 import copy
 
@@ -99,7 +99,7 @@ if __name__ == '__main__' :
     testdeck = Deck(decklist)
     print(testdeck)
     slot4.takeDamage(1)
-    os.system('clear')
+    QoL.clear()
     print(testdeck)
     slot5.explain()
     print(testdeck.shuffle())

@@ -1,4 +1,4 @@
-import os
+import QoL
 
 win = '''
 {spc}__/\\\\\\________/\\\\\\_______/\\\\\\\\\\_______/\\\\\\________/\\\\\\___________           
@@ -49,7 +49,7 @@ def print_scales(player_weight, opponent_weight) :
     print(scales)
 
 if __name__ == '__main__' :
-    os.system('clear')
+    QoL.clear()
     print(win)
     print('-'*120)
     print(lose)

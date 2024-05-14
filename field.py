@@ -1,7 +1,7 @@
 import card
 import card_library
 import deck
-import os
+import QoL
 import ASCII_text
 import itertools312
 import copy
@@ -80,7 +80,7 @@ class Playmat :
         Returns:
             played: if the card was played (bool)
         '''
-        os.system('clear')
+        QoL.clear()
         self.print_field()
         self.hand[index].explain()
         cost = self.hand[index].saccs
@@ -122,7 +122,7 @@ class Playmat :
             self.player_field[zone].play(zone=zone)
             self.hand.pop(index)
             played = True
-        os.system('clear')
+        QoL.clear()
         self.print_field()
         return played
 
@@ -255,7 +255,7 @@ class Playmat :
                     deck_string += card.TextByLine() + ' '*5
                 deck_string += '\n'
             deck_string += '\n'
-        os.system('clear')
+        QoL.clear()
         print(' '*5 + 'Remaining cards in deck:')
         print(deck_string, end='')
         print(' '*5 + 'Remaining squirrels: ' + str(len(self.player_squirrels)))
@@ -273,7 +273,7 @@ class Playmat :
                     graveyard_string += card.TextByLine() + ' '*5
                 graveyard_string += '\n'
             graveyard_string += '\n'
-        os.system('clear')
+        QoL.clear()
         print(' '*5 + 'Graveyard:')
         print(graveyard_string, end='')
     
@@ -296,7 +296,7 @@ class Playmat :
         '''
         prints the field and score scales (clears screen first)
         '''
-        os.system('clear')
+        QoL.clear()
         vis_bushes = [self.bushes[1], self.bushes[2], self.bushes[3], self.bushes[4], self.bushes[5]]
         vis_opponent_field = [self.opponent_field[1], self.opponent_field[2], self.opponent_field[3], self.opponent_field[4], self.opponent_field[5]]
         vis_player_field = [self.player_field[1], self.player_field[2], self.player_field[3], self.player_field[4], self.player_field[5]]
@@ -341,7 +341,7 @@ class Playmat :
         self.print_hand()
 
 if __name__ == '__main__' :
-    os.system('clear')
+    QoL.clear()
     leshy_deck = deck.Deck([card_library.Asp(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF()])
     player_deck = deck.Deck([card_library.DumpyTF(), card_library.Lobster(), card_library.BoppitW(), card_library.Ouroboros(), card_library.Turtle(), card_library.Asp(), card_library.Falcon(), card_library.DumpyTF(), card_library.Turtle(), card_library.BoppitW()])
     squirrels = [card_library.Squirrel()]
@@ -381,7 +381,7 @@ if __name__ == '__main__' :
             play_index = len(testmat.hand) + 1
         if play_index in range(len(testmat.hand)) :
             bad_input = False
-            os.system('clear')
+            QoL.clear()
             testmat.print_field()
             print(' '*5 + 'Card to play: ')
             testmat.hand[play_index].explain()
