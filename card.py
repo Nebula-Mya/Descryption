@@ -84,6 +84,8 @@ class BlankCard() :
         self.is_poisoned = False
         self.zone = 0
         self.status = 'alive'
+        if self.species == 'Cat' :
+            self.spent_lives = 0
         self.updateASCII()
 
     def attack(self, front_left_card, front_card, front_right_card, left_card, right_card) :
@@ -204,20 +206,25 @@ class BlankCard() :
         '''
         resets stats and updates ASCII art without activating sigils on being killed, only on any death
         '''
-        if self.name == 'Ouroboros' :
-                self.base_attack += 1
-                self.base_life += 1
-                new_stats = '''{a}
+        if self.species == 'Cat' :
+            self.spent_lives += 1
+        elif self.species == 'Ouroboros' :
+            self.base_attack += 1
+            self.base_life += 1
+            new_stats = '''{a}
 {l}'''.format(a=self.base_attack,l=self.base_life)
-                import sys
-                if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-                    data_file = 'Descryption_Data/data.txt'
-                else:
-                    data_file = 'data.txt'
-                with open(data_file, 'w') as file :
-                    file.write(new_stats)
-        self.resetStats()
-        self.updateASCII()
+            import sys
+            if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+                data_file = 'Descryption_Data/data.txt'
+            else:
+                data_file = 'data.txt'
+            with open(data_file, 'w') as file :
+                file.write(new_stats)
+            self.resetStats()
+            self.updateASCII()
+        else :
+            self.resetStats()
+            self.updateASCII()
 
     def explain(self) :
         '''

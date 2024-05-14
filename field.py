@@ -121,9 +121,13 @@ class Playmat :
                 self.player_field[ind].sacc()
                 if self.player_field[ind].sigil == 'unkillable' :
                     self.hand.append(self.player_field[ind])
-                else :
+                elif self.player_field[ind].sigil != 'many lives' :
                     self.graveyard.append(self.player_field[ind])
-                self.player_field[ind] = card.BlankCard()
+                if self.player_field[ind].sigil != 'many lives' :
+                    self.player_field[ind] = card.BlankCard()
+                elif self.player_field[ind].species == 'Cat' :
+                    if self.player_field[ind].spent_lives >= 9 :
+                        self.player_field[ind] = card_library.UndeadCat()
             self.player_field[zone] = self.hand[index]
             self.player_field[zone].play(zone=zone)
             self.hand.pop(index)

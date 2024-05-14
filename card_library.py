@@ -98,6 +98,15 @@ class Beehive(card.BlankCard) :
     def __init__(self) :
         super().__init__(name='Beehive', cost=1, attack=0, life=2, sigil='bees within')
 
+class Cat(card.BlankCard) :
+    def __init__(self) :
+        super().__init__(name='Cat', cost=1, attack=0, life=1, sigil='many lives')
+        self.spent_lives = 0
+
+class UndeadCat(card.BlankCard) :
+    def __init__(self) :
+        super().__init__(name='Undead Cat', cost=1, attack=3, life=6)
+
 # Allowed cards:
 Poss_Playr = {
     0 : [Rabbit(), Shrew(), BlackGoat()],
