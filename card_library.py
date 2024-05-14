@@ -92,7 +92,7 @@ class Bullfrog(card.BlankCard) :
 
 class BlackGoat(card.BlankCard) :
     def __init__(self) :
-        super().__init__(name='Black Goat', cost=0, attack=1, life=0, sigil='worthy sacrifice')
+        super().__init__(name='Black Goat', cost=1, attack=0, life=1, sigil='worthy sacrifice')
 
 class Beehive(card.BlankCard) :
     def __init__(self) :
