@@ -30,7 +30,42 @@ Dict = {
         ],
 
     'venom' : [
-        [" ___ "," \ / "," ·V· "],
+        [" _   "," \ / "," ·V· "],
         'Poisons target on attack.'
-        ]
+        ],
+
+    'airborne' : [ # unimplemented
+        ["  _  ","ɩΞΞɭ "," ɩΞΞð"],
+        'Attacks from the air, ignoring other creatures.'
+        ],
+
+    'mighty leap' : [ # unimplemented
+        ["_____","ʅ   ʃ"," ʅɩð "],
+        'Can block airborne creatures.'
+        ],
+
+    'worthy sacrifice' : [ # unimplemented
+        ["(C)  "," (C) ","  (C)"],
+        'Worth three sacrifices.'
+        ],
+
+    'bees within' : [ # unimplemented
+        [" /‾\ ","|___|","  Ʈ->"],
+        'Adds bees to the hand when damaged.'
+        ],
+
+    'hefty (right)' : [ # unimplemented
+        [".    ","|)_[]","'———'"],
+        'Moves to the right, pushing other creatures with it.'
+        ],
+    
+    'hefty (left)' : [ # unimplemented
+        ["    .","[]_(|","'———'"],
+        'Moves to the left, pushing other creatures with it.'
+        ],
+
+    'many lives' : [ # unimplemented
+        ["  _  "," / \ ","(   )"],
+        "Doesn't die when sacrificed."
+        ],
 }
