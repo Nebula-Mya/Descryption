@@ -158,6 +158,8 @@ class Playmat :
             for zone in self.opponent_field :
                 if self.opponent_field[zone].species != '' and self.opponent_field[zone].zone != 0 and self.opponent_field[zone].zone != 6:
                     (leshy_points, player_points) = self.opponent_field[zone].attack(self.player_field[zone-1],self.player_field[zone],self.player_field[zone+1],self.opponent_field[zone-1],self.opponent_field[zone+1])
+                    if leshy_points > 0 and self.player_field[zone].sigil == 'bees within' :
+                        self.hand.append(card_library.Bee())
                     self.score['player'] += player_points
                     self.score['opponent'] += leshy_points
             for zone in self.opponent_field :

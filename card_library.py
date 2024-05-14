@@ -94,10 +94,14 @@ class BlackGoat(card.BlankCard) :
     def __init__(self) :
         super().__init__(name='Black Goat', cost=0, attack=1, life=0, sigil='worthy sacrifice')
 
+class Beehive(card.BlankCard) :
+    def __init__(self) :
+        super().__init__(name='Beehive', cost=1, attack=0, life=2, sigil='bees within')
+
 # Allowed cards:
 Poss_Playr = {
     0 : [Rabbit(), Shrew(), BlackGoat()],
-    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog()],
+    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog(), Beehive()],
     2 : [Asp(), Falcon(), Cockroach(), Wolf(), Raven()]*3 + [Ouroboros()],
     3 : [Lobster(), Grizzly()],
     4 : [BoppitW(), Urayuli()]
