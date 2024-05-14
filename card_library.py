@@ -107,6 +107,10 @@ class UndeadCat(card.BlankCard) :
     def __init__(self) :
         super().__init__(name='Undead Cat', cost=1, attack=3, life=6)
 
+class MooseBuck(card.BlankCard) :
+    def __init__(self) :
+        super().__init__(name='Moose Buck', cost=4, attack=3, life=7, sigil='hefty (right)')
+
 # Allowed cards:
 Poss_Playr = {
     0 : [Rabbit(), Shrew(), BlackGoat()],

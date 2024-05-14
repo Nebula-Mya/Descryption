@@ -8,6 +8,29 @@ import copy
 import random
 import os
 
+def hefty_check(field, zone, direction) :
+    '''
+    recursively checks how many cards can be pushed by a card with hefty sigil
+
+    Arguments:
+        field: the field to check (dict)
+        zone: the zone to check (int)
+        direction: the direction to check (str)
+    
+    Returns:
+        the number of cards that can be pushed (int)
+    '''
+    if direction == 'right' :
+        if field[zone+1].species == '' and zone != 5 :
+            return 1 + hefty_check(field, zone+1, direction)
+        else :
+            return 0
+    elif direction == 'left' :
+        if field[zone-1].species == '' and zone != 1 :
+            return 1 + hefty_check(field, zone-1, direction)
+        else :
+            return 0
+
 class Playmat :
     '''
     The field of play, including the bushes, the cards in play, the player's hand, and the score.
@@ -158,6 +181,25 @@ class Playmat :
                     self.player_field[zone-1] = self.player_field[zone]
                     self.player_field[zone-1].zone = zone-1
                     self.player_field[zone] = card.BlankCard()
+                elif self.player_field[zone] == 'hefty (right)' :
+                    push_count = hefty_check(self.player_field, zone, 'right')
+                    if push_count == 0 or zone == 5 :
+                        self.player_field[zone].sigil = 'hefty (left)'
+                    elif push_count >= 1 :
+                        did_shift = True
+                        for n in range(zone + push_count, zone - 1, -1) :
+                            self.player_field[n+1] = self.player_field[n]
+                            self.player_field[n+1].zone = n+1
+                            self.player_field[n] = card.BlankCard()
+                elif self.player_field[zone] == 'hefty (left)' :
+                    push_count = hefty_check(self.player_field, zone, 'left')
+                    if push_count == 0 or zone == 1 :
+                        self.player_field[zone].sigil = 'hefty (right)'
+                    elif push_count >= 1 :
+                        for n in range(zone - push_count, zone + 1) :
+                            self.player_field[n-1] = self.player_field[n]
+                            self.player_field[n-1].zone = n-1
+                            self.player_field[n] = card.BlankCard()
         elif self.active == 'opponent' :
             for zone in self.opponent_field :
                 if self.opponent_field[zone].species != '' and self.opponent_field[zone].zone != 0 and self.opponent_field[zone].zone != 6:
@@ -178,6 +220,25 @@ class Playmat :
                     self.opponent_field[zone-1] = self.opponent_field[zone]
                     self.opponent_field[zone-1].zone = zone-1
                     self.opponent_field[zone] = card.BlankCard()
+                elif self.opponent_field[zone] == 'hefty (right)' :
+                    push_count = hefty_check(self.opponent_field, zone, 'right')
+                    if push_count == 0 or zone == 5 :
+                        self.opponent_field[zone].sigil = 'hefty (left)'
+                    elif push_count >= 1 :
+                        did_shift = True
+                        for n in range(zone + push_count, zone - 1, -1) :
+                            self.opponent_field[n+1] = self.opponent_field[n]
+                            self.opponent_field[n+1].zone = n+1
+                            self.opponent_field[n] = card.BlankCard()
+                elif self.opponent_field[zone] == 'hefty (left)' :
+                    push_count = hefty_check(self.opponent_field, zone, 'left')
+                    if push_count == 0 or zone == 1 :
+                        self.opponent_field[zone].sigil = 'hefty (right)'
+                    elif push_count >= 1 :
+                        for n in range(zone - push_count, zone + 1) :
+                            self.opponent_field[n-1] = self.opponent_field[n]
+                            self.opponent_field[n-1].zone = n-1
+                            self.opponent_field[n] = card.BlankCard()
 
     def check_states(self) :
         '''
