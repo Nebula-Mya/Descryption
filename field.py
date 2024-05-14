@@ -6,6 +6,7 @@ import ASCII_text
 import itertools312
 import copy
 import random
+import os
 
 class Playmat :
     '''
@@ -244,58 +245,66 @@ class Playmat :
         '''
         prints the remaining cards in the deck (sorted) and the squirrels (sorted) (clears screen first)
         '''
+        (term_cols, term_rows) = os.get_terminal_size()
+        card_gaps = (term_cols*55 // 100) // 5 - 15
         sorted_main_deck = sorted(self.player_deck, key=lambda x: x.name)
         sorted_main_deck = sorted(sorted_main_deck, key=lambda x: x.cost)
         chunked = list(itertools312.batched(sorted_main_deck, 8)) 
         deck_string = ''
         for chunk in chunked :
             for n in range(11) :
-                deck_string += ' '*5
+                deck_string += ' '*card_gaps
                 for card in chunk :
-                    deck_string += card.TextByLine() + ' '*5
+                    deck_string += card.TextByLine() + ' '*card_gaps
                 deck_string += '\n'
             deck_string += '\n'
         QoL.clear()
-        print(' '*5 + 'Remaining cards in deck:')
+        print(' '*card_gaps + 'Remaining cards in deck:')
         print(deck_string, end='')
-        print(' '*5 + 'Remaining squirrels: ' + str(len(self.player_squirrels)))
+        print(' '*card_gaps + 'Remaining squirrels: ' + str(len(self.player_squirrels)))
 
     def print_graveyard(self) :
         '''
         prints the cards in the graveyard (in order) (clears screen first)
         '''
+        (term_cols, term_rows) = os.get_terminal_size()
+        card_gaps = (term_cols*55 // 100) // 5 - 15
         chunked = list(itertools312.batched(self.graveyard, 8)) 
         graveyard_string = ''
         for chunk in chunked :
             for n in range(11) :
-                graveyard_string += ' '*5
+                graveyard_string += ' '*card_gaps
                 for card in chunk :
-                    graveyard_string += card.TextByLine() + ' '*5
+                    graveyard_string += card.TextByLine() + ' '*card_gaps
                 graveyard_string += '\n'
             graveyard_string += '\n'
         QoL.clear()
-        print(' '*5 + 'Graveyard:')
+        print(' '*card_gaps + 'Graveyard:')
         print(graveyard_string, end='')
     
     def print_hand(self) : # unsorted for the time being
         '''
         prints the cards in the player's hand (does NOT clear screen first)
         '''
+        (term_cols, term_rows) = os.get_terminal_size()
+        card_gaps = (term_cols*55 // 100) // 5 - 15
         chunked = list(itertools312.batched(self.hand, 8))
         hand_string = ''
         for chunk in chunked :
             for n in range(11) :
-                hand_string += ' '*5
+                hand_string += ' '*card_gaps
                 for card in chunk :
-                    hand_string += card.TextByLine() + ' '*5
+                    hand_string += card.TextByLine() + ' '*card_gaps
                 hand_string += '\n'
-        print(' '*5 + 'Hand:')
+        print(' '*card_gaps + 'Hand:')
         print(hand_string, end='')
 
     def print_field(self) :
         '''
         prints the field and score scales (clears screen first)
         '''
+        (term_cols, term_rows) = os.get_terminal_size()
+        card_gaps = (term_cols*55 // 100) // 5 - 15
         QoL.clear()
         vis_bushes = [self.bushes[1], self.bushes[2], self.bushes[3], self.bushes[4], self.bushes[5]]
         vis_opponent_field = [self.opponent_field[1], self.opponent_field[2], self.opponent_field[3], self.opponent_field[4], self.opponent_field[5]]
@@ -304,12 +313,12 @@ class Playmat :
         field_string = ''
         for row in field_list :
             for n in range(11) :
-                field_string += ' '*16
+                field_string += ' '*card_gaps*3
                 for card in row :
-                    field_string += card.TextByLine() + ' '*16
+                    field_string += card.TextByLine() + ' '*card_gaps*3
                 field_string += '\n'
             if row == vis_opponent_field :
-                field_string += ' '*5 + '-'*161 + '\n'
+                field_string += ' '*card_gaps + '-'*card_gaps*30 + '\n'
         print(field_string, end='')
         # print scales
         if self.score['player'] > self.score['opponent'] :
@@ -341,6 +350,8 @@ class Playmat :
         self.print_hand()
 
 if __name__ == '__main__' :
+    (term_cols, term_rows) = os.get_terminal_size()
+    card_gaps = (term_cols*55 // 100) // 5 - 15
     QoL.clear()
     leshy_deck = deck.Deck([card_library.Asp(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF()])
     player_deck = deck.Deck([card_library.DumpyTF(), card_library.Lobster(), card_library.BoppitW(), card_library.Ouroboros(), card_library.Turtle(), card_library.Asp(), card_library.Falcon(), card_library.DumpyTF(), card_library.Turtle(), card_library.BoppitW()])
@@ -383,7 +394,7 @@ if __name__ == '__main__' :
             bad_input = False
             QoL.clear()
             testmat.print_field()
-            print(' '*5 + 'Card to play: ')
+            print(' '*card_gaps + 'Card to play: ')
             testmat.hand[play_index].explain()
             second_bad_input = True
         else :

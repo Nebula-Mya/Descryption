@@ -1,4 +1,5 @@
 import sigils
+import os
 
 class BlankCard() :
     '''
@@ -207,6 +208,8 @@ class BlankCard() :
         '''
         prints explanation of stats and sigil for player
         '''
+        (term_cols, term_rows) = os.get_terminal_size()
+        card_gaps = (term_cols*55 // 100) // 5 - 15
         if self.sigil.title() == '' :
             sigil_text = 'No'
         else :
@@ -221,7 +224,7 @@ class BlankCard() :
 {spc}|             |
 {spc}|             |
 {spc}|          {S}|         {card} has an attack power of {attack} and life points {life} of {max_life}.
-{spc}'-------------'""".format(species=self.name, C=self.cost, rw1=sigils.Dict[self.sigil][0][0], rw2=sigils.Dict[self.sigil][0][1], rw3=sigils.Dict[self.sigil][0][2], S=self.stats, saccs=self.saccs, sigil=sigil_text, desc=sigils.Dict[self.sigil][1], attack=self.current_attack, life=self.current_life, max_life=self.base_life, card=self.species, spc=' '*5)
+{spc}'-------------'""".format(species=self.name, C=self.cost, rw1=sigils.Dict[self.sigil][0][0], rw2=sigils.Dict[self.sigil][0][1], rw3=sigils.Dict[self.sigil][0][2], S=self.stats, saccs=self.saccs, sigil=sigil_text, desc=sigils.Dict[self.sigil][1], attack=self.current_attack, life=self.current_life, max_life=self.base_life, card=self.species, spc=' '*card_gaps)
         print(description)
 
     def updateASCII(self) :

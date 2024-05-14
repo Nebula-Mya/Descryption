@@ -6,6 +6,7 @@ import ASCII_text
 import random
 import math
 import copy
+import os
 
 def choose_and_play(field) :
     '''
@@ -15,6 +16,8 @@ def choose_and_play(field) :
     Arguments:
         field: the field object to play the card on (field object)
     '''
+    (term_cols, term_rows) = os.get_terminal_size()
+    card_gaps = (term_cols*55 // 100) // 5 - 15
     bad_input = True
     second_bad_input = False
     invalid_index = False
@@ -34,7 +37,7 @@ def choose_and_play(field) :
             bad_input = False
             QoL.clear()
             field.print_field()
-            print(' '*5 + 'Card to play:')
+            print(' '*card_gaps + 'Card to play:')
             field.hand[play_index].explain()
             second_bad_input = True
         else :

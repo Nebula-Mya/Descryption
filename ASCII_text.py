@@ -1,4 +1,5 @@
 import QoL
+import os
 
 win = '''
 {spc}__/\\\\\\________/\\\\\\_______/\\\\\\\\\\_______/\\\\\\________/\\\\\\___________           
@@ -41,11 +42,18 @@ lose = '''
 {spc}        _\\///////////////_______\\/////_________\\///////////_____\\///////////////_____\\///__________
 '''.format(spc=' '*31)
 
+
+(term_cols, term_rows) = os.get_terminal_size()
+card_gaps = (term_cols*55 // 100) // 5 - 15
+if card_gaps <= 0 :
+    score_gap = 31
+else :
+    score_gap = card_gaps*9 + 31
 def print_scales(player_weight, opponent_weight) :
     scales = '''{spc}PLAYR   LESHY
 {spc}{plr}___{lsh}
 {spc}     / \\
-{spc}    /___\\'''.format(plr=player_weight, lsh=opponent_weight, spc=' '*79)
+{spc}    /___\\'''.format(plr=player_weight, lsh=opponent_weight, spc=' '*score_gap)
     print(scales)
 
 if __name__ == '__main__' :

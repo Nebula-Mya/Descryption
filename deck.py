@@ -2,6 +2,7 @@ import itertools312
 import QoL
 import random
 import copy
+import os
 
 class Deck() :
     '''
@@ -67,15 +68,17 @@ class Deck() :
         return shuffled_deck
 
     def __str__(self) : 
+        (term_cols, term_rows) = os.get_terminal_size()
+        card_gaps = (term_cols*55 // 100) // 5 - 15
         sorted_deck = sorted(self.cards, key=lambda x: x.name)
         sorted_deck = sorted(sorted_deck, key=lambda x: x.cost)
         chunked = list(itertools312.batched(sorted_deck, 8)) 
         deck_string = ''
         for chunk in chunked :
             for n in range(11) :
-                deck_string += ' '*5
+                deck_string += ' '*card_gaps
                 for card in chunk :
-                    deck_string += card.TextByLine() + ' '*5
+                    deck_string += card.TextByLine() + ' '*card_gaps
                 deck_string += '\n'
             deck_string += '\n'
         return deck_string
