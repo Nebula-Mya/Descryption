@@ -1,8 +1,6 @@
 import QoL
 import os
 
-(term_cols, term_rows) = os.get_terminal_size()
-
 win = '''
 {spc}__/\\\\\\________/\\\\\\_______/\\\\\\\\\\_______/\\\\\\________/\\\\\\___________           
 {spc} _\\///\\\\\\____/\\\\\\/______/\\\\\\///\\\\\\____\\/\\\\\\_______\\/\\\\\\___________          
@@ -44,8 +42,10 @@ lose = '''
 {spc}        _\\///////////////_______\\/////_________\\///////////_____\\///////////////_____\\///__________
 '''.format(spc=' '*31)
 
-center_space = (term_cols - 123) // 2
-title = '''
+def print_title() :
+    (term_cols, term_rows) = os.get_terminal_size()
+    center_space = (term_cols - 123) // 2
+    title = '''
 {spc}████████▄     ▄████████    ▄████████  ▄████████    ▄████████  ▄██   ▄      ▄███████▄     ███      ▄█   ▄██████▄   ███▄▄▄▄  
 {spc}███   ▀███   ███    ███   ███    ███ ███    ███   ███    ███  ███   ██▄   ███    ███ ▀█████████▄ ███  ███    ███  ███▀▀▀██▄
 {spc}███    ███   ███    █▀    ███    █▀  ███    █▀    ███    ███  ███▄▄▄███   ███    ███    ▀███▀▀██ ███▌ ███    ███  ███   ███
@@ -56,13 +56,15 @@ title = '''
 {spc}████████▀    ██████████  ▄████████▀  ████████▀    ███    ███   ▀█████▀   ▄████▀         ▄████▀   █▀    ▀██████▀    ▀█   █▀ 
 {spc}                                                  ███    ███                                                               
 {spc}{gap}An MS-DOS style demake of Daniel Mullin's "Inscryption"   '''.format(spc=' '*center_space, gap=' '*65)
+    print(title)
 
-card_gaps = (term_cols*55 // 100) // 5 - 15
-if card_gaps <= 0 :
-    score_gap = 28
-else :
-    score_gap = card_gaps*9 + 28
 def print_scales(player_weight, opponent_weight) :
+    (term_cols, term_rows) = os.get_terminal_size()
+    card_gaps = (term_cols*55 // 100) // 5 - 15
+    if card_gaps <= 0 :
+        score_gap = 28
+    else :
+        score_gap = card_gaps*9 + 28
     scales = '''{spc} PLAYER      LESHY
 {spc}{plr}   {lsh}
 {spc}‾‾‾‾‾‾‾‾/‾\\‾‾‾‾‾‾‾‾
