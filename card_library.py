@@ -110,7 +110,7 @@ class UndeadCat(card.BlankCard) :
 # Allowed cards:
 Poss_Playr = {
     0 : [Rabbit(), Shrew(), BlackGoat()],
-    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog(), Beehive()],
+    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog(), Beehive(), Cat()],
     2 : [Asp(), Falcon(), Cockroach(), Wolf(), Raven()]*3 + [Ouroboros()],
     3 : [Lobster(), Grizzly()],
     4 : [BoppitW(), Urayuli()]
