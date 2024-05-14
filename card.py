@@ -1,5 +1,6 @@
 import sigils
 import os
+import QoL
 
 class BlankCard() :
     '''
@@ -190,15 +191,7 @@ class BlankCard() :
         if self.name == 'Ouroboros' :
             self.base_attack += 1
             self.base_life += 1
-            new_stats = '''{a}
-{l}'''.format(a=self.base_attack,l=self.base_life)
-            import sys
-            if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-                data_file = 'Descryption_Data/data.txt'
-            else:
-                data_file = 'data.txt'
-            with open(data_file, 'w') as file :
-                file.write(new_stats)
+            QoL.write_file('data.txt', 'Descryption_Data/data.txt', [str(self.base_attack), str(self.base_life)])
         self.resetStats()
         self.updateASCII()
         
@@ -211,15 +204,7 @@ class BlankCard() :
         elif self.species == 'Ouroboros' :
             self.base_attack += 1
             self.base_life += 1
-            new_stats = '''{a}
-{l}'''.format(a=self.base_attack,l=self.base_life)
-            import sys
-            if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-                data_file = 'Descryption_Data/data.txt'
-            else:
-                data_file = 'data.txt'
-            with open(data_file, 'w') as file :
-                file.write(new_stats)
+            QoL.write_file('data.txt', 'Descryption_Data/data.txt', [str(self.base_attack), str(self.base_life)])
             self.resetStats()
             self.updateASCII()
         else :

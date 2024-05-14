@@ -1,4 +1,5 @@
 import card
+import QoL
 
 class Squirrel(card.BlankCard) :
     '''
@@ -49,13 +50,7 @@ class BoppitW(card.BlankCard) :
 
 class Ouroboros(card.BlankCard) :
     def __init__(self) :
-        import sys
-        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-            data_file = 'Descryption_Data/data.txt'
-        else:
-            data_file = 'data.txt'
-        with open(data_file, 'r') as file: 
-            [Oro_attack,Oro_life] = file.read().split('\n')
+        [Oro_attack, Oro_life] = QoL.read_file('data.txt', 'Descryption_Data/data.txt')
         super().__init__(name='Ouroboros', cost=2, attack=int(Oro_attack), life=int(Oro_life), sigil='unkillable')
 
 class Cockroach(card.BlankCard) :
