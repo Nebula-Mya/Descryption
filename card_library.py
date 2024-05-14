@@ -86,10 +86,14 @@ class Bee(card.BlankCard) :
     def __init__(self) :
         super().__init__(name='Bee', cost=0, attack=1, life=1, sigil='airborne')
 
+class Bullfrog(card.BlankCard) :
+    def __init__(self) :
+        super().__init__(name='Bullfrog', cost=1, attack=1, life=2, sigil='mighty leap')
+
 # Allowed cards:
 Poss_Playr = {
     0 : [Rabbit(), Shrew()],
-    1 : [DumpyTF(), Turtle(), Stoat()],
+    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog()],
     2 : [Asp(), Falcon(), Cockroach(), Wolf(), Raven()]*3 + [Ouroboros()],
     3 : [Lobster(), Grizzly()],
     4 : [BoppitW(), Urayuli()]
