@@ -49,7 +49,12 @@ class BoppitW(card.BlankCard) :
 
 class Ouroboros(card.BlankCard) :
     def __init__(self) :
-        with open('data.txt', 'r') as file: 
+        import sys
+        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+            data_file = 'Descryption_Data/data.txt'
+        else:
+            data_file = 'data.txt'
+        with open(data_file, 'r') as file: 
             [Oro_attack,Oro_life] = file.read().split('\n')
         super().__init__(name='Ouroboros', cost=2, attack=int(Oro_attack), life=int(Oro_life), sigil='unkillable')
 

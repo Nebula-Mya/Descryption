@@ -185,7 +185,12 @@ class BlankCard() :
             self.base_life += 1
             new_stats = '''{a}
 {l}'''.format(a=self.base_attack,l=self.base_life)
-            with open('data.txt', 'w') as file :
+            import sys
+            if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+                data_file = 'Descryption_Data/data.txt'
+            else:
+                data_file = 'data.txt'
+            with open(data_file, 'w') as file :
                 file.write(new_stats)
         self.resetStats()
         self.updateASCII()
@@ -199,7 +204,12 @@ class BlankCard() :
                 self.base_life += 1
                 new_stats = '''{a}
 {l}'''.format(a=self.base_attack,l=self.base_life)
-                with open('data.txt', 'w') as file :
+                import sys
+                if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+                    data_file = 'Descryption_Data/data.txt'
+                else:
+                    data_file = 'data.txt'
+                with open(data_file, 'w') as file :
                     file.write(new_stats)
         self.resetStats()
         self.updateASCII()
