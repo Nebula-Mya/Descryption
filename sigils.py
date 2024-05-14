@@ -30,7 +30,7 @@ Dict = {
         ],
 
     'venom' : [
-        [" _   "," \ / "," ·V· "],
+        [" ___ "," \ / "," ·V· "],
         'Poisons target on attack.'
         ],
 
@@ -65,7 +65,7 @@ Dict = {
         ],
 
     'many lives' : [ # unimplemented
-        ["  _  "," / \ ","(   )"],
+        ["  Ω  "," CXƆ ","  V  "],
         "Doesn't die when sacrificed."
         ],
 }
