@@ -85,6 +85,7 @@ class Playmat :
         self.print_field()
         self.hand[index].explain()
         cost = self.hand[index].saccs
+        og_cost = cost
         print('Sacrifices required:', cost)
         print('Select sacrifices: (press enter to go back)', end=' ')
         sacc_list = []
@@ -92,6 +93,8 @@ class Playmat :
             sacc_index_list = input('')
             sacc_indexes = []
             for char in sacc_index_list :
+                if self.player_field[int(char)].sigil == 'worthy sacrifice' :
+                    cost -= 2
                 sacc_indexes.append(int(char))
             if sacc_index_list == '' :
                 sacc_list = []
@@ -99,6 +102,7 @@ class Playmat :
                 break
             elif len(sacc_indexes) > cost - len(sacc_list) :
                 print('Too many sacrifices.')
+                cost = og_cost # to prevent goat cheesing
             else:
                 sacc_list_snapshot = sacc_list.copy()
                 for sacc_index in sacc_indexes :
@@ -111,6 +115,7 @@ class Playmat :
             if self.player_field[zone].species != '' and zone not in sacc_list :
                 print('Cannot play on top of a non sacrificed card.')
                 sacc_list = []
+                cost = og_cost # to prevent goat cheesing
         if len(sacc_list) != 0 or (len(sacc_list) == 0 and cost == 0):
             for ind in sacc_list :
                 self.player_field[ind].sacc()

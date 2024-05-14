@@ -90,16 +90,20 @@ class Bullfrog(card.BlankCard) :
     def __init__(self) :
         super().__init__(name='Bullfrog', cost=1, attack=1, life=2, sigil='mighty leap')
 
+class BlackGoat(card.BlankCard) :
+    def __init__(self) :
+        super().__init__(name='Black Goat', cost=0, attack=1, life=0, sigil='worthy sacrifice')
+
 # Allowed cards:
 Poss_Playr = {
-    0 : [Rabbit(), Shrew()],
+    0 : [Rabbit(), Shrew(), BlackGoat()],
     1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog()],
     2 : [Asp(), Falcon(), Cockroach(), Wolf(), Raven()]*3 + [Ouroboros()],
     3 : [Lobster(), Grizzly()],
     4 : [BoppitW(), Urayuli()]
 }
 Poss_Leshy = {
-    0 : [OppositeRabbit(), OppositeShrew()],
-    1 : [DumpyTF(), Turtle(), Stoat()],
-    2 : [Asp(), Falcon(), Cockroach(), Wolf()]
+    0 : [OppositeRabbit(), OppositeShrew(), Squirrel()],
+    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog()],
+    2 : [Asp(), Falcon(), Cockroach(), Wolf(), Raven()]
 }
