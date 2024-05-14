@@ -149,9 +149,9 @@ def deck_gen(possible_cards, size) :
     deck_list = []
     max_cost = max(possible_cards.keys())
     # weighting of cost is done with a beta distribution
-    # mult that by max_cost, use ceil to get ints
+    # mult that by max_cost+1, use floor to get ints
     for i in range(size) :
-        cost = math.ceil(max_cost * random.betavariate(1.4, 3.1))
+        cost = math.floor((max_cost + 1) * random.betavariate(1.8, 3))
         card = copy.deepcopy(random.choice(possible_cards[cost]))
         deck_list.append(card)
     return deck.Deck(deck_list)

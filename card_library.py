@@ -9,19 +9,19 @@ class Squirrel(card.BlankCard) :
 
 class Rabbit(card.BlankCard) :
     def __init__(self) :
-        super().__init__(name='Rabbit', cost=1, attack=1, life=1, sigil='lane shift right')
+        super().__init__(name='Rabbit', cost=0, attack=1, life=1, sigil='lane shift right')
     
 class OppositeRabbit(card.BlankCard) :
     def __init__(self) :
-        super().__init__(name='Rabbit', cost=1, attack=1, life=1, sigil='lane shift left')
+        super().__init__(name='Rabbit', cost=0, attack=1, life=1, sigil='lane shift left')
 
 class Shrew(card.BlankCard) :
     def __init__(self) :
-        super().__init__(name='Shrew', cost=1, attack=1, life=1, sigil='lane shift left')
+        super().__init__(name='Shrew', cost=0, attack=1, life=1, sigil='lane shift left')
 
 class OppositeShrew(card.BlankCard) :
     def __init__(self) :
-        super().__init__(name='Shrew', cost=1, attack=1, life=1, sigil='lane shift right')
+        super().__init__(name='Shrew', cost=0, attack=1, life=1, sigil='lane shift right')
 
 class DumpyTF(card.BlankCard) :
     def __init__(self) :
@@ -60,12 +60,14 @@ class Ouroboros(card.BlankCard) :
 
 # Allowed cards:
 Poss_Playr = {
-    1 : [Rabbit(), Shrew(), DumpyTF(), Turtle()],
+    0 : [Rabbit(), Shrew()],
+    1 : [DumpyTF(), Turtle()],
     2 : [Asp(), Falcon()]*4 + [Ouroboros()],
     3 : [Lobster()],
     4 : [BoppitW()]
 }
 Poss_Leshy = {
-    1 : [OppositeRabbit(), OppositeShrew(), DumpyTF(), Turtle()],
+    0 : [OppositeRabbit(), OppositeShrew()],
+    1 : [DumpyTF(), Turtle()],
     2 : [Asp(), Falcon()]
 }
