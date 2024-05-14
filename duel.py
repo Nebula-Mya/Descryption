@@ -308,7 +308,7 @@ def main(deck_size, hand_size) :
     while ongoing :
         quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
         if quit_game == 'y' :
-            exit()
+            return
         # gameplay loop
         # player turn
         if playfield.active == 'player' :

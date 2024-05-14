@@ -49,6 +49,19 @@ def write_file(file_name, relative_path, data) :
     with open(data_file, 'w') as file :
         file.write(to_write)
 
+def center_justified(text) :
+    '''
+    centers text in the console
+
+    Arguments:
+        text: the text to center (str)
+    
+    Returns:
+        the centered text (str)
+    '''
+    width = os.get_terminal_size().columns
+    return text.center(width)
+
 if __name__ == '__main__' :
     clear()
     [deck_size, hand_size] = read_file('config.txt', 'Descryption_Data/config.txt')
