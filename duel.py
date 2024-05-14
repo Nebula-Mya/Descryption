@@ -32,7 +32,7 @@ def choose_and_play(field) :
         try :
             play_index = int(play_index) - 1
         except :
-            play_index = len(field.hand) + 1
+            play_index = len(field.hand)
         if play_index in range(len(field.hand)) :
             bad_input = False
             QoL.clear()
@@ -107,6 +107,134 @@ def winner_check(field) :
         return True
     return False
 
+def view_remaining(field) : 
+    bad_input = True
+    invalid_index = False
+    while bad_input :
+        field.print_remaining()
+        if invalid_index :
+            print('Invalid index.')
+            invalid_index = False
+        card_choice = input('Choose a card to view: (press enter to go back) ')
+        if card_choice == '' :
+            return
+        try :
+            card_choice = int(card_choice) - 1
+        except :
+            card_choice = len(field.player_deck)
+        if card_choice in range(len(field.player_deck)) :
+            bad_input = False
+            field.print_remaining()
+            sorted_main_deck = sorted(field.player_deck, key=lambda x: x.name)
+            sorted_main_deck = sorted(sorted_main_deck, key=lambda x: x.cost)
+            sorted_main_deck[card_choice].explain()
+            input('Press enter to continue.')
+        else :
+            invalid_index = True
+
+def view_graveyard(field) :
+    bad_input = True
+    invalid_index = False
+    while bad_input :
+        field.print_graveyard()
+        if invalid_index :
+            print('Invalid index.')
+            invalid_index = False
+        card_choice = input('Choose a card to view: (press enter to go back) ')
+        if card_choice == '' :
+            return
+        try :
+            card_choice = int(card_choice) - 1
+        except :
+            card_choice = len(field.graveyard)
+        if card_choice in range(len(field.graveyard)) :
+            bad_input = False
+            field.print_graveyard()
+            field.graveyard[card_choice].explain()
+            input('Press enter to continue.')
+        else :
+            invalid_index = True
+
+def view_cards(field) :
+    bad_input = True
+    invalid_choice = False
+    while bad_input :
+        field.print_field()
+        if invalid_choice :
+            print('Invalid choice.')
+            invalid_choice = False
+        print('1. Bushes (PLACEHOLDER)')
+        print("2. Leshy's field")
+        print('3. Player field')
+        row_choice = input('Choose a row to view: (press enter to go back) ')
+        if row_choice == '' :
+            break
+        elif row_choice == '1' : # bushes
+            invalid_index = False
+            while bad_input :
+                field.print_field()
+                if invalid_index :
+                    print('Invalid index.')
+                    invalid_index = False
+                col_choice = input('Choose a card to view: (press enter to go back) ')
+                if col_choice == '' :
+                    break
+                try :
+                    col_choice = int(col_choice)
+                except :
+                    col_choice = 0
+                if col_choice in range(1, 6) and field.bushes[col_choice].species != '':
+                    field.print_field()
+                    field.bushes[col_choice].explain()
+                    bad_input = False
+                    input('Press enter to continue.')
+                else :
+                    invalid_index = True
+        elif row_choice == '2' : # leshy's field
+            invalid_index = False
+            while bad_input :
+                field.print_field()
+                if invalid_index :
+                    print('Invalid index.')
+                    invalid_index = False
+                col_choice = input('Choose a card to view: (press enter to go back) ')
+                if col_choice == '' :
+                    break
+                try :
+                    col_choice = int(col_choice)
+                except :
+                    col_choice = 0
+                if col_choice in range(1, 6) and field.opponent_field[col_choice].species != '':
+                    field.print_field()
+                    field.opponent_field[col_choice].explain()
+                    bad_input = False
+                    input('Press enter to continue.')
+                else :
+                    invalid_index = True
+        elif row_choice == '3' : # player's field
+            invalid_index = False
+            while bad_input :
+                field.print_field()
+                if invalid_index :
+                    print('Invalid index.')
+                    invalid_index = False
+                col_choice = input('Choose a card to view: (press enter to go back) ')
+                if col_choice == '' :
+                    break
+                try :
+                    col_choice = int(col_choice)
+                except :
+                    col_choice = 0
+                if col_choice in range(1, 6) and field.player_field[col_choice].species != '':
+                    field.print_field()
+                    field.player_field[col_choice].explain()
+                    bad_input = False
+                    input('Press enter to continue.')
+                else :
+                    invalid_index = True
+        else :
+            invalid_choice = True
+
 def view_play_attack(field) :
     '''
     menu for player to choose to view deck (will happen), view graveyard (will happen), play a card (will happen), or attack and end turn (won't happen, will be in main loop)
@@ -119,18 +247,19 @@ def view_play_attack(field) :
         field.print_field()
         print('1. View deck')
         print('2. View graveyard')
-        print('3. Play a card')
-        print('4. Attack and end turn')
+        print('3. View a card')
+        print('4. Play a card')
+        print('5. Attack and end turn')
         choice = input('Choose an option: ')
         if choice == '1' :
-            field.print_remaining()
-            input('Press enter to continue.')
+            view_remaining(field)
         elif choice == '2' :
-            field.print_graveyard()
-            input('Press enter to continue.')
+            view_graveyard(field)
         elif choice == '3' :
-            choose_and_play(field)
+            view_cards(field)
         elif choice == '4' :
+            choose_and_play(field)
+        elif choice == '5' :
             not_attack = False
         else :
             print('Invalid choice.')
@@ -173,7 +302,6 @@ def main(deck_size, hand_size) :
     for n in range(hand_size - 1) :
         playfield.draw('main')
     playfield.print_full_field()
-    input('Press enter to start.')
 
     # game loop
     ongoing = True
