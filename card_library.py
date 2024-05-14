@@ -25,11 +25,11 @@ class OppositeShrew(card.BlankCard) :
 
 class DumpyTF(card.BlankCard) :
     def __init__(self) :
-        super().__init__(name='Dumpy Tree Frog', cost=1, attack=1, life=2)
+        super().__init__(name='Dumpy Tree Frog', cost=1, attack=2, life=2)
 
 class Turtle(card.BlankCard) :
     def __init__(self) :
-        super().__init__(name='Turtle', cost=1, attack=0, life=3)
+        super().__init__(name='Turtle', cost=1, attack=0, life=4)
 
 class Asp(card.BlankCard) :
     def __init__(self) :
@@ -37,7 +37,7 @@ class Asp(card.BlankCard) :
 
 class Falcon(card.BlankCard) :
     def __init__(self) :
-        super().__init__(name='Falcon', cost=2, attack=2, life=2)
+        super().__init__(name='Falcon', cost=2, attack=4, life=1)
 
 class Lobster(card.BlankCard) :
     def __init__(self) :
@@ -58,16 +58,36 @@ class Ouroboros(card.BlankCard) :
             [Oro_attack,Oro_life] = file.read().split('\n')
         super().__init__(name='Ouroboros', cost=2, attack=int(Oro_attack), life=int(Oro_life), sigil='unkillable')
 
+class Cockroach(card.BlankCard) :
+    def __init__(self) :
+        super().__init__(name='Cockroach', cost=2, attack=1, life=1, sigil='unkillable')
+
+class Stoat(card.BlankCard) :
+    def __init__(self) :
+        super().__init__(name='Stoat', cost=1, attack=1, life=3)
+
+class Wolf(card.BlankCard) :
+    def __init__(self) :
+        super().__init__(name='Wolf', cost=2, attack=3, life=2)
+
+class Grizzly(card.BlankCard) :
+    def __init__(self) :
+        super().__init__(name='Grizzly', cost=3, attack=4, life=6)
+
+class Urayuli(card.BlankCard) :
+    def __init__(self) :
+        super().__init__(name='Urayuli', cost=4, attack=7, life=7)
+
 # Allowed cards:
 Poss_Playr = {
     0 : [Rabbit(), Shrew()],
-    1 : [DumpyTF(), Turtle()],
-    2 : [Asp(), Falcon()]*4 + [Ouroboros()],
-    3 : [Lobster()],
-    4 : [BoppitW()]
+    1 : [DumpyTF(), Turtle(), Stoat()],
+    2 : [Asp(), Falcon(), Cockroach(), Wolf()]*4 + [Ouroboros()],
+    3 : [Lobster(), Grizzly()],
+    4 : [BoppitW(), Urayuli()]
 }
 Poss_Leshy = {
     0 : [OppositeRabbit(), OppositeShrew()],
-    1 : [DumpyTF(), Turtle()],
-    2 : [Asp(), Falcon()]
+    1 : [DumpyTF(), Turtle(), Stoat()],
+    2 : [Asp(), Falcon(), Cockroach(), Wolf()]
 }
