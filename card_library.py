@@ -67,7 +67,5 @@ Poss_Playr = {
 }
 Poss_Leshy = {
     1 : [OppositeRabbit(), OppositeShrew(), DumpyTF(), Turtle()],
-    2 : [Asp(), Falcon()],
-    3 : [Lobster()],
-    4 : [BoppitW()],
+    2 : [Asp(), Falcon()]
 }
