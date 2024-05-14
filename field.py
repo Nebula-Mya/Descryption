@@ -21,8 +21,10 @@ def hefty_check(field, zone, direction) :
         the number of cards that can be pushed (int)
     '''
     if direction == 'right' :
-        if field[zone+1].species == '' and zone != 5 :
+        if field[zone+1].species != '' and zone != 5 :
             return 1 + hefty_check(field, zone+1, direction)
+        elif field[zone+1].species == '' :
+            return 1
         else :
             return 0
     elif direction == 'left' :
@@ -163,6 +165,7 @@ class Playmat :
         '''
         attacks with all of the active player's cards in play and updates score
         '''
+        did_shift = False
         if self.active == 'player' :
             for zone in self.player_field :
                 if self.player_field[zone].species != '' and self.player_field[zone].zone != 0 and self.player_field[zone].zone != 6 :
