@@ -114,6 +114,9 @@ class BlankCard() :
         elif self.sigil == 'venom' :
             opponent_teeth += front_card.takeDamage(self.current_attack)
             front_card.is_poisoned = True
+        ## airborne: attacks front, ignores other creatures
+        elif self.sigil == 'airborne' :
+            opponent_teeth += front_card.takeDamage(self.current_attack, from_air=True)
         ## irrelevant or no sigil: attacks front
         else :
             opponent_teeth += front_card.takeDamage(self.current_attack)
@@ -140,7 +143,7 @@ class BlankCard() :
             self.line_cursor = 2
         return self.text_lines[self.line_cursor - 1]
 
-    def takeDamage(self, damage) :
+    def takeDamage(self, damage, from_air=False) :
         '''
         reduces current life by damage
 
@@ -153,6 +156,8 @@ class BlankCard() :
         if self.species == '' :
             teeth = damage
         elif self.status == 'dead' :
+            teeth = damage
+        elif from_air and self.sigil != 'mighty leap':
             teeth = damage
         else :
             self.current_life -= damage

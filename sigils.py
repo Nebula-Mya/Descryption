@@ -34,7 +34,7 @@ Dict = {
         'Poisons target on attack.'
         ],
 
-    'airborne' : [ # unimplemented
+    'airborne' : [
         ["  _  ","ɩΞΞɭ "," ɩΞΞð"],
         'Attacks from the air, ignoring other creatures.'
         ],

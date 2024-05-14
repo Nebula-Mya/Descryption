@@ -37,7 +37,7 @@ class Asp(card.BlankCard) :
 
 class Falcon(card.BlankCard) :
     def __init__(self) :
-        super().__init__(name='Falcon', cost=2, attack=4, life=1)
+        super().__init__(name='Falcon', cost=2, attack=3, life=1, sigil='airborne')
 
 class Lobster(card.BlankCard) :
     def __init__(self) :
@@ -78,11 +78,19 @@ class Urayuli(card.BlankCard) :
     def __init__(self) :
         super().__init__(name='Urayuli', cost=4, attack=7, life=7)
 
+class Raven(card.BlankCard) :
+    def __init__(self) :
+        super().__init__(name='Raven', cost=2, attack=2, life=3, sigil='airborne')
+
+class Bee(card.BlankCard) :
+    def __init__(self) :
+        super().__init__(name='Bee', cost=0, attack=1, life=1, sigil='airborne')
+
 # Allowed cards:
 Poss_Playr = {
     0 : [Rabbit(), Shrew()],
     1 : [DumpyTF(), Turtle(), Stoat()],
-    2 : [Asp(), Falcon(), Cockroach(), Wolf()]*4 + [Ouroboros()],
+    2 : [Asp(), Falcon(), Cockroach(), Wolf(), Raven()]*3 + [Ouroboros()],
     3 : [Lobster(), Grizzly()],
     4 : [BoppitW(), Urayuli()]
 }
