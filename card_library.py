@@ -120,7 +120,8 @@ Poss_Playr = {
     4 : [BoppitW(), Urayuli(), MooseBuck()]
 }
 Poss_Leshy = {
-    0 : [OppositeRabbit(), OppositeShrew(), Squirrel()],
+    0 : [OppositeRabbit(), OppositeShrew()],
     1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog()],
-    2 : [Asp(), Falcon(), Cockroach(), Wolf(), Raven()]
+    2 : [Asp(), Falcon(), Cockroach(), Wolf(), Raven()],
+    3 : [Lobster(), Grizzly()],
 }

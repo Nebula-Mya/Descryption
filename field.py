@@ -299,10 +299,10 @@ class Playmat :
         for zone in self.opponent_field :
             if self.opponent_field[zone].species == '' and zone != 0 and zone != 6 :
                 if self.bushes[zone].species != '' :
-                    bush_count -= 1
+                    bush_count -= 1 # decrement bush_count because the card is advancing
                 self.opponent_field[zone] = self.bushes[zone]
                 self.opponent_field[zone].play(zone=zone)
-                if random.randrange(1,11) > 4 or bush_count >= 2:
+                if random.randrange(1,11) > 4 or bush_count >= 3:
                     self.bushes[zone] = card.BlankCard()
                 else :
                     self.bushes[zone] = self.opponent_deck[0]
