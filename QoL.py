@@ -38,9 +38,9 @@ def write_file(file_name, relative_path, data) :
         data: the lines of data to write to the file (list)
     '''
     to_write = ''
-    for line in data :
-        to_write += line
-        if line != data[-1] :
+    for line in range(len(data)) :
+        to_write += data[line]
+        if line != len(data) - 1 :
             to_write += '\n'
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         data_file = relative_path
