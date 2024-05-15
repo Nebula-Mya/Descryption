@@ -389,7 +389,7 @@ class Playmat :
         print(' '*card_gaps + 'Graveyard:')
         print(graveyard_string, end='')
     
-    def print_hand(self) : # unsorted for the time being
+    def print_hand(self) : 
         '''
         prints the cards in the player's hand (does NOT clear screen first)
         '''

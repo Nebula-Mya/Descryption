@@ -108,6 +108,12 @@ def winner_check(field) :
     return False
 
 def view_remaining(field) : 
+    '''
+    displays the remaining cards in the player's deck (sorted so as to not allow cheating), and allows the player to view a card
+    
+    Arguments:
+        field: the field object to view (field object)
+    '''
     bad_input = True
     invalid_index = False
     while bad_input :
@@ -133,6 +139,11 @@ def view_remaining(field) :
             invalid_index = True
 
 def view_graveyard(field) :
+    '''
+    displays the cards in the graveyard and allows the player to view a card
+    
+    Arguments:
+        field: the field object to view (field object)'''
     bad_input = True
     invalid_index = False
     while bad_input :
@@ -156,6 +167,12 @@ def view_graveyard(field) :
             invalid_index = True
 
 def view_cards(field) :
+    '''
+    menu for player to choose to view bushes, leshy's field, or player's field, all of which are executed by this function
+
+    Arguments:
+        field: the field object to view (field object)
+    '''
     bad_input = True
     invalid_choice = False
     while bad_input :

@@ -52,12 +52,7 @@ class Deck() :
         '''
         sorted_deck = sorted(self.cards, key=lambda x: x.name)
         sorted_deck = sorted(sorted_deck, key=lambda x: x.cost)
-        card = sorted_deck[index]
-        card_name = card.species
-        card_cost = card.saccs
-        card_attack = card.base_attack
-        card_life = card.base_life
-        card = card.BlankCard(name=card_name, cost=card_cost, attack=card_attack, life=card_life, sigil=sigil) 
+        sorted_deck[index].sigil = sigil 
 
     def shuffle(self) :
         '''
