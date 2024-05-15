@@ -1,5 +1,3 @@
-### This is the main file to run!! 
-
 import duel
 import QoL
 import ASCII_text
