@@ -347,6 +347,7 @@ def main(deck_size, hand_size) :
 
         # if winner_check, ongoing = False
         ongoing = not winner_check(playfield)
+        input('Press enter to return to menu.')
 
 if __name__ == '__main__' :
     QoL.clear()
