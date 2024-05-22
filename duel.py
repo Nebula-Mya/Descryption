@@ -181,7 +181,7 @@ def view_cards(field) :
         if invalid_choice :
             print('Invalid choice.')
             invalid_choice = False
-        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
             print('1. Bushes (PLACEHOLDER)')
         else :
             print('1. Bushes')
