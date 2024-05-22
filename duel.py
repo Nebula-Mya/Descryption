@@ -7,6 +7,7 @@ import random
 import math
 import copy
 import os
+import sys
 
 def choose_and_play(field) :
     '''
@@ -180,7 +181,10 @@ def view_cards(field) :
         if invalid_choice :
             print('Invalid choice.')
             invalid_choice = False
-        print('1. Bushes (PLACEHOLDER)')
+        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+            print('1. Bushes (PLACEHOLDER)')
+        else :
+            print('1. Bushes')
         print("2. Leshy's field")
         print('3. Player field')
         row_choice = input('Choose a row to view: (press enter to go back) ')
@@ -323,9 +327,10 @@ def main(deck_size, hand_size) :
     # game loop
     ongoing = True
     while ongoing :
-        quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
-        if quit_game == 'y' :
-            return
+        if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) :
+            quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
+            if quit_game == 'y' :
+                return
         # gameplay loop
         # player turn
         if playfield.active == 'player' :
