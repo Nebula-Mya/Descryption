@@ -169,11 +169,13 @@ class Playmat :
         '''
         did_shift = False
         if self.active == 'player' :
+            # attacking
             for zone in self.player_field :
                 if self.player_field[zone].species != '' and self.player_field[zone].zone != 0 and self.player_field[zone].zone != 6 :
-                    (player_points, leshy_points) = self.player_field[zone].attack(self.opponent_field[zone-1],self.opponent_field[zone],self.opponent_field[zone+1],self.player_field[zone-1],self.player_field[zone+1])
+                    (player_points, leshy_points) = self.player_field[zone].attack(self.opponent_field[zone-1],self.opponent_field[zone],self.opponent_field[zone+1],self.player_field[zone-1],self.player_field[zone+1], is_players=True, bushes=self.bushes)
                     self.score['player'] += player_points
                     self.score['opponent'] += leshy_points
+            # post-attack sigils
             for zone in self.player_field :
                 if did_shift :
                     did_shift = False
@@ -216,6 +218,7 @@ class Playmat :
                             self.player_field[n-1].zone = n-1
                             self.player_field[n] = card.BlankCard()
         elif self.active == 'opponent' :
+            # attacking
             for zone in self.opponent_field :
                 if self.opponent_field[zone].species != '' and self.opponent_field[zone].zone != 0 and self.opponent_field[zone].zone != 6:
                     (leshy_points, player_points) = self.opponent_field[zone].attack(self.player_field[zone-1],self.player_field[zone],self.player_field[zone+1],self.opponent_field[zone-1],self.opponent_field[zone+1])
@@ -223,6 +226,7 @@ class Playmat :
                         self.hand.append(card_library.Bee())
                     self.score['player'] += player_points
                     self.score['opponent'] += leshy_points
+            # post-attack sigils
             for zone in self.opponent_field :
                 if did_shift :
                     did_shift = False
@@ -288,8 +292,11 @@ class Playmat :
         for zone in self.opponent_field :
             if self.opponent_field[zone].status == 'dead' :
                 self.opponent_field[zone].die(self.opponent_field[zone-1], self.opponent_field[zone+1], self.opponent_field)
-                self.graveyard.append(self.opponent_field[zone])
                 self.opponent_field[zone] = card.BlankCard()
+        for zone in self.bushes :
+            if self.bushes[zone].status == 'dead' :
+                self.bushes[zone].die(self.bushes[zone-1], self.bushes[zone+1], self.bushes)
+                self.bushes[zone] = card.BlankCard()
 
     def advance(self) :
         '''

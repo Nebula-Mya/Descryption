@@ -89,7 +89,7 @@ class BlankCard() :
             self.spent_lives = 0
         self.updateASCII()
 
-    def attack(self, front_left_card, front_card, front_right_card, left_card, right_card) :
+    def attack(self, front_left_card, front_card, front_right_card, left_card, right_card, is_players=False, bushes={}) :
         '''
         attacks zone(s) in front
 
@@ -99,30 +99,36 @@ class BlankCard() :
             front_right_card: the card in the zone to the right of the front card (card object)
             left_card: the card in the zone to the left of the attacking card (card object)
             right_card: the card in the zone to the right of the attacking card (card object)
+            is_players: whether the attacking card is on the player's field (bool)
+            bushes: the dict of bushed cards (dict)
         
         Returns:
             opponent_teeth: the damage dealt to the opponent (int)
             controller_teeth: the damage dealt to the controller (int)
         '''
+        if is_players :
+            to_opp_field = True
+        else :
+            to_opp_field = False
         opponent_teeth = 0
         controller_teeth = 0
         # if sigil is;
         ## bifurcate: attacks front_left_card and front_right_card
         if self.sigil == 'bifurcate' :
             if front_left_card != None :
-                opponent_teeth += front_left_card.takeDamage(self.current_attack)
+                opponent_teeth += front_left_card.takeDamage(self.current_attack, in_opp_field=to_opp_field, bushes=bushes)
             if front_right_card != None :
-                opponent_teeth += front_right_card.takeDamage(self.current_attack)
+                opponent_teeth += front_right_card.takeDamage(self.current_attack, in_opp_field=to_opp_field, bushes=bushes)
         ## venom: attacks front, then poisons front
         elif self.sigil == 'venom' :
-            opponent_teeth += front_card.takeDamage(self.current_attack)
+            opponent_teeth += front_card.takeDamage(self.current_attack, in_opp_field=to_opp_field, bushes=bushes)
             front_card.is_poisoned = True
         ## airborne: attacks front, ignores other creatures
         elif self.sigil == 'airborne' :
-            opponent_teeth += front_card.takeDamage(self.current_attack, from_air=True)
+            opponent_teeth += front_card.takeDamage(self.current_attack, from_air=True, in_opp_field=to_opp_field, bushes=bushes)
         ## irrelevant or no sigil: attacks front
         else :
-            opponent_teeth += front_card.takeDamage(self.current_attack)
+            opponent_teeth += front_card.takeDamage(self.current_attack, in_opp_field=to_opp_field, bushes=bushes)
         # if poisoned, deal 1 damage to self
         if self.is_poisoned :
             controller_teeth += self.takeDamage(1)
@@ -146,29 +152,32 @@ class BlankCard() :
             self.line_cursor = 2
         return self.text_lines[self.line_cursor - 1]
 
-    def takeDamage(self, damage, from_air=False) :
+    def takeDamage(self, damage, from_air=False, in_opp_field=False, in_bushes=False, bushes={}) :
         '''
         reduces current life by damage
 
         Arguments:
             damage: the amount of damage to take (int)
+            from_air: whether the damage is from an airborne creature (bool)
+            in_opp_field: whether the card is on Leshy's feild (bool)
+            in_bushes: whether the card is in the bushes (bool)
+            bushes: the dict of bushed cards (dict)
 
         Returns:
             teeth: damage to controller (int)
         '''
-        if self.species == '' :
-            teeth = damage
-        elif self.status == 'dead' :
-            teeth = damage
-        elif from_air and self.sigil != 'mighty leap':
+        teeth = 0
+        if (self.species == '' or self.status == 'dead' or (from_air and self.sigil != 'mighty leap')) and not in_bushes :
             teeth = damage
         else :
+            prev_life = self.current_life
             self.current_life -= damage
-            teeth = 0
             self.updateASCII()
             if self.current_life <= 0 :
                 self.status = 'dead'
-                teeth = abs(self.current_life)
+                if in_opp_field :
+                    excess_damage = damage - prev_life
+                    bushes[self.zone].takeDamage(excess_damage, from_air, in_bushes=True)
         return teeth
 
     def play(self, zone) :
