@@ -2,6 +2,8 @@ import duel
 import QoL
 import ASCII_text
 
+version_ID = 'v0.1.3a-alpha'
+
 def reset_oro() :
     '''
     resets the attack and life of Ouroboros to 1
@@ -36,7 +38,7 @@ def settings() :
     invalid_choice = False
     while bad_input :
         QoL.clear()
-        print('v0.1.3a-alpha')
+        print(version_ID)
         print('\n'*2)
         ASCII_text.print_title()
         [deck_size, hand_size] = QoL.read_file('config.txt', 'Descryption_Data/config.txt')
@@ -57,7 +59,7 @@ def settings() :
             invalid_deck_size = False
             while bad_choice :
                 QoL.clear()
-                print('v0.1.3a-alpha')
+                print(version_ID)
                 print('\n'*2)
                 ASCII_text.print_title()
                 print('\n'*5)
@@ -84,7 +86,7 @@ def settings() :
             invalid_hand_size = False
             while bad_choice :
                 QoL.clear()
-                print('v0.1.3a-alpha')
+                print(version_ID)
                 print('\n'*2)
                 ASCII_text.print_title()
                 print('\n'*5)
@@ -108,7 +110,7 @@ def settings() :
                     invalid_hand_size = True
         elif choice == '3' :
             QoL.clear()
-            print('v0.1.3a-alpha')
+            print(version_ID)
             print('\n'*2)
             ASCII_text.print_title()
             print('\n'*5)
@@ -137,7 +139,7 @@ def main_menu() :
     invalid_choice = False
     while bad_input :
         QoL.clear()
-        print('v0.1.3a-alpha')
+        print(version_ID)
         print('\n'*2)
         ASCII_text.print_title()
         print('\n'*6)
