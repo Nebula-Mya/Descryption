@@ -343,72 +343,90 @@ class Playmat :
             #region intelligent choosing of zones to prioritize
             in_strategy = []
             out_of_strategy = []
+            uninfluenced = True
 
             # check for strategy and categories, then assign zones to in_strategy or out_of_strategy
-            if (self.score['opponent'] - self.score['player'] >= strat_change_threshold) and (self.opponent_deck[0].base_attack > 0) : # Leshy winning enough to go on the offensive, regardless of card category
+            # if a card in in a category, but the category does not apply, it will be checked for all other categories
+            # if a card is not in a category, and Leshy is not past the strat change threshold, it will be played defensively
+            # if a card is in a category, and it does apply, it will not be checked for other categories
+            if (self.score['opponent'] - self.score['player'] >= strat_change_threshold) and (self.opponent_deck[0].base_attack > 0): # Leshy winning enough to go on the offensive, regardless of card category
                 for zone in range(1, 6) :
                     if self.bushes[zone].species == '' :
                         if self.player_field[zone].species == '' :
                             in_strategy.append(zone)
+                            uninfluenced = False
                         else :
                             out_of_strategy.append(zone)
             
             # anti airborne
-            elif self.opponent_deck[0].species in card_library.Categories['anti_air'] :
+            if self.opponent_deck[0].species in card_library.Categories['anti_air'] and uninfluenced:
+                out_of_strategy = []
                 for zone in range(1, 6) :
                     if self.bushes[zone].species == '' :
                         if self.player_field[zone].sigil == 'airborne' :
                             in_strategy.append(zone)
+                            uninfluenced = False
                         else :
                             out_of_strategy.append(zone)
 
             # anti bifurcate
-            elif self.opponent_deck[0].species in card_library.Categories['anti_bifurcate'] :
+            if self.opponent_deck[0].species in card_library.Categories['anti_bifurcate'] and uninfluenced:
+                out_of_strategy = []
                 for zone in range(1, 6) :
                     if self.bushes[zone].species == '' :
                         if self.player_field[zone].sigil == 'bifurcate' :
                             in_strategy.append(zone)
+                            uninfluenced = False
                         else :
                             out_of_strategy.append(zone)
 
             # anti death effects
-            elif self.opponent_deck[0].species in card_library.Categories['wont_kill'] :
+            if self.opponent_deck[0].species in card_library.Categories['wont_kill'] and uninfluenced:
+                out_of_strategy = []
                 for zone in range(1, 6) :
                     if self.bushes[zone].species == '' :
                         if self.player_field[zone].sigil in ['bees within', 'split', 'many lives', 'unkillable'] :
                             in_strategy.append(zone)
+                            uninfluenced = False
                         else :
                             out_of_strategy.append(zone)
 
             # anti venom
-            elif self.opponent_deck[0].species in card_library.Categories['anti_venom'] :
+            if self.opponent_deck[0].species in card_library.Categories['anti_venom'] and uninfluenced:
+                out_of_strategy = []
                 for zone in range(1, 6) :
                     if self.bushes[zone].species == '' :
                         if self.player_field[zone].sigil == 'venom' :
                             in_strategy.append(zone)
+                            uninfluenced = False
                         else :
                             out_of_strategy.append(zone)
 
             # anti moving right
-            elif self.opponent_deck[0].species in card_library.Categories['anti_right'] :
+            if self.opponent_deck[0].species in card_library.Categories['anti_right'] and uninfluenced:
+                out_of_strategy = []
                 for zone in range(1, 6) :
                     if self.bushes[zone].species == '' :
                         if self.player_field[zone].sigil in ['lane shift right', 'hefty (right)'] :
                             in_strategy.append(zone)
+                            uninfluenced = False
                         else :
                             out_of_strategy.append(zone)
 
             # anti moving left
-            elif self.opponent_deck[0].species in card_library.Categories['anti_left'] :
+            if self.opponent_deck[0].species in card_library.Categories['anti_left'] and uninfluenced:
+                out_of_strategy = []
                 for zone in range(1, 6) :
                     if self.bushes[zone].species == '' :
                         if self.player_field[zone].sigil in ['lane shift left', 'hefty (left)'] :
                             in_strategy.append(zone)
+                            uninfluenced = False
                         else :
                             out_of_strategy.append(zone)
 
             # for those not in a category or whose category did not apply (defensive)
-            if in_strategy == [] :
+            if uninfluenced :
+                out_of_strategy = []
                 for zone in range(1, 6) :
                     if self.bushes[zone].species == '' :
                         if self.player_field[zone].species != '' :
