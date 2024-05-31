@@ -84,7 +84,6 @@ class Deck() :
         return deck_string
 
 if __name__ == '__main__' :
-    import card
     import card_library
     slot1 = card_library.Squirrel()
     slot2 = card_library.Rabbit()

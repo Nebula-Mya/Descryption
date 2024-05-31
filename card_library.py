@@ -120,3 +120,23 @@ Poss_Leshy = {
     2 : [Asp(), Falcon(), Cockroach(), Wolf(), Raven()],
     3 : [Lobster(), Grizzly()],
 }
+
+'''
+
+'''
+
+# categories of cards for intelligent Leshy (lists of card.species strings)
+Categories = {
+    # good against airbornes (glass cannons and those with mighty leap)
+    'anti_air' : ['Dumpy Tree Frog']
+}
+
+if __name__ == '__main__' :
+    import deck
+    Leshy_cardlist = deck.Deck([])
+    for cost in Poss_Leshy :
+        for card in Poss_Leshy[cost] :
+            Leshy_cardlist.addCard(card)
+
+    QoL.clear()
+    print(Leshy_cardlist)
