@@ -298,8 +298,8 @@ class Playmat :
                 self.bushes[zone].die(self.bushes[zone-1], self.bushes[zone+1], self.bushes)
                 self.bushes[zone] = card.BlankCard()
 
-    '''
-    PLANNING FOR INTELLIGENT LESHY (this is an entirely new method of advancing, other than moving cards from bushes to the field)
+    ''' PLANNING FOR INTELLIGENT LESHY 
+    (this is an entirely new method of advancing, other than moving cards from bushes to the field)
 
     1. split cards into different categories to respond to different threats (glass cannon cards and those with mighty leap would be categorized to respond to airborne cards, etc.)
 
@@ -363,10 +363,20 @@ class Playmat :
                         out_of_strategy.append(zone)
         ... (repeat for all categories in order of priority)
 
+        # for those not in a category
+        else :
+            for zone in range(1, 6) :
+                if self.bushes[zone].species == '' :
+                    in_strategy.append(zone)
+
         # ensure that the loop will not run if there are no zones to play to, preventing infinite loop
         if len(in_strategy) + len(out_of_strategy) == 0 :
             break
-
+        
+        # randomize the order of zones to play to, to prevent predictability
+        random.shuffle(in_strategy)
+        random.shuffle(out_of_strategy)
+        
         # play cards in strategy
         for zone in in_strategy :
             if random.randint(1,100) <= in_strategy_chance :
@@ -385,7 +395,7 @@ class Playmat :
     '''
     def advance(self) :
         '''
-        advances cards from bushes to field
+        advances cards from bushes to field, utilizing rudimentary decision making for Leshy
         '''
         bush_count = 0
         ## bush count will be unused after revamp

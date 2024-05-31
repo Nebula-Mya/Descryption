@@ -121,14 +121,32 @@ Poss_Leshy = {
     3 : [Lobster(), Grizzly()],
 }
 
-'''
-
-'''
-
 # categories of cards for intelligent Leshy (lists of card.species strings)
 Categories = {
-    # good against airbornes (glass cannons and those with mighty leap)
-    'anti_air' : ['Dumpy Tree Frog']
+    # good against airbornes (non airborne glass cannons and those with mighty leap)
+    'anti_air' : ['Bullfrog', 'Asp', 'Wolf'],
+    # priority: 0
+
+    # good against bifurcates (non airborne glass cannons (airbornes wouldnt kill the bifurcate)
+    'anti_bifurcate' : ['Asp', 'Wolf'],
+    # priority: 1
+
+    # good against those moving right (moves with, bifurcate, or trifurcate(to be added))
+    'anti_right' : ['Shrew', 'Lobster'],
+    # priority: 4
+    ## this being higher priority than anti_left may introduce a bias with bifurcates and trifurcates
+
+    # good against those moving left (moves with, bifurcate, or trifurcate(to be added))
+    'anti_left' : ['Rabbit', 'Lobster'],
+    # priority: 5
+
+    # good against those with on death effects (tanks, airbornes, and bifurcates) (death effects are bees within, split, many lives, and unkillable)
+    'wont_kill' : ['Turtle', 'Falcon', 'Raven', 'Lobster'],
+    # priority: 2
+
+    # good against those with venom (fragiles and waterbornes(to be added))
+    'anti_venom' : ['Asp', 'Cockroach', 'Dumpy Tree Frog']
+    # priority: 3
 }
 
 if __name__ == '__main__' :
@@ -138,5 +156,17 @@ if __name__ == '__main__' :
         for card in Poss_Leshy[cost] :
             Leshy_cardlist.addCard(card)
 
+    Player_cardlist = deck.Deck([])
+    for cost in Poss_Playr :
+        for card in Poss_Playr[cost] :
+            if card not in Player_cardlist.cards :
+                Player_cardlist.addCard(card)
+
     QoL.clear()
+    print(QoL.center_justified('Leshy Card List'))
+    print()
     print(Leshy_cardlist)
+    print()
+    print(QoL.center_justified('Player Card List'))
+    print()
+    print(Player_cardlist)
