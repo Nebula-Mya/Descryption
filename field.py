@@ -433,15 +433,25 @@ class Playmat :
                             in_strategy.append(zone)
                         else :
                             out_of_strategy.append(zone)
+            
+            # anti mighty leap (this is seperate from the other categories because it relies only on the card's sigil, not species)
+            if self.opponent_deck[0].sigil == 'airborne' :
+                for zone in range(1, 6) :
+                    if self.player_field[zone].sigil == 'mighty leap' and random.randint(1,100) <= in_strategy_chance :
+                        if zone in in_strategy :
+                            in_strategy.remove(zone)
+                        if zone in out_of_strategy :
+                            out_of_strategy.remove(zone)
+                        break
             #endregion
 
             # ensure that the loop will not run if there are no zones to play to, preventing infinite loop
             if len(in_strategy) + len(out_of_strategy) == 0 :
                 break
-            
+
             #region playing cards to zones
             # play cards in strategy
-            if random.randint(1,100) <= in_strategy_chance and in_strategy != [] :
+            if (random.randint(1,100) <= in_strategy_chance and in_strategy != []) or out_of_strategy == [] :
                 zone = random.choice(in_strategy)
                 self.bushes[zone] = self.opponent_deck[0]
                 self.opponent_deck.pop(0)
