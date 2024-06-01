@@ -2,7 +2,7 @@ import duel
 import QoL
 import ASCII_text
 
-version_ID = 'v0.1.3b-alpha'
+version_ID = 'v0.1.3c-alpha'
 
 def reset_oro() :
     '''
