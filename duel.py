@@ -17,7 +17,7 @@ def choose_and_play(field) :
     Arguments:
         field: the field object to play the card on (field object)
     '''
-    (term_cols, term_rows) = os.get_terminal_size()
+    term_cols = os.get_terminal_size().columns
     card_gaps = (term_cols*55 // 100) // 5 - 15
     bad_input = True
     second_bad_input = False

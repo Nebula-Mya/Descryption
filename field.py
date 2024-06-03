@@ -501,7 +501,7 @@ class Playmat :
         '''
         prints the remaining cards in the deck (sorted) and the squirrels (sorted) (clears screen first)
         '''
-        (term_cols, term_rows) = os.get_terminal_size()
+        term_cols = os.get_terminal_size().columns
         card_gaps = (term_cols*55 // 100) // 5 - 15
         sorted_main_deck = sorted(self.player_deck, key=lambda x: x.name)
         sorted_main_deck = sorted(sorted_main_deck, key=lambda x: x.cost)
@@ -526,7 +526,7 @@ class Playmat :
         '''
         prints the cards in the graveyard (in order) (clears screen first)
         '''
-        (term_cols, term_rows) = os.get_terminal_size()
+        term_cols = os.get_terminal_size().columns
         card_gaps = (term_cols*55 // 100) // 5 - 15
         cards_per_row = term_cols // (card_gaps + 15) 
         if cards_per_row >= 9 :
@@ -548,7 +548,7 @@ class Playmat :
         '''
         prints the cards in the player's hand (does NOT clear screen first)
         '''
-        (term_cols, term_rows) = os.get_terminal_size()
+        term_cols = os.get_terminal_size().columns
         card_gaps = (term_cols*55 // 100) // 5 - 15
         cards_per_row = term_cols // (card_gaps + 15) 
         if cards_per_row >= 9 :
@@ -568,7 +568,7 @@ class Playmat :
         '''
         prints the field and score scales (clears screen first)
         '''
-        (term_cols, term_rows) = os.get_terminal_size()
+        term_cols = os.get_terminal_size().columns
         card_gaps = (term_cols*55 // 100) // 5 - 15
         QoL.clear()
         vis_bushes = [self.bushes[1], self.bushes[2], self.bushes[3], self.bushes[4], self.bushes[5]]

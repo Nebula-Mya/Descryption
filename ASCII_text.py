@@ -43,7 +43,7 @@ lose = '''
 '''.format(spc=' '*31)
 
 def print_title() :
-    (term_cols, term_rows) = os.get_terminal_size()
+    term_cols = os.get_terminal_size().columns
     center_space = (term_cols - 124) // 2
     title = '''
 {spc}████████▄     ▄████████    ▄████████   ▄████████    ▄████████  ▄██   ▄      ▄███████▄     ███      ▄█   ▄██████▄   ███▄▄▄▄  
@@ -59,7 +59,7 @@ def print_title() :
     print(title)
 
 def print_scales(player_weight, opponent_weight) :
-    (term_cols, term_rows) = os.get_terminal_size()
+    term_cols = os.get_terminal_size().columns
     card_gaps = (term_cols*55 // 100) // 5 - 15
     if card_gaps <= 0 :
         score_gap = 28

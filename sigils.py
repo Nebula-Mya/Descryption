@@ -68,4 +68,16 @@ Dict = {
         ["  Ω  "," CXƆ ","  V  "],
         "Doesn't die when sacrificed."
         ],
+    'waterborne' : [
+        ["<⁻v⁻>","ˎ\\ /ˏ","λ/λ\\λ"],
+        'Attacks directed toward this card hit the owner directly.'
+        ],
 }
+
+if __name__ == '__main__':
+    print('Sigils:')
+    for key in Dict:
+        print(key)
+        print(Dict[key][0])
+        print(Dict[key][1])
+        print()

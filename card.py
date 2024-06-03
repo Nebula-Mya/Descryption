@@ -224,23 +224,24 @@ class BlankCard() :
         '''
         prints explanation of stats and sigil for player
         '''
-        (term_cols, term_rows) = os.get_terminal_size()
+        term_cols = os.get_terminal_size().columns
         card_gaps = (term_cols*55 // 100) // 5 - 15
         if self.sigil.title() == '' :
             sigil_text = 'No'
         else :
             sigil_text = self.sigil.title()
+        max_desc_first = term_cols - 17 - card_gaps
         description = """{spc},-------------,
 {spc}|{species} {C}|  {spc}{card} requires {saccs} sacrifices to summon.
 {spc}|             |
 {spc}|             |
 {spc}|    {rw1}    |
-{spc}|    {rw2}    |  {spc}{sigil} sigil: {desc}
-{spc}|    {rw3}    |
-{spc}|             |
+{spc}|    {rw2}    |  {spc}{sigil} sigil: {desc1}
+{spc}|    {rw3}    |      {desc2}
+{spc}|             |      {desc3}
 {spc}|             |
 {spc}|          {S}|  {spc}{card} has an attack power of {attack} and life points {life} of {max_life}.
-{spc}'-------------'""".format(species=self.name, C=self.cost, rw1=sigils.Dict[self.sigil][0][0], rw2=sigils.Dict[self.sigil][0][1], rw3=sigils.Dict[self.sigil][0][2], S=self.stats, saccs=self.saccs, sigil=sigil_text, desc=sigils.Dict[self.sigil][1], attack=self.current_attack, life=self.current_life, max_life=self.base_life, card=self.species, spc=' '*card_gaps)
+{spc}'-------------'""".format(species=self.name, C=self.cost, rw1=sigils.Dict[self.sigil][0][0], rw2=sigils.Dict[self.sigil][0][1], rw3=sigils.Dict[self.sigil][0][2], S=self.stats, saccs=self.saccs, sigil=sigil_text, attack=self.current_attack, life=self.current_life, max_life=self.base_life, card=self.species, spc=' '*card_gaps, desc1=sigils.Dict[self.sigil][1])
         print(description)
 
     def updateASCII(self) :
