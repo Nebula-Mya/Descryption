@@ -98,7 +98,6 @@ def ai_category_checking(categories, player_field, opponent_deck, bushes, score,
                     in_strategy.remove(zone)
                 if zone in out_of_strategy :
                     out_of_strategy.remove(zone)
-                break
 
     return in_strategy, out_of_strategy
 
