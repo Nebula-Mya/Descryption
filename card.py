@@ -227,12 +227,14 @@ class BlankCard() :
         term_cols = os.get_terminal_size().columns
         card_gaps = (term_cols*55 // 100) // 5 - 15
         if self.sigil.title() == '' :
-            sigil_text = 'No'
+            sigil_text = 'No Sigil'
+        elif 'hefty' in self.sigil:
+            sigil_text = 'Hefty:'
         else :
-            sigil_text = self.sigil.title()
+            sigil_text = self.sigil.title() + ':'
         # get parameters for sigil description
-        max_desc_first = term_cols - 25 - card_gaps*2 - len(sigil_text)
-        max_desc_rest = term_cols - 21 - card_gaps*2
+        max_desc_first = term_cols - 18 - card_gaps*2 - len(sigil_text)
+        max_desc_rest = term_cols - 14 - card_gaps*2
         # split description into lines
         [desc_first_line, desc_second_line, desc_third_line] = QoL.split_nicely(sigils.Dict[self.sigil][1], max_desc_first, max_desc_rest, max_lines=3, add_blank_lines=True)
 
@@ -241,7 +243,7 @@ class BlankCard() :
 {spc}|             |
 {spc}|             |
 {spc}|    {rw1}    |
-{spc}|    {rw2}    |  {spc}{sigil} Sigil: {desc1}
+{spc}|    {rw2}    |  {spc}{sigil} {desc1}
 {spc}|    {rw3}    |      {spc}{desc2}
 {spc}|             |      {spc}{desc3}
 {spc}|             |

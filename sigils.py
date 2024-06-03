@@ -30,7 +30,7 @@ Dict = {
         ],
 
     'venom' : [
-        [" ___ "," \ / "," ·V· "],
+        [" ___ "," \\ / "," ·V· "],
         'Poisons target on attack.'
         ],
 
@@ -50,17 +50,17 @@ Dict = {
         ],
 
     'bees within' : [
-        [" /‾\ ","|___|","  Ʈ->"],
-        'Adds bees to the hand when damaged.'
+        [" /‾\\ ","|___|","  Ʈ->"],
+        'Adds a bee to your hand when damaged.'
         ],
 
     'hefty (right)' : [ 
-        [".    ","|)_[]","'———'"],
+        [". >>>","|)_[]","'———'"],
         'Moves to the right, pushing other creatures with it.'
         ],
     
     'hefty (left)' : [
-        ["    .","[]_(|","'———'"],
+        ["<<< .","[]_(|","'———'"],
         'Moves to the left, pushing other creatures with it.'
         ],
 
@@ -71,6 +71,10 @@ Dict = {
     'waterborne' : [
         ["<⁻v⁻>","ˎ\\ /ˏ","λ/λ\\λ"],
         'Attacks directed toward this card hit the owner directly.'
+        ],
+    'vole hole' : [
+        [" ___ ","/…¨…\\","‾‾‾‾‾"],
+        'Adds a vole to your hand when played.'
         ],
 }
 
