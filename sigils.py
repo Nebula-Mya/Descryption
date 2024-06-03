@@ -75,9 +75,18 @@ Dict = {
 }
 
 if __name__ == '__main__':
-    print('Sigils:')
+    import card
+    import QoL
+    import os
+    QoL.clear()
+    term_cols = os.get_terminal_size().columns
+    card_gaps = (term_cols*55 // 100) // 5 - 15
+    tab = ' '*(card_gaps // 2)
     for key in Dict:
-        print(key)
-        print(Dict[key][0])
-        print(Dict[key][1])
+        if key == '':
+            continue
+        print(tab + key.title() + ':')
+        example = card.BlankCard(sigil=key)
+        example.species = 'EXAMPLE CARD'
+        example.explain()
         print()
