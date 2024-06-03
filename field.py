@@ -337,31 +337,46 @@ class Playmat :
         '''
         checks for dead cards and removes them, plus returns unkillables if player's turn
         '''
+        # check for dead cards in player field
         for zone in self.player_field :
+
+            # if a normal card dies
             if self.player_field[zone].status == 'dead' and self.player_field[zone].sigil != 'unkillable' and self.player_field[zone].sigil != 'split':
-                self.player_field[zone].die(self.player_field[zone-1], self.player_field[zone+1], self.player_field)
+                self.player_field[zone].die()
                 self.graveyard.append(self.player_field[zone])
                 self.player_field[zone] = card.BlankCard()
+
+            # if an unkillable card dies
             elif self.player_field[zone].status == 'dead' and self.player_field[zone].sigil == 'unkillable' :
-                self.player_field[zone].die(self.player_field[zone-1], self.player_field[zone+1], self.player_field)
+                self.player_field[zone].die()
                 self.player_field[zone].status = 'alive'
                 self.hand.append(self.player_field[zone])
                 self.player_field[zone] = card.BlankCard()
+
+            # if a split card dies
             elif self.player_field[zone].status == 'dead' and self.player_field[zone].sigil == 'split' :
                 split_card = copy.deepcopy(self.player_field[zone])
+
+                # play a copy to left and right if possible
                 if self.player_field[zone-1].species == '' and zone != 1 :
                     self.player_field[zone-1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone - 1)
                     self.player_field[zone] = card.BlankCard()
                 if self.player_field[zone+1].species == '' and zone != 5 :
                     self.player_field[zone+1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone + 1)
                     self.player_field[zone] = card.BlankCard()
+
+                # removes the original card
+                self.player_field[zone].die()
+                self.graveyard.append(self.player_field[zone])
+                self.player_field[zone] = card.BlankCard()
+
         for zone in self.opponent_field :
             if self.opponent_field[zone].status == 'dead' :
-                self.opponent_field[zone].die(self.opponent_field[zone-1], self.opponent_field[zone+1], self.opponent_field)
+                self.opponent_field[zone].die()
                 self.opponent_field[zone] = card.BlankCard()
         for zone in self.bushes :
             if self.bushes[zone].status == 'dead' :
-                self.bushes[zone].die(self.bushes[zone-1], self.bushes[zone+1], self.bushes)
+                self.bushes[zone].die()
                 self.bushes[zone] = card.BlankCard()
 
     def advance(self) : 

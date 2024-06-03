@@ -188,7 +188,7 @@ class BlankCard() :
         self.zone = zone
         self.updateASCII()
 
-    def die(self, left_card, right_card, field) :
+    def die(self) :
         '''
         activates sigils on death and resets stats
 
