@@ -4,6 +4,38 @@ import ASCII_text
 
 version_ID = 'v0.1.3c-alpha'
 
+choice_text = 'Choose an option:'
+
+def menu_center(text, width=24) :
+    '''
+    centers text for the menu, adding a space if the text ends with a colon, and spacing out from numbering (honestly don't quite understand this one, but it works?) 
+
+    Arguments:
+        text: the text to center (str)
+        width: the width of the menu, defaults to 24 (int)
+    
+    Returns:
+        the centered text (str)
+    '''
+    og_text = text
+    numbered = False
+    shift_left = 0
+    if text[1] == '.' :
+        text_start = text[:2]
+        text = text[2:].lstrip()
+        numbered = True
+        shift_left = 1
+    if len(text) < width :
+        text = ' '*((width - len(text)) // 2 - shift_left) + text + ' '*(width - len(text) + shift_left)
+    elif len(text) > width :
+        text = ' '*((width - len(text)) - shift_left) + text + ' '*((width - len(text)) // 2 + shift_left)
+    if og_text[-1] == ':' :
+        return QoL.center_justified(text).rstrip() + ' '
+    elif numbered :
+        return QoL.center_justified(text_start + text)
+    else :
+        return QoL.center_justified(text)
+
 def reset_oro() :
     '''
     resets the attack and life of Ouroboros to 1
@@ -30,6 +62,17 @@ def set_hand_size(size) :
     [deck_size, junk] = QoL.read_file('config.txt', 'Descryption_Data/config.txt')
     QoL.write_file('config.txt', 'Descryption_Data/config.txt', [deck_size, str(size)])
 
+def print_settings_options() :
+    '''
+    prints the settings options
+    '''
+    print(QoL.center_justified('Settings   '))
+    print(QoL.center_justified('==========   '))
+    print(QoL.center_justified('1.  Change deck size      '))
+    print(QoL.center_justified('2.  Change hand size      '))
+    print(QoL.center_justified('3.   Reset Ouroboros     '))
+    print(QoL.center_justified('4. Return to main menu   '))
+
 def settings() :
     '''
     allows the player to change the deck size and hand size as well as reset Ouroboros
@@ -43,17 +86,12 @@ def settings() :
         ASCII_text.print_title()
         [deck_size, hand_size] = QoL.read_file('config.txt', 'Descryption_Data/config.txt')
         print('\n'*5)
-        print(QoL.center_justified('Settings   '))
-        print(QoL.center_justified('==========   '))
-        print(QoL.center_justified('1.  Change deck size      '))
-        print(QoL.center_justified('2.  Change hand size      '))
-        print(QoL.center_justified('3.   Reset Ouroboros     '))
-        print(QoL.center_justified('4. Return to main menu   '))
+        print_settings_options()
         print('\n'*3)
         if invalid_choice :
             print(QoL.center_justified('Invalid choice'))
             invalid_choice = False
-        choice = input(QoL.center_justified('Choose a menu to view:   ').rstrip() + ' ')
+        choice = input(menu_center(choice_text))
         if choice == '1' :
             bad_choice = True
             invalid_deck_size = False
@@ -114,12 +152,7 @@ def settings() :
             print('\n'*2)
             ASCII_text.print_title()
             print('\n'*5)
-            print(QoL.center_justified('Settings   '))
-            print(QoL.center_justified('==========   '))
-            print(QoL.center_justified('1.  Change deck size      '))
-            print(QoL.center_justified('2.  Change hand size      '))
-            print(QoL.center_justified('3.   Reset Ouroboros     '))
-            print(QoL.center_justified('4. Return to main menu   '))
+            print_settings_options()
             print('\n'*3)
             reset_choice = input(QoL.center_justified('Are you sure you want to reset Ouroboros? y/n').rstrip() + ' ')
             if reset_choice == 'y' :
@@ -154,7 +187,7 @@ def main_menu() :
         if invalid_choice :
             print(QoL.center_justified('Invalid choice'))
             invalid_choice = False
-        choice = input(QoL.center_justified('Choose a menu to view:   ').rstrip() + ' ')
+        choice = input(menu_center(choice_text))
         if choice == '1' :
             [deck_size, hand_size] = QoL.read_file('config.txt', 'Descryption_Data/config.txt')
             duel.main(int(deck_size), int(hand_size))
