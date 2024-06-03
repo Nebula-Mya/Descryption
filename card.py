@@ -241,7 +241,7 @@ class BlankCard() :
 {spc}|             |
 {spc}|             |
 {spc}|    {rw1}    |
-{spc}|    {rw2}    |  {spc}{sigil} sigil: {desc1}
+{spc}|    {rw2}    |  {spc}{sigil} Sigil: {desc1}
 {spc}|    {rw3}    |      {spc}{desc2}
 {spc}|             |      {spc}{desc3}
 {spc}|             |
