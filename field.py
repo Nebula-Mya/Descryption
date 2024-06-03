@@ -35,6 +35,74 @@ def hefty_check(field, zone, direction) :
         else :
             return 0
 
+def ai_category_checking(categories, player_field, opponent_deck, bushes, score, strat_change_threshold, in_strategy_chance) :
+    '''
+    checks for cards in a category and assigns them to in_strategy or out_of_strategy
+
+    Arguments:
+        categories: the categories to check (list)
+        player_field: the player's field (dict)
+        opponent_deck: Leshy's deck (list)
+        bushes: the bushes on the field (dict)
+        score: the score of the game (dict)
+        strat_change_threshold: the score difference in Leshy's favor that will trigger a change in his strategy (int)
+        in_strategy_chance: the percent chance that leshy will play a card in strategy (as opposed to out of strategy) (int)
+
+    Returns:
+        in_strategy: the zones in strategy (list)
+        out_of_strategy: the zones out of strategy (list)
+    '''
+    in_strategy = []
+    out_of_strategy = []
+    uninfluenced = True
+
+    # check for strategy and categories, then assign zones to in_strategy or out_of_strategy
+    # if a card in in a category, but the category does not apply, it will be checked for all other categories
+    # if a card is not in a category, and Leshy is not past the strat change threshold, it will be played defensively
+    # if a card is in a category, and it does apply, it will not be checked for other categories
+    if (score['opponent'] - score['player'] >= strat_change_threshold) and (opponent_deck[0].base_attack > 0): # Leshy winning enough to go on the offensive, regardless of card category
+        for zone in range(1, 6) :
+            if bushes[zone].species == '' :
+                if player_field[zone].species == '' :
+                    in_strategy.append(zone)
+                    uninfluenced = False
+                else :
+                    out_of_strategy.append(zone)
+
+    # check for categories in order of priority
+    for category in categories :
+        if opponent_deck[0].species in category['cards'] and uninfluenced :
+            out_of_strategy = []
+            for zone in range(1, 6) :
+                if bushes[zone].species == '' :
+                    if player_field[zone].sigil in category['deals_with'] :
+                        in_strategy.append(zone)
+                        uninfluenced = False
+                    else :
+                        out_of_strategy.append(zone)
+
+    # for those not in a category or whose category did not apply (defensive)
+    if uninfluenced :
+        out_of_strategy = []
+        for zone in range(1, 6) :
+            if bushes[zone].species == '' :
+                if player_field[zone].species != '' :
+                    in_strategy.append(zone)
+                else :
+                    out_of_strategy.append(zone)
+
+    # anti mighty leap (this is seperate from the other categories because it relies only on the card's sigil, not species)
+    if opponent_deck[0].sigil == 'airborne' :
+        for zone in range(1, 6) :
+            if player_field[zone].sigil == 'mighty leap' and random.randint(1,100) <= in_strategy_chance :
+                if zone in in_strategy :
+                    in_strategy.remove(zone)
+                if zone in out_of_strategy :
+                    out_of_strategy.remove(zone)
+                break
+
+    return in_strategy, out_of_strategy
+
 class Playmat :
     '''
     The field of play, including the bushes, the cards in play, the player's hand, and the score.
@@ -340,110 +408,8 @@ class Playmat :
         played = 0
         while played < play_count :
             
-            #region intelligent choosing of zones to prioritize
-            in_strategy = []
-            out_of_strategy = []
-            uninfluenced = True
-
-            # check for strategy and categories, then assign zones to in_strategy or out_of_strategy
-            # if a card in in a category, but the category does not apply, it will be checked for all other categories
-            # if a card is not in a category, and Leshy is not past the strat change threshold, it will be played defensively
-            # if a card is in a category, and it does apply, it will not be checked for other categories
-            if (self.score['opponent'] - self.score['player'] >= strat_change_threshold) and (self.opponent_deck[0].base_attack > 0): # Leshy winning enough to go on the offensive, regardless of card category
-                for zone in range(1, 6) :
-                    if self.bushes[zone].species == '' :
-                        if self.player_field[zone].species == '' :
-                            in_strategy.append(zone)
-                            uninfluenced = False
-                        else :
-                            out_of_strategy.append(zone)
-            
-            # anti airborne
-            if self.opponent_deck[0].species in card_library.Categories['anti_air'] and uninfluenced:
-                out_of_strategy = []
-                for zone in range(1, 6) :
-                    if self.bushes[zone].species == '' :
-                        if self.player_field[zone].sigil == 'airborne' :
-                            in_strategy.append(zone)
-                            uninfluenced = False
-                        else :
-                            out_of_strategy.append(zone)
-
-            # anti bifurcate
-            if self.opponent_deck[0].species in card_library.Categories['anti_bifurcate'] and uninfluenced:
-                out_of_strategy = []
-                for zone in range(1, 6) :
-                    if self.bushes[zone].species == '' :
-                        if self.player_field[zone].sigil == 'bifurcate' :
-                            in_strategy.append(zone)
-                            uninfluenced = False
-                        else :
-                            out_of_strategy.append(zone)
-
-            # anti death effects
-            if self.opponent_deck[0].species in card_library.Categories['wont_kill'] and uninfluenced:
-                out_of_strategy = []
-                for zone in range(1, 6) :
-                    if self.bushes[zone].species == '' :
-                        if self.player_field[zone].sigil in ['bees within', 'split', 'many lives', 'unkillable'] :
-                            in_strategy.append(zone)
-                            uninfluenced = False
-                        else :
-                            out_of_strategy.append(zone)
-
-            # anti venom
-            if self.opponent_deck[0].species in card_library.Categories['anti_venom'] and uninfluenced:
-                out_of_strategy = []
-                for zone in range(1, 6) :
-                    if self.bushes[zone].species == '' :
-                        if self.player_field[zone].sigil == 'venom' :
-                            in_strategy.append(zone)
-                            uninfluenced = False
-                        else :
-                            out_of_strategy.append(zone)
-
-            # anti moving right
-            if self.opponent_deck[0].species in card_library.Categories['anti_right'] and uninfluenced:
-                out_of_strategy = []
-                for zone in range(1, 6) :
-                    if self.bushes[zone].species == '' :
-                        if self.player_field[zone].sigil in ['lane shift right', 'hefty (right)'] :
-                            in_strategy.append(zone)
-                            uninfluenced = False
-                        else :
-                            out_of_strategy.append(zone)
-
-            # anti moving left
-            if self.opponent_deck[0].species in card_library.Categories['anti_left'] and uninfluenced:
-                out_of_strategy = []
-                for zone in range(1, 6) :
-                    if self.bushes[zone].species == '' :
-                        if self.player_field[zone].sigil in ['lane shift left', 'hefty (left)'] :
-                            in_strategy.append(zone)
-                            uninfluenced = False
-                        else :
-                            out_of_strategy.append(zone)
-
-            # for those not in a category or whose category did not apply (defensive)
-            if uninfluenced :
-                out_of_strategy = []
-                for zone in range(1, 6) :
-                    if self.bushes[zone].species == '' :
-                        if self.player_field[zone].species != '' :
-                            in_strategy.append(zone)
-                        else :
-                            out_of_strategy.append(zone)
-            
-            # anti mighty leap (this is seperate from the other categories because it relies only on the card's sigil, not species)
-            if self.opponent_deck[0].sigil == 'airborne' :
-                for zone in range(1, 6) :
-                    if self.player_field[zone].sigil == 'mighty leap' and random.randint(1,100) <= in_strategy_chance :
-                        if zone in in_strategy :
-                            in_strategy.remove(zone)
-                        if zone in out_of_strategy :
-                            out_of_strategy.remove(zone)
-                        break
-            #endregion
+            # intelligent choosing of zones to prioritize
+            in_strategy, out_of_strategy = ai_category_checking(card_library.AI_categories, self.player_field, self.opponent_deck, self.bushes, self.score, strat_change_threshold, in_strategy_chance)
 
             # ensure that the loop will not run if there are no zones to play to, preventing infinite loop
             if len(in_strategy) + len(out_of_strategy) == 0 :
@@ -617,90 +583,17 @@ class Playmat :
         self.print_field()
         self.print_hand()
 
-if __name__ == '__main__' :
-    (term_cols, term_rows) = os.get_terminal_size()
-    card_gaps = (term_cols*55 // 100) // 5 - 15
-    QoL.clear()
-    leshy_deck = deck.Deck([card_library.Asp(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF()])
-    player_deck = deck.Deck([card_library.DumpyTF(), card_library.Lobster(), card_library.BoppitW(), card_library.Ouroboros(), card_library.Turtle(), card_library.Asp(), card_library.Falcon(), card_library.DumpyTF(), card_library.Turtle(), card_library.BoppitW()])
-    squirrels = [card_library.Squirrel()]
-    for n in range(19) :
-        squirrels.append(card_library.Squirrel())
-    player_squirrels = deck.Deck(squirrels)
-    testmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
-    #region
-    # testmat.player_field[1] = card_library.Rabbit()
-    # testmat.player_field[2] = card_library.Falcon()
-    # testmat.player_field[3] = card_library.DumpyTF()
-    # testmat.player_field[4] = card_library.Rabbit()
-    # testmat.player_field[1].play(zone=1)
-    # testmat.player_field[2].play(zone=2)
-    # testmat.player_field[3].play(zone=3)
-    # testmat.player_field[4].play(zone=4)
-    # testmat.draw('resource')
-    # testmat.draw('main')
-    # testmat.draw('resource')
-    # testmat.draw('resource')
-    # testmat.draw('main')
-    # bad_input = True
-    # second_bad_input = False
-    # invalid_index = False
-    # while bad_input :
-    #     testmat.print_full_field()
-    #     if invalid_index :
-    #         print('Invalid index.')
-    #         invalid_index = False
-    #     play_index = input('Card to play: ')
-    #     if play_index == 'quit' : # for testing purposes
-    #         exit()
-    #     # if play_index == '' : # commented for testing purposes
-    #     #     break
-    #     try :
-    #         play_index = int(play_index) - 1
-    #     except :
-    #         play_index = len(testmat.hand) + 1
-    #     if play_index in range(len(testmat.hand)) :
-    #         bad_input = False
-    #         QoL.clear()
-    #         testmat.print_field()
-    #         print(' '*card_gaps + 'Card to play: ')
-    #         testmat.hand[play_index].explain()
-    #         second_bad_input = True
-    #     else :
-    #         invalid_index = True
-    #     while second_bad_input and not bad_input:
-    #         zone_to_play = input('Zone to play: (press enter to go back) ')
-    #         if zone_to_play == 'quit' : # for testing purposes
-    #             exit()
-    #         if zone_to_play == '' :
-    #             bad_input = True
-    #             break
-    #         try :
-    #             zone_to_play = int(zone_to_play)
-    #         except :
-    #             zone_to_play = 0
-    #         if zone_to_play in range(1, 6) :
-    #             second_bad_input = False
-    #             if not testmat.play_card(play_index, zone_to_play) :
-    #                 bad_input = True
-    #                 second_bad_input = False
-    #         else :
-    #             print('Invalid zone.')
-    # input('Press enter to continue.')
-    # testmat.print_remaining()
-    # input('Press enter to continue.')
-    # testmat.print_graveyard()
-    # input('Press enter to continue.')
-    # testmat.print_full_field()
-    # input('Press enter to continue. (attack)')
-    # testmat.attack()
-    # testmat.check_states()
-    # testmat.print_full_field()
-    # input('Press enter to continue. (advance)')
-    # testmat.advance()
-    # testmat.print_full_field()
-    #endregion
-    def test_advancing():
+def test_advancing():
+        QoL.clear()
+
+        # create decks
+        leshy_deck = deck.Deck([card_library.Asp(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF()])
+        player_deck = deck.Deck([card_library.DumpyTF(), card_library.Lobster(), card_library.BoppitW(), card_library.Ouroboros(), card_library.Turtle(), card_library.Asp(), card_library.Falcon(), card_library.DumpyTF(), card_library.Turtle(), card_library.BoppitW()])
+        squirrels = [card_library.Squirrel()]
+        for n in range(19) :
+            squirrels.append(card_library.Squirrel())
+        player_squirrels = deck.Deck(squirrels)
+
         # Create a sample playmat with cards on the field
         playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
         card_list = []
@@ -715,8 +608,8 @@ if __name__ == '__main__' :
         print("Initial Field:")
         playmat.print_full_field()
 
-        # Get user input before advancing
-        input("Press enter to advance.")
+        # # Get user input before advancing
+        # input("Press enter to advance.")
 
         # Call the advance method
         playmat.advance()
@@ -725,5 +618,5 @@ if __name__ == '__main__' :
         print("Field after Advancing:")
         playmat.print_full_field()
 
-    # Call the test_advancing function
+if __name__ == '__main__' :
     test_advancing()

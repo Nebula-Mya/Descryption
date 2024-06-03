@@ -121,33 +121,50 @@ Poss_Leshy = {
     3 : [Lobster(), Grizzly()],
 }
 
-# categories of cards for intelligent Leshy (lists of card.species strings)
-Categories = {
+# categories of cards for intelligent Leshy in order of priority (dicts in list)
+AI_categories = [
     # good against airbornes (non airborne glass cannons and those with mighty leap)
-    'anti_air' : ['Bullfrog', 'Asp', 'Wolf'],
-    # priority: 0
+    {
+        'category' : 'anti_air', 
+        'cards' : ['Bullfrog', 'Asp', 'Wolf'], 
+        'deals_with' : ['airborne']
+        },
 
-    # good against bifurcates (non airborne glass cannons (airbornes wouldnt kill the bifurcate)
-    'anti_bifurcate' : ['Asp', 'Wolf'],
-    # priority: 1
-
-    # good against those moving right (moves with, bifurcate, or trifurcate(to be added))
-    'anti_right' : ['Shrew', 'Lobster'],
-    # priority: 4
-    ## this being higher priority than anti_left may introduce a bias with bifurcates and trifurcates
-
-    # good against those moving left (moves with, bifurcate, or trifurcate(to be added))
-    'anti_left' : ['Rabbit', 'Lobster'],
-    # priority: 5
+    # good against bifurcates (non airborne glass cannons (airbornes wouldnt kill the bifurcate))
+    {
+        'category' : 'anti_bifurcate', 
+        'cards' : ['Asp', 'Wolf'], 
+        'deals_with' : ['bifurcate']
+        },
 
     # good against those with on death effects (tanks, airbornes, and bifurcates) (death effects are bees within, split, many lives, and unkillable)
-    'wont_kill' : ['Turtle', 'Falcon', 'Raven', 'Lobster'],
-    # priority: 2
+    {
+        'category' : 'wont_kill', 
+        'cards' : ['Turtle', 'Falcon', 'Raven', 'Lobster'], 
+        'deals_with' : ['bees within', 'split', 'many lives', 'unkillable']
+        },
 
     # good against those with venom (fragiles and waterbornes(to be added))
-    'anti_venom' : ['Asp', 'Cockroach', 'Dumpy Tree Frog']
-    # priority: 3
-}
+    {
+        'category' : 'anti_venom', 
+        'cards' : ['Asp', 'Cockroach', 'Dumpy Tree Frog'], 
+        'deals_with' : ['venom']
+        },
+
+    # good against those moving right (moves with, bifurcate, or trifurcate(to be added))
+    {
+        'category' : 'anti_right', 
+        'cards' : ['Shrew', 'Lobster'], 
+        'deals_with' : ['lane shift right', 'hefty (right)']
+        },
+
+    # good against those moving left (moves with, bifurcate, or trifurcate(to be added))
+    {
+        'category' : 'anti_left', 
+        'cards' : ['Rabbit', 'Lobster'], 
+        'deals_with' : ['lane shift left', 'hefty (left)']
+        },
+]
 
 if __name__ == '__main__' :
     import deck

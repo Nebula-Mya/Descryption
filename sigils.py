@@ -68,11 +68,11 @@ Dict = {
         ["  Ω  "," CXƆ ","  V  "],
         "Doesn't die when sacrificed."
         ],
-    'waterborne' : [
+    'waterborne' : [ # unimplemented
         ["<⁻v⁻>","ˎ\\ /ˏ","λ/λ\\λ"],
         'Attacks directed toward this card hit the owner directly.'
         ],
-    'vole hole' : [
+    'vole hole' : [ # unimplemented
         [" ___ ","/…¨…\\","‾‾‾‾‾"],
         'Adds a vole to your hand when played.'
         ],
