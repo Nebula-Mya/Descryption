@@ -230,18 +230,23 @@ class BlankCard() :
             sigil_text = 'No'
         else :
             sigil_text = self.sigil.title()
-        max_desc_first = term_cols - 17 - card_gaps
+        # get parameters for sigil description
+        max_desc_first = term_cols - 25 - card_gaps*2 - len(sigil_text)
+        max_desc_rest = term_cols - 21 - card_gaps*2
+        # split description into lines
+        [desc_first_line, desc_second_line, desc_third_line] = QoL.split_nicely(sigils.Dict[self.sigil][1], max_desc_first, max_desc_rest, max_lines=3, add_blank_lines=True)
+
         description = """{spc},-------------,
 {spc}|{species} {C}|  {spc}{card} requires {saccs} sacrifices to summon.
 {spc}|             |
 {spc}|             |
 {spc}|    {rw1}    |
 {spc}|    {rw2}    |  {spc}{sigil} sigil: {desc1}
-{spc}|    {rw3}    |      {desc2}
-{spc}|             |      {desc3}
+{spc}|    {rw3}    |      {spc}{desc2}
+{spc}|             |      {spc}{desc3}
 {spc}|             |
 {spc}|          {S}|  {spc}{card} has an attack power of {attack} and life points {life} of {max_life}.
-{spc}'-------------'""".format(species=self.name, C=self.cost, rw1=sigils.Dict[self.sigil][0][0], rw2=sigils.Dict[self.sigil][0][1], rw3=sigils.Dict[self.sigil][0][2], S=self.stats, saccs=self.saccs, sigil=sigil_text, attack=self.current_attack, life=self.current_life, max_life=self.base_life, card=self.species, spc=' '*card_gaps, desc1=sigils.Dict[self.sigil][1])
+{spc}'-------------'""".format(species=self.name, C=self.cost, rw1=sigils.Dict[self.sigil][0][0], rw2=sigils.Dict[self.sigil][0][1], rw3=sigils.Dict[self.sigil][0][2], S=self.stats, saccs=self.saccs, sigil=sigil_text, attack=self.current_attack, life=self.current_life, max_life=self.base_life, card=self.species, spc=' '*card_gaps, desc1=desc_first_line, desc2=desc_second_line, desc3=desc_third_line)
         print(description)
 
     def updateASCII(self) :

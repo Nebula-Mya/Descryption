@@ -1,7 +1,7 @@
 Dict = {
     '' : [ # sigil name
         ["     ","     ","     "], # sigil icon
-        '' # sigil description (60 chars max)
+        '' # sigil description
         ],
 
     'bifurcate' : [
