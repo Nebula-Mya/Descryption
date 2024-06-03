@@ -306,7 +306,7 @@ def deck_gen(possible_cards, size) :
         deck_list.append(card)
     return deck.Deck(deck_list)
 
-def main(deck_size, hand_size) :
+def main(deck_size, hand_size, Leshy_play_count_median=2, Leshy_play_count_variance=1, Leshy_in_strategy_chance=75, Leshy_strat_change_threshold=3) :
     # game setup
     opponent_deck = deck_gen(card_library.Poss_Leshy, deck_size*2 + 20)
     opponent_decklist = opponent_deck.shuffle()
@@ -315,7 +315,7 @@ def main(deck_size, hand_size) :
     squirrels_deck = [card_library.Squirrel()]
     for n in range(19) :
         squirrels_deck.append(card_library.Squirrel())
-    playfield = field.Playmat(deck=player_decklist, squirrels=squirrels_deck, opponent_deck=opponent_decklist)
+    playfield = field.Playmat(deck=player_decklist, squirrels=squirrels_deck, opponent_deck=opponent_decklist, Leshy_play_count_median=Leshy_play_count_median, Leshy_play_count_variance=Leshy_play_count_variance, Leshy_in_strategy_chance=Leshy_in_strategy_chance, Leshy_strat_change_threshold=Leshy_strat_change_threshold)
     # advance from bushes
     playfield.advance()
     # draw squirrel and hand_size - 1 card

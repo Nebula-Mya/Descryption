@@ -1,5 +1,6 @@
 import card
 import QoL
+import random
 
 class Squirrel(card.BlankCard) :
     '''
@@ -104,7 +105,11 @@ class UndeadCat(card.BlankCard) :
 
 class MooseBuck(card.BlankCard) :
     def __init__(self) :
-        super().__init__(name='Moose Buck', cost=4, attack=3, life=7, sigil='hefty (right)')
+        if random.randint(0,1) == 0 :
+            sigil_direction = 'hefty (left)'
+        else :
+            sigil_direction = 'hefty (right)'
+        super().__init__(name='Moose Buck', cost=4, attack=3, life=7, sigil=sigil_direction)
 
 # Allowed cards:
 Poss_Playr = {
@@ -155,14 +160,16 @@ AI_categories = [
     {
         'category' : 'anti_right', 
         'cards' : ['Shrew', 'Lobster'], 
-        'deals_with' : ['lane shift right', 'hefty (right)']
+        'deals_with' : ['lane shift right', 'hefty (right)'],
+        'opp_cards' : ['Rabbit', 'Lobster']
         },
 
     # good against those moving left (moves with, bifurcate, or trifurcate(to be added))
     {
         'category' : 'anti_left', 
         'cards' : ['Rabbit', 'Lobster'], 
-        'deals_with' : ['lane shift left', 'hefty (left)']
+        'deals_with' : ['lane shift left', 'hefty (left)'],
+        'opp_cards' : ['Shrew', 'Lobster']
         },
 ]
 

@@ -98,6 +98,24 @@ def ai_category_checking(categories, player_field, opponent_deck, bushes, score,
                     in_strategy.remove(zone)
                 if zone in out_of_strategy :
                     out_of_strategy.remove(zone)
+    
+    for category in categories :
+        if opponent_deck[0].sigil in category['deals_with'] :
+            for zone in range(1, 6) :
+
+                # left and right cards counter eachother, so it needs to also rely on the stats of the cards
+                if category['category'] == 'anti_right' or category['category'] == 'anti_left' :
+                    if opponent_deck[0].species in category['cards'] and ('left' not in player_field[zone].sigil) and ('right' not in player_field[zone].sigil) and random.randint(1,100) <= in_strategy_chance :
+                        if zone in in_strategy :
+                            in_strategy.remove(zone)
+                        if zone in out_of_strategy :
+                            out_of_strategy.remove(zone)
+                else :
+                    if opponent_deck[0].species in category['cards'] and random.randint(1,100) <= in_strategy_chance :
+                        if zone in in_strategy :
+                            in_strategy.remove(zone)
+                        if zone in out_of_strategy :
+                            out_of_strategy.remove(zone)
 
     return in_strategy, out_of_strategy
 
@@ -109,6 +127,10 @@ class Playmat :
         deck: the player's main deck (list)
         squirrels: the player's resource deck (list)
         opponent_deck: Leshy's deck (list)
+        Leshy_play_count_median: the number of cards Leshy will play each turn, defaults to 2 (int)
+        Leshy_play_count_variance: the variance of the number of cards Leshy will play each turn, defaults to 1 (int)
+        Leshy_in_strategy_chance: the percent chance that Leshy will play a card in strategy (as opposed to out of strategy), defaults to 75 (int)
+        Leshy_strat_change_threshold: the score difference in Leshy's favor that will trigger a change in his strategy, defaults to 3 (int)
     
     Other Attributes:
         bushes: the bushes on the field (dict)
@@ -133,7 +155,7 @@ class Playmat :
         print_field() : prints the field and score scales
         print_full_field() : prints the field and player's hand
     '''
-    def __init__(self, deck, squirrels, opponent_deck) :
+    def __init__(self, deck, squirrels, opponent_deck, Leshy_play_count_median=2, Leshy_play_count_variance=1, Leshy_in_strategy_chance=75, Leshy_strat_change_threshold=3) :
         self.bushes = {0: card.BlankCard(), 1: card.BlankCard(), 2: card.BlankCard(), 3: card.BlankCard(), 4: card.BlankCard(), 5: card.BlankCard(), 6: card.BlankCard()}
         self.player_field = {0: card.BlankCard(), 1: card.BlankCard(), 2: card.BlankCard(), 3: card.BlankCard(), 4: card.BlankCard(), 5: card.BlankCard(), 6: card.BlankCard()}
         self.opponent_field = {0: card.BlankCard(), 1: card.BlankCard(), 2: card.BlankCard(), 3: card.BlankCard(), 4: card.BlankCard(), 5: card.BlankCard(), 6: card.BlankCard()}
@@ -144,6 +166,10 @@ class Playmat :
         self.player_squirrels = squirrels
         self.opponent_deck = opponent_deck
         self.active = 'player'
+        self.Leshy_play_count_median = Leshy_play_count_median
+        self.Leshy_play_count_variance = Leshy_play_count_variance
+        self.Leshy_in_strategy_chance = Leshy_in_strategy_chance
+        self.Leshy_strat_change_threshold = Leshy_strat_change_threshold
     
     def draw(self, deck) :
         '''
@@ -385,7 +411,7 @@ class Playmat :
         '''
         #region constant variables and random gen
         # play count is the number of cards that leshy will play that turn
-        play_count_median = 2
+        play_count_median = self.Leshy_play_count_median
 
         # shift range slightly to match amount of cards on player's field
         player_card_count = 0
@@ -397,16 +423,18 @@ class Playmat :
         elif player_card_count < 2 :
             play_count_median -= 1
 
-        play_count_variance = 1
+        play_count_variance = self.Leshy_play_count_variance
         play_count = random.randint(play_count_median - play_count_variance, play_count_median + play_count_variance)
         if play_count < 1 :
             play_count = 1
+        elif play_count > 5 :
+            play_count = 5
 
         # in_strategy_chance is the percent chance that leshy will play a card in strategy (as opposed to out of strategy)
-        in_strategy_chance = 75
+        in_strategy_chance = self.Leshy_in_strategy_chance
 
         # strat_change_threshold is the score difference in Leshy's favor that will trigger a change in his strategy
-        strat_change_threshold = 2
+        strat_change_threshold = self.Leshy_strat_change_threshold
         #endregion
 
         #region advance from bushes to field
