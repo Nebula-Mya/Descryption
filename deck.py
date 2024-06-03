@@ -1,4 +1,3 @@
-import itertools312
 import QoL
 import random
 import copy
@@ -70,7 +69,7 @@ class Deck() :
         cards_per_row = term_cols // (card_gaps + 15) 
         if cards_per_row >= 9 :
             cards_per_row = 8
-        chunked = list(itertools312.batched(sorted_deck, cards_per_row)) 
+        chunked = QoL.chunk(sorted_deck, cards_per_row)
         deck_string = ''
         for chunk in chunked :
             for n in range(11) :

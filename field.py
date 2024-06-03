@@ -3,7 +3,6 @@ import card_library
 import deck
 import QoL
 import ASCII_text
-import itertools312
 import copy
 import random
 import os
@@ -474,7 +473,7 @@ class Playmat :
         cards_per_row = term_cols // (card_gaps + 15) 
         if cards_per_row >= 9 :
             cards_per_row = 8 
-        chunked = list(itertools312.batched(sorted_main_deck, cards_per_row))  
+        chunked = QoL.chunk(sorted_main_deck, cards_per_row)  
         deck_string = ''
         for chunk in chunked :
             for n in range(11) :
@@ -497,7 +496,7 @@ class Playmat :
         cards_per_row = term_cols // (card_gaps + 15) 
         if cards_per_row >= 9 :
             cards_per_row = 8 
-        chunked = list(itertools312.batched(self.graveyard, cards_per_row))  
+        chunked = QoL.chunk(self.graveyard, cards_per_row)  
         graveyard_string = ''
         for chunk in chunked :
             for n in range(11) :
@@ -519,7 +518,7 @@ class Playmat :
         cards_per_row = term_cols // (card_gaps + 15) 
         if cards_per_row >= 9 :
             cards_per_row = 8 
-        chunked = list(itertools312.batched(self.hand, cards_per_row)) 
+        chunked = QoL.chunk(self.hand, cards_per_row) 
         hand_string = ''
         for chunk in chunked :
             for n in range(11) :

@@ -121,6 +121,24 @@ def split_nicely(text, first_line_length, gen_line_length, max_lines=10, add_bla
 
     return lines
 
+def chunk(iterable, n) :
+    '''
+    chunks an iterable into n-sized chunks
+
+    Arguments:
+        iterable: the iterable to chunk (iterable)
+        n: the size of the chunks (int)
+    
+    Returns:
+        Chunks: a list of the chunks in order (list)
+    '''
+    chunks = []
+
+    for i in range(0, len(iterable), n) :
+        chunks.append(iterable[i:i + n])
+
+    return chunks
+
 if __name__ == '__main__' :
     clear()
     [deck_size, hand_size] = read_file('config.txt', 'Descryption_Data/config.txt')
