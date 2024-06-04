@@ -69,21 +69,21 @@ Dict = {
         "Doesn't die when sacrificed."
         ],
 
-    'waterborne' : [
+    'waterborne' : [ # incorporate into AI
         ["<⁻v⁻>","ˎ\\ /ˏ","λ/λ\\λ"],
         'Attacks directed toward this card hit the owner directly.'
         ],
         # waterborne cards (to be added):
         ### ___
 
-    'vole hole' : [
+    'vole hole' : [ # incorporate into AI
         [" ___ ","/…¨…\\","‾‾‾‾‾"],
         'Adds a vole to your hand when played.'
         ],
         # vole hole cards (to be added):
         ### ___
 
-    'touch of death' : [
+    'touch of death' : [ # incorporate into AI
         ["\\´‾`/","|°Δ°|","/\'\"\'\\"],
         'Always kills the card it attacks, regardless of health.'
         ],
