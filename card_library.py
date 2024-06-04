@@ -157,7 +157,7 @@ AI_categories = [
     # good against those with on death effects (tanks, airbornes, and bifurcates) (death effects are bees within, split, many lives, and unkillable)
     {
         'category' : 'wont_kill', 
-        'cards' : ['Turtle', 'Falcon', 'Raven', 'Lobster', 'Warren'], 
+        'cards' : ['Turtle', 'Falcon', 'Raven', 'Lobster', 'Warren', 'Dam', 'Vole'], 
         'deals_with' : ['bees within', 'split', 'many lives', 'unkillable']
         },
 
