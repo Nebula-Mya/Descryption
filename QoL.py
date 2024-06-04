@@ -162,7 +162,6 @@ def title_case(string) :
             title_cased += ' '
     return title_cased
 
-
 if __name__ == '__main__' :
     clear()
     [deck_size, hand_size] = read_file('config.txt', 'Descryption_Data/config.txt')
