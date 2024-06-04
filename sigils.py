@@ -92,7 +92,7 @@ Dict = {
 
     'dam builder' : [ # unimplemented
         ["~~/\\ ","~/\\_\\","/__\\ "],
-        'Builds dams on either side when played.' # dam is C0 0/2
+        'Builds dams on either side when played.'
         ],
         # dam builder cards:
         ### ___
