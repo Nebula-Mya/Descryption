@@ -77,6 +77,6 @@ if __name__ == '__main__' :
     print('-'*120)
     print(lose)
     print('-'*120)
-    player_weight = '▄▄▄__' 
-    opponent_weight = '_____'
+    player_weight = 'OOOO    ' 
+    opponent_weight = '        '
     print_scales(player_weight, opponent_weight)
