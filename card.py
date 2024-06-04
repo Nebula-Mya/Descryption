@@ -231,7 +231,7 @@ class BlankCard() :
         elif 'hefty' in self.sigil:
             sigil_text = 'Hefty:'
         else :
-            sigil_text = self.sigil.title() + ':'
+            sigil_text = QoL.title_case(self.sigil) + ':'
         # get parameters for sigil description
         max_desc_first = term_cols - 18 - card_gaps*2 - len(sigil_text)
         max_desc_rest = term_cols - 14 - card_gaps*2

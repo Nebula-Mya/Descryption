@@ -76,6 +76,10 @@ Dict = {
         [" ___ ","/…¨…\\","‾‾‾‾‾"],
         'Adds a vole to your hand when played.'
         ],
+    'touch of death' : [ # unimplemented
+        ["\\´‾`/","|°Δ°|","/\'\"\'\\"],
+        'Always kills the card it attacks, regardless of health.'
+        ],
 }
 
 if __name__ == '__main__':

@@ -139,6 +139,28 @@ def chunk(iterable, n) :
 
     return chunks
 
+def title_case(string) :
+    '''
+    converts a string to title case
+
+    Arguments:
+        string: the string to convert (str)
+    
+    Returns:
+        the title cased string (str)
+    '''
+    words = string.split()
+    title_cased = ''
+    for i in range(len(words)) :
+        if i == 0 :
+            title_cased += words[i].capitalize() + ' '
+        elif words[i] not in ['and', 'or', 'the', 'a', 'an', 'of', 'in', 'on', 'at', 'to', 'with', 'from', 'by', 'as', 'for', 'but', 'nor', 'so', 'yet'] :
+            title_cased += words[i].capitalize() + ' '
+        else :
+            title_cased += words[i] + ' '
+    return title_cased
+
+
 if __name__ == '__main__' :
     clear()
     [deck_size, hand_size] = read_file('config.txt', 'Descryption_Data/config.txt')
