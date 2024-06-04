@@ -89,21 +89,13 @@ def ai_category_checking(categories, player_field, opponent_deck, bushes, score,
                     in_strategy.append(zone)
                 else :
                     out_of_strategy.append(zone)
-
-    # anti mighty leap (this is seperate from the other categories because it relies only on the card's sigil, not species)
-    if opponent_deck[0].sigil == 'airborne' :
-        for zone in range(1, 6) :
-            if player_field[zone].sigil == 'mighty leap' and random.randint(1,100) <= in_strategy_chance :
-                if zone in in_strategy :
-                    in_strategy.remove(zone)
-                if zone in out_of_strategy :
-                    out_of_strategy.remove(zone)
     
+    # check for cards that counter Leshy's cards
     for category in categories :
         if opponent_deck[0].sigil in category['deals_with'] :
             for zone in range(1, 6) :
 
-                # left and right cards counter eachother, so it needs to also rely on the stats of the cards
+                # left and right cards counter eachother, so it only focuses on anti shifting cards that don't move
                 if category['category'] == 'anti_right' or category['category'] == 'anti_left' :
                     if opponent_deck[0].species in category['cards'] and ('left' not in player_field[zone].sigil) and ('right' not in player_field[zone].sigil) and random.randint(1,100) <= in_strategy_chance :
                         if zone in in_strategy :
@@ -250,6 +242,8 @@ class Playmat :
             self.player_field[zone] = self.hand[index]
             self.player_field[zone].play(zone=zone)
             self.hand.pop(index)
+            if self.player_field[zone].sigil == 'vole hole' :
+                self.hand.append(card_library.Vole())
             played = True
         QoL.clear()
         self.print_field()

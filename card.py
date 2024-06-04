@@ -130,6 +130,8 @@ class BlankCard() :
         ## airborne: attacks front, ignores other creatures
         elif self.sigil == 'airborne' :
             opponent_teeth += front_card.takeDamage(self.current_attack, from_air=True, in_opp_field=to_opp_field, bushes=bushes)
+        elif self.sigil == 'touch of death' :
+            opponent_teeth += front_card.takeDamage(self.current_attack, deathtouch=True, in_opp_field=to_opp_field, bushes=bushes)
         ## irrelevant or no sigil: attacks front
         else :
             opponent_teeth += front_card.takeDamage(self.current_attack, in_opp_field=to_opp_field, bushes=bushes)
@@ -156,7 +158,7 @@ class BlankCard() :
             self.line_cursor = 2
         return self.text_lines[self.line_cursor - 1]
 
-    def takeDamage(self, damage, from_air=False, in_opp_field=False, in_bushes=False, bushes={}) :
+    def takeDamage(self, damage, from_air=False, in_opp_field=False, in_bushes=False, bushes={}, deathtouch=False) :
         '''
         reduces current life by damage
 
@@ -171,15 +173,15 @@ class BlankCard() :
             teeth: damage to controller (int)
         '''
         teeth = 0
-        if (self.species == '' or self.status == 'dead' or (from_air and self.sigil != 'mighty leap')) and not in_bushes :
+        if (self.species == '' or self.status == 'dead' or (from_air and self.sigil != 'mighty leap') or self.sigil == 'waterborne') and not in_bushes :
             teeth = damage
         else :
             prev_life = self.current_life
             self.current_life -= damage
             self.updateASCII()
-            if self.current_life <= 0 :
+            if self.current_life <= 0 or deathtouch:
                 self.status = 'dead'
-                if in_opp_field :
+                if in_opp_field and self.current_life <= 0 :
                     excess_damage = damage - prev_life
                     bushes[self.zone].takeDamage(excess_damage, from_air, in_bushes=True)
         return teeth

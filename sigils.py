@@ -69,32 +69,39 @@ Dict = {
         "Doesn't die when sacrificed."
         ],
 
-    'waterborne' : [ # unimplemented
+    'waterborne' : [
         ["<⁻v⁻>","ˎ\\ /ˏ","λ/λ\\λ"],
         'Attacks directed toward this card hit the owner directly.'
         ],
-        # waterborne cards:
+        # waterborne cards (to be added):
         ### ___
 
-    'vole hole' : [ # unimplemented
+    'vole hole' : [
         [" ___ ","/…¨…\\","‾‾‾‾‾"],
-        'Adds a vole to your hand when played.' # vole is C0 0/1
+        'Adds a vole to your hand when played.'
         ],
-        # vole hole cards:
-        ### Warren (C1 0/2 Vole Hole) ['warren' can be used properly for animals other than rabbits, I checked]
+        # vole hole cards (to be added):
+        ### ___
 
-    'touch of death' : [ # unimplemented
+    'touch of death' : [
         ["\\´‾`/","|°Δ°|","/\'\"\'\\"],
         'Always kills the card it attacks, regardless of health.'
         ],
-        # touch of death cards:
+        # touch of death cards (to be added):
         ### ___
 
     'dam builder' : [ # unimplemented
         ["~~/\\ ","~/\\_\\","/__\\ "],
         'Builds dams on either side when played.'
         ],
-        # dam builder cards:
+        # dam builder cards (to be added):
+        ### ___
+
+    'corpse eater' : [ # unimplemented
+        ["ᴦ==ͽ ","L(Ō) "," \'\"\' "],
+        'Plays itself to a zone a card died in.'
+        ],
+        # corpse eater cards (to be added):
         ### ___
 }
 

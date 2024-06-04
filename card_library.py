@@ -13,7 +13,7 @@ class Rabbit(card.BlankCard) :
     def __init__(self, blank_cost=False) :
         super().__init__(name='Rabbit', cost=0, attack=1, life=1, sigil='lane shift right', blank_cost=blank_cost)
     
-class OppositeRabbit(card.BlankCard) :
+class OppositeRabbit(card.BlankCard) : # only for Leshy
     def __init__(self, blank_cost=False) :
         super().__init__(name='Rabbit', cost=0, attack=1, life=1, sigil='lane shift left', blank_cost=blank_cost)
 
@@ -21,7 +21,7 @@ class Shrew(card.BlankCard) :
     def __init__(self, blank_cost=False) :
         super().__init__(name='Shrew', cost=0, attack=1, life=1, sigil='lane shift left', blank_cost=blank_cost)
 
-class OppositeShrew(card.BlankCard) :
+class OppositeShrew(card.BlankCard) : # only for Leshy
     def __init__(self, blank_cost=False) :
         super().__init__(name='Shrew', cost=0, attack=1, life=1, sigil='lane shift right', blank_cost=blank_cost)
 
@@ -78,7 +78,7 @@ class Raven(card.BlankCard) :
     def __init__(self, blank_cost=False) :
         super().__init__(name='Raven', cost=2, attack=2, life=3, sigil='airborne', blank_cost=blank_cost)
 
-class Bee(card.BlankCard) :
+class Bee(card.BlankCard) : # only given by a sigil
     def __init__(self, blank_cost=False) :
         super().__init__(name='Bee', cost=0, attack=1, life=1, sigil='airborne', blank_cost=blank_cost)
 
@@ -111,14 +111,22 @@ class MooseBuck(card.BlankCard) :
             sigil_direction = 'hefty (right)'
         super().__init__(name='Moose Buck', cost=4, attack=3, life=7, sigil=sigil_direction, blank_cost=blank_cost)
 
-class Dam(card.BlankCard) :
+class Dam(card.BlankCard) : # only given by a sigil
     def __init__(self, blank_cost=True) :
         super().__init__(name='Dam', cost=0, attack=0, life=2, blank_cost=blank_cost)
+
+class Vole(card.BlankCard) : # only given by a sigil
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Vole', cost=0, attack=0, life=1, blank_cost=blank_cost)
+
+class Warren(card.BlankCard) :
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Warren', cost=1, attack=0, life=2, sigil='vole hole', blank_cost=blank_cost)
 
 # Allowed cards:
 Poss_Playr = {
     0 : [Rabbit(), Shrew(), BlackGoat()],
-    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog(), Beehive(), Cat()],
+    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog(), Beehive(), Cat(), Warren()],
     2 : [Asp(), Falcon(), Cockroach(), Wolf(), Raven()]*3 + [Ouroboros()],
     3 : [Lobster(), Grizzly()],
     4 : [BoppitW(), Urayuli(), MooseBuck()]
@@ -149,7 +157,7 @@ AI_categories = [
     # good against those with on death effects (tanks, airbornes, and bifurcates) (death effects are bees within, split, many lives, and unkillable)
     {
         'category' : 'wont_kill', 
-        'cards' : ['Turtle', 'Falcon', 'Raven', 'Lobster'], 
+        'cards' : ['Turtle', 'Falcon', 'Raven', 'Lobster', 'Warren'], 
         'deals_with' : ['bees within', 'split', 'many lives', 'unkillable']
         },
 
