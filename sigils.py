@@ -68,18 +68,34 @@ Dict = {
         ["  Ω  "," CXƆ ","  V  "],
         "Doesn't die when sacrificed."
         ],
+
     'waterborne' : [ # unimplemented
         ["<⁻v⁻>","ˎ\\ /ˏ","λ/λ\\λ"],
         'Attacks directed toward this card hit the owner directly.'
         ],
+        # waterborne cards:
+        ### ___
+
     'vole hole' : [ # unimplemented
         [" ___ ","/…¨…\\","‾‾‾‾‾"],
-        'Adds a vole to your hand when played.'
+        'Adds a vole to your hand when played.' # vole is C0 0/1
         ],
+        # vole hole cards:
+        ### Warren (C1 0/2 Vole Hole) ['warren' can be used properly for animals other than rabbits, I checked]
+
     'touch of death' : [ # unimplemented
         ["\\´‾`/","|°Δ°|","/\'\"\'\\"],
         'Always kills the card it attacks, regardless of health.'
         ],
+        # touch of death cards:
+        ### ___
+
+    'dam builder' : [ # unimplemented
+        ["~~/\\ ","~/\\_\\","/__\\ "],
+        'Builds dams on either side when played.' # dam is C0 0/2
+        ],
+        # dam builder cards:
+        ### ___
 }
 
 if __name__ == '__main__':
@@ -93,7 +109,7 @@ if __name__ == '__main__':
     for key in Dict:
         if key == '':
             continue
-        print(tab + key.title() + ':')
+        print(tab + QoL.title_case(key) + ':')
         example = card.BlankCard(sigil=key)
         example.species = 'EXAMPLE CARD'
         example.explain()

@@ -103,7 +103,7 @@ def print_settings_options() :
     prints the settings options
     '''
     print(QoL.center_justified('Settings   '))
-    print(QoL.center_justified('==========   '))
+    print(QoL.center_justified('='*26 + '   '))
     print(QoL.center_justified('1.  Change difficulty     '))
     print(QoL.center_justified('2.  Change deck size      '))
     print(QoL.center_justified('3.  Change hand size      '))

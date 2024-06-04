@@ -6,110 +6,114 @@ class Squirrel(card.BlankCard) :
     '''
     A squirrel card, which can be used as a resource to play other cards.
     '''
-    def __init__(self) :
-        super().__init__(name='Squirrel', cost=0, attack=0, life=1)
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Squirrel', cost=0, attack=0, life=1, blank_cost=blank_cost)
 
 class Rabbit(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Rabbit', cost=0, attack=1, life=1, sigil='lane shift right')
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Rabbit', cost=0, attack=1, life=1, sigil='lane shift right', blank_cost=blank_cost)
     
 class OppositeRabbit(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Rabbit', cost=0, attack=1, life=1, sigil='lane shift left')
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Rabbit', cost=0, attack=1, life=1, sigil='lane shift left', blank_cost=blank_cost)
 
 class Shrew(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Shrew', cost=0, attack=1, life=1, sigil='lane shift left')
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Shrew', cost=0, attack=1, life=1, sigil='lane shift left', blank_cost=blank_cost)
 
 class OppositeShrew(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Shrew', cost=0, attack=1, life=1, sigil='lane shift right')
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Shrew', cost=0, attack=1, life=1, sigil='lane shift right', blank_cost=blank_cost)
 
 class DumpyTF(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Dumpy Tree Frog', cost=1, attack=2, life=2)
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Dumpy Tree Frog', cost=1, attack=2, life=2, blank_cost=blank_cost)
 
 class Turtle(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Turtle', cost=1, attack=0, life=4)
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Turtle', cost=1, attack=0, life=4, blank_cost=blank_cost)
 
 class Asp(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Asp', cost=2, attack=2, life=1, sigil='venom')
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Asp', cost=2, attack=2, life=1, sigil='venom', blank_cost=blank_cost)
 
 class Falcon(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Falcon', cost=2, attack=3, life=1, sigil='airborne')
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Falcon', cost=2, attack=3, life=1, sigil='airborne', blank_cost=blank_cost)
 
 class Lobster(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Lobster', cost=3, attack=2, life=3, sigil='bifurcate')
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Lobster', cost=3, attack=2, life=3, sigil='bifurcate', blank_cost=blank_cost)
 
 class BoppitW(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Boppit Worm', cost=4, attack=3, life=5, sigil='split')
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Boppit Worm', cost=4, attack=3, life=5, sigil='split', blank_cost=blank_cost)
 
 class Ouroboros(card.BlankCard) :
-    def __init__(self) :
+    def __init__(self, blank_cost=False) :
         [Oro_attack, Oro_life] = QoL.read_file('data.txt', 'Descryption_Data/data.txt')
-        super().__init__(name='Ouroboros', cost=2, attack=int(Oro_attack), life=int(Oro_life), sigil='unkillable')
+        super().__init__(name='Ouroboros', cost=2, attack=int(Oro_attack), life=int(Oro_life), sigil='unkillable', blank_cost=blank_cost)
 
 class Cockroach(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Cockroach', cost=2, attack=1, life=1, sigil='unkillable')
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Cockroach', cost=2, attack=1, life=1, sigil='unkillable', blank_cost=blank_cost)
 
 class Stoat(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Stoat', cost=1, attack=1, life=3)
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Stoat', cost=1, attack=1, life=3, blank_cost=blank_cost)
 
 class Wolf(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Wolf', cost=2, attack=3, life=2)
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Wolf', cost=2, attack=3, life=2, blank_cost=blank_cost)
 
 class Grizzly(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Grizzly', cost=3, attack=4, life=6)
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Grizzly', cost=3, attack=4, life=6, blank_cost=blank_cost)
 
 class Urayuli(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Urayuli', cost=4, attack=7, life=7)
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Urayuli', cost=4, attack=7, life=7, blank_cost=blank_cost)
 
 class Raven(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Raven', cost=2, attack=2, life=3, sigil='airborne')
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Raven', cost=2, attack=2, life=3, sigil='airborne', blank_cost=blank_cost)
 
 class Bee(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Bee', cost=0, attack=1, life=1, sigil='airborne')
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Bee', cost=0, attack=1, life=1, sigil='airborne', blank_cost=blank_cost)
 
 class Bullfrog(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Bullfrog', cost=1, attack=1, life=2, sigil='mighty leap')
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Bullfrog', cost=1, attack=1, life=2, sigil='mighty leap', blank_cost=blank_cost)
 
 class BlackGoat(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Black Goat', cost=1, attack=0, life=1, sigil='worthy sacrifice')
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Black Goat', cost=1, attack=0, life=1, sigil='worthy sacrifice', blank_cost=blank_cost)
 
 class Beehive(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Beehive', cost=1, attack=0, life=2, sigil='bees within')
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Beehive', cost=1, attack=0, life=2, sigil='bees within', blank_cost=blank_cost)
 
 class Cat(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Cat', cost=1, attack=0, life=1, sigil='many lives')
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Cat', cost=1, attack=0, life=1, sigil='many lives', blank_cost=blank_cost)
         self.spent_lives = 0
 
 class UndeadCat(card.BlankCard) :
-    def __init__(self) :
-        super().__init__(name='Undead Cat', cost=1, attack=3, life=6)
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Undead Cat', cost=1, attack=3, life=6, blank_cost=blank_cost)
 
 class MooseBuck(card.BlankCard) :
-    def __init__(self) :
+    def __init__(self, blank_cost=False) :
         if random.randint(0,1) == 0 :
             sigil_direction = 'hefty (left)'
         else :
             sigil_direction = 'hefty (right)'
-        super().__init__(name='Moose Buck', cost=4, attack=3, life=7, sigil=sigil_direction)
+        super().__init__(name='Moose Buck', cost=4, attack=3, life=7, sigil=sigil_direction, blank_cost=blank_cost)
+
+class Dam(card.BlankCard) :
+    def __init__(self, blank_cost=True) :
+        super().__init__(name='Dam', cost=0, attack=0, life=2, blank_cost=blank_cost)
 
 # Allowed cards:
 Poss_Playr = {
@@ -120,10 +124,10 @@ Poss_Playr = {
     4 : [BoppitW(), Urayuli(), MooseBuck()]
 }
 Poss_Leshy = {
-    0 : [OppositeRabbit(), OppositeShrew()],
-    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog()],
-    2 : [Asp(), Falcon(), Cockroach(), Wolf(), Raven()],
-    3 : [Lobster(), Grizzly()],
+    0 : [OppositeRabbit(True), OppositeShrew(True)],
+    1 : [DumpyTF(True), Turtle(True), Stoat(True), Bullfrog(True)],
+    2 : [Asp(True), Falcon(True), Cockroach(True), Wolf(True), Raven(True)],
+    3 : [Lobster(True), Grizzly(True)],
 }
 
 # categories of cards for intelligent Leshy in order of priority (dicts in list)

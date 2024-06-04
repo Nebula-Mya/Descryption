@@ -385,10 +385,10 @@ class Playmat :
 
                 # play a copy to left and right if possible
                 if self.player_field[zone-1].species == '' and zone != 1 :
-                    self.player_field[zone-1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone - 1)
+                    self.player_field[zone-1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone - 1, blank_cost=True)
                     self.player_field[zone] = card.BlankCard()
                 if self.player_field[zone+1].species == '' and zone != 5 :
-                    self.player_field[zone+1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone + 1)
+                    self.player_field[zone+1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone + 1, blank_cost=True)
                     self.player_field[zone] = card.BlankCard()
 
                 # removes the original card

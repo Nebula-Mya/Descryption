@@ -14,6 +14,8 @@ class BlankCard() :
         sigil : the sigil the card currently has (str)
         status : whether the card is alive or dead (str)
         zone : the zone the card is in, with 0 as default (int)
+        blank_cost : whether the card has a blank cost (bool)
+        blank_stats : whether the card has blank stats (bool)
     
     Other Attributes :
         species : the name of the card without truncating or padding (str)
@@ -40,13 +42,12 @@ class BlankCard() :
         explain() : prints explanation of stats and sigil for player
         updateASCII() : updates the ASCII art for the card
     '''
-    def __init__(self, name = '', cost = 0, attack = 0, life = 0, sigil = '', status = 'alive', zone = 0) :
+    def __init__(self, name = '', cost = 0, attack = 0, life = 0, sigil = '', status = 'alive', zone = 0, blank_cost = False, blank_stats = False) :
         self.species = name
         self.name = name.ljust(9)[:9]
         if len(self.name) < len(name) and self.name[-2:] != '  ' :
             self.name = self.name[:-1] + '.'
         self.saccs = cost
-        self.cost = str("C:" + str(cost))
         self.base_attack = attack
         self.current_attack = attack
         self.base_life = life
@@ -55,8 +56,11 @@ class BlankCard() :
         self.is_poisoned = False
         self.status = status
         self.zone = zone
-        if self.species == '' :
+        if blank_cost or self.species == '':
             self.cost = '   '
+        else :
+            self.cost = str("C:" + str(cost))
+        if blank_stats or self.species == '':
             self.stats = '   '
         else :
             self.stats = hex(self.current_attack % 16)[2] + "/" + hex(self.current_life % 16)[2]

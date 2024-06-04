@@ -70,15 +70,15 @@ def choose_draw(field) :
     bad_input = True
     while bad_input :
         field.print_full_field()
-        deck_number = input('Draw from main deck (1) or resource deck (2): ')
+        deck_number = input('Draw from resource deck (1) or main deck (2): ')
         try :
             deck_number = int(deck_number)
         except :
             deck_number = 0
-        if deck_number == 1 :
+        if deck_number == 2 :
             card = field.draw('main')
             bad_input = False
-        elif deck_number == 2 :
+        elif deck_number == 1 :
             card = field.draw('resource')
             bad_input = False
         else :
@@ -181,16 +181,16 @@ def view_cards(field) :
         if invalid_choice :
             print('Invalid choice.')
             invalid_choice = False
-        if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
-            print('1. Bushes (PLACEHOLDER)')
-        else :
-            print('1. Bushes')
+        print('1. Player field')
         print("2. Leshy's field")
-        print('3. Player field')
+        if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')):
+            print('3. Bushes (PLACEHOLDER)')
+        else :
+            print('3. Bushes')
         row_choice = input('Choose a row to view: (press enter to go back) ')
         if row_choice == '' :
             break
-        elif row_choice == '1' : # bushes
+        elif row_choice == '3' : # bushes
             invalid_index = False
             while bad_input :
                 field.print_field()
@@ -232,7 +232,7 @@ def view_cards(field) :
                     input('Press enter to continue.')
                 else :
                     invalid_index = True
-        elif row_choice == '3' : # player's field
+        elif row_choice == '1' : # player's field
             invalid_index = False
             while bad_input :
                 field.print_field()
@@ -266,19 +266,24 @@ def view_play_attack(field) :
     not_attack = True
     while not_attack :
         field.print_field()
-        print('1. View deck')
-        print('2. View graveyard')
-        print('3. View a card')
-        print('4. Play a card')
+        # print('1. View deck')
+        # print('2. View graveyard')
+        # print('3. View a card')
+        # print('4. Play a card')
+        # print('5. Attack and end turn')
+        print('1. Play a card')
+        print('2. View a card')
+        print('3. View graveyard')
+        print('4. View deck')
         print('5. Attack and end turn')
         choice = input('Choose an option: ')
-        if choice == '1' :
+        if choice == '4' :
             view_remaining(field)
-        elif choice == '2' :
-            view_graveyard(field)
         elif choice == '3' :
+            view_graveyard(field)
+        elif choice == '2' :
             view_cards(field)
-        elif choice == '4' :
+        elif choice == '1' :
             choose_and_play(field)
         elif choice == '5' :
             not_attack = False
