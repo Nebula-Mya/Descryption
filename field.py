@@ -111,6 +111,23 @@ def ai_category_checking(categories, player_field, opponent_deck, bushes, score,
 
     return in_strategy, out_of_strategy
 
+def get_corpse_eaters(hand) :
+    '''
+    gets the indexes of all corpse eaters in the hand
+
+    Arguments:
+        hand: the player's hand (list)
+
+    Returns:
+        corpse_eaters: the corpse eaters in the hand (list)
+    '''
+    corpse_eaters = []
+    corpse_eaters_index = []
+    for card in range(len(hand)) :
+        if hand[card].sigil == 'corpse eater' :
+            corpse_eaters.append(card)
+    return corpse_eaters
+
 class Playmat :
     '''
     The field of play, including the bushes, the cards in play, the player's hand, and the score.
@@ -363,8 +380,12 @@ class Playmat :
 
     def check_states(self) :
         '''
-        checks for dead cards and removes them, plus returns unkillables if player's turn
+        checks for dead cards and removes them, plus returns unkillables if player's turn. Also summons corpse eaters if necessary.
         '''
+        # setup for corpse eaters
+        corpses = []
+        open_corpses = []
+
         # check for dead cards in player field
         for zone in self.player_field :
 
@@ -373,6 +394,7 @@ class Playmat :
                 self.player_field[zone].die()
                 self.graveyard.append(self.player_field[zone])
                 self.player_field[zone] = card.BlankCard()
+                corpses.append(zone)
 
             # if an unkillable card dies
             elif self.player_field[zone].status == 'dead' and self.player_field[zone].sigil == 'unkillable' :
@@ -395,6 +417,7 @@ class Playmat :
                 self.player_field[zone].die()
                 self.graveyard.append(self.player_field[zone])
                 self.player_field[zone] = card.BlankCard()
+                corpses.append(zone)
 
         for zone in self.opponent_field :
             # if a normal card dies
@@ -434,6 +457,23 @@ class Playmat :
                 # removes the original card
                 self.bushes[zone].die()
                 self.bushes[zone] = card.BlankCard()
+
+        # check for corpse eaters
+        for zone in corpses :
+            if self.player_field[zone].species == '' :
+                open_corpses.append(zone)
+        corpse_eaters = get_corpse_eaters(self.hand)
+        exhausted = False
+        while not exhausted :
+            if open_corpses != [] and corpse_eaters != []:
+                zone_choice = random.choice(open_corpses)
+                self.player_field[zone_choice] = self.hand[corpse_eaters[0]]
+                self.player_field[zone_choice].play(zone=zone_choice)
+                self.hand.pop(corpse_eaters[0])
+                open_corpses.remove(zone_choice)
+                corpse_eaters = get_corpse_eaters(self.hand) # refresh corpse eaters as hand indexes may have changed
+            else :
+                exhausted = True
 
     def advance(self) : 
         '''
@@ -742,8 +782,60 @@ def test_split_dam() :
     # print the field
     playmat.print_field()
 
+def test_corpse_eaters() :
+    QoL.clear()
+
+    # create decks
+    leshy_deck = deck.Deck([card_library.Asp(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF()])
+    player_deck = deck.Deck([card_library.DumpyTF(), card_library.Lobster(), card_library.BoppitW(), card_library.Ouroboros(), card_library.Turtle(), card_library.Asp(), card_library.Falcon(), card_library.DumpyTF(), card_library.Turtle(), card_library.BoppitW()])
+    squirrels = [card_library.Squirrel()]
+    for n in range(19) :
+        squirrels.append(card_library.Squirrel())
+    player_squirrels = deck.Deck(squirrels)
+
+    # Create a sample playmat with cards on the field
+    playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
+    card_list = []
+    for cost in card_library.Poss_Playr :
+        for species in card_library.Poss_Playr[cost] :
+            card_list.append(species)
+            card_list.append(card.BlankCard())
+    for zone in range(1, 6) :
+        playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
+    
+    # populate hand
+    for n in range(6) :
+        if random.randint(1, 2) == 1 :
+            playmat.hand.append(card.BlankCard(name='Corpse Eater', cost=1, attack=1, life=1, sigil='corpse eater', status='alive', blank_cost=True))
+        else :
+            playmat.hand.append(card_library.Squirrel())
+    
+    # print the field
+    playmat.print_full_field()
+
+    # get user input
+    input("Press enter to advance. (kill 2 cards)")
+
+    # kill 2 cards and check states
+    cards_to_kill = []
+    for zone in range(1, 6) :
+        if playmat.player_field[zone].species != '' :
+            cards_to_kill.append(zone)
+    kill_count = 2
+    if len(cards_to_kill) < 2 :
+        kill_count = len(cards_to_kill)
+    for n in range(kill_count) :
+        zone_to_kill = random.choice(cards_to_kill)
+        playmat.player_field[zone_to_kill].status = 'dead'
+        cards_to_kill.remove(zone_to_kill)
+    playmat.check_states()
+
+    # print the field
+    playmat.print_full_field()
+
 if __name__ == '__main__' :
-    test_advancing()
+    # test_advancing()
     # test_split_dam()
+    test_corpse_eaters()
 
     pass

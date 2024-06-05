@@ -80,8 +80,6 @@ Dict = {
         [" ___ ","/…¨…\\","‾‾‾‾‾"],
         'Adds a vole to your hand when played.'
         ],
-        # vole hole cards (to be added):
-        ### ___
 
     'touch of death' : [ # incorporate into AI
         ["\\´‾`/","|°Δ°|","/\'\"\'\\"],
@@ -94,10 +92,8 @@ Dict = {
         ["~~/\\ ","~/\\_\\","/__\\ "],
         'Builds dams on either side when played.'
         ],
-        # dam builder cards (to be added):
-        ### ___
 
-    'corpse eater' : [ # unimplemented
+    'corpse eater' : [ # incorporate into AI
         ["ᴦ==ͽ ","L(Ō) "," \'\"\' "],
         'Plays itself to a zone a card died in.'
         ],
