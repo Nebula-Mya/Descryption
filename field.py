@@ -834,8 +834,8 @@ def test_corpse_eaters() :
     playmat.print_full_field()
 
 if __name__ == '__main__' :
-    # test_advancing()
+    test_advancing()
     # test_split_dam()
-    test_corpse_eaters()
+    # test_corpse_eaters()
 
     pass
