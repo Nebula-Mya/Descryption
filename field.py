@@ -244,6 +244,14 @@ class Playmat :
             self.hand.pop(index)
             if self.player_field[zone].sigil == 'vole hole' :
                 self.hand.append(card_library.Vole())
+            if self.player_field[zone].sigil == 'dam builder' :
+                # play a copy to left and right if possible
+                if self.player_field[zone-1].species == '' and zone != 1 :
+                    self.player_field[zone-1] = card_library.Dam()
+                    self.player_field[zone-1].play(zone=zone-1)
+                if self.player_field[zone+1].species == '' and zone != 5 :
+                    self.player_field[zone+1] = card_library.Dam()
+                    self.player_field[zone+1].play(zone=zone+1)
             played = True
         QoL.clear()
         self.print_field()
@@ -380,10 +388,8 @@ class Playmat :
                 # play a copy to left and right if possible
                 if self.player_field[zone-1].species == '' and zone != 1 :
                     self.player_field[zone-1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone - 1, blank_cost=True)
-                    self.player_field[zone] = card.BlankCard()
                 if self.player_field[zone+1].species == '' and zone != 5 :
                     self.player_field[zone+1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone + 1, blank_cost=True)
-                    self.player_field[zone] = card.BlankCard()
 
                 # removes the original card
                 self.player_field[zone].die()
@@ -391,11 +397,41 @@ class Playmat :
                 self.player_field[zone] = card.BlankCard()
 
         for zone in self.opponent_field :
-            if self.opponent_field[zone].status == 'dead' :
+            # if a normal card dies
+            if self.opponent_field[zone].status == 'dead' and self.opponent_field[zone].sigil != 'unkillable' and self.opponent_field[zone].sigil != 'split':
                 self.opponent_field[zone].die()
                 self.opponent_field[zone] = card.BlankCard()
+            # if a split card dies
+            elif self.opponent_field[zone].status == 'dead' and self.opponent_field[zone].sigil == 'split' :
+                split_card = copy.deepcopy(self.opponent_field[zone])
+
+                # play a copy to left and right if possible
+                if self.opponent_field[zone-1].species == '' and zone != 1 :
+                    self.opponent_field[zone-1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone - 1, blank_cost=True)
+                if self.opponent_field[zone+1].species == '' and zone != 5 :
+                    self.opponent_field[zone+1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone + 1, blank_cost=True)
+
+                # removes the original card
+                self.opponent_field[zone].die()
+                self.opponent_field[zone] = card.BlankCard()
+
         for zone in self.bushes :
-            if self.bushes[zone].status == 'dead' :
+            # if a normal card dies
+            if self.bushes[zone].status == 'dead' and self.bushes[zone].sigil != 'unkillable' and self.bushes[zone].sigil != 'split':
+                self.bushes[zone].die()
+                self.bushes[zone] = card.BlankCard()
+            
+            # if a split card dies
+            elif self.bushes[zone].status == 'dead' and self.bushes[zone].sigil == 'split' :
+                split_card = copy.deepcopy(self.bushes[zone])
+
+                # play a copy to left and right if possible
+                if self.bushes[zone-1].species == '' and zone != 1 :
+                    self.bushes[zone-1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone - 1, blank_cost=True)
+                if self.bushes[zone+1].species == '' and zone != 5 :
+                    self.bushes[zone+1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone + 1, blank_cost=True)
+
+                # removes the original card
                 self.bushes[zone].die()
                 self.bushes[zone] = card.BlankCard()
 
@@ -618,7 +654,7 @@ class Playmat :
         self.print_field()
         self.print_hand()
 
-def test_advancing():
+def test_advancing() :
         QoL.clear()
 
         # create decks
@@ -640,8 +676,8 @@ def test_advancing():
             playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
 
         # Print the initial field
-        print("Initial Field:")
-        playmat.print_full_field()
+        # print("Initial Field:")
+        # playmat.print_full_field()
 
         # # Get user input before advancing
         # input("Press enter to advance.")
@@ -650,8 +686,64 @@ def test_advancing():
         playmat.advance()
 
         # Print the field after advancing
-        print("Field after Advancing:")
-        playmat.print_full_field()
+        # print("Field after Advancing:")
+        playmat.print_field()
+
+def test_split_dam() :
+    QoL.clear()
+
+    # create decks
+    leshy_deck = deck.Deck([card_library.Asp(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF()])
+    player_deck = deck.Deck([card_library.DumpyTF(), card_library.Lobster(), card_library.BoppitW(), card_library.Ouroboros(), card_library.Turtle(), card_library.Asp(), card_library.Falcon(), card_library.DumpyTF(), card_library.Turtle(), card_library.BoppitW()])
+    squirrels = [card_library.Squirrel()]
+    for n in range(19) :
+        squirrels.append(card_library.Squirrel())
+    player_squirrels = deck.Deck(squirrels)
+
+    # Create a sample playmat with cards on the field
+    playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
+    card_list = []
+    for cost in card_library.Poss_Playr :
+        for species in card_library.Poss_Playr[cost] :
+            card_list.append(species)
+            card_list.append(card.BlankCard())
+    for zone in range(1, 6) :
+        if zone == 3 :
+            playmat.player_field[zone] = card.BlankCard()
+            continue
+        playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
+    
+    # place a split card in the middle of leshy's field and advance twice
+    playmat.opponent_field[3] = card_library.BoppitW(True)
+    playmat.advance()
+    playmat.advance()
+
+    # print the field
+    playmat.print_field()
+
+    # get user input before advancing
+    input("Press enter to advance. (summoning a dam builder to zone 3)")
+
+    # place a dam builder in the middle of player's field
+    playmat.hand.append(card_library.Beaver())
+    playmat.hand[0].saccs = 0
+    playmat.play_card(0, 3)
+
+    # print the field
+    playmat.print_field()
+
+    # get user input before advancing
+    input("Press enter to advance. (kill the split card)")
+
+    # kill the split card
+    playmat.opponent_field[3].status = 'dead'
+    playmat.check_states()
+
+    # print the field
+    playmat.print_field()
 
 if __name__ == '__main__' :
     test_advancing()
+    # test_split_dam()
+
+    pass

@@ -90,7 +90,7 @@ Dict = {
         # touch of death cards (to be added):
         ### ___
 
-    'dam builder' : [ # unimplemented
+    'dam builder' : [ # incorporate into AI
         ["~~/\\ ","~/\\_\\","/__\\ "],
         'Builds dams on either side when played.'
         ],

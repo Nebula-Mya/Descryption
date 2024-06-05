@@ -123,11 +123,15 @@ class Warren(card.BlankCard) :
     def __init__(self, blank_cost=False) :
         super().__init__(name='Warren', cost=1, attack=0, life=2, sigil='vole hole', blank_cost=blank_cost)
 
+class Beaver(card.BlankCard) :
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Beaver', cost=2, attack=1, life=3, sigil='dam builder', blank_cost=blank_cost)
+
 # Allowed cards:
 Poss_Playr = {
     0 : [Rabbit(), Shrew(), BlackGoat()],
     1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog(), Beehive(), Cat(), Warren()],
-    2 : [Asp(), Falcon(), Cockroach(), Wolf(), Raven()]*3 + [Ouroboros()],
+    2 : [Asp(), Falcon(), Cockroach(), Wolf(), Raven(), Beaver()]*3 + [Ouroboros()],
     3 : [Lobster(), Grizzly()],
     4 : [BoppitW(), Urayuli(), MooseBuck()]
 }
@@ -135,7 +139,7 @@ Poss_Leshy = {
     0 : [OppositeRabbit(True), OppositeShrew(True)],
     1 : [DumpyTF(True), Turtle(True), Stoat(True), Bullfrog(True)],
     2 : [Asp(True), Falcon(True), Cockroach(True), Wolf(True), Raven(True)],
-    3 : [Lobster(True), Grizzly(True)],
+    3 : [BoppitW(True), Lobster(True), Grizzly(True)],
 }
 
 # categories of cards for intelligent Leshy in order of priority (dicts in list)
@@ -171,17 +175,17 @@ AI_categories = [
     # good against those moving right (moves with, bifurcate, or trifurcate(to be added))
     {
         'category' : 'anti_right', 
-        'cards' : ['Shrew', 'Lobster'], 
+        'cards' : ['Shrew', 'Lobster', 'Beaver'], 
         'deals_with' : ['lane shift right', 'hefty (right)'],
-        'opp_cards' : ['Rabbit', 'Lobster']
+        'opp_cards' : ['Rabbit', 'Lobster', 'Beaver']
         },
 
     # good against those moving left (moves with, bifurcate, or trifurcate(to be added))
     {
         'category' : 'anti_left', 
-        'cards' : ['Rabbit', 'Lobster'], 
+        'cards' : ['Rabbit', 'Lobster', 'Beaver'], 
         'deals_with' : ['lane shift left', 'hefty (left)'],
-        'opp_cards' : ['Shrew', 'Lobster']
+        'opp_cards' : ['Shrew', 'Lobster', 'Beaver']
         },
 ]
 
