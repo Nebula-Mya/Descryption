@@ -1,6 +1,5 @@
 import card
 import card_library
-import deck
 import QoL
 import ASCII_text
 import copy
@@ -516,6 +515,10 @@ class Playmat :
                 # always replace with BlankCard, new cards will be played (and replace the BlankCard) in the new section
                 self.bushes[zone] = card.BlankCard()
         #endregion
+
+        # prevent crash if opponent deck is empty
+        if self.opponent_deck == [] :
+            return
         
         played = 0
         while played < play_count :

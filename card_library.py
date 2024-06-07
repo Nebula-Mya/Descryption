@@ -155,8 +155,7 @@ Poss_Leshy = {
     0 : [OppositeRabbit(True), OppositeShrew(True)],
     1 : [DumpyTF(True), Turtle(True), Stoat(True), Bullfrog(True), CorpseMaggots(True), Otter(True)],
     2 : [Asp(True), Falcon(True), Cockroach(True), Wolf(True), Raven(True), Adder(True)],
-    3 : [Lobster(True), Grizzly(True), BullShark(True)],
-    4 : [BoppitW(True)]
+    3 : [Lobster(True), Grizzly(True), BullShark(True), BoppitW(True)]
 }
 
 # categories of cards for intelligent Leshy in order of priority (dicts in list)

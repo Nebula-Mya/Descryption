@@ -68,19 +68,33 @@ def choose_draw(field) :
         field: the field object to draw the card to (field object)
     '''
     bad_input = True
+    main_empty_alert = False
+    resource_empty_alert = False
     while bad_input :
         field.print_full_field()
+        if main_empty_alert :
+            print('Main deck is empty.')
+            main_empty_alert = False
+        if resource_empty_alert :
+            print('Resource deck is empty.')
+            resource_empty_alert = False
         deck_number = input('Draw from resource deck (1) or main deck (2): ')
         try :
             deck_number = int(deck_number)
         except :
             deck_number = 0
         if deck_number == 2 :
-            card = field.draw('main')
-            bad_input = False
+            try :
+                card = field.draw('main')
+                bad_input = False
+            except :
+                main_empty_alert = True
         elif deck_number == 1 :
-            card = field.draw('resource')
-            bad_input = False
+            try :
+                card = field.draw('resource')
+                bad_input = False
+            except :
+                resource_empty_alert = True
         else :
             print('Invalid deck number.')
 
@@ -98,13 +112,13 @@ def winner_check(field) :
     if win :
         QoL.clear()
         if winner == 'player' :
-            print(ASCII_text.win)
+            ASCII_text.print_win(overkill)
         elif winner == 'opponent' :
-            print(ASCII_text.lose)
             if abs(field.score['player'] - field.score['opponent']) < 8 :
-                print(' '*40 + 'You have been decked out.')
-        if overkill :
-            print('Overkill: ' + str(overkill))
+                deck_out = True
+            else :
+                deck_out = False
+            ASCII_text.print_lose(deck_out)
         return True
     return False
 
@@ -378,109 +392,6 @@ def main(deck_size, hand_size, Leshy_play_count_median=2, Leshy_play_count_varia
 
 if __name__ == '__main__' :
     QoL.clear()
-    # bad_input = True
-    # while bad_input :
-    #     deck_size = input('(PLAYTEST FEATURE) Deck size: ')
-    #     try :
-    #         deck_size = int(deck_size)
-    #         bad_input = False
-    #     except :
-    #         print('Invalid deck size.')
-    # bad_input = True
-    # while bad_input :
-    #     hand_size = input('(PLAYTEST FEATURE) Hand size: ')
-    #     try :
-    #         hand_size = int(hand_size)
-    #         bad_input = False
-    #     except :
-    #         print('Invalid hand size.')
-    # quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
-    # if quit_game == 'y' :
-    #     exit()
-
     deck_size = 20
     hand_size = 5
     main(deck_size, hand_size)
-
-    ## deck generation testing
-    # print(deck_gen(card_library.Poss_Playr, 32))
-
-    ## win check testing
-    # opponent_deck = deck_gen(card_library.Poss_Leshy, 15*2 + 20)
-    # opponent_decklist = opponent_deck.shuffle()
-    # player_deck = deck_gen(card_library.Poss_Playr, 15)
-    # player_decklist = player_deck.shuffle()
-    # squirrels_deck = [card_library.Squirrel()]
-    # for n in range(19) :
-    #     squirrels_deck.append(card_library.Squirrel())
-    # playfield = field.Playmat(deck=player_decklist, squirrels=squirrels_deck, opponent_deck=opponent_decklist)
-    # playfield.print_field()
-    # playfield.score['player'] = 10
-    # playfield.score['opponent'] = 3
-    # playfield.print_field()
-    # playfield.score['opponent'] = 2
-    # input('Press enter to continue.')
-    # playfield.print_field()
-    # input('Press enter to continue. (player wins)')
-    # winner_check(playfield)
-    # input('Press enter to continue.')
-
-    # playfield.score['player'] = 3
-    # playfield.score['opponent'] = 10
-    # playfield.print_field()
-    # playfield.score['player'] = 2
-    # input('Press enter to continue.')
-    # playfield.print_field()
-    # input('Press enter to continue. (opponent wins)')
-    # winner_check(playfield)
-    # input('Press enter to continue.')
-
-    # playfield.score['player'] = 0
-    # playfield.score['opponent'] = 2
-    # playfield.print_field()
-    # playfield.player_squirrels = []
-    # playfield.player_deck = []
-    # input('Press enter to continue. (decked out)')
-    # winner_check(playfield)
-
-    ## attack testing
-    # import card
-    # opponent_deck = deck_gen(card_library.Poss_Leshy, 15*2 + 20)
-    # opponent_decklist = opponent_deck.shuffle()
-    # player_deck = deck_gen(card_library.Poss_Playr, 15)
-    # player_decklist = player_deck.shuffle()
-    # squirrels_deck = [card_library.Squirrel()]
-    # for n in range(19) :
-    #     squirrels_deck.append(card_library.Squirrel())
-    # playfield = field.Playmat(deck=player_decklist, squirrels=squirrels_deck, opponent_deck=opponent_decklist)
-    # playfield.player_field = {0: card.BlankCard(), 1: card_library.Stoat(), 2: card_library.Wolf(), 3: card_library.Grizzly(), 4: card_library.Urayuli(), 5: card_library.Raven(), 6: card.BlankCard()}
-    # playfield.player_field[0].play(0)
-    # playfield.player_field[1].play(1)
-    # playfield.player_field[2].play(2)
-    # playfield.player_field[3].play(3)
-    # playfield.player_field[4].play(4)
-    # playfield.player_field[5].play(5)
-    # playfield.player_field[6].play(6)
-    # playfield.opponent_field = {0: card.BlankCard(), 1: card_library.Stoat(), 2: card_library.Wolf(), 3: card_library.Grizzly(), 4: card_library.Urayuli(), 5: card_library.Raven(), 6: card.BlankCard()}
-    # playfield.opponent_field[0].play(0)
-    # playfield.opponent_field[1].play(1)
-    # playfield.opponent_field[2].play(2)
-    # playfield.opponent_field[3].play(3)
-    # playfield.opponent_field[4].play(4)
-    # playfield.opponent_field[5].play(5)
-    # playfield.opponent_field[6].play(6)
-    # playfield.bushes = {0: card.BlankCard(), 1: card_library.Stoat(), 2: card.BlankCard(), 3: card_library.Grizzly(), 4: card_library.Urayuli(), 5: card_library.Raven(), 6: card.BlankCard()}
-    # playfield.bushes[0].play(0)
-    # playfield.bushes[1].play(1)
-    # playfield.bushes[2].play(2)
-    # playfield.bushes[3].play(3)
-    # playfield.bushes[4].play(4)
-    # playfield.bushes[5].play(5)
-    # playfield.bushes[6].play(6)
-    # playfield.print_field()
-    # input('Press enter to continue.')
-    # playfield.attack()
-    # playfield.print_field()
-    # input('Press enter to continue.')
-    # playfield.check_states()
-    # playfield.print_field()
