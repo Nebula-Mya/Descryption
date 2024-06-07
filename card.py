@@ -98,7 +98,7 @@ class BlankCard() :
             self.spent_lives = 0
         self.updateASCII()
 
-    def attack(self, front_left_card, front_card, front_right_card, is_players=False, bushes={}) :
+    def attack(self, front_left_card, front_card, front_right_card, is_players=False, bushes={}) : # REFACTORED
         '''
         attacks zone(s) in front
 
@@ -164,6 +164,7 @@ class BlankCard() :
             in_opp_field: whether the card is on Leshy's feild (bool)
             in_bushes: whether the card is in the bushes (bool)
             bushes: the dict of bushed cards (dict)
+            deathtouch: whether the damage is from a deathtouch creature (bool)
 
         Returns:
             teeth: damage to controller (int)

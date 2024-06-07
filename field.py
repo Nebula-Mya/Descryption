@@ -6,6 +6,8 @@ import copy
 import random
 import os
 import duel
+import sigils
+import sigil_tools
 
 def hefty_check(field, zone, direction) :
     '''
@@ -19,17 +21,26 @@ def hefty_check(field, zone, direction) :
     Returns:
         the number of cards that can be pushed (int)
     '''
+    # issue, will return positive values when it should return 0 because its just adding
     if direction == 'right' :
-        if field[zone+1].species != '' and zone < 4 :
+        if field[zone].species == '' : # only when the card after the card with hefty is empty
+            return -1
+        if field[zone+1].species != '' and zone < 5 :
+            if hefty_check(field, zone+1, direction) == 0 :
+                return 0
             return 1 + hefty_check(field, zone+1, direction)
-        elif field[zone+1].species == '' and zone < 4:
+        elif field[zone+1].species == '' and zone < 5 :
             return 1
         else :
             return 0
     elif direction == 'left' :
-        if field[zone-1].species != '' and zone > 2 :
+        if field[zone].species == '' : # only when the card after the card with hefty is empty
+            return -1
+        if field[zone-1].species != '' and zone > 1 :
+            if hefty_check(field, zone-1, direction) == 0 :
+                return 0
             return 1 + hefty_check(field, zone-1, direction)
-        if field[zone-1].species == '' and zone > 2 :
+        if field[zone-1].species == '' and zone > 1 :
             return 1
         else :
             return 0
@@ -289,49 +300,17 @@ class Playmat :
             for zone in self.player_field :
                 if did_shift :
                     did_shift = False
-                elif self.player_field[zone].sigil == 'lane shift right' and self.player_field[zone].zone != 5 and self.player_field[zone+1].species == '' :
-                    self.player_field[zone+1] = self.player_field[zone]
-                    self.player_field[zone+1].zone = zone+1
-                    self.player_field[zone] = card.BlankCard()
-                    did_shift = True
-                elif self.player_field[zone].sigil == 'lane shift left' and self.player_field[zone].zone != 2 and self.player_field[zone-1].species == '':
-                    self.player_field[zone-1] = self.player_field[zone]
-                    self.player_field[zone-1].zone = zone-1
-                    self.player_field[zone] = card.BlankCard()
-                elif self.player_field[zone].sigil == 'hefty (right)' :
-                    if zone == 5 :
-                        self.player_field[zone].sigil = 'hefty (left)'
-                        self.player_field[zone].updateASCII()
-                        break
-                    push_count = hefty_check(self.player_field, zone + 1, 'right')
-                    if push_count == 0:
-                        self.player_field[zone].sigil = 'hefty (left)'
-                        self.player_field[zone].updateASCII()
-                    elif push_count >= 1 :
-                        did_shift = True
-                        for n in range(zone + push_count, zone - 1, -1) :
-                            self.player_field[n+1] = self.player_field[n]
-                            self.player_field[n+1].zone = n+1
-                            self.player_field[n] = card.BlankCard()
-                elif self.player_field[zone].sigil == 'hefty (left)' :
-                    if zone == 1 :
-                        self.player_field[zone].sigil = 'hefty (right)'
-                        self.player_field[zone].updateASCII()
-                        break
-                    push_count = hefty_check(self.player_field, zone - 1, 'left')
-                    if push_count == 0:
-                        self.player_field[zone].sigil = 'hefty (right)'
-                        self.player_field[zone].updateASCII()
-                    elif push_count >= 1 :
-                        for n in range(zone - push_count, zone + 1) :
-                            self.player_field[n-1] = self.player_field[n]
-                            self.player_field[n-1].zone = n-1
-                            self.player_field[n] = card.BlankCard()
+                elif self.player_field[zone].sigil in sigils.movers :
+                    local_dict = locals()
+                    exec(sigils.Dict[self.player_field[zone].sigil][2], None, local_dict)
+                    did_shift = local_dict['did_shift']
+
         elif self.active == 'opponent' :
             # attacking
             for zone in self.opponent_field :
                 if self.opponent_field[zone].species != '' and self.opponent_field[zone].zone != 0 and self.opponent_field[zone].zone != 6:
                     leshy_points = self.opponent_field[zone].attack(self.player_field[zone-1],self.player_field[zone],self.player_field[zone+1])
+
                     if leshy_points < self.opponent_field[zone].current_attack and self.player_field[zone].sigil == 'bees within' :
                         self.hand.append(card_library.Bee())
                     self.score['opponent'] += leshy_points
@@ -339,42 +318,10 @@ class Playmat :
             for zone in self.opponent_field :
                 if did_shift :
                     did_shift = False
-                elif self.opponent_field[zone].sigil == 'lane shift right' and self.opponent_field[zone].zone != 5 and self.opponent_field[zone+1].species == '':
-                    self.opponent_field[zone+1] = self.opponent_field[zone]
-                    self.opponent_field[zone+1].zone = zone+1
-                    self.opponent_field[zone] = card.BlankCard()
-                    did_shift = True
-                elif self.opponent_field[zone].sigil == 'lane shift left' and self.opponent_field[zone].zone != 1 and self.opponent_field[zone-1].species == '':
-                    self.opponent_field[zone-1] = self.opponent_field[zone]
-                    self.opponent_field[zone-1].zone = zone-1
-                    self.opponent_field[zone] = card.BlankCard()
-                elif self.opponent_field[zone].sigil == 'hefty (right)' :
-                    if zone == 5 :
-                        self.opponent_field[zone].sigil = 'hefty (left)'
-                        self.opponent_field[zone].updateASCII()
-                        break
-                    push_count = hefty_check(self.opponent_field, zone + 1, 'right')
-                    if push_count == 0 :
-                        self.opponent_field[zone].sigil = 'hefty (left)'
-                    elif push_count >= 1 :
-                        did_shift = True
-                        for n in range(zone + push_count, zone - 1, -1) :
-                            self.opponent_field[n+1] = self.opponent_field[n]
-                            self.opponent_field[n+1].zone = n+1
-                            self.opponent_field[n] = card.BlankCard()
-                elif self.opponent_field[zone].sigil == 'hefty (left)' :
-                    if zone == 1 :
-                        self.opponent_field[zone].sigil = 'hefty (right)'
-                        self.opponent_field[zone].updateASCII()
-                        break
-                    push_count = hefty_check(self.opponent_field, zone - 1, 'left')
-                    if push_count == 0 :
-                        self.opponent_field[zone].sigil = 'hefty (right)'
-                    elif push_count >= 1 :
-                        for n in range(zone - push_count, zone + 1) :
-                            self.opponent_field[n-1] = self.opponent_field[n]
-                            self.opponent_field[n-1].zone = n-1
-                            self.opponent_field[n] = card.BlankCard()
+                elif self.opponent_field[zone].sigil in sigils.movers :
+                    local_dict = locals()
+                    exec(sigils.Dict[self.opponent_field[zone].sigil][2], None, local_dict)
+                    did_shift = local_dict['did_shift']
 
     def check_states(self) :
         '''
@@ -829,9 +776,79 @@ def test_corpse_eaters() :
     # print the field
     playmat.print_full_field()
 
+def test_hefty() :
+    QoL.clear()
+
+    # create decks
+    leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
+    player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
+    player_squirrels = duel.resource_gen()
+
+    # Create a sample playmat with cards on the field
+    playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
+    card_list = []
+    for cost in card_library.Poss_Playr :
+        for species in card_library.Poss_Playr[cost] :
+            card_list.append(species)
+            card_list.append(card.BlankCard())
+    for zone in range(1, 6) :
+        playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
+        playmat.player_field[zone].zone = zone
+
+    # place a hefty card in the player's field
+    playmat.player_field[2] = card_library.MooseBuck()
+    playmat.player_field[2].play(zone=2)
+    playmat.player_field[2].sigil = 'hefty (right)'
+    playmat.player_field[2].updateASCII()
+
+    # print the field
+    playmat.print_field()
+    print(playmat.player_field)
+
+    # get user input before advancing
+    input("Press enter to advance. (move the hefty card to the right)")
+
+    # advance
+    playmat.attack()
+
+    # print the field
+    playmat.print_field()
+    print(playmat.player_field)
+
+    # get user input before advancing
+    input("Press enter to advance. (place a card to the right)")
+
+    # place a card to the right of the hefty card
+    playmat.player_field[4] = card_library.Squirrel()
+
+    # print the field
+    playmat.print_field()
+    print(playmat.player_field)
+
+    # get user input before advancing
+    input("Press enter to advance. (move the hefty card to the right)")
+
+    # advance
+    playmat.attack()
+
+    # print the field
+    playmat.print_field()
+    print(playmat.player_field)
+
+    # get user input before advancing
+    input("Press enter to advance. (move the hefty card to the right)")
+
+    # advance
+    playmat.attack()
+
+    # print the field
+    playmat.print_field()
+    print(playmat.player_field)
+
 if __name__ == '__main__' :
-    test_advancing()
+    # test_advancing()
     # test_split_dam()
     # test_corpse_eaters()
+    test_hefty()
 
     pass

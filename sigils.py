@@ -1,3 +1,5 @@
+import sigil_tools
+
 Dict = { # check for applicable sigils when any may apply using the group lists at the bottom, then use the code contained in the sigil's list to apply the effect ( exec(sigils.Dict[sigil][2]) ) {see attack method in card.py for example}
     '' : [ # sigil name
         ["     ","     ","     "], # sigil icon
@@ -20,6 +22,18 @@ if (front_right_card.zone % 5) != 1 :
         [",-,  ","| |->","'-'  "], 
         'Moves right after attacking if possible.',
         '''
+if self.active == 'player' :
+    if self.player_field[zone].zone != 5 and self.player_field[zone+1].species == '' :
+        self.player_field[zone+1] = self.player_field[zone]
+        self.player_field[zone+1].zone = zone+1
+        self.player_field[zone] = card.BlankCard()
+        did_shift = True
+if self.active == 'opponent' :
+    if self.opponent_field[zone].zone != 5 and self.opponent_field[zone+1].species == '' :
+        self.opponent_field[zone+1] = self.opponent_field[zone]
+        self.opponent_field[zone+1].zone = zone+1
+        self.opponent_field[zone] = card.BlankCard()
+        did_shift = True
 '''
         ],
 
@@ -27,6 +41,18 @@ if (front_right_card.zone % 5) != 1 :
         ["  ,-,","<-| |","  '-'"],
         'Moves left after attacking if possible.',
         '''
+if self.active == 'player' :
+    if self.player_field[zone].zone != 1 and self.player_field[zone-1].species == '' :
+        self.player_field[zone-1] = self.player_field[zone]
+        self.player_field[zone-1].zone = zone-1
+        self.player_field[zone] = card.BlankCard()
+        did_shift = True
+if self.active == 'opponent' :
+    if self.opponent_field[zone].zone != 1 and self.opponent_field[zone-1].species == '' :
+        self.opponent_field[zone-1] = self.opponent_field[zone]
+        self.opponent_field[zone-1].zone = zone-1
+        self.opponent_field[zone] = card.BlankCard()
+        did_shift = True
 '''
         ],
 
@@ -44,13 +70,13 @@ if (front_right_card.zone % 5) != 1 :
 '''
         ],
 
-    'venom' : [
+    'venom' : [ # keep an eye that poison is applied
         [" ___ "," \\ / "," ·V· "],
         'Poisons target on attack.',
-        '''
+        ''' 
 points += front_card.takeDamage(self.current_attack, in_opp_field=to_opp_field, bushes=bushes)
 front_card.is_poisoned = True
-''' # keep an eye that poison is applied
+'''
         ],
 
     'airborne' : [
@@ -86,6 +112,46 @@ points += front_card.takeDamage(self.current_attack, from_air=True, in_opp_field
         [". >>>","|)_[]","'———'"],
         'Moves to the right, pushing other creatures with it.',
         '''
+if self.active == 'player' :
+    if zone == 5 :
+        self.player_field[zone].sigil = 'hefty (left)'
+        self.player_field[zone].updateASCII()
+    else :
+        push_count = sigil_tools.hefty_check(self.player_field, zone + 1, 'right')
+        if push_count == 0 :
+            self.player_field[zone].sigil = 'hefty (left)'
+            self.player_field[zone].updateASCII()
+        elif push_count == -1 :
+            self.player_field[zone+1] = self.player_field[zone]
+            self.player_field[zone+1].zone = zone+1
+            self.player_field[zone] = card.BlankCard()
+            did_shift = True
+        elif push_count >= 1 :
+            did_shift = True
+            for n in range(zone + push_count, zone - 1, -1) :
+                self.player_field[n+1] = self.player_field[n]
+                self.player_field[n+1].zone = n+1
+                self.player_field[n] = card.BlankCard()
+elif self.active == 'opponent' :
+    if zone == 5 :
+        self.opponent_field[zone].sigil = 'hefty (left)'
+        self.opponent_field[zone].updateASCII()
+    else :
+        push_count = sigil_tools.hefty_check(self.opponent_field, zone + 1, 'right')
+        if push_count == 0 :
+            self.opponent_field[zone].sigil = 'hefty (left)'
+            self.opponent_field[zone].updateASCII()
+        elif push_count == -1 :
+            self.opponent_field[zone+1] = self.opponent_field[zone]
+            self.opponent_field[zone+1].zone = zone+1
+            self.opponent_field[zone] = card.BlankCard()
+            did_shift = True
+        elif push_count >= 1 :
+            did_shift = True
+            for n in range(zone + push_count, zone - 1, -1) :
+                self.opponent_field[n+1] = self.opponent_field[n]
+                self.opponent_field[n+1].zone = n+1
+                self.opponent_field[n] = card.BlankCard()
 '''
         ],
     
@@ -93,6 +159,46 @@ points += front_card.takeDamage(self.current_attack, from_air=True, in_opp_field
         ["<<< .","[]_(|","'———'"],
         'Moves to the left, pushing other creatures with it.',
         '''
+if self.active == 'player' :
+    if zone == 1 :
+        self.player_field[zone].sigil = 'hefty (right)'
+        self.player_field[zone].updateASCII()
+    else :
+        push_count = sigil_tools.hefty_check(self.player_field, zone - 1, 'left')
+        if push_count == 0:
+            self.player_field[zone].sigil = 'hefty (right)'
+            self.player_field[zone].updateASCII()
+        elif push_count == -1 :
+                self.player_field[zone-1] = self.player_field[zone]
+                self.player_field[zone-1].zone = zone-1
+                self.player_field[zone] = card.BlankCard()
+                did_shift = True
+        elif push_count >= 1 :
+            did_shift = True
+            for n in range(zone - push_count, zone + 1) :
+                self.player_field[n-1] = self.player_field[n]
+                self.player_field[n-1].zone = n-1
+                self.player_field[n] = card.BlankCard()
+elif self.active == 'opponent' :
+    if zone == 1 :
+        self.opponent_field[zone].sigil = 'hefty (right)'
+        self.opponent_field[zone].updateASCII()
+    else :
+        push_count = sigil_tools.hefty_check(self.opponent_field, zone - 1, 'left')
+        if push_count == 0:
+            self.opponent_field[zone].sigil = 'hefty (right)'
+            self.opponent_field[zone].updateASCII()
+        elif push_count == -1 :
+                self.opponent_field[zone-1] = self.opponent_field[zone]
+                self.opponent_field[zone-1].zone = zone-1
+                self.opponent_field[zone] = card.BlankCard()
+                did_shift = True
+        elif push_count >= 1 :
+            did_shift = True
+            for n in range(zone - push_count, zone + 1) :
+                self.opponent_field[n-1] = self.opponent_field[n]
+                self.opponent_field[n-1].zone = n-1
+                self.opponent_field[n] = card.BlankCard()
 '''
         ],
 
@@ -143,10 +249,10 @@ points += front_card.takeDamage(self.current_attack, deathtouch=True, in_opp_fie
 on_attacks = ['bifurcate','venom','touch of death', 'airborne']
 on_deaths = ['split','unkillable','bees within']
 on_plays = ['vole hole','dam builder']
-on_damages = ['mighty leap', 'bees within', 'waterborne']
+on_damages = ['mighty leap', 'waterborne']
 on_sacrifices = ['worthy sacrifice','many lives']
 movers = ['lane shift right','lane shift left','hefty (right)','hefty (left)']
-misc = ['corpse eater']
+misc = ['corpse eater', 'bees within']
 
 if __name__ == '__main__':
     import card
