@@ -311,6 +311,21 @@ def deck_gen(possible_cards, size) :
         deck_list.append(card)
     return deck.Deck(deck_list)
 
+def resource_gen(size=20) :
+    '''
+    generates a resource deck
+
+    Arguments:
+        size: size of deck, defaults to 20 (int)
+
+    Returns:
+        a resource deck (deck object)
+    '''
+    squirrels = [card_library.Squirrel()]
+    for n in range(size - 1) :
+        squirrels.append(card_library.Squirrel())
+    return deck.Deck(squirrels)
+
 def main(deck_size, hand_size, Leshy_play_count_median=2, Leshy_play_count_variance=1, Leshy_in_strategy_chance=75, Leshy_strat_change_threshold=3) :
     # game setup
     opponent_deck = deck_gen(card_library.Poss_Leshy, deck_size*2 + 20)

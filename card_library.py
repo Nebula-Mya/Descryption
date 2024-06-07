@@ -35,7 +35,7 @@ class Turtle(card.BlankCard) :
 
 class Asp(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        super().__init__(name='Asp', cost=2, attack=2, life=1, sigil='venom', blank_cost=blank_cost)
+        super().__init__(name='Asp', cost=2, attack=2, life=2, sigil='venom', blank_cost=blank_cost)
 
 class Falcon(card.BlankCard) :
     def __init__(self, blank_cost=False) :
@@ -127,19 +127,36 @@ class Beaver(card.BlankCard) :
     def __init__(self, blank_cost=False) :
         super().__init__(name='Beaver', cost=2, attack=1, life=3, sigil='dam builder', blank_cost=blank_cost)
 
+class Adder(card.BlankCard) :
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Adder', cost=2, attack=1, life=1, sigil='touch of death', blank_cost=blank_cost)
+
+class CorpseMaggots(card.BlankCard) : # in Leshy's 1 cost and the player's 2 cost groups due to the 3 cost mainly being a deterrent for the player
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Corpse Maggots', cost=3, attack=1, life=2, sigil='corpse eater', blank_cost=blank_cost)
+
+class Otter(card.BlankCard) :
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Otter', cost=1, attack=1, life=1, sigil='waterborne', blank_cost=blank_cost)
+
+class BullShark(card.BlankCard) :
+    def __init__(self, blank_cost=False) :
+        super().__init__(name='Bull Shark', cost=3, attack=4, life=2, sigil='waterborne', blank_cost=blank_cost)
+
 # Allowed cards:
 Poss_Playr = {
     0 : [Rabbit(), Shrew(), BlackGoat()],
-    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog(), Beehive(), Cat(), Warren()],
-    2 : [Asp(), Falcon(), Cockroach(), Wolf(), Raven(), Beaver()]*3 + [Ouroboros()],
-    3 : [Lobster(), Grizzly()],
+    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog(), Beehive(), Cat(), Warren(), Otter()],
+    2 : [Asp(), Falcon(), Cockroach(), Wolf(), Raven(), Beaver(), Adder(), CorpseMaggots()]*3 + [Ouroboros()],
+    3 : [Lobster(), Grizzly(), BullShark()],
     4 : [BoppitW(), Urayuli(), MooseBuck()]
 }
 Poss_Leshy = {
     0 : [OppositeRabbit(True), OppositeShrew(True)],
-    1 : [DumpyTF(True), Turtle(True), Stoat(True), Bullfrog(True)],
-    2 : [Asp(True), Falcon(True), Cockroach(True), Wolf(True), Raven(True)],
-    3 : [BoppitW(True), Lobster(True), Grizzly(True)],
+    1 : [DumpyTF(True), Turtle(True), Stoat(True), Bullfrog(True), CorpseMaggots(True), Otter(True)],
+    2 : [Asp(True), Falcon(True), Cockroach(True), Wolf(True), Raven(True), Adder(True)],
+    3 : [Lobster(True), Grizzly(True), BullShark(True)],
+    4 : [BoppitW(True)]
 }
 
 # categories of cards for intelligent Leshy in order of priority (dicts in list)
@@ -150,6 +167,20 @@ AI_categories = [
         'cards' : ['Bullfrog', 'Asp', 'Wolf'], 
         'deals_with' : ['airborne']
         },
+
+    # good against deathtouch (waterbornes and those with deathtouch)
+    {
+        'category' : 'anti_deathtouch',
+        'cards' : ['Adder', 'Otter', 'Bull Shark'],
+        'deals_with' : ['touch of death']
+    },
+
+    # good against waterbornes (tanks and those with waterborne)
+    {
+        'category' : 'anti_water',
+        'cards' : ['Otter', 'Bull Shark', 'Boppit Worm', 'Turtle', 'Grizzly', 'Urayuli'],
+        'deals_with' : ['waterborne']
+    },
 
     # good against bifurcates (non airborne glass cannons (airbornes wouldnt kill the bifurcate))
     {
@@ -168,7 +199,7 @@ AI_categories = [
     # good against those with venom (fragiles and waterbornes(to be added))
     {
         'category' : 'anti_venom', 
-        'cards' : ['Asp', 'Cockroach', 'Dumpy Tree Frog'], 
+        'cards' : ['Asp', 'Cockroach', 'Dumpy Tree Frog', 'Otter', 'Bull Shark', 'Adder'], 
         'deals_with' : ['venom']
         },
 

@@ -44,7 +44,10 @@ class BlankCard() :
     '''
     def __init__(self, name = '', cost = 0, attack = 0, life = 0, sigil = '', status = 'alive', zone = 0, blank_cost = False, blank_stats = False) :
         self.species = name
-        self.name = name.ljust(9)[:9]
+        if name == '' or blank_cost : # takes advantage of extra space from having no cost
+            self.name = name.ljust(12)[:12]
+        else :
+            self.name = name.ljust(9)[:9]
         if len(self.name) < len(name) and self.name[-2:] != '  ' :
             self.name = self.name[:-1] + '.'
         self.saccs = cost
@@ -59,7 +62,7 @@ class BlankCard() :
         self.blank_cost = blank_cost
         self.blank_stats = blank_stats
         if self.blank_cost or self.species == '':
-            self.cost = '   '
+            self.cost = ''
         else :
             self.cost = str("C:" + str(cost))
         if self.blank_stats or self.species == '':
@@ -264,7 +267,7 @@ class BlankCard() :
         updates the ASCII art for the card
         '''
         if self.blank_cost or self.species == '':
-            self.cost = '   '
+            self.cost = ''
         else :
             self.cost = str("C:" + str(self.saccs))
         if self.blank_stats or self.species == '':

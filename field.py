@@ -6,6 +6,7 @@ import ASCII_text
 import copy
 import random
 import os
+import duel
 
 def hefty_check(field, zone, direction) :
     '''
@@ -524,7 +525,18 @@ class Playmat :
 
             # ensure that the loop will not run if there are no zones to play to, preventing infinite loop
             if len(in_strategy) + len(out_of_strategy) == 0 :
-                break
+                open_zone = False
+                for zone in range(1, 6) :
+                    if self.bushes[zone].species == '' :
+                        open_zone = True
+                if open_zone == False : # if all zones are full, stop here
+                    break
+                # move top card to bottom
+                garnet = self.opponent_deck[0]
+                self.opponent_deck.pop(0)
+                self.opponent_deck.append(garnet)
+                # continue to next loop
+                continue
 
             #region playing cards to zones
             # play cards in strategy
@@ -698,12 +710,9 @@ def test_advancing() :
         QoL.clear()
 
         # create decks
-        leshy_deck = deck.Deck([card_library.Asp(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF()])
-        player_deck = deck.Deck([card_library.DumpyTF(), card_library.Lobster(), card_library.BoppitW(), card_library.Ouroboros(), card_library.Turtle(), card_library.Asp(), card_library.Falcon(), card_library.DumpyTF(), card_library.Turtle(), card_library.BoppitW()])
-        squirrels = [card_library.Squirrel()]
-        for n in range(19) :
-            squirrels.append(card_library.Squirrel())
-        player_squirrels = deck.Deck(squirrels)
+        leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
+        player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
+        player_squirrels = duel.resource_gen()
 
         # Create a sample playmat with cards on the field
         playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
@@ -715,30 +724,19 @@ def test_advancing() :
         for zone in range(1, 6) :
             playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
 
-        # Print the initial field
-        # print("Initial Field:")
-        # playmat.print_full_field()
-
-        # # Get user input before advancing
-        # input("Press enter to advance.")
-
         # Call the advance method
         playmat.advance()
 
         # Print the field after advancing
-        # print("Field after Advancing:")
         playmat.print_field()
 
 def test_split_dam() :
     QoL.clear()
 
     # create decks
-    leshy_deck = deck.Deck([card_library.Asp(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF()])
-    player_deck = deck.Deck([card_library.DumpyTF(), card_library.Lobster(), card_library.BoppitW(), card_library.Ouroboros(), card_library.Turtle(), card_library.Asp(), card_library.Falcon(), card_library.DumpyTF(), card_library.Turtle(), card_library.BoppitW()])
-    squirrels = [card_library.Squirrel()]
-    for n in range(19) :
-        squirrels.append(card_library.Squirrel())
-    player_squirrels = deck.Deck(squirrels)
+    leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
+    player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
+    player_squirrels = duel.resource_gen()
 
     # Create a sample playmat with cards on the field
     playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
@@ -786,12 +784,9 @@ def test_corpse_eaters() :
     QoL.clear()
 
     # create decks
-    leshy_deck = deck.Deck([card_library.Asp(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF(), card_library.OppositeRabbit(), card_library.Falcon(), card_library.DumpyTF()])
-    player_deck = deck.Deck([card_library.DumpyTF(), card_library.Lobster(), card_library.BoppitW(), card_library.Ouroboros(), card_library.Turtle(), card_library.Asp(), card_library.Falcon(), card_library.DumpyTF(), card_library.Turtle(), card_library.BoppitW()])
-    squirrels = [card_library.Squirrel()]
-    for n in range(19) :
-        squirrels.append(card_library.Squirrel())
-    player_squirrels = deck.Deck(squirrels)
+    leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
+    player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
+    player_squirrels = duel.resource_gen()
 
     # Create a sample playmat with cards on the field
     playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())

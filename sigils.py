@@ -69,36 +69,30 @@ Dict = {
         "Doesn't die when sacrificed."
         ],
 
-    'waterborne' : [ # incorporate into AI
+    'waterborne' : [
         ["<⁻v⁻>","ˎ\\ /ˏ","λ/λ\\λ"],
         'Attacks directed toward this card hit the owner directly.'
         ],
-        # waterborne cards (to be added):
-        ### ___
 
-    'vole hole' : [ # incorporate into AI
+    'vole hole' : [
         [" ___ ","/…¨…\\","‾‾‾‾‾"],
         'Adds a vole to your hand when played.'
         ],
 
-    'touch of death' : [ # incorporate into AI
+    'touch of death' : [
         ["\\´‾`/","|°Δ°|","/\'\"\'\\"],
         'Always kills the card it attacks, regardless of health.'
         ],
-        # touch of death cards (to be added):
-        ### ___
 
-    'dam builder' : [ # incorporate into AI
+    'dam builder' : [
         ["~~/\\ ","~/\\_\\","/__\\ "],
         'Builds dams on either side when played.'
         ],
 
-    'corpse eater' : [ # incorporate into AI
+    'corpse eater' : [
         ["ᴦ==ͽ ","L(Ō) "," \'\"\' "],
         'Plays itself to a zone a card died in.'
         ],
-        # corpse eater cards (to be added):
-        ### ___
 }
 
 if __name__ == '__main__':
