@@ -2,7 +2,7 @@ import duel
 import QoL
 import ASCII_text
 
-version_ID = 'v0.1.3-alpha'
+version_ID = 'v0.2.0a-alpha'
 
 choice_text = 'Choose an option:'
 
