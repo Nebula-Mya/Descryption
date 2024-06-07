@@ -98,7 +98,7 @@ class BlankCard() :
             self.spent_lives = 0
         self.updateASCII()
 
-    def attack(self, front_left_card, front_card, front_right_card, left_card, right_card, is_players=False, bushes={}) :
+    def attack(self, front_left_card, front_card, front_right_card, is_players=False, bushes={}) :
         '''
         attacks zone(s) in front
 
@@ -106,44 +106,35 @@ class BlankCard() :
             front_left_card: the card in the zone to the left of the front card (card object)
             front_card: the card in the zone in front of the attacking card (card object)
             front_right_card: the card in the zone to the right of the front card (card object)
-            left_card: the card in the zone to the left of the attacking card (card object)
-            right_card: the card in the zone to the right of the attacking card (card object)
             is_players: whether the attacking card is on the player's field (bool)
             bushes: the dict of bushed cards (dict)
         
         Returns:
-            opponent_teeth: the damage dealt to the opponent (int)
-            controller_teeth: the damage dealt to the controller (int)
+            points: the damage dealt to the opponent (int)
         '''
+        ### future code
+        # setup variables
         if is_players :
             to_opp_field = True
         else :
             to_opp_field = False
-        opponent_teeth = 0
-        controller_teeth = 0
-        # if sigil is;
-        ## bifurcate: attacks front_left_card and front_right_card
-        if self.sigil == 'bifurcate' :
-            if front_left_card != None :
-                opponent_teeth += front_left_card.takeDamage(self.current_attack, in_opp_field=to_opp_field, bushes=bushes)
-            if front_right_card != None :
-                opponent_teeth += front_right_card.takeDamage(self.current_attack, in_opp_field=to_opp_field, bushes=bushes)
-        ## venom: attacks front, then poisons front
-        elif self.sigil == 'venom' :
-            opponent_teeth += front_card.takeDamage(self.current_attack, in_opp_field=to_opp_field, bushes=bushes)
-            front_card.is_poisoned = True
-        ## airborne: attacks front, ignores other creatures
-        elif self.sigil == 'airborne' :
-            opponent_teeth += front_card.takeDamage(self.current_attack, from_air=True, in_opp_field=to_opp_field, bushes=bushes)
-        elif self.sigil == 'touch of death' :
-            opponent_teeth += front_card.takeDamage(self.current_attack, deathtouch=True, in_opp_field=to_opp_field, bushes=bushes)
-        ## irrelevant or no sigil: attacks front
+        points = 0
+
+        # if sigil is a sigil that activates on attack, execute the code
+        if self.sigil in sigils.on_attacks :
+            local_dict = locals()
+            exec(sigils.Dict[self.sigil][2], None, local_dict)
+            points = local_dict['points']
+
+        # if sigil is irrelevant or none existent, attack front
         else :
-            opponent_teeth += front_card.takeDamage(self.current_attack, in_opp_field=to_opp_field, bushes=bushes)
+            points += front_card.takeDamage(self.current_attack, in_opp_field=to_opp_field, bushes=bushes)
+        
         # if poisoned, deal 1 damage to self
         if self.is_poisoned :
-            controller_teeth += self.takeDamage(1)
-        return (opponent_teeth, controller_teeth)
+            self.takeDamage(1)
+
+        return points
 
     def __str__(self) :
         print(self.name)
