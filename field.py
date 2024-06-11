@@ -248,7 +248,7 @@ class Playmat :
         self.print_field()
         return played
 
-    def attack(self) :
+    def attack(self) : # REFACTORED
         '''
         attacks with all of the active player's cards in play and updates score
         '''
@@ -274,11 +274,6 @@ class Playmat :
             for zone in self.opponent_field :
                 if self.opponent_field[zone].species != '' and self.opponent_field[zone].zone != 0 and self.opponent_field[zone].zone != 6:
                     leshy_points = self.opponent_field[zone].attack(self.player_field[zone-1],self.player_field[zone],self.player_field[zone+1], self.hand)
-
-                    # bees within (REMOVE ONCE BlankCard.take_damage IS REFACTORED)
-                    if self.player_field[zone].sigil == 'bees within' :
-                        if leshy_points < self.opponent_field[zone].current_attack :
-                            self.hand.append(card_library.Bee())
 
                     # score update
                     self.score['opponent'] += leshy_points

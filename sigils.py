@@ -72,7 +72,7 @@ if self.active == 'opponent' :
 '''
         ],
 
-    'venom' : [ # keep an eye that poison is applied
+    'venom' : [
         [" ___ "," \\ / "," ·V· "],
         'Poisons target on attack.',
         ''' 
@@ -93,6 +93,17 @@ points += front_card.takeDamage(self.current_attack, hand, from_air=True, in_opp
         ["_____","ʅ   ʃ"," ʅɩð "],
         'Can block airborne creatures.',
         '''
+if self.species == '' or self.status == 'dead' :
+    teeth = damage
+else :
+    prev_life = self.current_life
+    self.current_life -= damage
+    self.updateASCII()
+    if self.current_life <= 0 or deathtouch :
+        self.status = 'dead'
+        if in_opp_field and self.current_life <= 0 :
+            excess_damage = damage - prev_life
+            bushes[self.zone].takeDamage(excess_damage, hand, from_air, in_bushes=True)
 '''
         ],
 
@@ -107,8 +118,21 @@ points += front_card.takeDamage(self.current_attack, hand, from_air=True, in_opp
         [" /‾\\ ","|___|","  Ʈ->"],
         'Adds a bee to your hand when damaged.',
         '''
-if (not (in_opp_field or in_bushes) ) : # only if opponent is attacking, as leshy's bees within wont do anything; he doesnt have a hand to add to
-    hand.append(card_library.Bee())
+import card_library
+
+if self.species == '' or self.status == 'dead' or from_air:
+    teeth = damage
+else :
+    prev_life = self.current_life
+    self.current_life -= damage
+    self.updateASCII()
+    if not (in_opp_field or in_bushes) : # only if opponent is attacking, as leshy's bees within wont do anything; he doesnt have a hand to add to
+        hand.append(card_library.Bee())
+    if self.current_life <= 0 or deathtouch :
+        self.status = 'dead'
+        if in_opp_field and self.current_life <= 0 :
+            excess_damage = damage - prev_life
+            bushes[self.zone].takeDamage(excess_damage, hand, from_air, in_bushes=True)
 '''
         ],
 
@@ -223,6 +247,7 @@ elif self.active == 'opponent' :
         ["<⁻v⁻>","ˎ\\ /ˏ","λ/λ\\λ"],
         'Attacks directed toward this card hit the owner directly.',
         '''
+teeth = damage
 '''
         ],
 
@@ -256,12 +281,12 @@ points += front_card.takeDamage(self.current_attack, hand, deathtouch=True, in_o
         ],
 }
 
-on_attacks = ['bifurcate','venom','touch of death', 'airborne']
-on_deaths = ['split','unkillable','bees within']
+on_attacks = ['bifurcate','venom','touch of death', 'airborne'] # IMPLEMENTED
+on_deaths = ['split','unkillable']
 on_plays = ['vole hole','dam builder']
-on_damages = ['mighty leap', 'waterborne', 'bees within']
+on_damages = ['mighty leap', 'waterborne', 'bees within'] # IMPLEMENTED
 on_sacrifices = ['worthy sacrifice','many lives']
-movers = ['lane shift right','lane shift left','hefty (right)','hefty (left)']
+movers = ['lane shift right','lane shift left','hefty (right)','hefty (left)'] # IMPLEMENTED
 on_dead_card = ['corpse eater']
 
 if __name__ == '__main__':

@@ -70,6 +70,7 @@ def choose_draw(field) :
     bad_input = True
     main_empty_alert = False
     resource_empty_alert = False
+    invalid_choice = False
     while bad_input :
         field.print_full_field()
         if main_empty_alert :
@@ -78,6 +79,9 @@ def choose_draw(field) :
         if resource_empty_alert :
             print('Resource deck is empty.')
             resource_empty_alert = False
+        if invalid_choice :
+            print('Invalid choice.')
+            invalid_choice = False
         deck_number = input('Draw from resource deck (1) or main deck (2): ')
         try :
             deck_number = int(deck_number)
@@ -96,7 +100,7 @@ def choose_draw(field) :
             except :
                 resource_empty_alert = True
         else :
-            print('Invalid deck number.')
+            invalid_choice = True
 
 def winner_check(field) :
     '''
@@ -278,18 +282,17 @@ def view_play_attack(field) :
         field: the field object to view (field object)
     '''
     not_attack = True
+    invalid_choice = False
     while not_attack :
         field.print_field()
-        # print('1. View deck')
-        # print('2. View graveyard')
-        # print('3. View a card')
-        # print('4. Play a card')
-        # print('5. Attack and end turn')
         print('1. Play a card')
         print('2. View a card')
         print('3. View graveyard')
         print('4. View deck')
         print('5. Attack and end turn')
+        if invalid_choice :
+            print('Invalid choice.')
+            invalid_choice = False
         choice = input('Choose an option: ')
         if choice == '4' :
             view_remaining(field)
@@ -302,7 +305,7 @@ def view_play_attack(field) :
         elif choice == '5' :
             not_attack = False
         else :
-            print('Invalid choice.')
+            invalid_choice = True
 
 def deck_gen(possible_cards, size) :
     '''

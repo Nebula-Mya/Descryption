@@ -147,7 +147,7 @@ class BlankCard() :
             self.line_cursor = 2
         return self.text_lines[self.line_cursor - 1]
 
-    def takeDamage(self, damage, hand, from_air=False, in_opp_field=False, in_bushes=False, bushes={}, deathtouch=False) :
+    def takeDamage(self, damage, hand, from_air=False, in_opp_field=False, in_bushes=False, bushes={}, deathtouch=False) : # REFACTORED
         '''
         reduces current life by damage
 
@@ -163,19 +163,29 @@ class BlankCard() :
         Returns:
             teeth: damage to controller (int)
         '''
+        # setup variables
         teeth = 0
-        if (self.species == '' or self.status == 'dead' or (from_air and self.sigil != 'mighty leap') or self.sigil == 'waterborne') and not in_bushes :
-            teeth = damage
-        else :
-            prev_life = self.current_life
-            self.current_life -= damage
-            self.updateASCII()
-            if self.current_life <= 0 or deathtouch:
-                self.status = 'dead'
-                if in_opp_field and self.current_life <= 0 :
-                    excess_damage = damage - prev_life
-                    bushes[self.zone].takeDamage(excess_damage, from_air, in_bushes=True)
+
+        # if sigil is a sigil that activates on damage
+        [teeth] = QoL.exec_sigil_code(self, sigils.on_damages, local_vars=locals(), vars_to_return=['teeth'])
+
+        # if sigil is irrelevant or none existent, take damage
+        if self.sigil not in sigils.on_damages:
+            if self.species == '' or self.status == 'dead' or from_air :
+                teeth = damage
+            else :
+                prev_life = self.current_life
+                self.current_life -= damage
+                self.updateASCII()
+                if self.current_life <= 0 or deathtouch :
+                    self.status = 'dead'
+                    if in_opp_field and self.current_life <= 0 :
+                        excess_damage = damage - prev_life
+                        bushes[self.zone].takeDamage(excess_damage, hand, in_bushes=True)
+        
         return teeth
+
+        
 
     def play(self, zone) :
         '''
