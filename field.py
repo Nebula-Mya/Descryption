@@ -254,36 +254,28 @@ class Playmat :
         '''
         did_shift = False
         if self.active == 'player' :
-            # attacking
-            for zone in self.player_field :
-                if self.player_field[zone].species != '' and self.player_field[zone].zone != 0 and self.player_field[zone].zone != 6 :
-                    player_points = self.player_field[zone].attack(self.opponent_field[zone-1],self.opponent_field[zone],self.opponent_field[zone+1], self.hand, is_players=True, bushes=self.bushes)
+            attacking_field = self.player_field
+            defending_field = self.opponent_field
+            is_players = True
+        else :
+            attacking_field = self.opponent_field
+            defending_field = self.player_field
+            is_players = False
 
-                    # score update
-                    self.score['player'] += player_points
+        # attacking
+        for zone in attacking_field :
+            if attacking_field[zone].species != '' and attacking_field[zone].zone != 0 and attacking_field[zone].zone != 6 :
+                attacker_points = attacking_field[zone].attack(defending_field[zone-1],defending_field[zone],defending_field[zone+1], self.hand, is_players=is_players, bushes=self.bushes)
 
-            # post-attack sigils
-            for zone in self.player_field :
-                if did_shift :
-                    did_shift = False
-                else :
-                    [did_shift] = QoL.exec_sigil_code(self.player_field[zone], sigils.movers, None, locals(), ['did_shift'] )
+                # score update
+                self.score[self.active] += attacker_points
 
-        elif self.active == 'opponent' :
-            # attacking
-            for zone in self.opponent_field :
-                if self.opponent_field[zone].species != '' and self.opponent_field[zone].zone != 0 and self.opponent_field[zone].zone != 6:
-                    leshy_points = self.opponent_field[zone].attack(self.player_field[zone-1],self.player_field[zone],self.player_field[zone+1], self.hand)
-
-                    # score update
-                    self.score['opponent'] += leshy_points
-                    
-            # post-attack sigils
-            for zone in self.opponent_field :
-                if did_shift :
-                    did_shift = False
-                else :
-                    [did_shift] = QoL.exec_sigil_code(self.opponent_field[zone], sigils.movers, None, locals(), ['did_shift'] )
+        # moving sigils
+        for zone in attacking_field :
+            if did_shift :
+                did_shift = False
+            else :
+                [did_shift] = QoL.exec_sigil_code(attacking_field[zone], sigils.movers, None, locals(), ['did_shift'] )
 
     def check_states(self) :
         '''
@@ -381,6 +373,16 @@ class Playmat :
                 corpse_eaters = get_corpse_eaters(self.hand) # refresh corpse eaters as hand indexes may have changed
             else :
                 exhausted = True
+
+        return
+        # new code
+        # setup variables
+        corpses = []
+        open_corpses = []
+
+        # check for dead cards in each field
+        for field in [self.player_field, self.opponent_field, self.bushes] :
+            pass
 
     def advance(self) : 
         '''

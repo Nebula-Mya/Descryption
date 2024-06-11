@@ -22,18 +22,12 @@ if (front_right_card.zone % 5) != 1 :
         '''
 import card
 
-if self.active == 'player' :
-    if self.player_field[zone].zone != 5 and self.player_field[zone+1].species == '' :
-        self.player_field[zone+1] = self.player_field[zone]
-        self.player_field[zone+1].zone = zone+1
-        self.player_field[zone] = card.BlankCard()
-        did_shift = True
-if self.active == 'opponent' :
-    if self.opponent_field[zone].zone != 5 and self.opponent_field[zone+1].species == '' :
-        self.opponent_field[zone+1] = self.opponent_field[zone]
-        self.opponent_field[zone+1].zone = zone+1
-        self.opponent_field[zone] = card.BlankCard()
-        did_shift = True
+if zone != 5 and attacking_field[zone+1].species == '' :
+    attacking_field[zone+1] = attacking_field[zone]
+    attacking_field[zone+1].zone = zone+1
+    attacking_field[zone] = card.BlankCard()
+    attacking_field[zone].play(zone)
+    did_shift = True
 '''
         ],
 
@@ -43,18 +37,12 @@ if self.active == 'opponent' :
         '''
 import card
 
-if self.active == 'player' :
-    if self.player_field[zone].zone != 1 and self.player_field[zone-1].species == '' :
-        self.player_field[zone-1] = self.player_field[zone]
-        self.player_field[zone-1].zone = zone-1
-        self.player_field[zone] = card.BlankCard()
-        did_shift = True
-if self.active == 'opponent' :
-    if self.opponent_field[zone].zone != 1 and self.opponent_field[zone-1].species == '' :
-        self.opponent_field[zone-1] = self.opponent_field[zone]
-        self.opponent_field[zone-1].zone = zone-1
-        self.opponent_field[zone] = card.BlankCard()
-        did_shift = True
+if zone != 1 and attacking_field[zone-1].species == '' :
+    attacking_field[zone-1] = attacking_field[zone]
+    attacking_field[zone-1].zone = zone-1
+    attacking_field[zone] = card.BlankCard()
+    attacking_field[zone].play(zone)
+    did_shift = True
 '''
         ],
 
@@ -143,46 +131,27 @@ else :
 import QoL
 import card
 
-if self.active == 'player' :
-    if zone == 5 :
-        self.player_field[zone].sigil = 'hefty (left)'
-        self.player_field[zone].updateASCII()
-    else :
-        push_count = QoL.hefty_check(self.player_field, zone + 1, 'right')
-        if push_count == 0 :
-            self.player_field[zone].sigil = 'hefty (left)'
-            self.player_field[zone].updateASCII()
-        elif push_count == -1 :
-            self.player_field[zone+1] = self.player_field[zone]
-            self.player_field[zone+1].zone = zone+1
-            self.player_field[zone] = card.BlankCard()
-            did_shift = True
-        elif push_count >= 1 :
-            did_shift = True
-            for n in range(zone + push_count, zone - 1, -1) :
-                self.player_field[n+1] = self.player_field[n]
-                self.player_field[n+1].zone = n+1
-                self.player_field[n] = card.BlankCard()
-elif self.active == 'opponent' :
-    if zone == 5 :
-        self.opponent_field[zone].sigil = 'hefty (left)'
-        self.opponent_field[zone].updateASCII()
-    else :
-        push_count = QoL.hefty_check(self.opponent_field, zone + 1, 'right')
-        if push_count == 0 :
-            self.opponent_field[zone].sigil = 'hefty (left)'
-            self.opponent_field[zone].updateASCII()
-        elif push_count == -1 :
-            self.opponent_field[zone+1] = self.opponent_field[zone]
-            self.opponent_field[zone+1].zone = zone+1
-            self.opponent_field[zone] = card.BlankCard()
-            did_shift = True
-        elif push_count >= 1 :
-            did_shift = True
-            for n in range(zone + push_count, zone - 1, -1) :
-                self.opponent_field[n+1] = self.opponent_field[n]
-                self.opponent_field[n+1].zone = n+1
-                self.opponent_field[n] = card.BlankCard()
+if zone == 5 :
+    attacking_field[zone].sigil = 'hefty (left)'
+    attacking_field[zone].updateASCII()
+else :
+    push_count = QoL.hefty_check(attacking_field, zone + 1, 'right')
+    if push_count == 0 :
+        attacking_field[zone].sigil = 'hefty (left)'
+        attacking_field[zone].updateASCII()
+    elif push_count == -1 :
+        attacking_field[zone+1] = attacking_field[zone]
+        attacking_field[zone+1].zone = zone+1
+        attacking_field[zone] = card.BlankCard()
+        attacking_field[zone].play(zone)
+        did_shift = True
+    elif push_count >= 1 :
+        for n in range(zone + push_count, zone - 1, -1) :
+            attacking_field[n+1] = attacking_field[n]
+            attacking_field[n+1].zone = n+1
+            attacking_field[n] = card.BlankCard()
+            attacking_field[n].play(n)
+        did_shift = True
 '''
         ],
     
@@ -193,46 +162,27 @@ elif self.active == 'opponent' :
 import QoL
 import card
 
-if self.active == 'player' :
-    if zone == 1 :
-        self.player_field[zone].sigil = 'hefty (right)'
-        self.player_field[zone].updateASCII()
-    else :
-        push_count = QoL.hefty_check(self.player_field, zone - 1, 'left')
-        if push_count == 0:
-            self.player_field[zone].sigil = 'hefty (right)'
-            self.player_field[zone].updateASCII()
-        elif push_count == -1 :
-                self.player_field[zone-1] = self.player_field[zone]
-                self.player_field[zone-1].zone = zone-1
-                self.player_field[zone] = card.BlankCard()
-                did_shift = True
-        elif push_count >= 1 :
+if zone == 1 :
+    attacking_field[zone].sigil = 'hefty (right)'
+    attacking_field[zone].updateASCII()
+else :
+    push_count = QoL.hefty_check(attacking_field, zone - 1, 'left')
+    if push_count == 0:
+        attacking_field[zone].sigil = 'hefty (right)'
+        attacking_field[zone].updateASCII()
+    elif push_count == -1 :
+            attacking_field[zone-1] = attacking_field[zone]
+            attacking_field[zone-1].zone = zone-1
+            attacking_field[zone] = card.BlankCard()
+            attacking_field[zone].play(zone)
             did_shift = True
-            for n in range(zone - push_count, zone + 1) :
-                self.player_field[n-1] = self.player_field[n]
-                self.player_field[n-1].zone = n-1
-                self.player_field[n] = card.BlankCard()
-elif self.active == 'opponent' :
-    if zone == 1 :
-        self.opponent_field[zone].sigil = 'hefty (right)'
-        self.opponent_field[zone].updateASCII()
-    else :
-        push_count = QoL.hefty_check(self.opponent_field, zone - 1, 'left')
-        if push_count == 0:
-            self.opponent_field[zone].sigil = 'hefty (right)'
-            self.opponent_field[zone].updateASCII()
-        elif push_count == -1 :
-                self.opponent_field[zone-1] = self.opponent_field[zone]
-                self.opponent_field[zone-1].zone = zone-1
-                self.opponent_field[zone] = card.BlankCard()
-                did_shift = True
-        elif push_count >= 1 :
-            did_shift = True
-            for n in range(zone - push_count, zone + 1) :
-                self.opponent_field[n-1] = self.opponent_field[n]
-                self.opponent_field[n-1].zone = n-1
-                self.opponent_field[n] = card.BlankCard()
+    elif push_count >= 1 :
+        for n in range(zone - push_count, zone + 1) :
+            attacking_field[n-1] = attacking_field[n]
+            attacking_field[n-1].zone = n-1
+            attacking_field[n] = card.BlankCard()
+            attacking_field[n].play(n)
+        did_shift = True
 '''
         ],
 
