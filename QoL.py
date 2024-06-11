@@ -177,7 +177,6 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None
         the variables to return (list)
     '''
     # imports
-    import card
     import sigils
 
     # set up variables
