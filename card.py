@@ -98,7 +98,7 @@ class BlankCard() :
             self.spent_lives = 0
         self.updateASCII()
 
-    def attack(self, front_left_card, front_card, front_right_card, is_players=False, bushes={}) : # REFACTORED
+    def attack(self, front_left_card, front_card, front_right_card, hand, is_players=False, bushes={}) : # REFACTORED
         '''
         attacks zone(s) in front
 
@@ -106,33 +106,26 @@ class BlankCard() :
             front_left_card: the card in the zone to the left of the front card (card object)
             front_card: the card in the zone in front of the attacking card (card object)
             front_right_card: the card in the zone to the right of the front card (card object)
+            hand: the player's hand (list)
             is_players: whether the attacking card is on the player's field (bool)
             bushes: the dict of bushed cards (dict)
         
         Returns:
             points: the damage dealt to the opponent (int)
         '''
-        ### future code
         # setup variables
-        if is_players :
-            to_opp_field = True
-        else :
-            to_opp_field = False
         points = 0
 
-        # if sigil is a sigil that activates on attack, execute the code
-        if self.sigil in sigils.on_attacks :
-            local_dict = locals()
-            exec(sigils.Dict[self.sigil][2], None, local_dict)
-            points = local_dict['points']
+        # if sigil is a sigil that activates on attack
+        [points] = QoL.exec_sigil_code(self, sigils.on_attacks, local_vars=locals(), vars_to_return=['points'])
 
         # if sigil is irrelevant or none existent, attack front
-        else :
-            points += front_card.takeDamage(self.current_attack, in_opp_field=to_opp_field, bushes=bushes)
+        if self.sigil not in sigils.on_attacks:
+            points += front_card.takeDamage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
         
         # if poisoned, deal 1 damage to self
         if self.is_poisoned :
-            self.takeDamage(1)
+            self.takeDamage(1, hand)
 
         return points
 
@@ -154,12 +147,13 @@ class BlankCard() :
             self.line_cursor = 2
         return self.text_lines[self.line_cursor - 1]
 
-    def takeDamage(self, damage, from_air=False, in_opp_field=False, in_bushes=False, bushes={}, deathtouch=False) :
+    def takeDamage(self, damage, hand, from_air=False, in_opp_field=False, in_bushes=False, bushes={}, deathtouch=False) :
         '''
         reduces current life by damage
 
         Arguments:
             damage: the amount of damage to take (int)
+            hand: the player's hand (list)
             from_air: whether the damage is from an airborne creature (bool)
             in_opp_field: whether the card is on Leshy's feild (bool)
             in_bushes: whether the card is in the bushes (bool)

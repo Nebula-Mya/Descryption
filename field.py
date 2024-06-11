@@ -7,7 +7,6 @@ import random
 import os
 import duel
 import sigils
-import sigil_tools
 
 def ai_category_checking(categories, player_field, opponent_deck, bushes, score, strat_change_threshold, in_strategy_chance) :
     '''
@@ -258,34 +257,38 @@ class Playmat :
             # attacking
             for zone in self.player_field :
                 if self.player_field[zone].species != '' and self.player_field[zone].zone != 0 and self.player_field[zone].zone != 6 :
-                    player_points = self.player_field[zone].attack(self.opponent_field[zone-1],self.opponent_field[zone],self.opponent_field[zone+1], is_players=True, bushes=self.bushes)
+                    player_points = self.player_field[zone].attack(self.opponent_field[zone-1],self.opponent_field[zone],self.opponent_field[zone+1], self.hand, is_players=True, bushes=self.bushes)
+
+                    # score update
                     self.score['player'] += player_points
+
             # post-attack sigils
             for zone in self.player_field :
                 if did_shift :
                     did_shift = False
-                elif self.player_field[zone].sigil in sigils.movers :
-                    local_dict = locals()
-                    exec(sigils.Dict[self.player_field[zone].sigil][2], None, local_dict)
-                    did_shift = local_dict['did_shift']
+                else :
+                    [did_shift] = QoL.exec_sigil_code(self.player_field[zone], sigils.movers, None, locals(), ['did_shift'] )
 
         elif self.active == 'opponent' :
             # attacking
             for zone in self.opponent_field :
                 if self.opponent_field[zone].species != '' and self.opponent_field[zone].zone != 0 and self.opponent_field[zone].zone != 6:
-                    leshy_points = self.opponent_field[zone].attack(self.player_field[zone-1],self.player_field[zone],self.player_field[zone+1])
+                    leshy_points = self.opponent_field[zone].attack(self.player_field[zone-1],self.player_field[zone],self.player_field[zone+1], self.hand)
 
-                    if leshy_points < self.opponent_field[zone].current_attack and self.player_field[zone].sigil == 'bees within' :
-                        self.hand.append(card_library.Bee())
+                    # bees within (REMOVE ONCE BlankCard.take_damage IS REFACTORED)
+                    if self.player_field[zone].sigil == 'bees within' :
+                        if leshy_points < self.opponent_field[zone].current_attack :
+                            self.hand.append(card_library.Bee())
+
+                    # score update
                     self.score['opponent'] += leshy_points
+                    
             # post-attack sigils
             for zone in self.opponent_field :
                 if did_shift :
                     did_shift = False
-                elif self.opponent_field[zone].sigil in sigils.movers :
-                    local_dict = locals()
-                    exec(sigils.Dict[self.opponent_field[zone].sigil][2], None, local_dict)
-                    did_shift = local_dict['did_shift']
+                else :
+                    [did_shift] = QoL.exec_sigil_code(self.opponent_field[zone], sigils.movers, None, locals(), ['did_shift'] )
 
     def check_states(self) :
         '''

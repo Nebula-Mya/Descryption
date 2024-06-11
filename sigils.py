@@ -1,5 +1,3 @@
-import sigil_tools
-
 Dict = { # check for applicable sigils when any may apply using the group lists at the bottom, then use the code contained in the sigil's list to apply the effect ( exec(sigils.Dict[sigil][2]) ) {see attack method in card.py for example}
     '' : [ # sigil name
         ["     ","     ","     "], # sigil icon
@@ -12,9 +10,9 @@ Dict = { # check for applicable sigils when any may apply using the group lists 
         'Attacks diagonally, dealing damage to two targets.',
         '''
 if (front_left_card.zone % 5) != 1 :
-    points += front_left_card.takeDamage(self.current_attack, in_opp_field=to_opp_field, bushes=bushes)
+    points += front_left_card.takeDamage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
 if (front_right_card.zone % 5) != 1 :
-    points += front_right_card.takeDamage(self.current_attack, in_opp_field=to_opp_field, bushes=bushes)
+    points += front_right_card.takeDamage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
 '''
         ],
 
@@ -22,6 +20,8 @@ if (front_right_card.zone % 5) != 1 :
         [",-,  ","| |->","'-'  "], 
         'Moves right after attacking if possible.',
         '''
+import card
+
 if self.active == 'player' :
     if self.player_field[zone].zone != 5 and self.player_field[zone+1].species == '' :
         self.player_field[zone+1] = self.player_field[zone]
@@ -41,6 +41,8 @@ if self.active == 'opponent' :
         ["  ,-,","<-| |","  '-'"],
         'Moves left after attacking if possible.',
         '''
+import card
+
 if self.active == 'player' :
     if self.player_field[zone].zone != 1 and self.player_field[zone-1].species == '' :
         self.player_field[zone-1] = self.player_field[zone]
@@ -74,7 +76,7 @@ if self.active == 'opponent' :
         [" ___ "," \\ / "," ·V· "],
         'Poisons target on attack.',
         ''' 
-points += front_card.takeDamage(self.current_attack, in_opp_field=to_opp_field, bushes=bushes)
+points += front_card.takeDamage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
 front_card.is_poisoned = True
 '''
         ],
@@ -83,7 +85,7 @@ front_card.is_poisoned = True
         ["  _  ","ɩΞΞɭ "," ɩΞΞð"],
         'Attacks from the air, ignoring other creatures.',
         '''
-points += front_card.takeDamage(self.current_attack, from_air=True, in_opp_field=to_opp_field, bushes=bushes)
+points += front_card.takeDamage(self.current_attack, hand, from_air=True, in_opp_field=is_players, bushes=bushes)
 '''
         ],
 
@@ -105,6 +107,8 @@ points += front_card.takeDamage(self.current_attack, from_air=True, in_opp_field
         [" /‾\\ ","|___|","  Ʈ->"],
         'Adds a bee to your hand when damaged.',
         '''
+if (not (in_opp_field or in_bushes) ) : # only if opponent is attacking, as leshy's bees within wont do anything; he doesnt have a hand to add to
+    hand.append(card_library.Bee())
 '''
         ],
 
@@ -112,12 +116,15 @@ points += front_card.takeDamage(self.current_attack, from_air=True, in_opp_field
         [". >>>","|)_[]","'———'"],
         'Moves to the right, pushing other creatures with it.',
         '''
+import QoL
+import card
+
 if self.active == 'player' :
     if zone == 5 :
         self.player_field[zone].sigil = 'hefty (left)'
         self.player_field[zone].updateASCII()
     else :
-        push_count = sigil_tools.hefty_check(self.player_field, zone + 1, 'right')
+        push_count = QoL.hefty_check(self.player_field, zone + 1, 'right')
         if push_count == 0 :
             self.player_field[zone].sigil = 'hefty (left)'
             self.player_field[zone].updateASCII()
@@ -137,7 +144,7 @@ elif self.active == 'opponent' :
         self.opponent_field[zone].sigil = 'hefty (left)'
         self.opponent_field[zone].updateASCII()
     else :
-        push_count = sigil_tools.hefty_check(self.opponent_field, zone + 1, 'right')
+        push_count = QoL.hefty_check(self.opponent_field, zone + 1, 'right')
         if push_count == 0 :
             self.opponent_field[zone].sigil = 'hefty (left)'
             self.opponent_field[zone].updateASCII()
@@ -159,12 +166,15 @@ elif self.active == 'opponent' :
         ["<<< .","[]_(|","'———'"],
         'Moves to the left, pushing other creatures with it.',
         '''
+import QoL
+import card
+
 if self.active == 'player' :
     if zone == 1 :
         self.player_field[zone].sigil = 'hefty (right)'
         self.player_field[zone].updateASCII()
     else :
-        push_count = sigil_tools.hefty_check(self.player_field, zone - 1, 'left')
+        push_count = QoL.hefty_check(self.player_field, zone - 1, 'left')
         if push_count == 0:
             self.player_field[zone].sigil = 'hefty (right)'
             self.player_field[zone].updateASCII()
@@ -184,7 +194,7 @@ elif self.active == 'opponent' :
         self.opponent_field[zone].sigil = 'hefty (right)'
         self.opponent_field[zone].updateASCII()
     else :
-        push_count = sigil_tools.hefty_check(self.opponent_field, zone - 1, 'left')
+        push_count = QoL.hefty_check(self.opponent_field, zone - 1, 'left')
         if push_count == 0:
             self.opponent_field[zone].sigil = 'hefty (right)'
             self.opponent_field[zone].updateASCII()
@@ -227,7 +237,7 @@ elif self.active == 'opponent' :
         ["\\´‾`/","|°Δ°|","/\'\"\'\\"],
         'Always kills the card it attacks, regardless of health.',
         '''
-points += front_card.takeDamage(self.current_attack, deathtouch=True, in_opp_field=to_opp_field, bushes=bushes)
+points += front_card.takeDamage(self.current_attack, hand, deathtouch=True, in_opp_field=is_players, bushes=bushes)
 '''
         ],
 
@@ -249,10 +259,10 @@ points += front_card.takeDamage(self.current_attack, deathtouch=True, in_opp_fie
 on_attacks = ['bifurcate','venom','touch of death', 'airborne']
 on_deaths = ['split','unkillable','bees within']
 on_plays = ['vole hole','dam builder']
-on_damages = ['mighty leap', 'waterborne']
+on_damages = ['mighty leap', 'waterborne', 'bees within']
 on_sacrifices = ['worthy sacrifice','many lives']
 movers = ['lane shift right','lane shift left','hefty (right)','hefty (left)']
-misc = ['corpse eater', 'bees within']
+on_dead_card = ['corpse eater']
 
 if __name__ == '__main__':
     import card
