@@ -1,4 +1,4 @@
-Dict = { # check for applicable sigils when any may apply using the group lists at the bottom, then use the code contained in the sigil's list to apply the effect ( exec(sigils.Dict[sigil][2]) ) {see attack method in card.py for example}
+Dict = {
     '' : [ # sigil name
         ["     ","     ","     "], # sigil icon
         '', # sigil description

@@ -183,9 +183,7 @@ class BlankCard() :
                         excess_damage = damage - prev_life
                         bushes[self.zone].takeDamage(excess_damage, hand, in_bushes=True)
         
-        return teeth
-
-        
+        return teeth     
 
     def play(self, zone) :
         '''
