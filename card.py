@@ -98,7 +98,7 @@ class BlankCard() :
             self.spent_lives = 0
         self.updateASCII()
 
-    def attack(self, front_left_card, front_card, front_right_card, hand, is_players=False, bushes={}) : # REFACTORED
+    def attack(self, front_left_card, front_card, front_right_card, hand, is_players=False, bushes={}) :
         '''
         attacks zone(s) in front
 
@@ -147,7 +147,7 @@ class BlankCard() :
             self.line_cursor = 2
         return self.text_lines[self.line_cursor - 1]
 
-    def takeDamage(self, damage, hand, from_air=False, in_opp_field=False, in_bushes=False, bushes={}, deathtouch=False) : # REFACTORED
+    def takeDamage(self, damage, hand, from_air=False, in_opp_field=False, in_bushes=False, bushes={}, deathtouch=False) :
         '''
         reduces current life by damage
 

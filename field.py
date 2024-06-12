@@ -550,7 +550,82 @@ class Playmat :
         self.print_field()
         self.print_hand()
 
-def test_advancing() :
+if __name__ == '__main__' :
+    def test_advancing() :
+            QoL.clear()
+
+            # create decks
+            leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
+            player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
+            player_squirrels = duel.resource_gen()
+
+            # Create a sample playmat with cards on the field
+            playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
+            card_list = []
+            for cost in card_library.Poss_Playr :
+                for species in card_library.Poss_Playr[cost] :
+                    card_list.append(species)
+                    card_list.append(card.BlankCard())
+            for zone in range(1, 6) :
+                playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
+
+            # Call the advance method
+            playmat.advance()
+
+            # Print the field after advancing
+            playmat.print_field()
+
+    def test_split_dam() :
+        QoL.clear()
+
+        # create decks
+        leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
+        player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
+        player_squirrels = duel.resource_gen()
+
+        # Create a sample playmat with cards on the field
+        playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
+        card_list = []
+        for cost in card_library.Poss_Playr :
+            for species in card_library.Poss_Playr[cost] :
+                card_list.append(species)
+                card_list.append(card.BlankCard())
+        for zone in range(1, 6) :
+            if zone == 3 :
+                playmat.player_field[zone] = card.BlankCard()
+                continue
+            playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
+        
+        # place a split card in the middle of leshy's field and advance twice
+        playmat.opponent_field[3] = card_library.BoppitW(True)
+        playmat.advance()
+        playmat.advance()
+
+        # print the field
+        playmat.print_field()
+
+        # get user input before advancing
+        input("Press enter to advance. (summoning a dam builder to zone 3)")
+
+        # place a dam builder in the middle of player's field
+        playmat.hand.append(card_library.Beaver())
+        playmat.hand[0].saccs = 0
+        playmat.play_card(0, 3)
+
+        # print the field
+        playmat.print_field()
+
+        # get user input before advancing
+        input("Press enter to advance. (kill the split card)")
+
+        # kill the split card
+        playmat.opponent_field[3].status = 'dead'
+        playmat.check_states()
+
+        # print the field
+        playmat.print_field()
+
+    def test_corpse_eaters() :
         QoL.clear()
 
         # create decks
@@ -567,181 +642,106 @@ def test_advancing() :
                 card_list.append(card.BlankCard())
         for zone in range(1, 6) :
             playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
+        
+        # populate hand
+        for n in range(6) :
+            if random.randint(1, 2) == 1 :
+                playmat.hand.append(card.BlankCard(name='Corpse Eater', cost=1, attack=1, life=1, sigil='corpse eater', status='alive', blank_cost=True))
+            else :
+                playmat.hand.append(card_library.Squirrel())
+        
+        # print the field
+        playmat.print_full_field()
 
-        # Call the advance method
-        playmat.advance()
+        # get user input
+        input("Press enter to advance. (kill 2 cards)")
 
-        # Print the field after advancing
+        # kill 2 cards and check states
+        cards_to_kill = []
+        for zone in range(1, 6) :
+            if playmat.player_field[zone].species != '' :
+                cards_to_kill.append(zone)
+        kill_count = 2
+        if len(cards_to_kill) < 2 :
+            kill_count = len(cards_to_kill)
+        for n in range(kill_count) :
+            zone_to_kill = random.choice(cards_to_kill)
+            playmat.player_field[zone_to_kill].status = 'dead'
+            cards_to_kill.remove(zone_to_kill)
+        playmat.check_states()
+
+        # print the field
+        playmat.print_full_field()
+
+    def test_hefty() :
+        QoL.clear()
+
+        # create decks
+        leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
+        player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
+        player_squirrels = duel.resource_gen()
+
+        # Create a sample playmat with cards on the field
+        playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
+        card_list = []
+        for cost in card_library.Poss_Playr :
+            for species in card_library.Poss_Playr[cost] :
+                card_list.append(species)
+                card_list.append(card.BlankCard())
+        for zone in range(1, 6) :
+            playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
+            playmat.player_field[zone].zone = zone
+
+        # place a hefty card in the player's field
+        playmat.player_field[2] = card_library.MooseBuck()
+        playmat.player_field[2].play(zone=2)
+        playmat.player_field[2].sigil = 'hefty (right)'
+        playmat.player_field[2].updateASCII()
+
+        # print the field
         playmat.print_field()
+        print(playmat.player_field)
 
-def test_split_dam() :
-    QoL.clear()
+        # get user input before advancing
+        input("Press enter to advance. (move the hefty card to the right)")
 
-    # create decks
-    leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
-    player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
-    player_squirrels = duel.resource_gen()
+        # advance
+        playmat.attack()
 
-    # Create a sample playmat with cards on the field
-    playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
-    card_list = []
-    for cost in card_library.Poss_Playr :
-        for species in card_library.Poss_Playr[cost] :
-            card_list.append(species)
-            card_list.append(card.BlankCard())
-    for zone in range(1, 6) :
-        if zone == 3 :
-            playmat.player_field[zone] = card.BlankCard()
-            continue
-        playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
-    
-    # place a split card in the middle of leshy's field and advance twice
-    playmat.opponent_field[3] = card_library.BoppitW(True)
-    playmat.advance()
-    playmat.advance()
+        # print the field
+        playmat.print_field()
+        print(playmat.player_field)
 
-    # print the field
-    playmat.print_field()
+        # get user input before advancing
+        input("Press enter to advance. (place a card to the right)")
 
-    # get user input before advancing
-    input("Press enter to advance. (summoning a dam builder to zone 3)")
+        # place a card to the right of the hefty card
+        playmat.player_field[4] = card_library.Squirrel()
 
-    # place a dam builder in the middle of player's field
-    playmat.hand.append(card_library.Beaver())
-    playmat.hand[0].saccs = 0
-    playmat.play_card(0, 3)
+        # print the field
+        playmat.print_field()
+        print(playmat.player_field)
 
-    # print the field
-    playmat.print_field()
+        # get user input before advancing
+        input("Press enter to advance. (move the hefty card to the right)")
 
-    # get user input before advancing
-    input("Press enter to advance. (kill the split card)")
+        # advance
+        playmat.attack()
 
-    # kill the split card
-    playmat.opponent_field[3].status = 'dead'
-    playmat.check_states()
+        # print the field
+        playmat.print_field()
+        print(playmat.player_field)
 
-    # print the field
-    playmat.print_field()
+        # get user input before advancing
+        input("Press enter to advance. (move the hefty card to the right)")
 
-def test_corpse_eaters() :
-    QoL.clear()
+        # advance
+        playmat.attack()
 
-    # create decks
-    leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
-    player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
-    player_squirrels = duel.resource_gen()
+        # print the field
+        playmat.print_field()
+        print(playmat.player_field)
 
-    # Create a sample playmat with cards on the field
-    playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
-    card_list = []
-    for cost in card_library.Poss_Playr :
-        for species in card_library.Poss_Playr[cost] :
-            card_list.append(species)
-            card_list.append(card.BlankCard())
-    for zone in range(1, 6) :
-        playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
-    
-    # populate hand
-    for n in range(6) :
-        if random.randint(1, 2) == 1 :
-            playmat.hand.append(card.BlankCard(name='Corpse Eater', cost=1, attack=1, life=1, sigil='corpse eater', status='alive', blank_cost=True))
-        else :
-            playmat.hand.append(card_library.Squirrel())
-    
-    # print the field
-    playmat.print_full_field()
-
-    # get user input
-    input("Press enter to advance. (kill 2 cards)")
-
-    # kill 2 cards and check states
-    cards_to_kill = []
-    for zone in range(1, 6) :
-        if playmat.player_field[zone].species != '' :
-            cards_to_kill.append(zone)
-    kill_count = 2
-    if len(cards_to_kill) < 2 :
-        kill_count = len(cards_to_kill)
-    for n in range(kill_count) :
-        zone_to_kill = random.choice(cards_to_kill)
-        playmat.player_field[zone_to_kill].status = 'dead'
-        cards_to_kill.remove(zone_to_kill)
-    playmat.check_states()
-
-    # print the field
-    playmat.print_full_field()
-
-def test_hefty() :
-    QoL.clear()
-
-    # create decks
-    leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
-    player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
-    player_squirrels = duel.resource_gen()
-
-    # Create a sample playmat with cards on the field
-    playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
-    card_list = []
-    for cost in card_library.Poss_Playr :
-        for species in card_library.Poss_Playr[cost] :
-            card_list.append(species)
-            card_list.append(card.BlankCard())
-    for zone in range(1, 6) :
-        playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
-        playmat.player_field[zone].zone = zone
-
-    # place a hefty card in the player's field
-    playmat.player_field[2] = card_library.MooseBuck()
-    playmat.player_field[2].play(zone=2)
-    playmat.player_field[2].sigil = 'hefty (right)'
-    playmat.player_field[2].updateASCII()
-
-    # print the field
-    playmat.print_field()
-    print(playmat.player_field)
-
-    # get user input before advancing
-    input("Press enter to advance. (move the hefty card to the right)")
-
-    # advance
-    playmat.attack()
-
-    # print the field
-    playmat.print_field()
-    print(playmat.player_field)
-
-    # get user input before advancing
-    input("Press enter to advance. (place a card to the right)")
-
-    # place a card to the right of the hefty card
-    playmat.player_field[4] = card_library.Squirrel()
-
-    # print the field
-    playmat.print_field()
-    print(playmat.player_field)
-
-    # get user input before advancing
-    input("Press enter to advance. (move the hefty card to the right)")
-
-    # advance
-    playmat.attack()
-
-    # print the field
-    playmat.print_field()
-    print(playmat.player_field)
-
-    # get user input before advancing
-    input("Press enter to advance. (move the hefty card to the right)")
-
-    # advance
-    playmat.attack()
-
-    # print the field
-    playmat.print_field()
-    print(playmat.player_field)
-
-if __name__ == '__main__' :
     # test_advancing()
     # test_split_dam()
     test_corpse_eaters()
