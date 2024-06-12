@@ -1,4 +1,4 @@
-Dict = {
+Dict = {    
     '' : [ # sigil name
         ["     ","     ","     "], # sigil icon
         '', # sigil description
@@ -81,19 +81,24 @@ if current_field[zone].status == 'dead' :
         [",->-,","| X |","'-<-'"],
         'Returns to hand on death.',
         '''
-import card
+if applicables == sigils.on_death :
+    import card
 
-if current_field[zone].status == 'dead' and current_field == self.player_field :
-    current_field[zone].die()
-    current_field[zone].status = 'alive'
-    self.hand.append(current_field[zone])
-    current_field[zone] = card.BlankCard()
-    current_field[zone].play(zone)
-elif current_field[zone].status == 'dead' :
-    current_field[zone].die()
-    current_field[zone] = card.BlankCard()
-    current_field[zone].play(zone)
-    corpses.append(zone)
+    if current_field[zone].status == 'dead' and current_field == self.player_field :
+        current_field[zone].die()
+        current_field[zone].status = 'alive'
+        self.hand.append(current_field[zone])
+        current_field[zone] = card.BlankCard()
+        current_field[zone].play(zone)
+    elif current_field[zone].status == 'dead' :
+        current_field[zone].die()
+        current_field[zone] = card.BlankCard()
+        current_field[zone].play(zone)
+        corpses.append(zone)
+
+elif applicables == sigils.on_sacrifice :
+    self.hand.append(self.player_field[ind])
+    self.player_field[ind] = card.BlankCard()
 '''
         ],
 
@@ -227,6 +232,7 @@ else :
         ["  Ω  "," CXƆ ","  V  "],
         "Doesn't die when sacrificed.",
         '''
+pass
 '''
         ],
 
@@ -272,9 +278,9 @@ on_attacks = ['bifurcate','venom','touch of death', 'airborne'] # IMPLEMENTED
 on_deaths = ['split','unkillable'] # IMPLEMENTED
 on_plays = ['vole hole','dam builder'] # in field.play_card()
 on_damages = ['mighty leap', 'waterborne', 'bees within'] # IMPLEMENTED
-on_sacrifices = ['worthy sacrifice','many lives'] # in field.play_card()
+on_sacrifices = ['many lives', 'unkillable'] # IMPLEMENTED
 movers = ['lane shift right','lane shift left','hefty (right)','hefty (left)'] # IMPLEMENTED
-misc = ['corpse eater'] # these need to be hardcoded
+misc = ['corpse eater', 'worthy sacrifice'] # these need to be hardcoded
 
 if __name__ == '__main__':
     import card

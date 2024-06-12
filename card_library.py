@@ -98,6 +98,10 @@ class Cat(card.BlankCard) :
     def __init__(self, blank_cost=False) :
         super().__init__(name='Cat', cost=1, attack=0, life=1, sigil='many lives', blank_cost=blank_cost)
         self.spent_lives = 0
+    
+    def resetStats(self):
+        super().resetStats()
+        self.spent_lives = 0
 
 class UndeadCat(card.BlankCard) :
     def __init__(self, blank_cost=False) :

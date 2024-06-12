@@ -183,26 +183,32 @@ class Playmat :
         Returns:
             played: if the card was played (bool)
         '''
+        # set up variables
+        cost = self.hand[index].saccs
+        og_cost = cost
+        sacc_list = []
+        played = False
+
+        # update display
         QoL.clear()
         self.print_field()
         self.hand[index].explain()
-        cost = self.hand[index].saccs
-        og_cost = cost
         print('Sacrifices required:', cost)
         print('Select sacrifices: (press enter to go back)', end=' ')
-        sacc_list = []
-        while len(sacc_list) < cost :
+
+        # get sacrifices
+        while not (len(sacc_list) == cost) :
             sacc_index_list = input('')
             sacc_indexes = []
-            for char in sacc_index_list :
+            for char in sacc_index_list : # add saccs to list
                 if self.player_field[int(char)].sigil == 'worthy sacrifice' :
                     cost -= 2
                 sacc_indexes.append(int(char))
-            if sacc_index_list == '' :
+            if sacc_index_list == '' : # go back
                 sacc_list = []
                 played = False
                 break
-            elif len(sacc_indexes) > cost - len(sacc_list) :
+            elif len(sacc_indexes) > cost - len(sacc_list) : # too many saccs
                 print('Too many sacrifices.')
                 cost = og_cost # to prevent goat cheesing
             else:
@@ -214,41 +220,48 @@ class Playmat :
                         print('Invalid zone.')
                         sacc_list = sacc_list_snapshot
                         break
-            if self.player_field[zone].species != '' and zone not in sacc_list :
-                print('Cannot play on top of a non sacrificed card.')
-                sacc_list = []
-                cost = og_cost # to prevent goat cheesing
-        if len(sacc_list) != 0 or (len(sacc_list) == 0 and cost == 0):
-            for ind in sacc_list :
-                self.player_field[ind].sacc()
-                if self.player_field[ind].sigil == 'unkillable' :
-                    self.hand.append(self.player_field[ind])
-                elif self.player_field[ind].sigil != 'many lives' :
-                    self.graveyard.append(self.player_field[ind])
-                if self.player_field[ind].sigil != 'many lives' :
-                    self.player_field[ind] = card.BlankCard()
-                elif self.player_field[ind].species == 'Cat' :
-                    if self.player_field[ind].spent_lives >= 9 :
-                        self.player_field[ind] = card_library.UndeadCat()
-            self.player_field[zone] = self.hand[index]
-            self.player_field[zone].play(zone=zone)
-            self.hand.pop(index)
-            if self.player_field[zone].sigil == 'vole hole' :
-                self.hand.append(card_library.Vole())
-            if self.player_field[zone].sigil == 'dam builder' :
-                # play a copy to left and right if possible
-                if self.player_field[zone-1].species == '' and zone != 1 :
-                    self.player_field[zone-1] = card_library.Dam()
-                    self.player_field[zone-1].play(zone=zone-1)
-                if self.player_field[zone+1].species == '' and zone != 5 :
-                    self.player_field[zone+1] = card_library.Dam()
-                    self.player_field[zone+1].play(zone=zone+1)
-            played = True
+            if self.player_field[zone].species != '' and (len(sacc_list) == cost):
+                def fail_saccs() :
+                    sacc_list = []
+                    cost = og_cost # to prevent goat cheesing
+                    return [sacc_list, cost]
+                if zone not in sacc_list :
+                    print('Cannot play on top of a non sacrificed card.')
+                    [sacc_list, cost] = fail_saccs()
+                elif self.player_field[zone].sigil == 'many lives' :
+                    print('Cannot play on top of a card with many lives.')
+                    [sacc_list, cost] = fail_saccs()
+
+        # remove saccs
+        for ind in sacc_list :
+            self.player_field[ind].sacc()
+            QoL.exec_sigil_code(self.player_field[ind], sigils.on_sacrifices, None, locals())
+            if self.player_field[ind].sigil not in sigils.on_sacrifices :
+                self.graveyard.append(self.player_field[ind])
+                self.player_field[ind] = card.BlankCard()
+            if self.player_field[ind].species == 'Cat' and self.player_field[ind].spent_lives >= 9 : # if first is false, second will not be checked
+                self.player_field[ind] = card_library.UndeadCat()
+
+        # play card to zone
+        self.player_field[zone] = self.hand[index]
+        self.player_field[zone].play(zone=zone)
+        self.hand.pop(index)
+        if self.player_field[zone].sigil == 'vole hole' :
+            self.hand.append(card_library.Vole())
+        if self.player_field[zone].sigil == 'dam builder' :
+            # play a copy to left and right if possible
+            if self.player_field[zone-1].species == '' and zone != 1 :
+                self.player_field[zone-1] = card_library.Dam()
+                self.player_field[zone-1].play(zone=zone-1)
+            if self.player_field[zone+1].species == '' and zone != 5 :
+                self.player_field[zone+1] = card_library.Dam()
+                self.player_field[zone+1].play(zone=zone+1)
+        played = True
         QoL.clear()
         self.print_field()
         return played
 
-    def attack(self) : # REFACTORED
+    def attack(self) :
         '''
         attacks with all of the active player's cards in play and updates score
         '''

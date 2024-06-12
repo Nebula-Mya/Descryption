@@ -162,7 +162,7 @@ def title_case(string) :
             title_cased += ' '
     return title_cased
 
-def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None, vars_to_return=None) :
+def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None, vars_to_return=[]) :
     '''
     executes sigil code
     
