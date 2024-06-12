@@ -270,9 +270,9 @@ points += front_card.takeDamage(self.current_attack, hand, deathtouch=True, in_o
 
 on_attacks = ['bifurcate','venom','touch of death', 'airborne'] # IMPLEMENTED
 on_deaths = ['split','unkillable'] # IMPLEMENTED
-on_plays = ['vole hole','dam builder']
+on_plays = ['vole hole','dam builder'] # in field.play_card()
 on_damages = ['mighty leap', 'waterborne', 'bees within'] # IMPLEMENTED
-on_sacrifices = ['worthy sacrifice','many lives']
+on_sacrifices = ['worthy sacrifice','many lives'] # in field.play_card()
 movers = ['lane shift right','lane shift left','hefty (right)','hefty (left)'] # IMPLEMENTED
 misc = ['corpse eater'] # these need to be hardcoded
 
