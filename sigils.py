@@ -9,10 +9,9 @@ Dict = {
         ["_   _"," \ / ","  |  "],
         'Attacks diagonally, dealing damage to two targets.',
         '''
-if (front_left_card.zone % 5) != 1 :
-    points += front_left_card.takeDamage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
-if (front_right_card.zone % 5) != 1 :
-    points += front_right_card.takeDamage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
+for target_card in [front_left_card, front_right_card] :
+    if (target_card.zone % 5) != 1 :
+        points += target_card.takeDamage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
 '''
         ],
 
@@ -50,6 +49,31 @@ if zone != 1 and attacking_field[zone-1].species == '' :
         ["  |  ","()|()","  |  "],
         'Splits into two cards when killed.',
         '''
+import card
+import copy
+
+if current_field[zone].status == 'dead' :
+    split_card = copy.deepcopy(current_field[zone])
+
+    # play a copy to the left and right if possible
+    if split_card.base_life > 1 :
+        if zone == 1 :
+            poss_zones = [2]
+        elif zone == 5 :
+            poss_zones = [4]
+        else :
+            poss_zones = [zone-1, zone+1]
+        for shifted_zone in poss_zones :
+            if current_field[shifted_zone].species == '' :
+                current_field[shifted_zone] = card.BlankCard(name=split_card.species, cost=split_card.saccs, attack=split_card.base_attack//2, life=split_card.base_life//2, sigil=split_card.sigil, zone=shifted_zone, blank_cost=True)
+    
+                
+    # remove the original card
+    current_field[zone].die()
+    self.graveyard.append(current_field[zone])
+    current_field[zone] = card.BlankCard()
+    current_field[zone].play(zone)
+    corpses.append(zone)
 '''
         ],
 
@@ -57,6 +81,19 @@ if zone != 1 and attacking_field[zone-1].species == '' :
         [",->-,","| X |","'-<-'"],
         'Returns to hand on death.',
         '''
+import card
+
+if current_field[zone].status == 'dead' and current_field == self.player_field :
+    current_field[zone].die()
+    current_field[zone].status = 'alive'
+    self.hand.append(current_field[zone])
+    current_field[zone] = card.BlankCard()
+    current_field[zone].play(zone)
+elif current_field[zone].status == 'dead' :
+    current_field[zone].die()
+    current_field[zone] = card.BlankCard()
+    current_field[zone].play(zone)
+    corpses.append(zone)
 '''
         ],
 
@@ -232,12 +269,12 @@ points += front_card.takeDamage(self.current_attack, hand, deathtouch=True, in_o
 }
 
 on_attacks = ['bifurcate','venom','touch of death', 'airborne'] # IMPLEMENTED
-on_deaths = ['split','unkillable']
+on_deaths = ['split','unkillable'] # IMPLEMENTED
 on_plays = ['vole hole','dam builder']
 on_damages = ['mighty leap', 'waterborne', 'bees within'] # IMPLEMENTED
 on_sacrifices = ['worthy sacrifice','many lives']
 movers = ['lane shift right','lane shift left','hefty (right)','hefty (left)'] # IMPLEMENTED
-on_dead_card = ['corpse eater']
+misc = ['corpse eater'] # these need to be hardcoded
 
 if __name__ == '__main__':
     import card

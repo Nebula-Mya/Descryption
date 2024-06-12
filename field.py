@@ -281,81 +281,23 @@ class Playmat :
         '''
         checks for dead cards and removes them, plus returns unkillables if player's turn. Also summons corpse eaters if necessary.
         '''
-        # setup for corpse eaters
+        # setup variables
         corpses = []
         open_corpses = []
 
-        # check for dead cards in player field
-        for zone in self.player_field :
+        # check for dead cards in each field
+        for current_field in [self.player_field, self.opponent_field, self.bushes] :
+            for zone in current_field :
 
-            # if a normal card dies
-            if self.player_field[zone].status == 'dead' and self.player_field[zone].sigil != 'unkillable' and self.player_field[zone].sigil != 'split':
-                self.player_field[zone].die()
-                self.graveyard.append(self.player_field[zone])
-                self.player_field[zone] = card.BlankCard()
-                corpses.append(zone)
+                # if a sigil applies
+                [corpses] = QoL.exec_sigil_code(current_field[zone], sigils.on_deaths, None, locals(), ['corpses'])
 
-            # if an unkillable card dies
-            elif self.player_field[zone].status == 'dead' and self.player_field[zone].sigil == 'unkillable' :
-                self.player_field[zone].die()
-                self.player_field[zone].status = 'alive'
-                self.hand.append(self.player_field[zone])
-                self.player_field[zone] = card.BlankCard()
-
-            # if a split card dies
-            elif self.player_field[zone].status == 'dead' and self.player_field[zone].sigil == 'split' :
-                split_card = copy.deepcopy(self.player_field[zone])
-
-                # play a copy to left and right if possible
-                if self.player_field[zone-1].species == '' and zone != 1 :
-                    self.player_field[zone-1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone - 1, blank_cost=True)
-                if self.player_field[zone+1].species == '' and zone != 5 :
-                    self.player_field[zone+1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone + 1, blank_cost=True)
-
-                # removes the original card
-                self.player_field[zone].die()
-                self.graveyard.append(self.player_field[zone])
-                self.player_field[zone] = card.BlankCard()
-                corpses.append(zone)
-
-        for zone in self.opponent_field :
-            # if a normal card dies
-            if self.opponent_field[zone].status == 'dead' and self.opponent_field[zone].sigil != 'unkillable' and self.opponent_field[zone].sigil != 'split':
-                self.opponent_field[zone].die()
-                self.opponent_field[zone] = card.BlankCard()
-            # if a split card dies
-            elif self.opponent_field[zone].status == 'dead' and self.opponent_field[zone].sigil == 'split' :
-                split_card = copy.deepcopy(self.opponent_field[zone])
-
-                # play a copy to left and right if possible
-                if self.opponent_field[zone-1].species == '' and zone != 1 :
-                    self.opponent_field[zone-1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone - 1, blank_cost=True)
-                if self.opponent_field[zone+1].species == '' and zone != 5 :
-                    self.opponent_field[zone+1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone + 1, blank_cost=True)
-
-                # removes the original card
-                self.opponent_field[zone].die()
-                self.opponent_field[zone] = card.BlankCard()
-
-        for zone in self.bushes :
-            # if a normal card dies
-            if self.bushes[zone].status == 'dead' and self.bushes[zone].sigil != 'unkillable' and self.bushes[zone].sigil != 'split':
-                self.bushes[zone].die()
-                self.bushes[zone] = card.BlankCard()
-            
-            # if a split card dies
-            elif self.bushes[zone].status == 'dead' and self.bushes[zone].sigil == 'split' :
-                split_card = copy.deepcopy(self.bushes[zone])
-
-                # play a copy to left and right if possible
-                if self.bushes[zone-1].species == '' and zone != 1 :
-                    self.bushes[zone-1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone - 1, blank_cost=True)
-                if self.bushes[zone+1].species == '' and zone != 5 :
-                    self.bushes[zone+1] = card.BlankCard(name=split_card.species,cost=split_card.saccs,attack=split_card.base_attack//2,life=split_card.base_life//2,sigil='',status='alive',zone=zone + 1, blank_cost=True)
-
-                # removes the original card
-                self.bushes[zone].die()
-                self.bushes[zone] = card.BlankCard()
+                # if a normal card dies
+                if current_field[zone].status == 'dead' and (current_field[zone].sigil not in sigils.on_deaths) :
+                    current_field[zone].die()
+                    current_field[zone] = card.BlankCard()
+                    current_field[zone].play(zone)
+                    corpses.append(zone)
 
         # check for corpse eaters
         for zone in corpses :
@@ -364,25 +306,15 @@ class Playmat :
         corpse_eaters = get_corpse_eaters(self.hand)
         exhausted = False
         while not exhausted :
-            if open_corpses != [] and corpse_eaters != []:
+            if open_corpses != [] and corpse_eaters !=[] :
                 zone_choice = random.choice(open_corpses)
                 self.player_field[zone_choice] = self.hand[corpse_eaters[0]]
-                self.player_field[zone_choice].play(zone=zone_choice)
+                self.player_field[zone_choice].play(zone_choice)
                 self.hand.pop(corpse_eaters[0])
                 open_corpses.remove(zone_choice)
-                corpse_eaters = get_corpse_eaters(self.hand) # refresh corpse eaters as hand indexes may have changed
+                corpse_eaters = get_corpse_eaters(self.hand)
             else :
                 exhausted = True
-
-        return
-        # new code
-        # setup variables
-        corpses = []
-        open_corpses = []
-
-        # check for dead cards in each field
-        for field in [self.player_field, self.opponent_field, self.bushes] :
-            pass
 
     def advance(self) : 
         '''
@@ -812,7 +744,7 @@ def test_hefty() :
 if __name__ == '__main__' :
     # test_advancing()
     # test_split_dam()
-    # test_corpse_eaters()
-    test_hefty()
+    test_corpse_eaters()
+    # test_hefty()
 
     pass
