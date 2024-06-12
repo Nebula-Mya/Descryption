@@ -246,21 +246,13 @@ class Playmat :
         self.player_field[zone] = self.hand[index]
         self.player_field[zone].play(zone=zone)
         self.hand.pop(index)
-        if self.player_field[zone].sigil == 'vole hole' :
-            self.hand.append(card_library.Vole())
-        if self.player_field[zone].sigil == 'dam builder' :
-            # play a copy to left and right if possible
-            if self.player_field[zone-1].species == '' and zone != 1 :
-                self.player_field[zone-1] = card_library.Dam()
-                self.player_field[zone-1].play(zone=zone-1)
-            if self.player_field[zone+1].species == '' and zone != 5 :
-                self.player_field[zone+1] = card_library.Dam()
-                self.player_field[zone+1].play(zone=zone+1)
+        # handle sigils
+        QoL.exec_sigil_code(self.player_field[zone], sigils.on_plays, None, locals())
         played = True
         QoL.clear()
         self.print_field()
         return played
-
+    
     def attack(self) :
         '''
         attacks with all of the active player's cards in play and updates score

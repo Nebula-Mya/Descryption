@@ -248,6 +248,9 @@ teeth = damage
         [" ___ ","/…¨…\\","‾‾‾‾‾"],
         'Adds a vole to your hand when played.',
         '''
+import card_library
+
+self.hand.append(card_library.Vole())
 '''
         ],
 
@@ -263,6 +266,18 @@ points += front_card.takeDamage(self.current_attack, hand, deathtouch=True, in_o
         ["~~/\\ ","~/\\_\\","/__\\ "],
         'Builds dams on either side when played.',
         '''
+import card_library
+
+if zone == 1 :
+    poss_zones = [2]
+elif zone == 5 :
+    poss_zones = [4]
+else :
+    poss_zones = [zone-1, zone+1]
+for shifted_zone in poss_zones :
+    if self.player_field[shifted_zone].species == '' :
+        self.player_field[shifted_zone] = card_library.Dam()
+        self.player_field[shifted_zone].play(zone=shifted_zone)
 '''
         ],
 
