@@ -54,6 +54,13 @@ class Ouroboros(card.BlankCard) :
         [Oro_attack, Oro_life] = QoL.read_file('data.txt', 'Descryption_Data/data.txt')
         super().__init__(name='Ouroboros', cost=2, attack=int(Oro_attack), life=int(Oro_life), sigil='unkillable', blank_cost=blank_cost)
 
+    def sacc(self) :
+        self.base_attack += 1
+        self.base_life += 1
+        QoL.write_file('data.txt', 'Descryption_Data/data.txt', [str(self.base_attack), str(self.base_life)])
+        self.reset_stats()
+        self.updateASCII()
+
 class Cockroach(card.BlankCard) :
     def __init__(self, blank_cost=False) :
         super().__init__(name='Cockroach', cost=2, attack=1, life=1, sigil='unkillable', blank_cost=blank_cost)
@@ -99,9 +106,12 @@ class Cat(card.BlankCard) :
         super().__init__(name='Cat', cost=1, attack=0, life=1, sigil='many lives', blank_cost=blank_cost)
         self.spent_lives = 0
     
-    def resetStats(self):
-        super().resetStats()
+    def reset_stats(self):
+        super().reset_stats()
         self.spent_lives = 0
+
+    def sacc(self) :
+        self.spent_lives += 1
 
 class UndeadCat(card.BlankCard) :
     def __init__(self, blank_cost=False) :

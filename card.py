@@ -30,7 +30,7 @@ class BlankCard() :
         line_cursor : the current line to print (int)
 
     Methods :
-        resetStats() : sets current stats to base stats
+        reset_stats() : sets current stats to base stats
         attack(front_left_card, front_card, front_right_card, left_card, right_card) : attacks zone(s) in front
         print() : prints self.name
         displayFull() : prints full card
@@ -85,7 +85,7 @@ class BlankCard() :
         self.text_lines = self.text.split("\n")
         self.line_cursor = 1
         
-    def resetStats(self) :
+    def reset_stats(self) :
         '''
         resets current stats to base stats
         '''
@@ -94,8 +94,6 @@ class BlankCard() :
         self.is_poisoned = False
         self.zone = 0
         self.status = 'alive'
-        if self.species == 'Cat' :
-            self.spent_lives = 0
         self.updateASCII()
 
     def attack(self, front_left_card, front_card, front_right_card, hand, is_players=False, bushes={}) :
@@ -189,7 +187,7 @@ class BlankCard() :
         '''
         activates sigils on entering field, resets stats, and updates zone
         '''
-        self.resetStats()
+        self.reset_stats()
         self.zone = zone
         self.updateASCII()
 
@@ -206,24 +204,15 @@ class BlankCard() :
             self.base_attack += 1
             self.base_life += 1
             QoL.write_file('data.txt', 'Descryption_Data/data.txt', [str(self.base_attack), str(self.base_life)])
-        self.resetStats()
+        self.reset_stats()
         self.updateASCII()
         
     def sacc(self) :
         '''
         resets stats and updates ASCII art without activating sigils on being killed, only on any death
         '''
-        if self.species == 'Cat' :
-            self.spent_lives += 1
-        elif self.species == 'Ouroboros' :
-            self.base_attack += 1
-            self.base_life += 1
-            QoL.write_file('data.txt', 'Descryption_Data/data.txt', [str(self.base_attack), str(self.base_life)])
-            self.resetStats()
-            self.updateASCII()
-        else :
-            self.resetStats()
-            self.updateASCII()
+        self.reset_stats()
+        self.updateASCII()
 
     def explain(self) :
         '''
