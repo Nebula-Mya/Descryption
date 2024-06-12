@@ -61,6 +61,12 @@ class Ouroboros(card.BlankCard) :
         self.reset_stats()
         self.updateASCII()
 
+    def die(self) :
+        self.base_attack += 1
+        self.base_life += 1
+        QoL.write_file('data.txt', 'Descryption_Data/data.txt', [str(self.base_attack), str(self.base_life)])
+        super().die()
+
 class Cockroach(card.BlankCard) :
     def __init__(self, blank_cost=False) :
         super().__init__(name='Cockroach', cost=2, attack=1, life=1, sigil='unkillable', blank_cost=blank_cost)

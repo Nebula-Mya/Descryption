@@ -200,10 +200,6 @@ class BlankCard() :
             right_card: the card in the zone to the right of the dying card (card object)
             field: the dict of the controller's field (dict)
         '''
-        if self.name == 'Ouroboros' :
-            self.base_attack += 1
-            self.base_life += 1
-            QoL.write_file('data.txt', 'Descryption_Data/data.txt', [str(self.base_attack), str(self.base_life)])
         self.reset_stats()
         self.updateASCII()
         
