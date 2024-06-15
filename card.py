@@ -194,7 +194,7 @@ class BlankCard() :
         prints explanation of stats and sigil for player
         '''
         # setup variables
-        explaination = ''
+        explanation = ''
 
         # get terminal size
         term_cols = os.get_terminal_size().columns
@@ -218,20 +218,21 @@ class BlankCard() :
         # create display text
         for line in range(1, 12) :
             if line != 1 : # go to next line
-                explaination += '\n'
-            explaination += ' '*card_gaps + self.text_lines[line]
-            if line == 2 : # cost and species
-                explaination += ' '*(card_gaps + 2) + self.species + ' requires ' + str(self.saccs) + ' sacrifices to summon.'
-            elif line == 6 : # sigil and description line 1
-                explaination += ' '*(card_gaps + 2) + sigil_text + ' ' + desc_first_line
-            elif line == 7 : # description line 2
-                explaination += ' '*(card_gaps + 6) + desc_second_line
-            elif line == 8 : # description line 3
-                explaination += ' '*(card_gaps + 6) + desc_third_line
-            elif line == 10 : # stats
-                explaination += ' '*(card_gaps + 2) + self.species + ' has an attack power of ' + str(self.current_attack) + ' and life points of ' + str(self.current_life) + ' of ' + str(self.base_life) + '.'
+                explanation += '\n'
+            explanation += ' '*card_gaps + self.text_lines[line] # add the card line
+            match line : # add the explanation to the end of the line
+                case 2 : # cost and species
+                    explanation += ' '*(card_gaps + 2) + self.species + ' requires ' + str(self.saccs) + ' sacrifices to summon.'
+                case 6 : # sigil and description line 1
+                    explanation += ' '*(card_gaps + 2) + sigil_text + ' ' + desc_first_line
+                case 7 : # description line 2
+                    explanation += ' '*(card_gaps + 6) + desc_second_line
+                case 8 : # description line 3
+                    explanation += ' '*(card_gaps + 6) + desc_third_line
+                case 10 : # stats
+                    explanation += ' '*(card_gaps + 2) + self.species + ' has an attack power of ' + str(self.current_attack) + ' and life points of ' + str(self.current_life) + ' of ' + str(self.base_life) + '.'
 
-        print(explaination)
+        print(explanation)
 
     def update_ASCII(self) :
         '''
