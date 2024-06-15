@@ -206,8 +206,7 @@ class Playmat :
                 sacc_indexes.append(int(char))
             if sacc_index_list == '' : # go back
                 sacc_list = []
-                played = False
-                break
+                return False
             elif len(sacc_indexes) > cost - len(sacc_list) : # too many saccs
                 print('Too many sacrifices.')
                 cost = og_cost # to prevent goat cheesing
@@ -234,23 +233,23 @@ class Playmat :
 
         # remove saccs
         for ind in sacc_list :
-            self.player_field[ind].sacc()
+            self.player_field[ind].die()
             QoL.exec_sigil_code(self.player_field[ind], sigils.on_sacrifices, None, locals())
             if self.player_field[ind].sigil not in sigils.on_sacrifices :
                 self.graveyard.append(self.player_field[ind])
                 self.player_field[ind] = card.BlankCard()
             if self.player_field[ind].species == 'Cat' and self.player_field[ind].spent_lives >= 9 : # if first is false, second will not be checked
                 self.player_field[ind] = card_library.UndeadCat()
-
-        # play card to zone
-        self.player_field[zone] = self.hand[index]
-        self.player_field[zone].play(zone=zone)
-        self.hand.pop(index)
-        # handle sigils
-        QoL.exec_sigil_code(self.player_field[zone], sigils.on_plays, None, locals())
-        played = True
-        QoL.clear()
-        self.print_field()
+        else :
+            # play card to zone
+            self.player_field[zone] = self.hand[index]
+            self.player_field[zone].play(zone=zone)
+            self.hand.pop(index)
+            # handle sigils
+            QoL.exec_sigil_code(self.player_field[zone], sigils.on_plays, None, locals())
+            played = True
+            QoL.clear()
+            self.print_field()
         return played
     
     def attack(self) :

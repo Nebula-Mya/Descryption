@@ -35,8 +35,7 @@ class BlankCard() :
         text_by_line() : returns one line of the card's ASCII art at a time
         take_damage(damage) : reduces current life by damage 
         play(zone) : activates sigils on entering field, resets stats, and updates zone
-        die(left_card, right_card, field) : activates sigils on death and resets stats
-        sacc() : resets stats and updates ASCII art without activating sigils on being killed
+        die() : resets stats and updates ASCII
         explain() : prints explanation of stats and sigil for player
         update_ASCII() : updates the ASCII art for the card
     '''
@@ -61,11 +60,14 @@ class BlankCard() :
             self.name = species.ljust(12)[:12]
         else :
             self.name = species.ljust(9)[:9]
-        if len(self.name) < len(species) : # abbreviate name if it is too long
-            if self.name[-2] == ' ' :
-                self.name = self.name[:-2] + '. '
-            else :
-                self.name = self.name[:-1] + '.'
+            
+        # abbreviate name if it is too long
+        if len(self.name) >= len(species) : # guard clause
+            pass
+        elif self.name[-2] == ' ' :
+            self.name = self.name[:-2] + '. '
+        else :
+            self.name = self.name[:-1] + '.'
         
         # create ASCII art for card
         self.update_ASCII()
@@ -74,11 +76,11 @@ class BlankCard() :
         '''
         resets current stats to base stats
         '''
-        self.current_attack = self.base_attack
-        self.current_life = self.base_life
-        self.is_poisoned = False
         self.zone = 0
         self.status = 'alive'
+        self.is_poisoned = False
+        self.current_attack = self.base_attack
+        self.current_life = self.base_life
         self.update_ASCII()
 
     def attack(self, front_left_card, front_card, front_right_card, hand, is_players=False, bushes={}) :
@@ -99,12 +101,11 @@ class BlankCard() :
         # setup variables
         points = 0
 
-        # if sigil is a sigil that activates on attack
-        [points] = QoL.exec_sigil_code(self, sigils.on_attacks, local_vars=locals(), vars_to_return=['points'])
-
-        # if sigil is irrelevant or none existent, attack front
-        if self.sigil not in sigils.on_attacks:
-            points += front_card.take_damage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
+        # attack cards
+        if self.sigil in sigils.on_attacks : # if sigil is a sigil that activates on attack
+            [points] = QoL.exec_sigil_code(self, sigils.on_attacks, local_vars=locals(), vars_to_return=['points'])
+        else : # if sigil is irrelevant or none existent, attack front
+            points = front_card.take_damage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
         
         # if poisoned, deal 1 damage to self
         if self.is_poisoned :
@@ -113,7 +114,7 @@ class BlankCard() :
         return points
 
     def __str__(self) :
-        print(self.name)
+        return self.name
 
     def text_by_line(self) :
         '''
@@ -143,22 +144,21 @@ class BlankCard() :
         # setup variables
         teeth = 0
 
-        # if sigil is a sigil that activates on damage
-        [teeth] = QoL.exec_sigil_code(self, sigils.on_damages, local_vars=locals(), vars_to_return=['teeth'])
-
+        # take damage
+        if self.sigil in sigils.on_damages: # if sigil is a sigil that activates on damage
+            [teeth] = QoL.exec_sigil_code(self, sigils.on_damages, local_vars=locals(), vars_to_return=['teeth'])
         # if sigil is irrelevant or none existent, take damage
-        if self.sigil not in sigils.on_damages:
-            if self.species == '' or self.status == 'dead' or from_air :
-                teeth = damage
-            else :
-                prev_life = self.current_life
-                self.current_life -= damage
-                self.update_ASCII()
-                if self.current_life <= 0 or deathtouch :
-                    self.status = 'dead'
-                    if in_opp_field and self.current_life <= 0 :
-                        excess_damage = damage - prev_life
-                        bushes[self.zone].take_damage(excess_damage, hand, in_bushes=True)
+        elif self.species == '' or self.status == 'dead' or from_air : 
+            teeth = damage
+        else :
+            prev_life = self.current_life
+            self.current_life -= damage
+            self.update_ASCII()
+            if self.current_life <= 0 or deathtouch :
+                self.status = 'dead'
+                if in_opp_field and self.current_life <= 0 :
+                    excess_damage = damage - prev_life
+                    bushes[self.zone].take_damage(excess_damage, hand, in_bushes=True)
         
         return teeth     
 
@@ -172,19 +172,7 @@ class BlankCard() :
 
     def die(self) :
         '''
-        activates sigils on death and resets stats
-
-        Arguments:
-            left_card: the card in the zone to the left of the dying card (card object)
-            right_card: the card in the zone to the right of the dying card (card object)
-            field: the dict of the controller's field (dict)
-        '''
-        self.reset_stats()
-        self.update_ASCII()
-        
-    def sacc(self) :
-        '''
-        resets stats and updates ASCII art without activating sigils on being killed, only on any death
+        resets stats and updates ASCII
         '''
         self.reset_stats()
         self.update_ASCII()
@@ -201,12 +189,13 @@ class BlankCard() :
         card_gaps = (term_cols*55 // 100) // 5 - 15
 
         # get sigil name
-        if self.sigil.title() == '' :
-            sigil_text = 'No Sigil'
-        elif 'hefty' in self.sigil: # remove (right) or (left) from sigil name
-            sigil_text = 'Hefty:'
-        else :
-            sigil_text = QoL.title_case(self.sigil) + ':'
+        match self.sigil.title() :
+            case '' :
+                sigil_text = 'No Sigil'
+            case _ if 'hefty' in self.sigil:
+                sigil_text = 'Hefty:'
+            case _ :
+                sigil_text = self.sigil.title() + ':'
 
         # get parameters for sigil description
         max_desc_first = term_cols - 18 - card_gaps*2 - len(sigil_text)

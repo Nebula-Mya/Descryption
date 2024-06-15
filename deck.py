@@ -11,16 +11,23 @@ class Deck() :
         cards: cards in players deck (list)
 
     Methods:
-        addCard(card): adds card to deck
-        removeCard(index) : removes card from deck
-        changeSigil(index, sigil): changes card's sigil
+        add_card(card): adds card to deck
+        remove_card(index) : removes card from deck
+        change_sigil(index, sigil): changes card's sigil
         shuffle(): generates a shuffled list of cards
         print(): prints decklist
     '''
     def __init__(self, cards) :
         self.cards = cards
     
-    def addCard(self, card) :
+    def sorted_deck(self) :
+        '''
+        sorts deck by cost then name
+        '''
+        sorted_deck = sorted(self.cards, key=lambda x: x.name) # sort by name (will be sub-sorting under cost)
+        return sorted(sorted_deck, key=lambda x: x.cost) # sort by cost
+
+    def add_card(self, card) :
         '''
         adds card to deck
 
@@ -29,19 +36,18 @@ class Deck() :
         '''
         self.cards.append(card)
     
-    def removeCard(self, index) :
+    def remove_card(self, index) :
         '''
         removes card from deck
 
         Arguments:
             index: index of card to remove (int)
         '''
-        sorted_deck = sorted(self.cards, key=lambda x: x.name)
-        sorted_deck = sorted(sorted_deck, key=lambda x: x.cost)
+        sorted_deck = self.sorted_deck()
         card = sorted_deck[index]
         self.cards.remove(card)
 
-    def changeSigil(self, index, sigil) :
+    def change_sigil(self, index, sigil) :
         '''
         changes card's sigil
 
@@ -49,27 +55,33 @@ class Deck() :
             index: index of card to change (int)
             sigil: sigil to change to (str)
         '''
-        sorted_deck = sorted(self.cards, key=lambda x: x.name)
-        sorted_deck = sorted(sorted_deck, key=lambda x: x.cost)
+        sorted_deck = self.sorted_deck()
         sorted_deck[index].sigil = sigil 
+        sorted_deck[index].update_ASCII()
 
     def shuffle(self) :
         '''
         generates a shuffled list of cards
         '''
-        shuffled_deck = copy.deepcopy(self.cards) # deep copy to avoid changing original deck, may need to be changed to shallow copy, we shall see
+        shuffled_deck = copy.deepcopy(self.cards) # avoid changing original deck
         random.shuffle(shuffled_deck)
         return shuffled_deck
 
     def __str__(self) : 
+        # get terminal size
         term_cols = os.get_terminal_size().columns
         card_gaps = (term_cols*55 // 100) // 5 - 15
-        sorted_deck = sorted(self.cards, key=lambda x: x.name)
-        sorted_deck = sorted(sorted_deck, key=lambda x: x.cost)
+
+        sorted_deck = self.sorted_deck()
+
+        # get number of cards per row
         cards_per_row = term_cols // (card_gaps + 15) 
         if cards_per_row >= 9 :
             cards_per_row = 8
+    
         chunked = QoL.chunk(sorted_deck, cards_per_row)
+
+        # generate deck string
         deck_string = ''
         for chunk in chunked :
             for n in range(11) :
@@ -97,7 +109,9 @@ if __name__ == '__main__' :
         decklist.append(card_library.Squirrel())
     testdeck = Deck(decklist)
     print(testdeck)
-    slot4.take_damage(1)
+    print(testdeck.cards[4])
+    testdeck.cards[4].take_damage(1, hand=[])
+    testdeck.change_sigil(4, 'hefty (right)')
     QoL.clear()
     print(testdeck)
     slot5.explain()
