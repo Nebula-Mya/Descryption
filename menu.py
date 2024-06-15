@@ -103,7 +103,7 @@ def print_settings_options() :
     prints the settings options
     '''
     print(QoL.center_justified('Settings   '))
-    print(QoL.center_justified('='*26 + '   '))
+    print(QoL.center_justified('='*26 + ' '*3))
     print(QoL.center_justified('1.  Change difficulty     '))
     print(QoL.center_justified('2.  Change deck size      '))
     print(QoL.center_justified('3.  Change hand size      '))
@@ -149,9 +149,9 @@ def settings() :
                     else :
                         difficulty_key.append(' '*10)
                 print(QoL.center_justified('1. Very Easy' + difficulty_key[0]))
-                print(QoL.center_justified('2.   Easy' + difficulty_key[1] + '   '))
-                print(QoL.center_justified('3.  Normal' + difficulty_key[2] + '  '))
-                print(QoL.center_justified('4.   Hard' + difficulty_key[3] + '   '))
+                print(QoL.center_justified('2.   Easy' + difficulty_key[1] + ' '*3))
+                print(QoL.center_justified('3.  Normal' + difficulty_key[2] + ' '*2))
+                print(QoL.center_justified('4.   Hard' + difficulty_key[3] + ' '*3))
                 print(QoL.center_justified('5. Very Hard' + difficulty_key[4]))
                 print('\n'*3)
                 if invalid_difficulty :

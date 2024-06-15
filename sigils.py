@@ -11,7 +11,7 @@ Dict = {
         '''
 for target_card in [front_left_card, front_right_card] :
     if (target_card.zone % 5) != 1 :
-        points += target_card.takeDamage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
+        points += target_card.take_damage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
 '''
         ],
 
@@ -65,7 +65,7 @@ if current_field[zone].status == 'dead' :
             poss_zones = [zone-1, zone+1]
         for shifted_zone in poss_zones :
             if current_field[shifted_zone].species == '' :
-                current_field[shifted_zone] = card.BlankCard(name=split_card.species, cost=split_card.saccs, attack=split_card.base_attack//2, life=split_card.base_life//2, sigil=split_card.sigil, zone=shifted_zone, blank_cost=True)
+                current_field[shifted_zone] = card.BlankCard(species=split_card.species, cost=split_card.saccs, attack=split_card.base_attack//2, life=split_card.base_life//2, sigil=split_card.sigil, zone=shifted_zone, blank_cost=True)
     
                 
     # remove the original card
@@ -106,7 +106,7 @@ elif applicables == sigils.on_sacrifice :
         [" ___ "," \\ / "," ·V· "],
         'Poisons target on attack.',
         ''' 
-points += front_card.takeDamage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
+points += front_card.take_damage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
 front_card.is_poisoned = True
 '''
         ],
@@ -115,7 +115,7 @@ front_card.is_poisoned = True
         ["  _  ","ɩΞΞɭ "," ɩΞΞð"],
         'Attacks from the air, ignoring other creatures.',
         '''
-points += front_card.takeDamage(self.current_attack, hand, from_air=True, in_opp_field=is_players, bushes=bushes)
+points += front_card.take_damage(self.current_attack, hand, from_air=True, in_opp_field=is_players, bushes=bushes)
 '''
         ],
 
@@ -128,12 +128,12 @@ if self.species == '' or self.status == 'dead' :
 else :
     prev_life = self.current_life
     self.current_life -= damage
-    self.updateASCII()
+    self.update_ASCII()
     if self.current_life <= 0 or deathtouch :
         self.status = 'dead'
         if in_opp_field and self.current_life <= 0 :
             excess_damage = damage - prev_life
-            bushes[self.zone].takeDamage(excess_damage, hand, from_air, in_bushes=True)
+            bushes[self.zone].take_damage(excess_damage, hand, from_air, in_bushes=True)
 '''
         ],
 
@@ -155,14 +155,14 @@ if self.species == '' or self.status == 'dead' or from_air:
 else :
     prev_life = self.current_life
     self.current_life -= damage
-    self.updateASCII()
+    self.update_ASCII()
     if not (in_opp_field or in_bushes) : # only if opponent is attacking, as leshy's bees within wont do anything; he doesnt have a hand to add to
         hand.append(card_library.Bee())
     if self.current_life <= 0 or deathtouch :
         self.status = 'dead'
         if in_opp_field and self.current_life <= 0 :
             excess_damage = damage - prev_life
-            bushes[self.zone].takeDamage(excess_damage, hand, from_air, in_bushes=True)
+            bushes[self.zone].take_damage(excess_damage, hand, from_air, in_bushes=True)
 '''
         ],
 
@@ -175,12 +175,12 @@ import card
 
 if zone == 5 :
     attacking_field[zone].sigil = 'hefty (left)'
-    attacking_field[zone].updateASCII()
+    attacking_field[zone].update_ASCII()
 else :
     push_count = QoL.hefty_check(attacking_field, zone + 1, 'right')
     if push_count == 0 :
         attacking_field[zone].sigil = 'hefty (left)'
-        attacking_field[zone].updateASCII()
+        attacking_field[zone].update_ASCII()
     elif push_count == -1 :
         attacking_field[zone+1] = attacking_field[zone]
         attacking_field[zone+1].zone = zone+1
@@ -206,12 +206,12 @@ import card
 
 if zone == 1 :
     attacking_field[zone].sigil = 'hefty (right)'
-    attacking_field[zone].updateASCII()
+    attacking_field[zone].update_ASCII()
 else :
     push_count = QoL.hefty_check(attacking_field, zone - 1, 'left')
     if push_count == 0:
         attacking_field[zone].sigil = 'hefty (right)'
-        attacking_field[zone].updateASCII()
+        attacking_field[zone].update_ASCII()
     elif push_count == -1 :
             attacking_field[zone-1] = attacking_field[zone]
             attacking_field[zone-1].zone = zone-1
@@ -258,7 +258,7 @@ self.hand.append(card_library.Vole())
         ["\\´‾`/","|°Δ°|","/\'\"\'\\"],
         'Always kills the card it attacks, regardless of health.',
         '''
-points += front_card.takeDamage(self.current_attack, hand, deathtouch=True, in_opp_field=is_players, bushes=bushes)
+points += front_card.take_damage(self.current_attack, hand, deathtouch=True, in_opp_field=is_players, bushes=bushes)
 '''
         ],
 
@@ -289,12 +289,12 @@ for shifted_zone in poss_zones :
         ],
 }
 
-on_attacks = ['bifurcate','venom','touch of death', 'airborne'] # IMPLEMENTED
-on_deaths = ['split','unkillable'] # IMPLEMENTED
-on_plays = ['vole hole','dam builder'] # in field.play_card()
-on_damages = ['mighty leap', 'waterborne', 'bees within'] # IMPLEMENTED
-on_sacrifices = ['many lives', 'unkillable'] # IMPLEMENTED
-movers = ['lane shift right','lane shift left','hefty (right)','hefty (left)'] # IMPLEMENTED
+on_attacks = ['bifurcate','venom','touch of death', 'airborne']
+on_deaths = ['split','unkillable']
+on_plays = ['vole hole','dam builder']
+on_damages = ['mighty leap', 'waterborne', 'bees within']
+on_sacrifices = ['many lives', 'unkillable']
+movers = ['lane shift right','lane shift left','hefty (right)','hefty (left)']
 misc = ['corpse eater', 'worthy sacrifice'] # these need to be hardcoded
 
 if __name__ == '__main__':

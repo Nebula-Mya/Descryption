@@ -452,7 +452,7 @@ class Playmat :
             for n in range(11) :
                 deck_string += ' '*card_gaps
                 for card in chunk :
-                    deck_string += card.TextByLine() + ' '*card_gaps
+                    deck_string += card.text_by_line() + ' '*card_gaps
                 deck_string += '\n'
             deck_string += '\n'
         QoL.clear()
@@ -475,7 +475,7 @@ class Playmat :
             for n in range(11) :
                 graveyard_string += ' '*card_gaps
                 for card in chunk :
-                    graveyard_string += card.TextByLine() + ' '*card_gaps
+                    graveyard_string += card.text_by_line() + ' '*card_gaps
                 graveyard_string += '\n'
             graveyard_string += '\n'
         QoL.clear()
@@ -497,7 +497,7 @@ class Playmat :
             for n in range(11) :
                 hand_string += ' '*card_gaps
                 for card in chunk :
-                    hand_string += card.TextByLine() + ' '*card_gaps
+                    hand_string += card.text_by_line() + ' '*card_gaps
                 hand_string += '\n'
         print(' '*card_gaps + 'Hand:')
         print(hand_string, end='')
@@ -518,7 +518,7 @@ class Playmat :
             for n in range(11) :
                 field_string += ' '*card_gaps*3
                 for card in row :
-                    field_string += card.TextByLine() + ' '*card_gaps*3
+                    field_string += card.text_by_line() + ' '*card_gaps*3
                 field_string += '\n'
             if row == vis_opponent_field :
                 if card_gaps <= 0 :
@@ -651,7 +651,7 @@ if __name__ == '__main__' :
         # populate hand
         for n in range(6) :
             if random.randint(1, 2) == 1 :
-                playmat.hand.append(card.BlankCard(name='Corpse Eater', cost=1, attack=1, life=1, sigil='corpse eater', status='alive', blank_cost=True))
+                playmat.hand.append(card.BlankCard(species='Corpse Eater', cost=1, attack=1, life=1, sigil='corpse eater', status='alive', blank_cost=True))
             else :
                 playmat.hand.append(card_library.Squirrel())
         
@@ -701,7 +701,7 @@ if __name__ == '__main__' :
         playmat.player_field[2] = card_library.MooseBuck()
         playmat.player_field[2].play(zone=2)
         playmat.player_field[2].sigil = 'hefty (right)'
-        playmat.player_field[2].updateASCII()
+        playmat.player_field[2].update_ASCII()
 
         # print the field
         playmat.print_field()

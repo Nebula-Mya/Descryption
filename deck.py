@@ -75,7 +75,7 @@ class Deck() :
             for n in range(11) :
                 deck_string += ' '*card_gaps
                 for card in chunk :
-                    deck_string += card.TextByLine() + ' '*card_gaps
+                    deck_string += card.text_by_line() + ' '*card_gaps
                 deck_string += '\n'
             deck_string += '\n'
         return deck_string
@@ -97,7 +97,7 @@ if __name__ == '__main__' :
         decklist.append(card_library.Squirrel())
     testdeck = Deck(decklist)
     print(testdeck)
-    slot4.takeDamage(1)
+    slot4.take_damage(1)
     QoL.clear()
     print(testdeck)
     slot5.explain()

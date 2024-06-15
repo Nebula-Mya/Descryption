@@ -133,22 +133,20 @@ def view_remaining(field) :
     Arguments:
         field: the field object to view (field object)
     '''
-    bad_input = True
     invalid_index = False
-    while bad_input :
+    while True :
         field.print_remaining()
         if invalid_index :
             print('Invalid index.')
             invalid_index = False
         card_choice = input('Choose a card to view: (press enter to go back) ')
         if card_choice == '' :
-            return
+            break
         try :
             card_choice = int(card_choice) - 1
         except :
             card_choice = len(field.player_deck)
         if card_choice in range(len(field.player_deck)) :
-            bad_input = False
             field.print_remaining()
             sorted_main_deck = sorted(field.player_deck, key=lambda x: x.name)
             sorted_main_deck = sorted(sorted_main_deck, key=lambda x: x.cost)
@@ -163,22 +161,20 @@ def view_graveyard(field) :
     
     Arguments:
         field: the field object to view (field object)'''
-    bad_input = True
     invalid_index = False
-    while bad_input :
+    while True :
         field.print_graveyard()
         if invalid_index :
             print('Invalid index.')
             invalid_index = False
         card_choice = input('Choose a card to view: (press enter to go back) ')
         if card_choice == '' :
-            return
+            break
         try :
             card_choice = int(card_choice) - 1
         except :
             card_choice = len(field.graveyard)
         if card_choice in range(len(field.graveyard)) :
-            bad_input = False
             field.print_graveyard()
             field.graveyard[card_choice].explain()
             input('Press enter to continue.')
@@ -192,9 +188,8 @@ def view_cards(field) :
     Arguments:
         field: the field object to view (field object)
     '''
-    bad_input = True
     invalid_choice = False
-    while bad_input :
+    while True :
         field.print_field()
         if invalid_choice :
             print('Invalid choice.')
@@ -210,7 +205,7 @@ def view_cards(field) :
             break
         elif row_choice == '3' : # bushes
             invalid_index = False
-            while bad_input :
+            while True :
                 field.print_field()
                 if invalid_index :
                     print('Invalid index.')
@@ -225,13 +220,12 @@ def view_cards(field) :
                 if col_choice in range(1, 6) and field.bushes[col_choice].species != '':
                     field.print_field()
                     field.bushes[col_choice].explain()
-                    bad_input = False
                     input('Press enter to continue.')
                 else :
                     invalid_index = True
         elif row_choice == '2' : # leshy's field
             invalid_index = False
-            while bad_input :
+            while True :
                 field.print_field()
                 if invalid_index :
                     print('Invalid index.')
@@ -246,13 +240,12 @@ def view_cards(field) :
                 if col_choice in range(1, 6) and field.opponent_field[col_choice].species != '':
                     field.print_field()
                     field.opponent_field[col_choice].explain()
-                    bad_input = False
                     input('Press enter to continue.')
                 else :
                     invalid_index = True
         elif row_choice == '1' : # player's field
             invalid_index = False
-            while bad_input :
+            while True :
                 field.print_field()
                 if invalid_index :
                     print('Invalid index.')
@@ -267,7 +260,6 @@ def view_cards(field) :
                 if col_choice in range(1, 6) and field.player_field[col_choice].species != '':
                     field.print_field()
                     field.player_field[col_choice].explain()
-                    bad_input = False
                     input('Press enter to continue.')
                 else :
                     invalid_index = True
@@ -287,16 +279,16 @@ def view_play_attack(field) :
         field.print_field()
         print('1. Play a card')
         print('2. View a card')
-        print('3. View graveyard')
-        print('4. View deck')
+        print('3. View deck')
+        print('4. View graveyard')
         print('5. Attack and end turn')
         if invalid_choice :
             print('Invalid choice.')
             invalid_choice = False
         choice = input('Choose an option: ')
-        if choice == '4' :
+        if choice == '3' :
             view_remaining(field)
-        elif choice == '3' :
+        elif choice == '4' :
             view_graveyard(field)
         elif choice == '2' :
             view_cards(field)
