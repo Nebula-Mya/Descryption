@@ -98,7 +98,7 @@ class BlankCard() :
         Returns:
             points: the damage dealt to the opponent (int)
         '''
-        # setup variables
+        # set up variables
         points = 0
 
         # attack cards
@@ -141,7 +141,7 @@ class BlankCard() :
         Returns:
             teeth: damage to controller (int)
         '''
-        # setup variables
+        # set up variables
         teeth = 0
 
         # take damage
@@ -181,7 +181,7 @@ class BlankCard() :
         '''
         prints explanation of stats and sigil for player
         '''
-        # setup variables
+        # set up variables
         explanation = ''
 
         # get terminal size

@@ -17,48 +17,58 @@ def choose_and_play(field) :
     Arguments:
         field: the field object to play the card on (field object)
     '''
+    # get terminal size
     term_cols = os.get_terminal_size().columns
     card_gaps = (term_cols*55 // 100) // 5 - 15
-    bad_input = True
-    second_bad_input = False
+
+    # set variables
     invalid_index = False
-    while bad_input :
+    invalid_zone = False
+
+    while True :
         field.print_full_field()
-        if invalid_index :
+        if invalid_index : # need to print this after the field is printed so it's not cleared
             print('Invalid index.')
             invalid_index = False
+
         play_index = input('Card to play: (press enter to go back) ')
-        if play_index == '' :
+
+        if play_index == '' : # go back
             break
-        try :
+
+        try : # adjust down for indexing and check if it's a number
             play_index = int(play_index) - 1
-        except :
+        except ValueError :
             play_index = len(field.hand)
-        if play_index in range(len(field.hand)) :
-            bad_input = False
+        
+        if play_index not in range(len(field.hand)) : # guard clause for invalid index
+            invalid_index = True
+            continue
+        # if valid index
+        while True :
             QoL.clear()
             field.print_field()
             print(' '*card_gaps + 'Card to play:')
             field.hand[play_index].explain()
-            second_bad_input = True
-        else :
-            invalid_index = True
-        while second_bad_input and not bad_input:
-            zone_to_play = input('Zone to play: (press enter to go back) ')
-            if zone_to_play == '' :
-                bad_input = True
-                break
-            try :
-                zone_to_play = int(zone_to_play)
-            except :
-                zone_to_play = 0
-            if zone_to_play in range(1, 6) :
-                second_bad_input = False
-                if not field.play_card(play_index, zone_to_play) :
-                    bad_input = True
-                    second_bad_input = False
-            else :
+            if invalid_zone :
                 print('Invalid zone.')
+                invalid_zone = False
+            zone_to_play = input('Zone to play: (press enter to go back) ')
+
+            if zone_to_play == '' : # go back
+                break
+
+            try : # check if it's a number
+                zone_to_play = int(zone_to_play)
+            except ValueError :
+                zone_to_play = 0
+
+            if zone_to_play not in range(1, 6) : # guard clause for invalid zone
+                invalid_zone = True
+            elif not field.play_card(play_index, zone_to_play) :
+                continue
+            else :
+                return
 
 def choose_draw(field) :
     '''
@@ -67,40 +77,44 @@ def choose_draw(field) :
     Arguments:
         field: the field object to draw the card to (field object)
     '''
-    bad_input = True
+    # set up variables
     main_empty_alert = False
     resource_empty_alert = False
     invalid_choice = False
-    while bad_input :
-        field.print_full_field()
+
+    while True :
         if main_empty_alert :
             print('Main deck is empty.')
             main_empty_alert = False
-        if resource_empty_alert :
+        if resource_empty_alert :  
             print('Resource deck is empty.')
             resource_empty_alert = False
         if invalid_choice :
             print('Invalid choice.')
             invalid_choice = False
+        
         deck_number = input('Draw from resource deck (1) or main deck (2): ')
-        try :
+
+        try : # check if it's a number
             deck_number = int(deck_number)
-        except :
+        except ValueError :
             deck_number = 0
-        if deck_number == 2 :
-            try :
-                card = field.draw('main')
-                bad_input = False
-            except :
-                main_empty_alert = True
-        elif deck_number == 1 :
-            try :
-                card = field.draw('resource')
-                bad_input = False
-            except :
-                resource_empty_alert = True
-        else :
-            invalid_choice = True
+        
+        match deck_number :
+            case 1 :
+                try :
+                    field.draw('resource')
+                    break
+                except ValueError :
+                    resource_empty_alert = True
+            case 2 :
+                try :
+                    field.draw('main')
+                    break
+                except ValueError :
+                    main_empty_alert = True
+            case _ :
+                invalid_choice = True
 
 def winner_check(field) :
     '''

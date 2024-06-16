@@ -162,6 +162,8 @@ class Playmat :
             deck: the deck to draw from (str) (main or resource)
         '''
         if deck == 'main' :
+            if self.player_deck == [] :
+                raise ValueError('Deck is empty.')
             self.hand.append(self.player_deck[0])
             self.player_deck.pop(0)
             # show card explanation
@@ -169,6 +171,8 @@ class Playmat :
             self.hand[-1].explain()
             input('Press enter to continue.')
         elif deck == 'resource' :
+            if self.player_squirrels == [] :
+                raise ValueError('Deck is empty.')
             self.hand.append(self.player_squirrels[0])
             self.player_squirrels.pop(0)   
 
@@ -200,7 +204,7 @@ class Playmat :
         while not (len(sacc_list) == cost) :
             sacc_index_list = input('')
             sacc_indexes = []
-            for char in sacc_index_list : # add saccs to list
+            for char in filter(lambda x: int(x) in range(1, 6), sacc_index_list) : # add saccs to list
                 if self.player_field[int(char)].sigil == 'worthy sacrifice' :
                     cost -= 2
                 sacc_indexes.append(int(char))
@@ -285,7 +289,7 @@ class Playmat :
         '''
         checks for dead cards and removes them, plus returns unkillables if player's turn. Also summons corpse eaters if necessary.
         '''
-        # setup variables
+        # set up variables
         corpses = []
         open_corpses = []
 
