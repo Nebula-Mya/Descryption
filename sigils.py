@@ -81,7 +81,8 @@ if current_field[zone].status == 'dead' :
         [",->-,","| X |","'-<-'"],
         'Returns to hand on death.',
         '''
-if applicables == sigils.on_death :
+import sigils
+if applicables == sigils.on_deaths :
     import card
 
     if current_field[zone].status == 'dead' and current_field == self.player_field :
@@ -96,7 +97,7 @@ if applicables == sigils.on_death :
         current_field[zone].play(zone)
         corpses.append(zone)
 
-elif applicables == sigils.on_sacrifice :
+elif applicables == sigils.on_sacrifices :
     self.hand.append(self.player_field[ind])
     self.player_field[ind] = card.BlankCard()
 '''

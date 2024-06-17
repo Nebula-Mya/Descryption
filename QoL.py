@@ -181,6 +181,7 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None
 
     # set up variables
     returned_vars = []
+    local_vars['applicables'] = applicables
 
     if current_card.sigil in applicables :
         exec(sigils.Dict[current_card.sigil][2], global_vars, local_vars)
