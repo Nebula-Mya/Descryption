@@ -240,7 +240,7 @@ class Playmat :
             self.player_field[ind].die()
             QoL.exec_sigil_code(self.player_field[ind], sigils.on_sacrifices, None, locals())
             if self.player_field[ind].sigil not in sigils.on_sacrifices :
-                self.graveyard.append(self.player_field[ind])
+                self.graveyard.insert(0, self.player_field[ind])
                 self.player_field[ind] = card.BlankCard()
             if self.player_field[ind].species == 'Cat' and self.player_field[ind].spent_lives >= 9 : # if first is false, second will not be checked
                 self.player_field[ind] = card_library.UndeadCat()

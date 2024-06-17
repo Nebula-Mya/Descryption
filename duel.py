@@ -21,7 +21,7 @@ def choose_and_play(field) :
     term_cols = os.get_terminal_size().columns
     card_gaps = (term_cols*55 // 100) // 5 - 15
 
-    # set variables
+    # set up variables
     invalid_index = False
     invalid_zone = False
 
@@ -58,12 +58,9 @@ def choose_and_play(field) :
             if zone_to_play == '' : # go back
                 break
 
-            try : # check if it's a number
-                zone_to_play = int(zone_to_play)
-            except ValueError :
-                zone_to_play = 0
+            (is_int, zone_to_play) = QoL.reps_int(zone_to_play)
 
-            if zone_to_play not in range(1, 6) : # guard clause for invalid zone
+            if not is_int or zone_to_play not in range(1, 6) : # guard clause for invalid zone
                 invalid_zone = True
             elif not field.play_card(play_index, zone_to_play) :
                 continue
@@ -92,13 +89,11 @@ def choose_draw(field) :
         if invalid_choice :
             print('Invalid choice.')
             invalid_choice = False
-        
+
+        field.print_full_field()
         deck_number = input('Draw from resource deck (1) or main deck (2): ')
 
-        try : # check if it's a number
-            deck_number = int(deck_number)
-        except ValueError :
-            deck_number = 0
+        (_, deck_number) = QoL.reps_int(deck_number)
         
         match deck_number :
             case 1 :
@@ -126,19 +121,23 @@ def winner_check(field) :
     Returns:
         True if the game is over, False if not (bool)
     '''
+    # get variables from field
     (win, winner, overkill) = field.check_win()
-    if win :
-        QoL.clear()
-        if winner == 'player' :
+    
+    if not win : # guard clause for game not being over
+        return False
+    
+    # game is over
+    QoL.clear()
+    match winner :
+        case 'player' :
             ASCII_text.print_win(overkill)
-        elif winner == 'opponent' :
-            if abs(field.score['player'] - field.score['opponent']) < 8 :
+        case 'opponent' :
+            deck_out = False
+            if abs(field.score['player'] - field.score['opponent']) < 8 : # if Leshy isn't winning by at least 8 points, it's a deck out
                 deck_out = True
-            else :
-                deck_out = False
             ASCII_text.print_lose(deck_out)
-        return True
-    return False
+    return True
 
 def view_remaining(field) : 
     '''
@@ -147,7 +146,9 @@ def view_remaining(field) :
     Arguments:
         field: the field object to view (field object)
     '''
+    # set up variables
     invalid_index = False
+
     while True :
         field.print_remaining()
         if invalid_index :
@@ -156,15 +157,11 @@ def view_remaining(field) :
         card_choice = input('Choose a card to view: (press enter to go back) ')
         if card_choice == '' :
             break
-        try :
-            card_choice = int(card_choice) - 1
-        except :
-            card_choice = len(field.player_deck)
-        if card_choice in range(len(field.player_deck)) :
+
+        (is_int, card_choice) = QoL.reps_int(card_choice, -1)
+        if is_int and card_choice in range(len(field.player_deck)) :
             field.print_remaining()
-            sorted_main_deck = sorted(field.player_deck, key=lambda x: x.name)
-            sorted_main_deck = sorted(sorted_main_deck, key=lambda x: x.cost)
-            sorted_main_deck[card_choice].explain()
+            QoL.sort_deck(field.player_deck)[card_choice].explain()
             input('Press enter to continue.')
         else :
             invalid_index = True
@@ -174,8 +171,11 @@ def view_graveyard(field) :
     displays the cards in the graveyard and allows the player to view a card
     
     Arguments:
-        field: the field object to view (field object)'''
+        field: the field object to view (field object)
+    '''
+    # set up variables
     invalid_index = False
+
     while True :
         field.print_graveyard()
         if invalid_index :
@@ -184,11 +184,9 @@ def view_graveyard(field) :
         card_choice = input('Choose a card to view: (press enter to go back) ')
         if card_choice == '' :
             break
-        try :
-            card_choice = int(card_choice) - 1
-        except :
-            card_choice = len(field.graveyard)
-        if card_choice in range(len(field.graveyard)) :
+
+        (is_int, card_choice) = QoL.reps_int(card_choice, -1)
+        if is_int and card_choice in range(len(field.graveyard)) :
             field.print_graveyard()
             field.graveyard[card_choice].explain()
             input('Press enter to continue.')
@@ -309,7 +307,9 @@ def view_play_attack(field) :
         elif choice == '1' :
             choose_and_play(field)
         elif choice == '5' :
-            not_attack = False
+            affirm = input('Are you sure you want to end your turn? (type anything to continue) ').lower() # might change this prompt
+            if affirm != '' :
+                not_attack = False
         else :
             invalid_choice = True
 
@@ -345,7 +345,7 @@ def resource_gen(size=20) :
         a resource deck (deck object)
     '''
     squirrels = [card_library.Squirrel()]
-    for n in range(size - 1) :
+    for _ in range(size - 1) :
         squirrels.append(card_library.Squirrel())
     return deck.Deck(squirrels)
 
@@ -356,21 +356,23 @@ def main(deck_size, hand_size, Leshy_play_count_median=2, Leshy_play_count_varia
     player_deck = deck_gen(card_library.Poss_Playr, deck_size)
     player_decklist = player_deck.shuffle()
     squirrels_deck = [card_library.Squirrel()]
-    for n in range(19) :
+    for _ in range(19) :
         squirrels_deck.append(card_library.Squirrel())
     playfield = field.Playmat(deck=player_decklist, squirrels=squirrels_deck, opponent_deck=opponent_decklist, Leshy_play_count_median=Leshy_play_count_median, Leshy_play_count_variance=Leshy_play_count_variance, Leshy_in_strategy_chance=Leshy_in_strategy_chance, Leshy_strat_change_threshold=Leshy_strat_change_threshold)
     # advance from bushes
     playfield.advance()
     # draw squirrel and hand_size - 1 card
     playfield.draw('resource')
-    for n in range(hand_size - 1) :
+    for _ in range(hand_size - 1) :
         playfield.draw('main')
-    playfield.print_full_field()
+    playfield.print_field()
 
     # game loop
     ongoing = True
     while ongoing :
         if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) :
+            if playfield.active == 'player' :
+                playfield.print_full_field()
             quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
             if quit_game == 'y' :
                 return

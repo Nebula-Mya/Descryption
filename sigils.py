@@ -70,7 +70,7 @@ if current_field[zone].status == 'dead' :
                 
     # remove the original card
     current_field[zone].die()
-    self.graveyard.append(current_field[zone])
+    self.graveyard.insert(0, current_field[zone])
     current_field[zone] = card.BlankCard()
     current_field[zone].play(zone)
     corpses.append(zone)

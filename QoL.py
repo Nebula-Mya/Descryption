@@ -226,6 +226,77 @@ def hefty_check(field, zone, direction) :
         else :
             return 0
 
+def sort_deck(deck) :
+    '''
+    sorts a deck by cost and name
+
+    Arguments:
+        deck: the deck to sort (list)
+    
+    Returns:
+        the sorted deck (list)
+    '''
+    deck = sorted(deck, key=lambda x: x.name) # sort by name (will be sub-sorting under cost)
+    return sorted(deck, key=lambda x: x.cost)
+
+def print_deck(deck, sort=False, fruitful=False) :
+    '''
+    prints a list of cards in a deck, with optional sorting
+
+    Arguments:
+        deck: deck to print (list)
+        sort: whether to sort the deck before printing (bool)
+        fruitful: whether to return the deck string instead of printing it (bool)
+    '''
+    # sort deck if needed
+    if sort :
+        deck = sort_deck(deck)
+    
+    # get terminal size
+        term_cols = os.get_terminal_size().columns
+        card_gaps = (term_cols*55 // 100) // 5 - 15
+        card_gaps_space = ' ' * card_gaps
+
+        # get number of cards per row
+        cards_per_row = term_cols // (card_gaps + 15) 
+        if cards_per_row >= 9 :
+            cards_per_row = 8
+    
+        # split deck into rows
+        chunked = chunk(deck, cards_per_row)
+        
+        # generate deck string
+        deck_string = '\n'.join(
+            '\n'.join(
+                card_gaps_space + card_gaps_space.join(card.text_by_line() for card in row)
+                for _ in range(11)
+            )
+            for row in chunked
+        )
+        if fruitful :
+            return deck_string
+        print(deck_string)
+
+def reps_int(string, increment=0) :
+    '''
+    checks if a string represents an integer and returns it
+
+    Arguments:
+        string: the string to convert (str)
+        increment: the increment to add to the integer, defaults to 0 (int)
+    
+    Returns:
+        is_int: whether the string is an integer (bool)
+        int_value: the integer, will default to 0 (int)
+    '''
+    try :
+        int_value = int(string) + increment
+        is_int = True
+    except ValueError :
+        int_value = 0
+        is_int = False
+    return is_int, int_value
+
 if __name__ == '__main__' :
     clear()
     [deck_size, hand_size] = read_file('config.txt', 'Descryption_Data/config.txt')
