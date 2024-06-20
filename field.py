@@ -8,80 +8,69 @@ import os
 import duel
 import sigils
 
-def ai_category_checking(categories, player_field, opponent_deck, bushes, score, strat_change_threshold, in_strategy_chance) :
+def ai_category_checking(categories, player_field, card_to_play, bushes, score, strat_change_threshold) :
     '''
-    checks for cards in a category and assigns them to in_strategy or out_of_strategy
+    checks the categories and current game state to determine which zones Leshy should play to
 
     Arguments:
         categories: the categories to check (list)
         player_field: the player's field (dict)
-        opponent_deck: Leshy's deck (list)
+        card_to_play: the card Leshy is considering playing (card)
         bushes: the bushes on the field (dict)
         score: the score of the game (dict)
         strat_change_threshold: the score difference in Leshy's favor that will trigger a change in his strategy (int)
-        in_strategy_chance: the percent chance that leshy will play a card in strategy (as opposed to out of strategy) (int)
 
     Returns:
         in_strategy: the zones in strategy (list)
         out_of_strategy: the zones out of strategy (list)
     '''
+    # set up variables
     in_strategy = []
     out_of_strategy = []
-    uninfluenced = True
+    influenced = False
 
-    # check for strategy and categories, then assign zones to in_strategy or out_of_strategy
-    # if a card in in a category, but the category does not apply, it will be checked for all other categories
-    # if a card is not in a category, and Leshy is not past the strat change threshold, it will be played defensively
-    # if a card is in a category, and it does apply, it will not be checked for other categories
-    if (score['opponent'] - score['player'] >= strat_change_threshold) and (opponent_deck[0].base_attack > 0): # Leshy winning enough to go on the offensive, regardless of card category
-        for zone in range(1, 6) :
-            if bushes[zone].species == '' :
-                if player_field[zone].species == '' :
-                    in_strategy.append(zone)
-                    uninfluenced = False
-                else :
-                    out_of_strategy.append(zone)
+    # steps of the strategy:
+    # 1. Check if Leshy is winning enough to go on the offensive, regardless of card category
+    # 2. Check for categories/strategies in order of priority
+    # 3. For those not in a category or whose category did not apply (defensive)
+    # 4. Remove zones that are countered by player's cards from the strategy
 
-    # check for categories in order of priority
-    for category in categories :
-        if opponent_deck[0].species in category['cards'] and uninfluenced :
-            out_of_strategy = []
-            for zone in range(1, 6) :
-                if bushes[zone].species == '' :
-                    if player_field[zone].sigil in category['deals_with'] :
-                        in_strategy.append(zone)
-                        uninfluenced = False
-                    else :
-                        out_of_strategy.append(zone)
+    # Leshy winning enough to go on the offensive, regardless of card category
+    if (score['opponent'] - score['player'] >= strat_change_threshold) and (card_to_play.base_attack > 0): 
+        in_strategy += [zone for zone in range(1, 6) if bushes[zone].species == '' and player_field[zone].species == '']
+
+        out_of_strategy += [zone for zone in range(1, 6) if bushes[zone].species == '' and zone not in in_strategy]
+
+        influenced = bool(in_strategy) # only influence if strat applies to at least 1 zone, otherwise allow it to continue to the next strat
+
+    # check for categories/strategies in order of priority
+    for category in (category for category in categories if not influenced and card_to_play.species in category['cards']) : # generator to prevent checking categories if already influenced and reduce memory usage
+        out_of_strategy = [] # reset incase previous category didn't apply to any zones
+
+        in_strategy += [zone for zone in range(1, 6) if bushes[zone].species == '' and player_field[zone].sigil in category['deals_with']]
+
+        out_of_strategy += [zone for zone in range(1, 6) if bushes[zone].species == '' and zone not in in_strategy]
+
+        influenced = bool(in_strategy) # only influence if strat applies to at least 1 zone, otherwise allow it to continue to the next strat
 
     # for those not in a category or whose category did not apply (defensive)
-    if uninfluenced :
-        out_of_strategy = []
-        for zone in range(1, 6) :
-            if bushes[zone].species == '' :
-                if player_field[zone].species != '' :
-                    in_strategy.append(zone)
-                else :
-                    out_of_strategy.append(zone)
+    if not influenced :
+        out_of_strategy = [] # reset incase previous category didn't apply to any zones
+
+        in_strategy += [zone for zone in range(1, 6) if bushes[zone].species == '' and player_field[zone].species != '']
+
+        out_of_strategy += [zone for zone in range(1, 6) if bushes[zone].species == '' and zone not in in_strategy]
     
     # check for cards that counter Leshy's cards
-    for category in categories :
-        if opponent_deck[0].sigil in category['deals_with'] :
-            for zone in range(1, 6) :
+    for zone in [zone for category in categories if card_to_play.sigil in category['deals_with'] for zone in range(1, 6)] :
+        both_right = 'right' in player_field[zone].sigil and 'right' in card_to_play.sigil
+        both_left = 'left' in player_field[zone].sigil and 'left' in card_to_play.sigil
+        if both_right or both_left : # guard clause for opposing shifting cards, which counter eachother
+            continue
 
-                # left and right cards counter eachother, so it only focuses on anti shifting cards that don't move
-                if category['category'] == 'anti_right' or category['category'] == 'anti_left' :
-                    if opponent_deck[0].species in category['cards'] and ('left' not in player_field[zone].sigil) and ('right' not in player_field[zone].sigil) and random.randint(1,100) <= in_strategy_chance :
-                        if zone in in_strategy :
-                            in_strategy.remove(zone)
-                        if zone in out_of_strategy :
-                            out_of_strategy.remove(zone)
-                else :
-                    if opponent_deck[0].species in category['cards'] and random.randint(1,100) <= in_strategy_chance :
-                        if zone in in_strategy :
-                            in_strategy.remove(zone)
-                        if zone in out_of_strategy :
-                            out_of_strategy.remove(zone)
+        if card_to_play.species in category['cards'] and zone in in_strategy :
+            out_of_strategy.append(zone)
+            in_strategy.remove(zone)
 
     return in_strategy, out_of_strategy
 
@@ -96,10 +85,8 @@ def get_corpse_eaters(hand) :
         corpse_eaters: the corpse eaters in the hand (list)
     '''
     corpse_eaters = []
-    corpse_eaters_index = []
-    for card in range(len(hand)) :
-        if hand[card].sigil == 'corpse eater' :
-            corpse_eaters.append(card)
+    for card in [card for card in range(len(hand)) if hand[card].species == 'Corpse Eater'] :
+        corpse_eaters.append(card)
     return corpse_eaters
 
 class Playmat :
@@ -139,20 +126,24 @@ class Playmat :
         print_full_field() : prints the field and player's hand
     '''
     def __init__(self, deck, squirrels, opponent_deck, Leshy_play_count_median=2, Leshy_play_count_variance=1, Leshy_in_strategy_chance=75, Leshy_strat_change_threshold=3) :
-        self.bushes = {0: card.BlankCard(), 1: card.BlankCard(), 2: card.BlankCard(), 3: card.BlankCard(), 4: card.BlankCard(), 5: card.BlankCard(), 6: card.BlankCard()}
-        self.player_field = {0: card.BlankCard(), 1: card.BlankCard(), 2: card.BlankCard(), 3: card.BlankCard(), 4: card.BlankCard(), 5: card.BlankCard(), 6: card.BlankCard()}
-        self.opponent_field = {0: card.BlankCard(), 1: card.BlankCard(), 2: card.BlankCard(), 3: card.BlankCard(), 4: card.BlankCard(), 5: card.BlankCard(), 6: card.BlankCard()}
+        # basic variables
         self.hand = []
         self.graveyard = []
         self.score = {'player': 0, 'opponent': 0}
+        self.active = 'player'
         self.player_deck = deck
         self.player_squirrels = squirrels
         self.opponent_deck = opponent_deck
-        self.active = 'player'
         self.Leshy_play_count_median = Leshy_play_count_median
         self.Leshy_play_count_variance = Leshy_play_count_variance
         self.Leshy_in_strategy_chance = Leshy_in_strategy_chance
         self.Leshy_strat_change_threshold = Leshy_strat_change_threshold
+
+        # create the rows of the field
+        gen_blank_row = lambda: {column: card.BlankCard() for column in range(7)}
+        self.bushes = gen_blank_row()
+        self.player_field = gen_blank_row()
+        self.opponent_field = gen_blank_row()
     
     def draw(self, deck) :
         '''
@@ -161,20 +152,23 @@ class Playmat :
         Arguments:
             deck: the deck to draw from (str) (main or resource)
         '''
-        if deck == 'main' :
-            if self.player_deck == [] :
-                raise ValueError('Deck is empty.')
-            self.hand.append(self.player_deck[0])
-            self.player_deck.pop(0)
-            # show card explanation
-            self.print_field()
-            self.hand[-1].explain()
-            input('Press enter to continue.')
-        elif deck == 'resource' :
-            if self.player_squirrels == [] :
-                raise ValueError('Deck is empty.')
-            self.hand.append(self.player_squirrels[0])
-            self.player_squirrels.pop(0)   
+        match deck :
+            case 'main' :
+                if self.player_deck == [] :
+                    raise ValueError('Deck is empty.')
+                self.hand.append(self.player_deck[0])
+                self.player_deck.pop(0)
+
+                # show card explanation
+                self.print_field()
+                self.hand[-1].explain()
+                input('Press enter to continue.')
+
+            case 'resource' :
+                if self.player_squirrels == [] :
+                    raise ValueError('Deck is empty.')
+                self.hand.append(self.player_squirrels[0])
+                self.player_squirrels.pop(0)
 
     def play_card(self, index, zone) :
         '''
@@ -191,70 +185,76 @@ class Playmat :
         cost = self.hand[index].saccs
         og_cost = cost
         sacc_list = []
-        played = False
 
         # update display
-        QoL.clear()
         self.print_field()
         self.hand[index].explain()
         print('Sacrifices required:', cost)
         print('Select sacrifices: (press enter to go back)', end=' ')
 
+        def fail_saccs() :
+                sacc_list = []
+                cost = og_cost # to prevent goat cheesing
+                return [sacc_list, cost]
+
         # get sacrifices
         while not (len(sacc_list) == cost) :
             sacc_index_list = input('')
-            sacc_indexes = []
-            for char in filter(lambda x: int(x) in range(1, 6), sacc_index_list) : # add saccs to list
-                if self.player_field[int(char)].sigil == 'worthy sacrifice' :
-                    cost -= 2
-                sacc_indexes.append(int(char))
-            if sacc_index_list == '' : # go back
-                sacc_list = []
-                return False
-            elif len(sacc_indexes) > cost - len(sacc_list) : # too many saccs
-                print('Too many sacrifices.')
-                cost = og_cost # to prevent goat cheesing
-            else:
-                sacc_list_snapshot = sacc_list.copy()
-                for sacc_index in sacc_indexes :
-                    if sacc_index in range(1, 6) and sacc_index not in sacc_list and self.player_field[sacc_index].species != '' :
-                        sacc_list.append(sacc_index)
-                    else :
-                        print('Invalid zone.')
-                        sacc_list = sacc_list_snapshot
-                        break
-            if self.player_field[zone].species != '' and (len(sacc_list) == cost):
-                def fail_saccs() :
-                    sacc_list = []
-                    cost = og_cost # to prevent goat cheesing
-                    return [sacc_list, cost]
-                if zone not in sacc_list :
-                    print('Cannot play on top of a non sacrificed card.')
-                    [sacc_list, cost] = fail_saccs()
-                elif self.player_field[zone].sigil == 'many lives' :
-                    print('Cannot play on top of a card with many lives.')
-                    [sacc_list, cost] = fail_saccs()
 
+            if sacc_index_list == '' : # go back if user presses enter
+                return False
+            
+            sacc_indexes = [int(sacc) for sacc in sacc_index_list if sacc in [str(n) for n in range(1, 6)]] # get valid saccs
+
+            for goat in [sacc for sacc in sacc_indexes if self.player_field[sacc].sigil == 'worthy sacrifice'] : # decrease cost for cards with worthy sacrifice
+                cost -= 2
+
+            if len(sacc_indexes) > cost - len(sacc_list) : # too many saccs, serves as guard clause
+                print('Too many sacrifices.')
+                [sacc_list, cost] = fail_saccs() # reset saccs and cost to prevent player confusion, may change if alternate behavior is desired
+                continue
+
+            for sacc_index in sacc_indexes :
+                if sacc_index not in range(1, 6) or sacc_index in sacc_list or self.player_field[sacc_index].species == '' : # invalid zone
+                    print(str(sacc_index), 'is an invalid zone.')
+                    break # do not reset, just don't add the sacc, may change if alternate behavior is desired
+                else :
+                    sacc_list.append(sacc_index)
+
+            if self.player_field[zone].species == '' or len(sacc_list) != cost : # guard clause for playing on top of a card
+                continue
+            if zone not in sacc_list : # playing on top of a card that wasn't sacrificed
+                print('Cannot play on top of a non sacrificed card.')
+                [sacc_list, cost] = fail_saccs()
+            elif self.player_field[zone].sigil == 'many lives' : # playing on top of a card with many lives
+                print('Cannot play on top of a card with many lives.')
+                [sacc_list, cost] = fail_saccs()
+        
         # remove saccs
         for ind in sacc_list :
-            self.player_field[ind].die()
             QoL.exec_sigil_code(self.player_field[ind], sigils.on_sacrifices, None, locals())
+
+            if self.player_field[ind].species == 'Cat' and self.player_field[ind].sigil == 'many lives' : # make sure cat still has many lives
+                self.player_field[ind].spent_lives += 1
+                if self.player_field[ind].spent_lives >= 9 :
+                    self.player_field[ind] = card_library.UndeadCat()
+            else :
+                self.player_field[ind].die()
+
             if self.player_field[ind].sigil not in sigils.on_sacrifices :
                 self.graveyard.insert(0, self.player_field[ind])
                 self.player_field[ind] = card.BlankCard()
-            if self.player_field[ind].species == 'Cat' and self.player_field[ind].spent_lives >= 9 : # if first is false, second will not be checked
-                self.player_field[ind] = card_library.UndeadCat()
-        else :
+        else : 
             # play card to zone
             self.player_field[zone] = self.hand[index]
             self.player_field[zone].play(zone=zone)
             self.hand.pop(index)
+            
             # handle sigils
             QoL.exec_sigil_code(self.player_field[zone], sigils.on_plays, None, locals())
-            played = True
-            QoL.clear()
+
             self.print_field()
-        return played
+            return True
     
     def attack(self) :
         '''
@@ -373,7 +373,7 @@ class Playmat :
         while played < play_count :
             
             # intelligent choosing of zones to prioritize
-            in_strategy, out_of_strategy = ai_category_checking(card_library.AI_categories, self.player_field, self.opponent_deck, self.bushes, self.score, strat_change_threshold, in_strategy_chance)
+            in_strategy, out_of_strategy = ai_category_checking(card_library.AI_categories, self.player_field, self.opponent_deck[0], self.bushes, self.score, strat_change_threshold)
 
             # ensure that the loop will not run if there are no zones to play to, preventing infinite loop
             if len(in_strategy) + len(out_of_strategy) == 0 :
@@ -750,9 +750,49 @@ if __name__ == '__main__' :
         playmat.print_field()
         print(playmat.player_field)
 
+    def test_empty_deck() :
+        QoL.clear()
+
+        # create decks
+        leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
+        player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
+        player_squirrels = duel.resource_gen()
+
+        # Create a sample playmat with cards on the field
+        playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
+        card_list = []
+        for cost in card_library.Poss_Playr :
+            for species in card_library.Poss_Playr[cost] :
+                card_list.append(species)
+                card_list.append(card.BlankCard())
+        for zone in range(1, 6) :
+            playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
+            playmat.player_field[zone].zone = zone
+        playmat.print_full_field()
+
+        # empty squirrels
+        playmat.player_squirrels = []
+
+        # draw with empty squirrels
+        input("Press enter to draw with empty squirrels.")
+        duel.choose_draw(playmat)
+
+        # empty deck
+        playmat.player_deck = []
+        playmat.player_squirrels = duel.resource_gen().shuffle()
+
+        # draw with empty deck
+        input("Press enter to draw with empty deck.")
+        duel.choose_draw(playmat)
+
+        # see hand
+        input("Press enter to see hand.")
+        playmat.print_full_field()
+
     # test_advancing()
     # test_split_dam()
-    test_corpse_eaters()
+    # test_corpse_eaters()
     # test_hefty()
+    test_empty_deck()
 
     pass

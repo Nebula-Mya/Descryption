@@ -10,7 +10,7 @@ Dict = {
         'Attacks diagonally, dealing damage to two targets.',
         '''
 for target_card in [front_left_card, front_right_card] :
-    if (target_card.zone % 5) != 1 :
+    if (target_card.zone % 6) != 0 :
         points += target_card.take_damage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
 '''
         ],

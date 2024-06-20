@@ -116,9 +116,6 @@ class Cat(card.BlankCard) :
         super().reset_stats()
         self.spent_lives = 0
 
-    def sacc(self) :
-        self.spent_lives += 1
-
 class UndeadCat(card.BlankCard) :
     def __init__(self, blank_cost=False) :
         super().__init__(species='Undead Cat', cost=1, attack=3, life=6, blank_cost=blank_cost)
@@ -190,7 +187,7 @@ AI_categories = [
     # good against deathtouch (waterbornes and those with deathtouch)
     {
         'category' : 'anti_deathtouch',
-        'cards' : ['Adder', 'Otter', 'Bull Shark'],
+        'cards' : ['Adder', 'Otter', 'Bull Shark'], # maybe add some on death effects
         'deals_with' : ['touch of death']
     },
 
@@ -226,16 +223,14 @@ AI_categories = [
     {
         'category' : 'anti_right', 
         'cards' : ['Shrew', 'Lobster', 'Beaver'], 
-        'deals_with' : ['lane shift right', 'hefty (right)'],
-        'opp_cards' : ['Rabbit', 'Lobster', 'Beaver']
+        'deals_with' : ['lane shift right', 'hefty (right)']
         },
 
     # good against those moving left (moves with, bifurcate, or trifurcate(to be added))
     {
         'category' : 'anti_left', 
         'cards' : ['Rabbit', 'Lobster', 'Beaver'], 
-        'deals_with' : ['lane shift left', 'hefty (left)'],
-        'opp_cards' : ['Shrew', 'Lobster', 'Beaver']
+        'deals_with' : ['lane shift left', 'hefty (left)']
         },
 ]
 

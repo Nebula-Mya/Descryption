@@ -299,15 +299,14 @@ def deck_gen(possible_cards, size) :
     Returns:
         deck: deck of cards (deck object)
     '''
-    # set up variables
-    deck_list = []
-    max_cost = max(possible_cards.keys())
-
-    # weighting of cost is done via beta distribution, multiplied and rounding up to nearest cost
-    for _ in range(size) :
-        cost = math.floor((max_cost + 1) * random.betavariate(2.2, 3.3))
+    def random_card(possible_cards, alpha=2.2, beta=3.3) :
+        max_cost = max(possible_cards.keys())
+        cost = math.floor((max_cost + 1) * random.betavariate(alpha, beta))
         card = copy.deepcopy(random.choice(possible_cards[cost]))
-        deck_list.append(card)
+
+        return card
+    
+    deck_list = [random_card(possible_cards) for _ in range(size)]
 
     return deck.Deck(deck_list)
 
@@ -321,11 +320,7 @@ def resource_gen(size=20) :
     Returns:
         a resource deck (deck object)
     '''
-    # set up variables
-    squirrels = []
-
-    for _ in range(size) : 
-        squirrels.append(card_library.Squirrel())
+    squirrels = [card_library.Squirrel() for _ in range(size)]
 
     return deck.Deck(squirrels)
 
