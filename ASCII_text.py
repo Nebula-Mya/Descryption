@@ -17,13 +17,24 @@ def print_title() :
 {spc}{gap}An MS-DOS style demake of Daniel Mullin's "Inscryption"   '''.format(spc=' '*center_space, gap=' '*66)
     print(title)
 
-def print_scales(player_weight, opponent_weight) :
+def print_scales(score) :
     term_cols = os.get_terminal_size().columns
     card_gaps = (term_cols*55 // 100) // 5 - 15
     if card_gaps <= 0 :
         score_gap = 28
     else :
         score_gap = card_gaps*9 + 28
+
+    player_adv = max(0, score['player'] - score['opponent'])
+    opponent_adv = max(0, score['opponent'] - score['player'])
+    if player_adv :
+        player_weight = 'O'*player_adv + ' '*(8-player_adv)
+        opponent_weight = ' '*8
+    else :
+        player_weight = ' '*8
+        opponent_weight = ' '*opponent_adv + 'O'*opponent_adv
+    
+
     scales = '''{spc} PLAYER      LESHY
 {spc}{plr}   {lsh}
 {spc}‾‾‾‾‾‾‾‾/‾\\‾‾‾‾‾‾‾‾
@@ -108,6 +119,5 @@ if __name__ == '__main__' :
     print('-'*term_cols)
     print_lose()
     print('-'*term_cols)
-    player_weight = 'OOOO    ' 
-    opponent_weight = '        '
-    print_scales(player_weight, opponent_weight)
+    score = {'player': 6, 'opponent': 2}
+    print_scales(score)

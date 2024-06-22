@@ -297,29 +297,29 @@ def print_deck(deck, sort=False, fruitful=False) :
         deck = sort_deck(deck)
     
     # get terminal size
-        term_cols = os.get_terminal_size().columns
-        card_gaps = (term_cols*55 // 100) // 5 - 15
-        card_gaps_space = ' ' * card_gaps
+    term_cols = os.get_terminal_size().columns
+    card_gaps = (term_cols*55 // 100) // 5 - 15
+    card_gaps_space = ' ' * card_gaps
 
-        # get number of cards per row
-        cards_per_row = term_cols // (card_gaps + 15) 
-        if cards_per_row >= 9 :
-            cards_per_row = 8
+    # get number of cards per row
+    cards_per_row = term_cols // (card_gaps + 15) 
+    if cards_per_row >= 9 :
+        cards_per_row = 8
+
+    # split deck into rows
+    chunked = chunk(deck, cards_per_row)
     
-        # split deck into rows
-        chunked = chunk(deck, cards_per_row)
-        
-        # generate deck string
-        deck_string = '\n'.join(
-            '\n'.join(
-                card_gaps_space + card_gaps_space.join(card.text_by_line() for card in row)
-                for _ in range(11)
-            )
-            for row in chunked
+    # generate deck string
+    deck_string = '\n'.join(
+        '\n'.join(
+            card_gaps_space + card_gaps_space.join(card.text_by_line() for card in row)
+            for _ in range(11)
         )
-        if fruitful :
-            return deck_string
-        print(deck_string)
+        for row in chunked
+    )
+    if fruitful :
+        return deck_string
+    print(deck_string)
 
 def reps_int(string, increment=0) :
     '''
@@ -340,6 +340,24 @@ def reps_int(string, increment=0) :
         int_value = 0
         is_int = False
     return is_int, int_value
+
+def ping(locals={'ping':'pong'}) : # for testing
+    '''
+    writes local variables to ping.txt
+
+    Arguments:
+        locals: the local variables to write (dict)
+    '''
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS') : # guard clause to prevent pinging after compilation
+        return
+    
+    data_to_write = ''
+    for key, value in locals.items():
+        data_to_write += f"{key}: {value}\n\n"
+    data_to_write = data_to_write.rstrip()
+    
+    with open('ping.txt', 'w') as file :
+        file.write(data_to_write)
 
 if __name__ == '__main__' :
     clear()

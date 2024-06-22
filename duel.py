@@ -119,7 +119,7 @@ def winner_check(field) :
         True if the game is over, False if not (bool)
     '''
     # get variables from field
-    (win, winner, overkill) = field.check_win()
+    (win, winner, overkill, deck_out) = field.check_win()
     
     if not win : # guard clause for game not being over
         return False
@@ -130,9 +130,6 @@ def winner_check(field) :
         case 'player' :
             ASCII_text.print_win(overkill)
         case 'opponent' :
-            deck_out = False
-            if abs(field.score['player'] - field.score['opponent']) < 8 : # if Leshy isn't winning by at least 8 points, it's a deck out
-                deck_out = True
             ASCII_text.print_lose(deck_out)
     return True
 
@@ -279,8 +276,8 @@ def view_play_attack(field) :
             case '4' :
                 view_graveyard(field)
             case '5' :
-                affirm = input('Are you sure you want to end your turn? (type anything to continue) ').lower() # might change this prompt
-                if affirm != '' :
+                affirm = input('Are you sure you want to end your turn? (press enter to continue)').lower() # might change this prompt
+                if affirm == '' :
                     break
             case _ :
                 invalid_choice = True

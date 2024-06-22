@@ -1,0 +1,15 @@
+played: 0
+
+play_count_median: 2
+
+play_count_variance: 1
+
+in_strategy_chance: 75
+
+strat_change_threshold: 3
+
+player_card_count: 3
+
+play_count: 1
+
+self: <__main__.Playmat object at 0x7fb3bba10c70>

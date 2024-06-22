@@ -301,119 +301,72 @@ class Playmat :
         '''
         # set up variables
         corpses = []
-        open_corpses = []
 
-        # check for dead cards in each field
-        for current_field in [self.player_field, self.opponent_field, self.bushes] :
-            for zone in current_field :
+        # check for dead cards
+        for current_field, zone in [(current_field, zone) for current_field in [self.player_field, self.opponent_field, self.bushes] for zone in current_field] :
+            # if a sigil applies
+            [corpses] = QoL.exec_sigil_code(current_field[zone], sigils.on_deaths, None, locals(), ['corpses'])
 
-                # if a sigil applies
-                [corpses] = QoL.exec_sigil_code(current_field[zone], sigils.on_deaths, None, locals(), ['corpses'])
-
-                # if a normal card dies
-                if current_field[zone].status == 'dead' and (current_field[zone].sigil not in sigils.on_deaths) :
-                    current_field[zone].die()
-                    current_field[zone] = card.BlankCard()
-                    current_field[zone].play(zone)
-                    corpses.append(zone)
-
+            # if a normal card dies
+            if current_field[zone].status == 'dead' and (current_field[zone].sigil not in sigils.on_deaths) :
+                current_field[zone].die()
+                current_field[zone] = card.BlankCard()
+                current_field[zone].play(zone)
+                corpses.append((zone, current_field))
+        
         # check for corpse eaters
-        for zone in corpses :
-            if self.player_field[zone].species == '' :
-                open_corpses.append(zone)
+        open_corpses = [corpse for (corpse, field) in corpses if field == self.player_field and self.player_field[corpse].species == '']
         corpse_eaters = get_corpse_eaters(self.hand)
-        exhausted = False
-        while not exhausted :
-            if open_corpses != [] and corpse_eaters !=[] :
-                zone_choice = random.choice(open_corpses)
-                self.player_field[zone_choice] = self.hand[corpse_eaters[0]]
-                self.player_field[zone_choice].play(zone_choice)
-                self.hand.pop(corpse_eaters[0])
-                open_corpses.remove(zone_choice)
-                corpse_eaters = get_corpse_eaters(self.hand)
-            else :
-                exhausted = True
+
+        # play corpse eaters
+        while True :
+            if open_corpses == [] or corpse_eaters == [] : # guard clause for no open corpses or no corpse eaters
+                break
+            zone_choice = random.choice(open_corpses)
+            self.player_field[zone_choice] = self.hand[corpse_eaters[0]]
+            self.player_field[zone_choice].play(zone_choice)
+            self.hand.pop(corpse_eaters[0])
+            open_corpses.remove(zone_choice)
+            corpse_eaters = get_corpse_eaters(self.hand) # update corpse eaters
 
     def advance(self) : 
         '''
         advances cards from bushes to field, utilizing rudimentary decision making for Leshy
         '''
-        #region constant variables and random gen
-        # play count is the number of cards that leshy will play that turn
-        play_count_median = self.Leshy_play_count_median
-
-        # shift range slightly to match amount of cards on player's field
-        player_card_count = 0
-        for zone in range(1, 6) :
-            if self.player_field[zone].species != '' :
-                player_card_count += 1
-        if player_card_count > 3 :
-            play_count_median += 1
-        elif player_card_count < 2 :
-            play_count_median -= 1
-
-        play_count_variance = self.Leshy_play_count_variance
-        play_count = random.randint(play_count_median - play_count_variance, play_count_median + play_count_variance)
-        if play_count < 1 :
-            play_count = 1
-        elif play_count > 5 :
-            play_count = 5
-
-        # in_strategy_chance is the percent chance that leshy will play a card in strategy (as opposed to out of strategy)
-        in_strategy_chance = self.Leshy_in_strategy_chance
-
-        # strat_change_threshold is the score difference in Leshy's favor that will trigger a change in his strategy
-        strat_change_threshold = self.Leshy_strat_change_threshold
-        #endregion
-
-        #region advance from bushes to field
-        for zone in self.opponent_field :
-            if self.opponent_field[zone].species == '' and zone != 0 and zone != 6 :
-                self.opponent_field[zone] = self.bushes[zone]
-                self.opponent_field[zone].play(zone=zone)
-                # always replace with BlankCard, new cards will be played (and replace the BlankCard) in the new section
-                self.bushes[zone] = card.BlankCard()
-        #endregion
-
-        # prevent crash if opponent deck is empty
-        if self.opponent_deck == [] :
-            return
-        
+        # set up variables
         played = 0
-        while played < play_count :
-            
+        play_count_median = self.Leshy_play_count_median
+        play_count_variance = self.Leshy_play_count_variance
+        in_strategy_chance = self.Leshy_in_strategy_chance
+        strat_change_threshold = self.Leshy_strat_change_threshold
+        player_card_count = len([card_in_play for card_in_play in self.player_field.values() if card_in_play.species != ''])
+        play_count = random.randint(play_count_median - play_count_variance, play_count_median + play_count_variance)
+
+        play_count_median += (player_card_count > 3) - (player_card_count < 2) # shift range slightly to match amount of cards on player's field
+
+        play_count = max(min(play_count, len(self.opponent_deck), 5), 1) if self.opponent_deck else 0 # clamp play count
+
+        # advance from bushes to field
+        for zone in [zone for zone in self.opponent_field if self.opponent_field[zone].species == '' and zone % 6 != 0] :
+            self.opponent_field[zone] = self.bushes[zone]
+            self.opponent_field[zone].play(zone=zone)
+            self.bushes[zone] = card.BlankCard()
+        
+        while played < play_count and [zone for zone in range(1, 6) if self.bushes[zone].species == ''] :
             # intelligent choosing of zones to prioritize
             in_strategy, out_of_strategy = ai_category_checking(card_library.AI_categories, self.player_field, self.opponent_deck[0], self.bushes, self.score, strat_change_threshold)
 
-            # ensure that the loop will not run if there are no zones to play to, preventing infinite loop
-            if len(in_strategy) + len(out_of_strategy) == 0 :
-                open_zone = False
-                for zone in range(1, 6) :
-                    if self.bushes[zone].species == '' :
-                        open_zone = True
-                if open_zone == False : # if all zones are full, stop here
-                    break
-                # move top card to bottom
-                garnet = self.opponent_deck[0]
-                self.opponent_deck.pop(0)
-                self.opponent_deck.append(garnet)
-                # continue to next loop
-                continue
-
-            #region playing cards to zones
-            # play cards in strategy
-            if (random.randint(1,100) <= in_strategy_chance and in_strategy != []) or out_of_strategy == [] :
+            # playing cards to zones
+            if (random.randint(1,100) <= in_strategy_chance and in_strategy) or not out_of_strategy:
                 zone = random.choice(in_strategy)
                 self.bushes[zone] = self.opponent_deck[0]
                 self.opponent_deck.pop(0)
-            
             else :
                 zone = random.choice(out_of_strategy)
                 self.bushes[zone] = self.opponent_deck[0]
                 self.opponent_deck.pop(0)
 
             played += 1
-            #endregion
 
     def switch(self) :
         '''
@@ -423,6 +376,8 @@ class Playmat :
             self.active = 'opponent'
         elif self.active == 'opponent' :
             self.active = 'player'
+        else :
+            raise ValueError('Invalid active player.')
 
     def check_win(self) :
         '''
@@ -432,134 +387,84 @@ class Playmat :
             win: if a win condition has been met (bool)
             winner: the winner of the game (str)
             overkill: how much the player overkilled by (int)
+            deck_out: if the player lost by running out of cards (bool)
         '''
-        win = False
-        winner = ''
-        overkill = 0
-        if self.score['player'] - self.score['opponent'] >= 8 :
-            win = True
-            winner = 'player'
-            overkill = self.score['player'] - self.score['opponent'] - 8
-        elif self.score['opponent'] - self.score['player'] >= 8 :
-            win = True
-            winner = 'opponent'
-        elif self.player_deck == [] and self.player_squirrels == [] and self.active == 'player' :
-            win = True
-            winner = 'opponent'
-        return (win, winner, overkill)
+        if abs(self.score['player'] - self.score['opponent']) < 8 and (self.player_deck != [] or self.player_squirrels != [] or self.active != 'player') : # no win condition
+            return False, '', 0, False
+        
+        if self.score['player'] - self.score['opponent'] >= 8 : # player wins
+            return True, 'player', self.score['player'] - self.score['opponent'] - 8, False
+        
+        elif self.score['opponent'] - self.score['player'] >= 8 : # opponent wins via score
+            return True, 'opponent', 0, False
+        
+        return True, 'opponent', 0, True # opponent wins via deck out
 
     def print_remaining(self) :
         '''
         prints the remaining cards in the deck (sorted) and the squirrels (sorted) (clears screen first)
         '''
+        # set up variables
         term_cols = os.get_terminal_size().columns
-        card_gaps = (term_cols*55 // 100) // 5 - 15
-        sorted_main_deck = sorted(self.player_deck, key=lambda x: x.name)
-        sorted_main_deck = sorted(sorted_main_deck, key=lambda x: x.cost)
-        cards_per_row = term_cols // (card_gaps + 15) 
-        if cards_per_row >= 9 :
-            cards_per_row = 8 
-        chunked = QoL.chunk(sorted_main_deck, cards_per_row)  
-        deck_string = ''
-        for chunk in chunked :
-            for n in range(11) :
-                deck_string += ' '*card_gaps
-                for card in chunk :
-                    deck_string += card.text_by_line() + ' '*card_gaps
-                deck_string += '\n'
-            deck_string += '\n'
+        card_gaps_space = ' '*((term_cols*55 // 100) // 5 - 15)
+        deck_string = QoL.print_deck(self.player_deck, sort=True, fruitful=True)
+
+        # print remaining cards in deck
         QoL.clear()
-        print(' '*card_gaps + 'Remaining cards in deck:')
-        print(deck_string, end='')
-        print(' '*card_gaps + 'Remaining squirrels: ' + str(len(self.player_squirrels)))
+        print(card_gaps_space + 'Remaining cards in deck:')
+        print(deck_string + '\n')
+        print(card_gaps_space + 'Remaining squirrels: ' + str(len(self.player_squirrels)) + '\n')
 
     def print_graveyard(self) :
         '''
         prints the cards in the graveyard (in order) (clears screen first)
         '''
+        # set up variables
         term_cols = os.get_terminal_size().columns
-        card_gaps = (term_cols*55 // 100) // 5 - 15
-        cards_per_row = term_cols // (card_gaps + 15) 
-        if cards_per_row >= 9 :
-            cards_per_row = 8 
-        chunked = QoL.chunk(self.graveyard, cards_per_row)  
-        graveyard_string = ''
-        for chunk in chunked :
-            for n in range(11) :
-                graveyard_string += ' '*card_gaps
-                for card in chunk :
-                    graveyard_string += card.text_by_line() + ' '*card_gaps
-                graveyard_string += '\n'
-            graveyard_string += '\n'
+        card_gaps_space = ' '*((term_cols*55 // 100) // 5 - 15)
+        graveyard_string = QoL.print_deck(self.graveyard, sort=False, fruitful=True)
+
+        # print graveyard
         QoL.clear()
-        print(' '*card_gaps + 'Graveyard:')
+        print(card_gaps_space + 'Graveyard:')
         print(graveyard_string, end='')
     
     def print_hand(self) : 
         '''
         prints the cards in the player's hand (does NOT clear screen first)
         '''
+        # set up variables
         term_cols = os.get_terminal_size().columns
-        card_gaps = (term_cols*55 // 100) // 5 - 15
-        cards_per_row = term_cols // (card_gaps + 15) 
-        if cards_per_row >= 9 :
-            cards_per_row = 8 
-        chunked = QoL.chunk(self.hand, cards_per_row) 
-        hand_string = ''
-        for chunk in chunked :
-            for n in range(11) :
-                hand_string += ' '*card_gaps
-                for card in chunk :
-                    hand_string += card.text_by_line() + ' '*card_gaps
-                hand_string += '\n'
-        print(' '*card_gaps + 'Hand:')
-        print(hand_string, end='')
+        card_gaps_space = ' '*((term_cols*55 // 100) // 5 - 15)
+        hand_string = QoL.print_deck(self.hand, sort=False, fruitful=True)
+
+        # print hand
+        print(card_gaps_space + 'Hand:')
+        print(hand_string)
 
     def print_field(self) :
         '''
         prints the field and score scales (clears screen first)
         '''
+        # set up variables
+        field_string = ''
         term_cols = os.get_terminal_size().columns
         card_gaps = (term_cols*55 // 100) // 5 - 15
+        vis_bushes = [self.bushes[n] for n in range(1, 6)]
+        vis_opponent_field = [self.opponent_field[n] for n in range(1, 6)]
+        vis_player_field = [self.player_field[n] for n in range(1, 6)]
+
+        # generate field string
+        for row in [vis_bushes, vis_opponent_field, vis_player_field] :
+            for _ in range(11) :
+                field_string += ' '*card_gaps*3 + ''.join(card.text_by_line() + ' ' * (card_gaps * 3) for card in row) + '\n'
+
+            field_string += ' '*card_gaps + '-'*(card_gaps*16 + 75) + '\n' if row == vis_opponent_field else '' # add a divider between opponent and player fields
+
+        # print field
         QoL.clear()
-        vis_bushes = [self.bushes[1], self.bushes[2], self.bushes[3], self.bushes[4], self.bushes[5]]
-        vis_opponent_field = [self.opponent_field[1], self.opponent_field[2], self.opponent_field[3], self.opponent_field[4], self.opponent_field[5]]
-        vis_player_field = [self.player_field[1], self.player_field[2], self.player_field[3], self.player_field[4], self.player_field[5]]
-        field_list = [vis_bushes, vis_opponent_field, vis_player_field]
-        field_string = ''
-        for row in field_list :
-            for n in range(11) :
-                field_string += ' '*card_gaps*3
-                for card in row :
-                    field_string += card.text_by_line() + ' '*card_gaps*3
-                field_string += '\n'
-            if row == vis_opponent_field :
-                if card_gaps <= 0 :
-                    field_string += '-'*75 + '\n'
-                else :
-                    field_string += ' '*card_gaps + '-'*(card_gaps*16 + 75) + '\n'
         print(field_string, end='')
-        # print scales
-        if self.score['player'] > self.score['opponent'] :
-            if self.score['player'] - self.score['opponent'] >= 8 :
-                player_weight = 'O'*8
-                opponent_weight = ' '*8
-            else :
-                player_weight = 'O' * (self.score['player'] - self.score['opponent'])
-                player_weight += ' ' * (8 - (self.score['player'] - self.score['opponent']))
-                opponent_weight = ' '*8
-        elif self.score['opponent'] > self.score['player'] :
-            if self.score['opponent'] - self.score['player'] >= 8 :
-                opponent_weight = 'O'*8
-                player_weight = ' '*8
-            else :
-                opponent_weight = ' ' * (8 - (self.score['opponent'] - self.score['player']))
-                opponent_weight += 'O' * (self.score['opponent'] - self.score['player'])
-                player_weight = ' '*8
-        else :
-            player_weight = ' '*8
-            opponent_weight = ' '*8
-        ASCII_text.print_scales(player_weight, opponent_weight)
+        ASCII_text.print_scales(self.score)
 
     def print_full_field(self) :
         '''
@@ -569,6 +474,8 @@ class Playmat :
         self.print_hand()
 
 if __name__ == '__main__' :
+    import sys
+
     def test_advancing() :
             QoL.clear()
 
@@ -798,11 +705,17 @@ if __name__ == '__main__' :
         # see hand
         input("Press enter to see hand.")
         playmat.print_full_field()
-
-    # test_advancing()
-    # test_split_dam()
-    # test_corpse_eaters()
-    # test_hefty()
-    test_empty_deck()
-
-    pass
+    
+    match sys.argv[1] :
+        case 'advancing' :
+            test_advancing()
+        case 'split_dam' :
+            test_split_dam()
+        case 'corpse_eaters' :
+            test_corpse_eaters()
+        case 'hefty' :
+            test_hefty()
+        case 'empty_deck' :
+            test_empty_deck()
+        case _ :
+            pass
