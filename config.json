@@ -12,7 +12,7 @@
         }
     },
     "ouroboros": {
-        "attack": 2,
-        "life": 2
+        "attack": 1,
+        "life": 1
     }
 }
