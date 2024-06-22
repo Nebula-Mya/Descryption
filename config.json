@@ -1,0 +1,18 @@
+{
+    "settings": {
+        "deck size": 26,
+        "hand size": 5,
+        "difficulty": {
+            "current difficulty name": "Normal",
+            "current difficulty index": 2,
+            "leshy median plays": 2,
+            "leshy plays variance": 1,
+            "leshy strat chance": 75,
+            "leshy offense threshold": 3
+        }
+    },
+    "ouroboros": {
+        "attack": 2,
+        "life": 2
+    }
+}

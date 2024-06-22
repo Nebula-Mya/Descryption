@@ -40,7 +40,7 @@ def reset_oro() :
     '''
     resets the attack and life of Ouroboros to 1
     '''
-    QoL.write_file('data.txt', 'Descryption_Data/data.txt', ['1', '1'])
+    QoL.write_data([(['ouroboros', 'attack'], 1), (['ouroboros', 'life'], 1)])
 
 def set_deck_size(size) :
     '''
@@ -49,8 +49,7 @@ def set_deck_size(size) :
     Arguments:
         size: the new deck size (int)
     '''
-    [junk, hand_size, play_median, play_var, opp_strat, opp_threshold] = QoL.read_file('config.txt', 'Descryption_Data/config.txt')
-    QoL.write_file('config.txt', 'Descryption_Data/config.txt', [str(size), hand_size, play_median, play_var, opp_strat, opp_threshold])
+    QoL.write_data([(['settings', 'deck size'], size)])
 
 def set_hand_size(size) :
     '''
@@ -59,8 +58,7 @@ def set_hand_size(size) :
     Arguments:
         size: the new hand size (int)
     '''
-    [deck_size, junk, play_median, play_var, opp_strat, opp_threshold] = QoL.read_file('config.txt', 'Descryption_Data/config.txt')[0]
-    QoL.write_file('config.txt', 'Descryption_Data/config.txt', [deck_size, str(size), play_median, play_var, opp_strat, opp_threshold])
+    QoL.write_data([(['settings', 'hand size'], size)])
 
 def set_difficulty(difficulty) :
     '''
@@ -70,33 +68,45 @@ def set_difficulty(difficulty) :
         difficulty: the new difficulty (int)
     '''
     if difficulty == 0 :
-        play_median = '1'
-        play_var = '0'
-        opp_strat = '40'
-        opp_threshold = '10'
+        difficulty_name = 'Very Easy'
+        play_median = 1
+        play_var = 0
+        opp_strat = 40
+        opp_threshold = 10
     elif difficulty == 1 :
-        play_median = '2'
-        play_var = '0'
-        opp_strat = '60'
-        opp_threshold = '5'
+        difficulty_name = 'Easy'
+        play_median = 2
+        play_var = 0
+        opp_strat = 60
+        opp_threshold = 5
     elif difficulty == 2 :
-        play_median = '2'
-        play_var = '1'
-        opp_strat = '75'
-        opp_threshold = '3'
+        difficulty_name = 'Normal'
+        play_median = 2
+        play_var = 1
+        opp_strat = 75
+        opp_threshold = 3
     elif difficulty == 3 :
-        play_median = '3'
-        play_var = '2'
-        opp_strat = '90'
-        opp_threshold = '3'
+        difficulty_name = 'Hard'
+        play_median = 3
+        play_var = 2
+        opp_strat = 90
+        opp_threshold = 3
     elif difficulty == 4 :
-        play_median = '4'
-        play_var = '1'
-        opp_strat = '100'
-        opp_threshold = '2'
+        difficulty_name = 'Very Hard'
+        play_median = 4
+        play_var = 1
+        opp_strat = 100
+        opp_threshold = 2
 
-    [deck_size, hand_size] = QoL.read_file('config.txt', 'Descryption_Data/config.txt')[0:2]
-    QoL.write_file('config.txt', 'Descryption_Data/config.txt', [deck_size, hand_size, play_median, play_var, opp_strat, opp_threshold])
+    data_to_write = [
+        (['settings', 'difficulty', 'leshy median plays'], play_median),
+        (['settings', 'difficulty', 'leshy plays variance'], play_var),
+        (['settings', 'difficulty', 'leshy strat chance'], opp_strat),
+        (['settings', 'difficulty', 'leshy offense threshold'], opp_threshold),
+        (['settings', 'difficulty', 'current difficulty index'], difficulty),
+        (['settings', 'difficulty', 'current difficulty name'], difficulty_name)
+    ]
+    QoL.write_data(data_to_write)
 
 def print_settings_options() :
     '''
@@ -121,7 +131,12 @@ def settings() :
         print(version_ID)
         print('\n'*2)
         ASCII_text.print_title()
-        [deck_size, hand_size, play_median, play_var, opp_strat, opp_threshold] = QoL.read_file('config.txt', 'Descryption_Data/config.txt')
+        data_to_read = [
+            ['settings', 'deck size'],
+            ['settings', 'hand size'],
+            ['settings', 'difficulty', 'leshy strat chance']
+        ]
+        [deck_size, hand_size, opp_strat] = QoL.read_data(data_to_read)
         print('\n'*5)
         print_settings_options()
         print('\n'*3)
@@ -143,7 +158,7 @@ def settings() :
                 current_difficulty = -1
                 difficulty_key = []
                 for n in difficulty_dict :
-                    if difficulty_dict[n] == int(opp_strat) :
+                    if difficulty_dict[n] == opp_strat :
                         difficulty_key.append(' (CURRENT)')
                         current_difficulty = n
                     else :
@@ -182,8 +197,8 @@ def settings() :
                 print('\n'*2)
                 ASCII_text.print_title()
                 print('\n'*5)
-                print(QoL.center_justified('Current deck size: ' + deck_size))
-                print(QoL.center_justified('Current hand size: ' + hand_size))
+                print(QoL.center_justified('Current deck size: ' + str(deck_size)))
+                print(QoL.center_justified('Current hand size: ' + str(hand_size)))
                 print('\n'*3)
                 if invalid_deck_size :
                     print(QoL.center_justified('Invalid deck size'))
@@ -210,8 +225,8 @@ def settings() :
                 print('\n'*2)
                 ASCII_text.print_title()
                 print('\n'*5)
-                print(QoL.center_justified('Current deck size: ' + deck_size))
-                print(QoL.center_justified('Current hand size: ' + hand_size))
+                print(QoL.center_justified('Current deck size: ' + str(deck_size)))
+                print(QoL.center_justified('Current hand size: ' + str(hand_size)))
                 print('\n'*3)
                 if invalid_hand_size :
                     print(QoL.center_justified('Invalid hand size'))
@@ -273,8 +288,17 @@ def main_menu() :
             invalid_choice = False
         choice = input(menu_center(choice_text))
         if choice == '1' :
-            [deck_size, hand_size, play_median, play_var, opp_strat, opp_threshold] = QoL.read_file('config.txt', 'Descryption_Data/config.txt')
-            duel.main(int(deck_size), int(hand_size), Leshy_play_count_median=int(play_median), Leshy_play_count_variance=int(play_var), Leshy_in_strategy_chance=int(opp_strat), Leshy_strat_change_threshold=int(opp_threshold))
+            data_to_read = [
+                ['settings', 'deck size'],
+                ['settings', 'hand size'],
+                ['settings', 'difficulty', 'leshy median plays'],
+                ['settings', 'difficulty', 'leshy plays variance'],
+                ['settings', 'difficulty', 'leshy strat chance'],
+                ['settings', 'difficulty', 'leshy offense threshold']
+            ]
+            [deck_size, hand_size, play_median, play_var, opp_strat, opp_threshold] = QoL.read_data(data_to_read)
+
+            duel.main(deck_size, hand_size, Leshy_play_count_median=play_median, Leshy_play_count_variance=play_var, Leshy_in_strategy_chance=opp_strat, Leshy_strat_change_threshold=opp_threshold)
         elif choice == '2' :
             settings()
         elif choice == '3' :

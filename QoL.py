@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 
 def clear() :
     '''
@@ -10,44 +11,86 @@ def clear() :
     else : # mac/linux
         os.system('clear')
 
-def read_file(file_name, relative_path) :
+def read_data(data_to_read=[]) :
     '''
-    opens a file and returns its contents
+    reads the specified data from the config file
 
     Arguments:
-        file_name: the name of the file (str)
-        relative_path: the relative path to the file when frozen (str)
+        data_to_read: the data to read, where subsequent keys are ordered by depth in a sublist (list[list])
     
     Returns:
-        the contents of the file (list)
+        the specified data from the config file (list)
     '''
+    def get_data_value(data_keys, data) :
+        '''
+        gets the value from the config file using a list of subsequent keys
+    
+        Arguments:
+            data_keys: the list of subsequent keys (list)
+            data: the data to search (dict)
+
+        Returns:
+            the value at the specified path in the config file, or None if the path is invalid (any)
+        '''
+        if data_keys == []: # base case: all keys have been processed
+            return data
+        
+        key = data_keys[0]
+
+        if key in data: # recursive call with the next level
+            return get_data_value(data_keys[1:], data[key])
+        
+        raise KeyError(f'Key not found: {key}') # key not found
+
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-        data_file = relative_path
+        data_file = "Descryption_Data/config.json"
     else:
-        data_file = file_name
-    with open(data_file, 'r') as file: 
-        return file.read().split('\n')
+        data_file = "config.json"
+    with open(data_file, 'r') as file:
+        data = json.load(file)
+        data_to_return = [get_data_value(data_path, data) for data_path in data_to_read]
+        return data_to_return
 
-def write_file(file_name, relative_path, data) :
+def write_data(data_to_write={}) :
     '''
-    writes data to a file
-
+    writes the specified data to the config file
+    
     Arguments:
-        file_name: the name of the file (str)
-        relative_path: the relative path to the file when frozen (str)
-        data: the lines of data to write to the file (list)
+        data_to_write: the data to write, where subsequent keys are ordered by depth in a dictionary (tuple[list, any])
     '''
-    to_write = ''
-    for line in range(len(data)) :
-        to_write += data[line]
-        if line != len(data) - 1 :
-            to_write += '\n'
+    def set_data_value(data_keys, value_to_set, data):
+        '''
+        sets a value in the config file using a list of subsequent keys
+
+        Arguments:
+            data_keys: the list of subsequent keys leading to the value (list)
+            value_to_set: the value to set at the specified path (any)
+            data: the data dictionary to update (dict)
+        '''
+        for key in data_keys[:-1]:  # navigate to the last key's parent dictionary
+            if key not in data:
+                data[key] = {}  # create a new dict if the key doesn't exist
+
+            data = data[key]
+        
+        data[data_keys[-1]] = value_to_set  # set the value
+
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-        data_file = relative_path
+        data_file = "Descryption_Data/config.json"
     else:
-        data_file = file_name
-    with open(data_file, 'w') as file :
-        file.write(to_write)
+        data_file = "config.json"
+
+    try:
+        with open(data_file, 'r') as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        data = {}
+
+    for data_path, value in data_to_write:
+        set_data_value(data_path, value, data)
+
+    with open(data_file, 'w') as file:
+        json.dump(data, file, indent=4)
 
 def center_justified(text) :
     '''
@@ -300,6 +343,23 @@ def reps_int(string, increment=0) :
 
 if __name__ == '__main__' :
     clear()
-    [deck_size, hand_size] = read_file('config.txt', 'Descryption_Data/config.txt')
-    print(deck_size, hand_size)
-    write_file('config.txt', 'Descryption_Data/config.txt', ['heelo', 'thure!'])
+
+    # get original values
+    [play_var, oro_attack] = read_data([['settings', 'difficulty', 'leshy plays variance'], ['ouroboros', 'attack']])
+
+    # change values
+    data_to_write = [
+        (['settings', 'difficulty', 'leshy plays variance'], 5),
+        (['ouroboros', 'attack'], 10)
+    ]
+    write_data(data_to_write)
+
+    read_data([['settings']])
+    read_data([['settings', 'hand size'], ['ouroboros', 'attack']])
+
+    # return to original values
+    data_to_write = [
+        (['settings', 'difficulty', 'leshy plays variance'], play_var),
+        (['ouroboros', 'attack'], oro_attack)
+    ]
+    write_data(data_to_write)

@@ -51,20 +51,13 @@ class BoppitW(card.BlankCard) :
 
 class Ouroboros(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        [Oro_attack, Oro_life] = QoL.read_file('data.txt', 'Descryption_Data/data.txt')
-        super().__init__(species='Ouroboros', cost=2, attack=int(Oro_attack), life=int(Oro_life), sigil='unkillable', blank_cost=blank_cost)
-
-    def sacc(self) :
-        self.base_attack += 1
-        self.base_life += 1
-        QoL.write_file('data.txt', 'Descryption_Data/data.txt', [str(self.base_attack), str(self.base_life)])
-        self.reset_stats()
-        self.update_ASCII()
+        [oro_attack, oro_life] = QoL.read_data([['ouroboros', 'attack'], ['ouroboros', 'life']])
+        super().__init__(species='Ouroboros', cost=2, attack=oro_attack, life=oro_life, sigil='unkillable', blank_cost=blank_cost)
 
     def die(self) :
         self.base_attack += 1
         self.base_life += 1
-        QoL.write_file('data.txt', 'Descryption_Data/data.txt', [str(self.base_attack), str(self.base_life)])
+        QoL.write_data([(['ouroboros', 'attack'], self.base_attack), (['ouroboros', 'life'], self.base_life)])
         super().die()
 
 class Cockroach(card.BlankCard) :
