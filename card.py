@@ -166,6 +166,8 @@ class BlankCard() :
         '''
         activates sigils on entering field, resets stats, and updates zone
         '''
+        if zone not in range (1, 6) : # error handling
+            raise ValueError('Zone must be between 1 and 5')
         self.reset_stats()
         self.zone = zone
         self.update_ASCII()
@@ -235,6 +237,7 @@ class BlankCard() :
             self.cost = ''
         else :
             self.cost = str("C:" + str(self.saccs))
+        
         if self.blank_stats or self.species == '':
             self.stats = ' '*3
         else :

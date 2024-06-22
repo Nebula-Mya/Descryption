@@ -11,7 +11,7 @@ def clear() :
     else : # mac/linux
         os.system('clear')
 
-def read_data(data_to_read=[]) :
+def read_data(data_to_read) :
     '''
     reads the specified data from the config file
 
@@ -32,33 +32,33 @@ def read_data(data_to_read=[]) :
         Returns:
             the value at the specified path in the config file, or None if the path is invalid (any)
         '''
-        if data_keys == []: # base case: all keys have been processed
+        if data_keys == [] : # base case: all keys have been processed
             return data
         
         key = data_keys[0]
 
-        if key in data: # recursive call with the next level
+        if key in data : # recursive call with the next level
             return get_data_value(data_keys[1:], data[key])
         
         raise KeyError(f'Key not found: {key}') # key not found
 
-    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS') :
         data_file = "Descryption_Data/config.json"
     else:
         data_file = "config.json"
-    with open(data_file, 'r') as file:
+    with open(data_file, 'r') as file :
         data = json.load(file)
         data_to_return = [get_data_value(data_path, data) for data_path in data_to_read]
         return data_to_return
 
-def write_data(data_to_write={}) :
+def write_data(data_to_write) :
     '''
     writes the specified data to the config file
     
     Arguments:
-        data_to_write: the data to write, where subsequent keys are ordered by depth in a dictionary (tuple[list, any])
+        data_to_write: the data to write, where subsequent keys are ordered by depth (list[tuple][list, any])
     '''
-    def set_data_value(data_keys, value_to_set, data):
+    def set_data_value(data_keys, value_to_set, data) :
         '''
         sets a value in the config file using a list of subsequent keys
 
@@ -67,7 +67,7 @@ def write_data(data_to_write={}) :
             value_to_set: the value to set at the specified path (any)
             data: the data dictionary to update (dict)
         '''
-        for key in data_keys[:-1]:  # navigate to the last key's parent dictionary
+        for key in data_keys[:-1] :  # navigate to the last key's parent dictionary
             if key not in data:
                 data[key] = {}  # create a new dict if the key doesn't exist
 
@@ -75,21 +75,21 @@ def write_data(data_to_write={}) :
         
         data[data_keys[-1]] = value_to_set  # set the value
 
-    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS') :
         data_file = "Descryption_Data/config.json"
     else:
         data_file = "config.json"
 
-    try:
-        with open(data_file, 'r') as file:
+    try :
+        with open(data_file, 'r') as file :
             data = json.load(file)
-    except FileNotFoundError:
+    except FileNotFoundError :
         data = {}
 
-    for data_path, value in data_to_write:
+    for data_path, value in data_to_write :
         set_data_value(data_path, value, data)
 
-    with open(data_file, 'w') as file:
+    with open(data_file, 'w') as file :
         json.dump(data, file, indent=4)
 
 def center_justified(text) :

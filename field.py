@@ -181,6 +181,12 @@ class Playmat :
         Returns:
             played: if the card was played (bool)
         '''
+        # error handling
+        if index not in range(len(self.hand)) :
+            raise ValueError('Invalid index.')
+        if zone not in range(1, 6) :
+            raise ValueError('Invalid zone.')
+
         # set up variables
         cost = self.hand[index].saccs
         og_cost = cost
@@ -260,15 +266,19 @@ class Playmat :
         '''
         attacks with all of the active player's cards in play and updates score
         '''
+        # set up variables
         did_shift = False
-        if self.active == 'player' :
-            attacking_field = self.player_field
-            defending_field = self.opponent_field
-            is_players = True
-        else :
-            attacking_field = self.opponent_field
-            defending_field = self.player_field
-            is_players = False
+        match self.active :
+            case 'player' :
+                attacking_field = self.player_field
+                defending_field = self.opponent_field
+                is_players = True
+            case 'opponent' :
+                attacking_field = self.opponent_field
+                defending_field = self.player_field
+                is_players = False
+            case _ :
+                raise ValueError('Invalid active player.')
 
         # attacking
         for zone in attacking_field :

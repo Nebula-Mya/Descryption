@@ -28,6 +28,17 @@ class Deck() :
         '''
         self.cards.append(card)
     
+    def check_index(self, index) :
+        '''
+        checks if index is valid
+
+        Arguments:
+            index: index to check (int)
+        '''
+        deck_length = len(self.cards)
+        if index >= deck_length or index < 0:
+            raise IndexError(f"index {index} is out of range for deck of length {deck_length}")
+
     def remove_card(self, index) :
         '''
         removes card from deck
@@ -35,6 +46,8 @@ class Deck() :
         Arguments:
             index: index of card to remove (int)
         '''
+        self.check_index(index) # error handling
+
         sorted_deck = QoL.sort_deck(self.cards)
         card = sorted_deck[index]
         self.cards.remove(card)
@@ -47,6 +60,8 @@ class Deck() :
             index: index of card to change (int)
             sigil: sigil to change to (str)
         '''
+        self.check_index(index) # error handling
+        
         sorted_deck = QoL.sort_deck(self.cards)
         sorted_deck[index].sigil = sigil 
         sorted_deck[index].update_ASCII()

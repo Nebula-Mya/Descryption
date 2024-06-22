@@ -36,12 +36,9 @@ def choose_and_play(field) :
         if play_index == '' : # go back
             break
 
-        try : # adjust down for indexing and check if it's a number
-            play_index = int(play_index) - 1
-        except ValueError :
-            play_index = len(field.hand)
+        (is_int, play_index) = QoL.reps_int(play_index, -1)
         
-        if play_index not in range(len(field.hand)) : # guard clause for invalid index
+        if not is_int or play_index not in range(len(field.hand)) : # guard clause for invalid index
             invalid_index = True
             continue
         # if valid index
@@ -299,6 +296,12 @@ def deck_gen(possible_cards, size) :
     Returns:
         deck: deck of cards (deck object)
     '''
+    # error handling
+    if size < 1 :
+        raise ValueError('Deck size must be at least 1.')
+    if not possible_cards :
+        raise ValueError('Possible cards dict must not be empty.')
+
     def random_card(possible_cards, alpha=2.2, beta=3.3) :
         max_cost = max(possible_cards.keys())
         cost = math.floor((max_cost + 1) * random.betavariate(alpha, beta))
@@ -320,11 +323,31 @@ def resource_gen(size=20) :
     Returns:
         a resource deck (deck object)
     '''
+    # error handling
+    if size < 1 :
+        raise ValueError('Deck size must be at least 1.')
+
     squirrels = [card_library.Squirrel() for _ in range(size)]
 
     return deck.Deck(squirrels)
 
 def main(deck_size, hand_size, Leshy_play_count_median=2, Leshy_play_count_variance=1, Leshy_in_strategy_chance=75, Leshy_strat_change_threshold=3) :
+    # error handling
+    if deck_size < 1 :
+        raise ValueError('Deck size must be at least 1.')
+    if hand_size < 1 :
+        raise ValueError('Hand size must be at least 1.')
+    if hand_size > deck_size :
+        raise ValueError('Hand size must be less than or equal to deck size.')
+    if Leshy_play_count_median < 1 :
+        raise ValueError('Leshy play count median must be at least 1.')
+    if Leshy_play_count_variance < 0 :
+        raise ValueError('Leshy play count variance must be at least 0.')
+    if Leshy_in_strategy_chance < 0 or Leshy_in_strategy_chance > 100 :
+        raise ValueError('Leshy in strategy chance must be between 0 and 100.')
+    if Leshy_strat_change_threshold < -8 or Leshy_strat_change_threshold > 8 :
+        raise ValueError('Leshy strategy change threshold must be between -8 and 8.')
+
     # game setup
     opponent_deck = deck_gen(card_library.Poss_Leshy, deck_size*2)
     player_deck = deck_gen(card_library.Poss_Playr, deck_size)
