@@ -310,12 +310,12 @@ def deck_gen(possible_cards, size) :
 
     return deck.Deck(deck_list)
 
-def resource_gen(size=20) :
+def resource_gen(size) :
     '''
     generates a resource deck
 
     Arguments:
-        size: size of deck, defaults to 20 (int)
+        size: size of deck (int)
 
     Returns:
         a resource deck (deck object)
@@ -328,7 +328,7 @@ def resource_gen(size=20) :
 
     return deck.Deck(squirrels)
 
-def main(deck_size, hand_size, Leshy_play_count_median=2, Leshy_play_count_variance=1, Leshy_in_strategy_chance=75, Leshy_strat_change_threshold=3) :
+def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold) :
     # error handling
     if deck_size < 1 :
         raise ValueError('Deck size must be at least 1.')
@@ -350,7 +350,7 @@ def main(deck_size, hand_size, Leshy_play_count_median=2, Leshy_play_count_varia
     player_deck = deck_gen(card_library.Poss_Playr, deck_size)
     squirrels_deck = resource_gen(deck_size)
 
-    playfield = field.Playmat(deck=player_deck.shuffle(), squirrels=squirrels_deck.shuffle(), opponent_deck=opponent_deck.shuffle(), Leshy_play_count_median=Leshy_play_count_median, Leshy_play_count_variance=Leshy_play_count_variance, Leshy_in_strategy_chance=Leshy_in_strategy_chance, Leshy_strat_change_threshold=Leshy_strat_change_threshold)
+    playfield = field.Playmat(player_deck.shuffle(), squirrels_deck.shuffle(), opponent_deck.shuffle(), Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold)
 
     # advance from bushes
     playfield.advance()

@@ -97,10 +97,10 @@ class Playmat :
         deck: the player's main deck (list)
         squirrels: the player's resource deck (list)
         opponent_deck: Leshy's deck (list)
-        Leshy_play_count_median: the number of cards Leshy will play each turn, defaults to 2 (int)
-        Leshy_play_count_variance: the variance of the number of cards Leshy will play each turn, defaults to 1 (int)
-        Leshy_in_strategy_chance: the percent chance that Leshy will play a card in strategy (as opposed to out of strategy), defaults to 75 (int)
-        Leshy_strat_change_threshold: the score difference in Leshy's favor that will trigger a change in his strategy, defaults to 3 (int)
+        Leshy_play_count_median: the number of cards Leshy will play each turn (int)
+        Leshy_play_count_variance: the variance of the number of cards Leshy will play each turn (int)
+        Leshy_in_strategy_chance: the percent chance that Leshy will play a card in strategy (as opposed to out of strategy) (int)
+        Leshy_strat_change_threshold: the score difference in Leshy's favor that will trigger a change in his strategy (int)
     
     Other Attributes:
         bushes: the bushes on the field (dict)
@@ -125,7 +125,7 @@ class Playmat :
         print_field() : prints the field and score scales
         print_full_field() : prints the field and player's hand
     '''
-    def __init__(self, deck, squirrels, opponent_deck, Leshy_play_count_median=2, Leshy_play_count_variance=1, Leshy_in_strategy_chance=75, Leshy_strat_change_threshold=3) :
+    def __init__(self, deck, squirrels, opponent_deck, Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold) :
         # basic variables
         self.hand = []
         self.graveyard = []
@@ -482,10 +482,10 @@ if __name__ == '__main__' :
             # create decks
             leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
             player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
-            player_squirrels = duel.resource_gen()
+            player_squirrels = duel.resource_gen(20)
 
             # Create a sample playmat with cards on the field
-            playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
+            playmat = Playmat(player_deck.shuffle(), player_squirrels.shuffle(), leshy_deck.shuffle(), 2, 1, 75, 3)
             card_list = []
             for cost in card_library.Poss_Playr :
                 for species in card_library.Poss_Playr[cost] :
@@ -506,10 +506,10 @@ if __name__ == '__main__' :
         # create decks
         leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
         player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
-        player_squirrels = duel.resource_gen()
+        player_squirrels = duel.resource_gen(20)
 
         # Create a sample playmat with cards on the field
-        playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
+        playmat = Playmat(player_deck.shuffle(), player_squirrels.shuffle(), leshy_deck.shuffle(), 2, 1, 75, 3)
         card_list = []
         for cost in card_library.Poss_Playr :
             for species in card_library.Poss_Playr[cost] :
@@ -556,10 +556,10 @@ if __name__ == '__main__' :
         # create decks
         leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
         player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
-        player_squirrels = duel.resource_gen()
+        player_squirrels = duel.resource_gen(20)
 
         # Create a sample playmat with cards on the field
-        playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
+        playmat = Playmat(player_deck.shuffle(), player_squirrels.shuffle(), leshy_deck.shuffle(), 2, 1, 75, 3)
         card_list = []
         for cost in card_library.Poss_Playr :
             for species in card_library.Poss_Playr[cost] :
@@ -604,10 +604,10 @@ if __name__ == '__main__' :
         # create decks
         leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
         player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
-        player_squirrels = duel.resource_gen()
+        player_squirrels = duel.resource_gen(20)
 
         # Create a sample playmat with cards on the field
-        playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
+        playmat = Playmat(player_deck.shuffle(), player_squirrels.shuffle(), leshy_deck.shuffle(), 2, 1, 75, 3)
         card_list = []
         for cost in card_library.Poss_Playr :
             for species in card_library.Poss_Playr[cost] :
@@ -673,10 +673,10 @@ if __name__ == '__main__' :
         # create decks
         leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
         player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
-        player_squirrels = duel.resource_gen()
+        player_squirrels = duel.resource_gen(20)
 
         # Create a sample playmat with cards on the field
-        playmat = Playmat(deck=player_deck.shuffle(), squirrels=player_squirrels.shuffle(), opponent_deck=leshy_deck.shuffle())
+        playmat = Playmat(player_deck.shuffle(), player_squirrels.shuffle(), leshy_deck.shuffle(), 2, 1, 75, 3)
         card_list = []
         for cost in card_library.Poss_Playr :
             for species in card_library.Poss_Playr[cost] :
@@ -696,7 +696,7 @@ if __name__ == '__main__' :
 
         # empty deck
         playmat.player_deck = []
-        playmat.player_squirrels = duel.resource_gen().shuffle()
+        playmat.player_squirrels = duel.resource_gen(20).shuffle()
 
         # draw with empty deck
         input("Press enter to draw with empty deck.")

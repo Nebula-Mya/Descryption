@@ -305,7 +305,7 @@ def main_menu() :
             ]
             [deck_size, hand_size, play_median, play_var, opp_strat, opp_threshold] = QoL.read_data(data_to_read)
 
-            duel.main(deck_size, hand_size, Leshy_play_count_median=play_median, Leshy_play_count_variance=play_var, Leshy_in_strategy_chance=opp_strat, Leshy_strat_change_threshold=opp_threshold)
+            duel.main(deck_size, hand_size, play_median, play_var, opp_strat, opp_threshold)
         elif choice == '2' :
             settings()
         elif choice == '3' :
