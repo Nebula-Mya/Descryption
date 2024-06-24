@@ -29,10 +29,14 @@ def print_scales(score) :
     opponent_adv = max(0, score['opponent'] - score['player'])
     if player_adv :
         player_weight = 'O'*player_adv + ' '*(8-player_adv)
+        if len(player_weight) > 8 :
+            player_weight = 'O'*8
         opponent_weight = ' '*8
     else :
         player_weight = ' '*8
         opponent_weight = ' '*opponent_adv + 'O'*opponent_adv
+        if len(opponent_weight) > 8 :
+            opponent_weight = 'O'*8
     
 
     scales = '''{spc} PLAYER      LESHY

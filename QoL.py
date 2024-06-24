@@ -35,17 +35,20 @@ def read_data(data_to_read) :
         if data_keys == [] : # base case: all keys have been processed
             return data
         
-        key = data_keys[0]
+        key = data_keys[0] # get the next key
 
         if key in data : # recursive call with the next level
             return get_data_value(data_keys[1:], data[key])
         
         raise KeyError(f'Key not found: {key}') # key not found
-
+    
+    # get path to config file
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS') :
         data_file = "Descryption_Data/config.json"
     else:
         data_file = "config.json"
+
+    # get data from config file
     with open(data_file, 'r') as file :
         data = json.load(file)
         data_to_return = [get_data_value(data_path, data) for data_path in data_to_read]
@@ -71,24 +74,28 @@ def write_data(data_to_write) :
             if key not in data:
                 data[key] = {}  # create a new dict if the key doesn't exist
 
-            data = data[key]
+            data = data[key] # move to the next value
         
         data[data_keys[-1]] = value_to_set  # set the value
 
+    # get path to config file
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS') :
         data_file = "Descryption_Data/config.json"
     else:
         data_file = "config.json"
 
+    # get data from config file
     try :
         with open(data_file, 'r') as file :
             data = json.load(file)
     except FileNotFoundError :
         data = {}
 
+    # write data to dictionary
     for data_path, value in data_to_write :
         set_data_value(data_path, value, data)
 
+    # write dictionary to config file
     with open(data_file, 'w') as file :
         json.dump(data, file, indent=4)
 
@@ -119,68 +126,52 @@ def split_nicely(text, first_line_length, gen_line_length, max_lines=10, add_bla
     Returns:
         the split text (list)
     '''
+    # set up variables
     lines = []
 
     if len(text) > first_line_length :
-        # if the first line is too long, split it
-        if text[:first_line_length][-1] == ' ' :
+        if text[:first_line_length][-1] == ' ' : # if the first line is too long, split it
             lines.append(text[:first_line_length])
             text = text[first_line_length:]
+
         elif text[first_line_length:][0] != ' ': # hyphenate last word if needed
             lines.append(text[:(first_line_length - 1)] + '-')
             text = text[(first_line_length - 1):]
+
         else : # cut off leading space from next line
             lines.append(text[:first_line_length])
             text = text[(first_line_length + 1):]
-    else :
+    else : 
         lines.append(text)
         text = ''
 
     while text !='' :
         if len(text) > gen_line_length :
-            # if the text is too long, split it
-            if text[:gen_line_length][-1] == ' ' :
+            if text[:gen_line_length][-1] == ' ' : # if the text is too long, split it
                 lines.append(text[:gen_line_length])
                 text = text[gen_line_length:]
+
             elif text[gen_line_length:][0] != ' ' : # hyphenate last word if needed
                 lines.append(text[:(gen_line_length - 1)] + '-')
                 text = text[(gen_line_length - 1):]
+
             else : # cut off leading space from next line
                 lines.append(text[:gen_line_length])
                 text = text[(gen_line_length + 1):]
+
         else : # add the last line
             lines.append(text)
             text = ''
 
-    if len(lines) > max_lines :
-        # add ellipsis if text is too long
+    if len(lines) > max_lines : # add ellipsis if text is too long
         lines = lines[:max_lines]
         lines[-1] = lines[-1][:-3] + '...'
 
-    if len(lines) < max_lines and add_blank_lines :
-        # add blank lines if needed
+    if add_blank_lines and len(lines) < max_lines : # add blank lines if needed
         for i in range(max_lines - len(lines)) :
             lines.append('')
 
     return lines
-
-def chunk(iterable, n) :
-    '''
-    chunks an iterable into n-sized chunks
-
-    Arguments:
-        iterable: the iterable to chunk (iterable)
-        n: the size of the chunks (int)
-    
-    Returns:
-        Chunks: a list of the chunks in order (list)
-    '''
-    chunks = []
-
-    for i in range(0, len(iterable), n) :
-        chunks.append(iterable[i:i + n])
-
-    return chunks
 
 def title_case(string) :
     '''
@@ -192,18 +183,13 @@ def title_case(string) :
     Returns:
         the title cased string (str)
     '''
+    # set up variables
     words = string.split()
-    title_cased = ''
-    for i in range(len(words)) :
-        if i == 0 :
-            title_cased += words[i].capitalize()
-        elif words[i] not in ['and', 'or', 'the', 'a', 'an', 'of', 'in', 'on', 'at', 'to', 'with', 'from', 'by', 'as', 'for', 'but', 'nor', 'so', 'yet'] :
-            title_cased += words[i].capitalize()
-        else :
-            title_cased += words[i]
-        if i != len(words) - 1 :
-            title_cased += ' '
-    return title_cased
+    lower_words = ['and', 'or', 'the', 'a', 'an', 'of', 'in', 'on', 'at', 'to', 'with', 'from', 'by', 'as', 'for', 'but', 'nor', 'so', 'yet']
+
+    # convert to title case
+    title_cased_words = [words[0].capitalize()] + [word.capitalize() if word not in lower_words else word for word in words[1:]]
+    return ' '.join(title_cased_words)
 
 def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None, vars_to_return=[]) :
     '''
@@ -223,16 +209,14 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None
     import sigils
 
     # set up variables
-    returned_vars = []
     local_vars['applicables'] = applicables
 
+    # execute sigil code
     if current_card.sigil in applicables :
         exec(sigils.Dict[current_card.sigil][2], global_vars, local_vars)
 
-    for var in vars_to_return :
-        returned_vars.append(local_vars[var])
-
-    return returned_vars
+    # return variables
+    return [local_vars[var] for var in vars_to_return]
 
 def hefty_check(field, zone, direction) :
     '''
@@ -244,30 +228,31 @@ def hefty_check(field, zone, direction) :
         direction: the direction to check (str)
     
     Returns:
-        the number of cards that can be pushed, -1 being the card after the hefty one is open (int)
+        the number of cards that can be pushed, -1 being an open zone adjacent to the card with hefty (int)
     '''
-    # issue, will return positive values when it should return 0 because its just adding
-    if direction == 'right' :
-        if field[zone].species == '' : # only when the card after the card with hefty is empty
-            return -1
-        if field[zone+1].species != '' and zone < 5 :
-            if hefty_check(field, zone+1, direction) == 0 :
-                return 0
-            return 1 + hefty_check(field, zone+1, direction)
-        elif field[zone+1].species == '' and zone < 5 :
+    # set up variables
+    match direction :
+        case 'right' :
+            edge_check = zone < 5
+            dir_shift = 1
+        case 'left' :
+            edge_check = zone > 1
+            dir_shift = -1
+        case _ :
+            raise ValueError('Invalid direction')
+
+    # get number of cards that can be pushed
+    if field[zone].species == '' : # only when the card after the card with hefty is empty
+        return -1
+    match field[zone + dir_shift].species : # check the next card
+        case '' if edge_check :
             return 1
-        else :
-            return 0
-    elif direction == 'left' :
-        if field[zone].species == '' : # only when the card after the card with hefty is empty
-            return -1
-        if field[zone-1].species != '' and zone > 1 :
-            if hefty_check(field, zone-1, direction) == 0 :
+        case _ if edge_check :
+            hefty_count = hefty_check(field, zone + dir_shift, direction)
+            if hefty_count == 0 :
                 return 0
-            return 1 + hefty_check(field, zone-1, direction)
-        if field[zone-1].species == '' and zone > 1 :
-            return 1
-        else :
+            return 1 + hefty_count
+        case _ :
             return 0
 
 def sort_deck(deck) :
@@ -307,7 +292,7 @@ def print_deck(deck, sort=False, fruitful=False) :
         cards_per_row = 8
 
     # split deck into rows
-    chunked = chunk(deck, cards_per_row)
+    chunked = [deck[i:i + cards_per_row] for i in range(0, len(deck), cards_per_row)]
     
     # generate deck string
     deck_string = '\n'.join(
@@ -330,16 +315,12 @@ def reps_int(string, increment=0) :
         increment: the increment to add to the integer, defaults to 0 (int)
     
     Returns:
-        is_int: whether the string is an integer (bool)
-        int_value: the integer, will default to 0 (int)
+        whether the string is an integer (bool), the integer (int)
     '''
-    try :
-        int_value = int(string) + increment
-        is_int = True
-    except ValueError :
-        int_value = 0
-        is_int = False
-    return is_int, int_value
+    try : # check if the string is an integer
+        return True, int(string) + increment
+    except ValueError : # if not, default to 0 and return False
+        return False, 0
 
 def ping(locals={'ping':'pong'}) : # for testing
     '''
@@ -351,10 +332,8 @@ def ping(locals={'ping':'pong'}) : # for testing
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS') : # guard clause to prevent pinging after compilation
         return
     
-    data_to_write = ''
-    for key, value in locals.items():
-        data_to_write += f"{key}: {value}\n\n"
-    data_to_write = data_to_write.rstrip()
+    # get string of local variables
+    data_to_write = '\n\n'.join(f"{key}: {value}" for key, value in locals.items()).rstrip()
     
     with open('ping.txt', 'w') as file :
         file.write(data_to_write)

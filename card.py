@@ -191,13 +191,13 @@ class BlankCard() :
         card_gaps = (term_cols*55 // 100) // 5 - 15
 
         # get sigil name
-        match self.sigil.title() :
+        match self.sigil :
             case '' :
                 sigil_text = 'No Sigil'
             case _ if 'hefty' in self.sigil:
                 sigil_text = 'Hefty:'
             case _ :
-                sigil_text = self.sigil.title() + ':'
+                sigil_text = QoL.title_case(self.sigil) + ':'
 
         # get parameters for sigil description
         max_desc_first = term_cols - 18 - card_gaps*2 - len(sigil_text)

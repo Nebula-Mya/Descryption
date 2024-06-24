@@ -599,6 +599,17 @@ if __name__ == '__main__' :
         playmat.print_full_field()
 
     def test_hefty() :
+        def advance_hefty(playmat) :
+            # get user input before advancing
+            input("Press enter to advance.")
+
+            # advance
+            playmat.attack()
+
+            # print the field
+            playmat.print_field()
+            print(playmat.player_field)
+
         QoL.clear()
 
         # create decks
@@ -606,6 +617,8 @@ if __name__ == '__main__' :
         player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
         player_squirrels = duel.resource_gen(20)
 
+
+        ### test hefty (right) ###
         # Create a sample playmat with cards on the field
         playmat = Playmat(player_deck.shuffle(), player_squirrels.shuffle(), leshy_deck.shuffle(), 2, 1, 75, 3)
         card_list = []
@@ -627,18 +640,10 @@ if __name__ == '__main__' :
         playmat.print_field()
         print(playmat.player_field)
 
-        # get user input before advancing
-        input("Press enter to advance. (move the hefty card to the right)")
-
-        # advance
-        playmat.attack()
-
-        # print the field
-        playmat.print_field()
-        print(playmat.player_field)
+        advance_hefty(playmat)
 
         # get user input before advancing
-        input("Press enter to advance. (place a card to the right)")
+        input("Press enter to play a squirrel to the right of the hefty card.")
 
         # place a card to the right of the hefty card
         playmat.player_field[4] = card_library.Squirrel()
@@ -647,25 +652,48 @@ if __name__ == '__main__' :
         playmat.print_field()
         print(playmat.player_field)
 
-        # get user input before advancing
-        input("Press enter to advance. (move the hefty card to the right)")
+        for _ in range(3) :
+            advance_hefty(playmat)
 
-        # advance
-        playmat.attack()
+        # get user input before moving on
+        input("Press enter to move on to the next test.")
+
+        ### test hefty (left) ###
+        # Create a sample playmat with cards on the field
+        playmat = Playmat(player_deck.shuffle(), player_squirrels.shuffle(), leshy_deck.shuffle(), 2, 1, 75, 3)
+        card_list = []
+        for cost in card_library.Poss_Playr :
+            for species in card_library.Poss_Playr[cost] :
+                card_list.append(species)
+                card_list.append(card.BlankCard())
+        for zone in range(1, 6) :
+            playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
+            playmat.player_field[zone].zone = zone
+        
+        # place a hefty card in the player's field
+        playmat.player_field[4] = card_library.MooseBuck()
+        playmat.player_field[4].play(zone=4)
+        playmat.player_field[4].sigil = 'hefty (left)'
+        playmat.player_field[4].update_ASCII()
 
         # print the field
         playmat.print_field()
         print(playmat.player_field)
 
-        # get user input before advancing
-        input("Press enter to advance. (move the hefty card to the right)")
+        advance_hefty(playmat)
 
-        # advance
-        playmat.attack()
+        # get user input before advancing
+        input("Press enter to play a squirrel to the left of the hefty card.")
+
+        # place a card to the left of the hefty card
+        playmat.player_field[2] = card_library.Squirrel()
 
         # print the field
         playmat.print_field()
         print(playmat.player_field)
+
+        for _ in range(3) :
+            advance_hefty(playmat)
 
     def test_empty_deck() :
         QoL.clear()

@@ -276,9 +276,7 @@ def view_play_attack(field) :
             case '4' :
                 view_graveyard(field)
             case '5' :
-                affirm = input('Are you sure you want to end your turn? (press enter to continue)').lower() # might change this prompt
-                if affirm == '' :
-                    break
+                break # might add a confirmation later if it's too easy to accidentally end turn
             case _ :
                 invalid_choice = True
 
