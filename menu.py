@@ -272,46 +272,54 @@ def settings() :
 
 def main_menu() :
     '''
-    displays the main menu
+    displays the main menu and allows the player to start a game, change settings, or exit the game
     '''
-    bad_input = True
+    # set up variables
     invalid_choice = False
-    while bad_input :
+
+    while True :
+        # print the menu
         QoL.clear()
         print(version_ID)
         print('\n'*2)
         ASCII_text.print_title()
         print('\n'*6)
-        # print(QoL.center_justified('Main Menu  '))
-        # print(QoL.center_justified('================  '))
         print(QoL.center_justified('1.  Start a game      '))
         print()
         print(QoL.center_justified('2.    Settings        '))
         print()
         print(QoL.center_justified('3.      Quit          '))
-        print('\n'*3)
+        print('\n')
+
         if invalid_choice :
             print(QoL.center_justified('Invalid choice'))
+            print()
             invalid_choice = False
-        choice = input(QoL.center_justified('Choose an option:' + ' '*3).rstrip() + ' ')
-        if choice == '1' :
-            data_to_read = [
-                ['settings', 'deck size'],
-                ['settings', 'hand size'],
-                ['settings', 'difficulty', 'leshy median plays'],
-                ['settings', 'difficulty', 'leshy plays variance'],
-                ['settings', 'difficulty', 'leshy strat chance'],
-                ['settings', 'difficulty', 'leshy offense threshold']
-            ]
-            [deck_size, hand_size, play_median, play_var, opp_strat, opp_threshold] = QoL.read_data(data_to_read)
-
-            duel.main(deck_size, hand_size, play_median, play_var, opp_strat, opp_threshold)
-        elif choice == '2' :
-            settings()
-        elif choice == '3' :
-            exit()
         else :
-            invalid_choice = True
+            print('\n')
+
+        # get the user's choice
+        choice = input(QoL.center_justified('Choose an option:' + ' '*3).rstrip() + ' ')
+
+        match choice :
+            case '1' :
+                data_to_read = [
+                    ['settings', 'deck size'],
+                    ['settings', 'hand size'],
+                    ['settings', 'difficulty', 'leshy median plays'],
+                    ['settings', 'difficulty', 'leshy plays variance'],
+                    ['settings', 'difficulty', 'leshy strat chance'],
+                    ['settings', 'difficulty', 'leshy offense threshold']
+                ]
+                [deck_size, hand_size, play_median, play_var, opp_strat, opp_threshold] = QoL.read_data(data_to_read)
+
+                duel.main(deck_size, hand_size, play_median, play_var, opp_strat, opp_threshold)
+            case '2' :
+                settings()
+            case '3' :
+                exit()
+            case _ :
+                invalid_choice = True
 
 if __name__ == '__main__' :
     main_menu()
