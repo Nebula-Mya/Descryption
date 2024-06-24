@@ -348,7 +348,7 @@ def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_varianc
     # game setup
     opponent_deck = deck_gen(card_library.Poss_Leshy, deck_size*2)
     player_deck = deck_gen(card_library.Poss_Playr, deck_size)
-    squirrels_deck = resource_gen(deck_size)
+    squirrels_deck = resource_gen(deck_size - hand_size - 1)
 
     playfield = field.Playmat(player_deck.shuffle(), squirrels_deck.shuffle(), opponent_deck.shuffle(), Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold)
 
