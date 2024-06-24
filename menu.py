@@ -4,264 +4,271 @@ import ASCII_text
 
 version_ID = 'v0.2.0a-alpha'
 
-choice_text = 'Choose an option:'
-
-def menu_center(text, width=24) :
-    '''
-    centers text for the menu, adding a space if the text ends with a colon, and spacing out from numbering (honestly don't quite understand this one, but it works?) 
-
-    Arguments:
-        text: the text to center (str)
-        width: the width of the menu, defaults to 24 (int)
-    
-    Returns:
-        the centered text (str)
-    '''
-    og_text = text
-    numbered = False
-    shift_left = 0
-    if text[1] == '.' :
-        text_start = text[:2]
-        text = text[2:].lstrip()
-        numbered = True
-        shift_left = 1
-    if len(text) < width :
-        text = ' '*((width - len(text)) // 2 - shift_left) + text + ' '*(width - len(text) + shift_left)
-    elif len(text) > width :
-        text = ' '*((width - len(text)) - shift_left) + text + ' '*((width - len(text)) // 2 + shift_left)
-    if og_text[-1] == ':' :
-        return QoL.center_justified(text).rstrip() + ' '
-    elif numbered :
-        return QoL.center_justified(text_start + text)
-    else :
-        return QoL.center_justified(text)
-
 def reset_oro() :
     '''
-    resets the attack and life of Ouroboros to 1
+    resets Ouroboros to level 1 if the player chooses to
     '''
-    QoL.write_data([(['ouroboros', 'attack'], 1), (['ouroboros', 'life'], 1)])
+    # set up variables
+    [oro_level] = QoL.read_data([['ouroboros', 'attack']])
 
-def set_deck_size(size) :
-    '''
-    sets the deck size
+    # print the menu
+    QoL.clear()
+    print(version_ID)
+    print('\n'*2)
+    ASCII_text.print_title()
+    print('\n'*6)
+    print(QoL.center_justified('Orouboros level: ' + str(oro_level)))
+    print('\n'*2)
 
-    Arguments:
-        size: the new deck size (int)
-    '''
-    QoL.write_data([(['settings', 'deck size'], size)])
+    # get the user's choice
+    reset_choice = input(QoL.center_justified('Are you sure you want to reset Ouroboros? y/n').rstrip() + ' ')
 
-def set_hand_size(size) :
+    # reset Ouroboros if the user chooses to
+    if reset_choice == 'y' :
+        QoL.write_data([(['ouroboros', 'attack'], 1), (['ouroboros', 'life'], 1)])
+    
+def set_deck_size() :
     '''
-    sets the hand size
-
-    Arguments:
-        size: the new hand size (int)
+    sets the deck size to the player's choice between the current hand size and 101
     '''
-    QoL.write_data([(['settings', 'hand size'], size)])
-
-def set_difficulty(difficulty) :
-    '''
-    sets the difficulty
-
-    Arguments:
-        difficulty: the new difficulty (int)
-    '''
-    if difficulty == 0 :
-        difficulty_name = 'Very Easy'
-        play_median = 1
-        play_var = 0
-        opp_strat = 40
-        opp_threshold = 10
-    elif difficulty == 1 :
-        difficulty_name = 'Easy'
-        play_median = 2
-        play_var = 0
-        opp_strat = 60
-        opp_threshold = 5
-    elif difficulty == 2 :
-        difficulty_name = 'Normal'
-        play_median = 2
-        play_var = 1
-        opp_strat = 75
-        opp_threshold = 3
-    elif difficulty == 3 :
-        difficulty_name = 'Hard'
-        play_median = 3
-        play_var = 2
-        opp_strat = 90
-        opp_threshold = 3
-    elif difficulty == 4 :
-        difficulty_name = 'Very Hard'
-        play_median = 4
-        play_var = 1
-        opp_strat = 100
-        opp_threshold = 2
-
-    data_to_write = [
-        (['settings', 'difficulty', 'leshy median plays'], play_median),
-        (['settings', 'difficulty', 'leshy plays variance'], play_var),
-        (['settings', 'difficulty', 'leshy strat chance'], opp_strat),
-        (['settings', 'difficulty', 'leshy offense threshold'], opp_threshold),
-        (['settings', 'difficulty', 'current difficulty index'], difficulty),
-        (['settings', 'difficulty', 'current difficulty name'], difficulty_name)
-    ]
-    QoL.write_data(data_to_write)
-
-def print_settings_options() :
-    '''
-    prints the settings options
-    '''
-    print(QoL.center_justified('Settings   '))
-    print(QoL.center_justified('='*26 + ' '*3))
-    print(QoL.center_justified('1.  Change difficulty     '))
-    print(QoL.center_justified('2.  Change deck size      '))
-    print(QoL.center_justified('3.  Change hand size      '))
-    print(QoL.center_justified('4.   Reset Ouroboros     '))
-    print(QoL.center_justified('5. Return to main menu   '))
-
-def settings() :
-    '''
-    allows the player to change the difficulty, deck size, hand size, and reset Ouroboros
-    '''
-    bad_input = True
+    # set up variables
     invalid_choice = False
-    while bad_input :
+    out_of_range = False
+    data_to_read = [
+        ['settings', 'deck size'],
+        ['settings', 'hand size']
+    ]
+    [deck_size, hand_size] = QoL.read_data(data_to_read)
+
+    while True :
+        # print the menu
         QoL.clear()
         print(version_ID)
         print('\n'*2)
         ASCII_text.print_title()
-        data_to_read = [
-            ['settings', 'deck size'],
-            ['settings', 'hand size'],
-            ['settings', 'difficulty', 'leshy strat chance']
-        ]
-        [deck_size, hand_size, opp_strat] = QoL.read_data(data_to_read)
         print('\n'*5)
-        print_settings_options()
-        print('\n'*3)
+        deck_size_str = 'Current deck size: ' + str(deck_size)
+        hand_size_str = 'Current hand size: ' + str(hand_size)
+        hand_size_str += ' '*(len(deck_size_str) - len(hand_size_str))
+        print(QoL.center_justified(deck_size_str))
+        print()
+        print(QoL.center_justified(hand_size_str))
+        print('\n')
+
         if invalid_choice :
             print(QoL.center_justified('Invalid choice'))
+            print()
             invalid_choice = False
-        choice = input(menu_center(choice_text))
-        # change difficulty
-        if choice == '1' :
-            bad_choice = True
-            invalid_difficulty = False
-            while bad_choice :
-                QoL.clear()
-                print(version_ID)
-                print('\n'*2)
-                ASCII_text.print_title()
-                print('\n'*5)
-                difficulty_dict = {0:40, 1:60, 2:75, 3:90, 4:100}
-                current_difficulty = -1
-                difficulty_key = []
-                for n in difficulty_dict :
-                    if difficulty_dict[n] == opp_strat :
-                        difficulty_key.append(' (CURRENT)')
-                        current_difficulty = n
-                    else :
-                        difficulty_key.append(' '*10)
-                print(QoL.center_justified('1. Very Easy' + difficulty_key[0]))
-                print(QoL.center_justified('2.   Easy' + difficulty_key[1] + ' '*3))
-                print(QoL.center_justified('3.  Normal' + difficulty_key[2] + ' '*2))
-                print(QoL.center_justified('4.   Hard' + difficulty_key[3] + ' '*3))
-                print(QoL.center_justified('5. Very Hard' + difficulty_key[4]))
-                print('\n'*3)
-                if invalid_difficulty :
-                    print(QoL.center_justified('Invalid difficulty'))
-                    invalid_difficulty = False
-                difficulty = input(QoL.center_justified('Enter the new difficulty: (press enter to cancel)').rstrip() + ' ')
-                if difficulty == '' :
-                    break
-                try :
-                    difficulty = int(difficulty)
-                except ValueError :
-                    difficulty = -1
-                if difficulty >= 1 and difficulty <= 5 :
-                    if difficulty == current_difficulty + 1 :
-                        bad_choice = False
-                    else :
-                        set_difficulty(difficulty - 1)
-                        bad_choice = False
-                else :
-                    invalid_difficulty = True
-        # change deck size
-        elif choice == '2' :
-            bad_choice = True
-            invalid_deck_size = False
-            while bad_choice :
-                QoL.clear()
-                print(version_ID)
-                print('\n'*2)
-                ASCII_text.print_title()
-                print('\n'*5)
-                print(QoL.center_justified('Current deck size: ' + str(deck_size)))
-                print(QoL.center_justified('Current hand size: ' + str(hand_size)))
-                print('\n'*3)
-                if invalid_deck_size :
-                    print(QoL.center_justified('Invalid deck size'))
-                    invalid_deck_size = False
-                new_size = input(QoL.center_justified('Enter the new deck size: (press enter to cancel)').rstrip() + ' ')
-                if new_size == '' :
-                    break
-                try :
-                    new_size = int(new_size)
-                except ValueError :
-                    new_size = -1
-                if new_size > int(hand_size) and new_size <= 100 :
-                    set_deck_size(new_size)
-                    bad_choice = False
-                else :
-                    invalid_deck_size = True
-        # change hand size
-        elif choice == '3' :
-            bad_choice = True
-            invalid_hand_size = False
-            while bad_choice :
-                QoL.clear()
-                print(version_ID)
-                print('\n'*2)
-                ASCII_text.print_title()
-                print('\n'*5)
-                print(QoL.center_justified('Current deck size: ' + str(deck_size)))
-                print(QoL.center_justified('Current hand size: ' + str(hand_size)))
-                print('\n'*3)
-                if invalid_hand_size :
-                    print(QoL.center_justified('Invalid hand size'))
-                    invalid_hand_size = False
-                new_size = input(QoL.center_justified('Enter the new hand size: (press enter to cancel)').rstrip() + ' ')
-                if new_size == '' :
-                    break
-                try :
-                    new_size = int(new_size)
-                except ValueError :
-                    new_size = -1
-                if new_size < int(deck_size) and new_size <= 15 :
-                    set_hand_size(new_size)
-                    bad_choice = False
-                else :
-                    invalid_hand_size = True
-        # reset Ouroboros
-        elif choice == '4' :
-            QoL.clear()
-            print(version_ID)
-            print('\n'*2)
-            ASCII_text.print_title()
-            print('\n'*5)
-            print_settings_options()
-            print('\n'*3)
-            reset_choice = input(QoL.center_justified('Are you sure you want to reset Ouroboros? y/n').rstrip() + ' ')
-            if reset_choice == 'y' :
-                reset_oro()
-            else :
-                continue
-        # quit to main menu
-        elif choice == '5' :
-            return
+        elif out_of_range :
+            print(QoL.center_justified('Deck size must be greater than hand size and at most 100'))
+            print()
+            out_of_range = False
         else :
-            invalid_choice = True
+            print('\n')
+
+        # get the user's choice
+        choice = input(QoL.center_justified('Enter the new deck size: (press enter to cancel)').rstrip() + ' ')
+
+        if choice == '' :
+            return
+        
+        (is_int, choice) = QoL.reps_int(choice)
+        match is_int :
+            case False :
+                invalid_choice = True
+            
+            case True if choice not in range(hand_size + 1, 101) :
+                out_of_range = True
+
+            case True :
+                QoL.write_data([(['settings', 'deck size'], choice)])
+                return
+
+def set_hand_size() :
+    '''
+    sets the hand size to the player's choice between 1 and the current deck size
+    '''
+    # set up variables
+    invalid_choice = False
+    out_of_range = False
+    data_to_read = [
+        ['settings', 'deck size'],
+        ['settings', 'hand size']
+    ]
+    [deck_size, hand_size] = QoL.read_data(data_to_read)
+
+    while True :
+        # print the menu
+        QoL.clear()
+        print(version_ID)
+        print('\n'*2)
+        ASCII_text.print_title()
+        print('\n'*5)
+        deck_size_str = 'Current deck size: ' + str(deck_size)
+        hand_size_str = 'Current hand size: ' + str(hand_size)
+        hand_size_str += ' '*(len(deck_size_str) - len(hand_size_str))
+        print(QoL.center_justified(deck_size_str))
+        print()
+        print(QoL.center_justified(hand_size_str))
+        print('\n')
+
+        if invalid_choice :
+            print(QoL.center_justified('Invalid choice'))
+            print()
+            invalid_choice = False
+        elif out_of_range :
+            print(QoL.center_justified('Hand size must be greater than 1 and less than the deck size'))
+            print()
+            out_of_range = False
+        else :
+            print('\n')
+
+        # get the user's choice
+        choice = input(QoL.center_justified('Enter the new hand size: (press enter to cancel)').rstrip() + ' ')
+
+        if choice == '' :
+            return
+        
+        (is_int, choice) = QoL.reps_int(choice)
+        match is_int :
+            case False :
+                invalid_choice = True
+            
+            case True if choice not in range(2, deck_size) :
+                out_of_range = True
+
+            case True :
+                QoL.write_data([(['settings', 'hand size'], choice)])
+                return
+
+def set_difficulty() :
+    '''
+    sets the difficulty to the player's choice, chosen from a list of difficulties
+    '''
+    def change_difficulty_data(difficulty_index) :
+        '''
+        sets the difficulty
+
+        Arguments:
+            difficulty_index: the new difficulty's index (int)
+        '''
+        def write_difficulty(name, number, median, var, strat, threshold) :
+            data_to_write = [
+                (['settings', 'difficulty', 'leshy median plays'], median),
+                (['settings', 'difficulty', 'leshy plays variance'], var),
+                (['settings', 'difficulty', 'leshy strat chance'], strat),
+                (['settings', 'difficulty', 'leshy offense threshold'], threshold),
+                (['settings', 'difficulty', 'current difficulty index'], number),
+                (['settings', 'difficulty', 'current difficulty name'], name)
+            ]
+
+            QoL.write_data(data_to_write)
+        
+        match difficulty_index :
+            case 0 :
+                write_difficulty('Very Easy', 0, 1, 0, 40, 10)
+            case 1 :
+                write_difficulty('Easy', 1, 2, 0, 60, 5)
+            case 2 :
+                write_difficulty('Normal', 2, 2, 1, 75, 3)
+            case 3 :
+                write_difficulty('Hard', 3, 3, 2, 90, 3)
+            case 4 :
+                write_difficulty('Very Hard', 4, 4, 1, 100, 2)
+
+    # set up variables
+    invalid_choice = False
+    [current_difficulty_index] = QoL.read_data([['settings', 'difficulty', 'current difficulty index']])
+    difficulty_key = [' (CURRENT)' if i == current_difficulty_index else ' '*10 for i in range(5)]
+
+    while True :
+        # print the menu
+        QoL.clear()
+        print(version_ID)
+        print('\n'*2)
+        ASCII_text.print_title()
+        print('\n'*5)
+        print(QoL.center_justified('1. Very Easy' + difficulty_key[0]))
+        print(QoL.center_justified('2.   Easy' + difficulty_key[1] + ' '*3))
+        print(QoL.center_justified('3.  Normal' + difficulty_key[2] + ' '*2))
+        print(QoL.center_justified('4.   Hard' + difficulty_key[3] + ' '*3))
+        print(QoL.center_justified('5. Very Hard' + difficulty_key[4]))
+        print('\n')
+
+        if invalid_choice :
+            print(QoL.center_justified('Invalid choice'))
+            print()
+            invalid_choice = False
+        else :
+            print('\n')
+        
+        # get the user's choice
+        choice = input(QoL.center_justified('Enter the new difficulty: (press enter to cancel)').rstrip() + ' ')
+
+        if choice == '' :
+            return
+        
+        (is_int, choice) = QoL.reps_int(choice, -1)
+        match is_int :
+            case False :
+                invalid_choice = True
+            case True if choice not in range(5) :
+                invalid_choice = True
+            case True :
+                change_difficulty_data(choice)
+                return
+        
+def settings() :
+    '''
+    allows the player to change the difficulty, deck size, hand size, and reset Ouroboros
+    '''
+    def print_settings_options() :
+        '''
+        prints the settings options
+        '''
+        print(QoL.center_justified('Settings   '))
+        print(QoL.center_justified('='*25 + ' '*4))
+        print(QoL.center_justified('1.  Change difficulty     '))
+        print(QoL.center_justified('2.  Change deck size      '))
+        print(QoL.center_justified('3.  Change hand size      '))
+        print(QoL.center_justified('4.  Reset Ouroboros      '))
+
+    # set up variables
+    invalid_choice = False
+
+    while True :
+        # print the menu
+        QoL.clear()
+        print(version_ID)
+        print('\n'*2)
+        ASCII_text.print_title()
+        print('\n'*5)
+        print_settings_options()
+        print('\n')
+
+        if invalid_choice :
+            print(QoL.center_justified('Invalid choice'))
+            print()
+            invalid_choice = False
+        else :
+            print('\n')
+        
+        # get the user's choice
+        choice = input(QoL.center_justified('Choose an option: (press enter to cancel)').rstrip() + ' ')
+
+        match choice :
+            case '' : # quit to main menu
+                return
+            case '1' :
+                set_difficulty()
+            case '2' :
+                set_deck_size()
+            case '3' :
+                set_hand_size()
+            case '4' :
+                reset_oro()
+            case _ :
+                invalid_choice = True
 
 def main_menu() :
     '''
@@ -286,7 +293,7 @@ def main_menu() :
         if invalid_choice :
             print(QoL.center_justified('Invalid choice'))
             invalid_choice = False
-        choice = input(menu_center(choice_text))
+        choice = input(QoL.center_justified('Choose an option:' + ' '*3).rstrip() + ' ')
         if choice == '1' :
             data_to_read = [
                 ['settings', 'deck size'],
