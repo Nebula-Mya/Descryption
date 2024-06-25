@@ -230,6 +230,7 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None
 
     # set up variables
     code_block = ''
+    local_vars['applicables'] = applicables
 
     # get code to execute
     if len(current_card.sigil) == 2 and all(x in applicables for x in current_card.sigil) :
