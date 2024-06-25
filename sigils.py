@@ -152,6 +152,8 @@ else :
         '''
 import card_library
 
+other_sigil = ['airborne'] + [sigil for sigil in self.sigil if sigil != 'bees within']
+
 if self.species == '' or self.status == 'dead' or from_air:
     teeth = damage
 else :
@@ -159,7 +161,7 @@ else :
     self.current_life -= damage
     self.update_ASCII()
     if not (in_opp_field or in_bushes) : # only if opponent is attacking, as leshy's bees within wont do anything; he doesnt have a hand to add to
-        hand.append(card_library.Bee())
+        hand.append(card_library.Bee(sigil=other_sigil))
     if self.current_life <= 0 or deathtouch :
         self.status = 'dead'
         if in_opp_field and self.current_life <= 0 :
@@ -252,7 +254,9 @@ teeth = damage
         '''
 import card_library
 
-self.hand.append(card_library.Vole())
+other_sigil = [sigil for sigil in self.sigil if sigil != 'vole hole']
+
+self.hand.append(card_library.Vole(sigil=other_sigil))
 '''
         ],
 

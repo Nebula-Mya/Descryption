@@ -85,8 +85,8 @@ class Raven(card.BlankCard) :
         super().__init__(species='Raven', cost=2, attack=2, life=3, sigil=['airborne'], blank_cost=blank_cost)
 
 class Bee(card.BlankCard) : # only given by a sigil
-    def __init__(self, blank_cost=False) :
-        super().__init__(species='Bee', cost=0, attack=1, life=1, sigil=['airborne'], blank_cost=blank_cost)
+    def __init__(self, blank_cost=False, sigil=['airborne']) :
+        super().__init__(species='Bee', cost=0, attack=1, life=1, sigil=sigil, blank_cost=blank_cost)
 
 class Bullfrog(card.BlankCard) :
     def __init__(self, blank_cost=False) :
@@ -126,8 +126,8 @@ class Dam(card.BlankCard) : # only given by a sigil
         super().__init__(species='Dam', cost=0, attack=0, life=2, blank_cost=blank_cost)
 
 class Vole(card.BlankCard) : # only given by a sigil
-    def __init__(self, blank_cost=False) :
-        super().__init__(species='Vole', cost=0, attack=0, life=1, blank_cost=blank_cost)
+    def __init__(self, blank_cost=False, sigil=None) :
+        super().__init__(species='Vole', cost=0, attack=0, life=1, sigil=sigil, blank_cost=blank_cost)
 
 class Warren(card.BlankCard) :
     def __init__(self, blank_cost=False) :
