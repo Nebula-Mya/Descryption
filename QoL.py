@@ -200,23 +200,53 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None
         applicables: the sigils to execute (list)
         global_vars: the global variables to use (dict)
         local_vars: the local variables to use (dict)
-        vars_to_return: the variables to return (list of str)
+        vars_to_return: the variables to return (list[str])
     
     Returns:
         the variables to return (list)
     '''
+    
+    def get_combo_code(sigil) :
+        '''
+        get the code block for a combination of sigils
+        
+        Arguments:
+            sigil: the sigils to combine (list[str])
+        
+        Returns:
+            the code block (str)
+        '''
+        # imports
+        import sigils
+
+        # sort sigils
+        combo = tuple(sorted(sigil))
+
+        # get code block
+        return sigils.Combos.get(combo, None)
+    
     # imports
     import sigils
 
     # set up variables
+    code_block = ''
     local_vars['applicables'] = applicables
 
-    # execute sigil code
-    if current_card.sigil in applicables :
-        exec(sigils.Dict[current_card.sigil][2], global_vars, local_vars)
+    # get code to execute
+    if len(current_card.sigil) == 2 and all(x in applicables for x in current_card.sigil) :
+        code_block = get_combo_code(current_card.sigil)
+    else :
+        for sigil in current_card.sigil :
+            if sigil in applicables :
+                code_block = sigils.Dict[sigil][2]
+                break
 
-    # return variables
-    return [local_vars[var] for var in vars_to_return]
+    if code_block != '' :
+        exec(code_block, global_vars, local_vars)
+
+    returned_vars = [local_vars[var] for var in vars_to_return]
+
+    return returned_vars
 
 def hefty_check(field, zone, direction) :
     '''

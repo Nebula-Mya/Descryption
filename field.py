@@ -47,7 +47,7 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
     for category in (category for category in categories if not influenced and card_to_play.species in category['cards']) : # generator to prevent checking categories if already influenced and reduce memory usage
         out_of_strategy = [] # reset incase previous category didn't apply to any zones
 
-        in_strategy += [zone for zone in range(1, 6) if bushes[zone].species == '' and player_field[zone].sigil in category['deals_with']]
+        in_strategy += [zone for zone in range(1, 6) if bushes[zone].species == '' and player_field[zone].sigil_in_category(category['deals_with'])]
 
         out_of_strategy += [zone for zone in range(1, 6) if bushes[zone].species == '' and zone not in in_strategy]
 
@@ -62,9 +62,9 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
         out_of_strategy += [zone for zone in range(1, 6) if bushes[zone].species == '' and zone not in in_strategy]
     
     # check for cards that counter Leshy's cards
-    for zone in [zone for category in categories if card_to_play.sigil in category['deals_with'] for zone in range(1, 6)] :
-        both_right = 'right' in player_field[zone].sigil and 'right' in card_to_play.sigil
-        both_left = 'left' in player_field[zone].sigil and 'left' in card_to_play.sigil
+    for zone in [zone for category in categories if card_to_play.sigil_in_category(category['deals_with']) for zone in range(1, 6)] : 
+        both_right = player_field[zone].has_sigil('right') and card_to_play.has_sigil('right')
+        both_left = player_field[zone].has_sigil('left') and card_to_play.has_sigil('left')
         if both_right or both_left : # guard clause for opposing shifting cards, which counter eachother
             continue
 
@@ -85,7 +85,7 @@ def get_corpse_eaters(hand) :
         corpse_eaters: the corpse eaters in the hand (list)
     '''
     corpse_eaters = []
-    for card in [card for card in range(len(hand)) if hand[card].species == 'Corpse Eater'] :
+    for card in [card for card in range(len(hand)) if hand[card].has_sigil('corpse eater')] : 
         corpse_eaters.append(card)
     return corpse_eaters
 
@@ -212,8 +212,10 @@ class Playmat :
             
             sacc_indexes = [int(sacc) for sacc in sacc_index_list if sacc in [str(n) for n in range(1, 6)]] # get valid saccs
 
-            for goat in [sacc for sacc in sacc_indexes if self.player_field[sacc].sigil == 'worthy sacrifice'] : # decrease cost for cards with worthy sacrifice
-                cost -= 2
+            for _ in [sacc for sacc in sacc_indexes if self.player_field[sacc].has_sigil('worthy sacrifice')] : # decrease cost for cards with worthy sacrifice
+                cost -= 2 
+                if cost < 0 :
+                    cost = 0
 
             if len(sacc_indexes) > cost - len(sacc_list) : # too many saccs, serves as guard clause
                 print('Too many sacrifices.')
@@ -232,7 +234,7 @@ class Playmat :
             if zone not in sacc_list : # playing on top of a card that wasn't sacrificed
                 print('Cannot play on top of a non sacrificed card.')
                 [sacc_list, cost] = fail_saccs()
-            elif self.player_field[zone].sigil == 'many lives' : # playing on top of a card with many lives
+            elif self.player_field[zone].has_sigil('many lives') : # playing on top of a card with many lives
                 print('Cannot play on top of a card with many lives.')
                 [sacc_list, cost] = fail_saccs()
         
@@ -240,14 +242,14 @@ class Playmat :
         for ind in sacc_list :
             QoL.exec_sigil_code(self.player_field[ind], sigils.on_sacrifices, None, locals())
 
-            if self.player_field[ind].species == 'Cat' and self.player_field[ind].sigil == 'many lives' : # make sure cat still has many lives
+            if self.player_field[ind].species == 'Cat' and self.player_field[ind].has_sigil('many lives') : # make sure cat still has many lives
                 self.player_field[ind].spent_lives += 1
                 if self.player_field[ind].spent_lives >= 9 :
                     self.player_field[ind] = card_library.UndeadCat()
             else :
                 self.player_field[ind].die()
 
-            if self.player_field[ind].sigil not in sigils.on_sacrifices :
+            if not self.player_field[ind].sigil_in_category(sigils.on_sacrifices) :
                 self.graveyard.insert(0, self.player_field[ind])
                 self.player_field[ind] = card.BlankCard()
         else : 
@@ -293,7 +295,7 @@ class Playmat :
             if did_shift :
                 did_shift = False
             else :
-                [did_shift] = QoL.exec_sigil_code(attacking_field[zone], sigils.movers, None, locals(), ['did_shift'] )
+                [did_shift] = QoL.exec_sigil_code(attacking_field[zone], sigils.movers, None, locals(), ['did_shift'])
 
     def check_states(self) :
         '''
@@ -308,7 +310,7 @@ class Playmat :
             [corpses] = QoL.exec_sigil_code(current_field[zone], sigils.on_deaths, None, locals(), ['corpses'])
 
             # if a normal card dies
-            if current_field[zone].status == 'dead' and (current_field[zone].sigil not in sigils.on_deaths) :
+            if current_field[zone].status == 'dead' and not current_field[zone].sigil_in_category(sigils.on_deaths) :
                 current_field[zone].die()
                 current_field[zone] = card.BlankCard()
                 current_field[zone].play(zone)
@@ -319,9 +321,7 @@ class Playmat :
         corpse_eaters = get_corpse_eaters(self.hand)
 
         # play corpse eaters
-        while True :
-            if open_corpses == [] or corpse_eaters == [] : # guard clause for no open corpses or no corpse eaters
-                break
+        while open_corpses and corpse_eaters :
             zone_choice = random.choice(open_corpses)
             self.player_field[zone_choice] = self.hand[corpse_eaters[0]]
             self.player_field[zone_choice].play(zone_choice)
@@ -335,15 +335,9 @@ class Playmat :
         '''
         # set up variables
         played = 0
-        play_count_median = self.Leshy_play_count_median
-        play_count_variance = self.Leshy_play_count_variance
-        in_strategy_chance = self.Leshy_in_strategy_chance
-        strat_change_threshold = self.Leshy_strat_change_threshold
         player_card_count = len([card_in_play for card_in_play in self.player_field.values() if card_in_play.species != ''])
-        play_count = random.randint(play_count_median - play_count_variance, play_count_median + play_count_variance)
-
-        play_count_median += (player_card_count > 3) - (player_card_count < 2) # shift range slightly to match amount of cards on player's field
-
+        play_count_median = self.Leshy_play_count_median + (player_card_count > 3) - (player_card_count < 2) # shift range slightly to match amount of cards on player's field
+        play_count = random.randint(play_count_median - self.Leshy_play_count_variance, play_count_median + self.Leshy_play_count_variance)
         play_count = max(min(play_count, len(self.opponent_deck), 5), 1) if self.opponent_deck else 0 # clamp play count
 
         # advance from bushes to field
@@ -354,10 +348,10 @@ class Playmat :
         
         while played < play_count and [zone for zone in range(1, 6) if self.bushes[zone].species == ''] :
             # intelligent choosing of zones to prioritize
-            in_strategy, out_of_strategy = ai_category_checking(card_library.AI_categories, self.player_field, self.opponent_deck[0], self.bushes, self.score, strat_change_threshold)
+            in_strategy, out_of_strategy = ai_category_checking(card_library.AI_categories, self.player_field, self.opponent_deck[0], self.bushes, self.score, self.Leshy_strat_change_threshold)
 
             # playing cards to zones
-            if (random.randint(1,100) <= in_strategy_chance and in_strategy) or not out_of_strategy:
+            if (random.randint(1,100) <= self.Leshy_in_strategy_chance and in_strategy) or not out_of_strategy:
                 zone = random.choice(in_strategy)
                 self.bushes[zone] = self.opponent_deck[0]
                 self.opponent_deck.pop(0)
@@ -571,7 +565,7 @@ if __name__ == '__main__' :
         # populate hand
         for n in range(6) :
             if random.randint(1, 2) == 1 :
-                playmat.hand.append(card.BlankCard(species='Corpse Eater', cost=1, attack=1, life=1, sigil='corpse eater', status='alive', blank_cost=True))
+                playmat.hand.append(card_library.CorpseMaggots(blank_cost=True))
             else :
                 playmat.hand.append(card_library.Squirrel())
         
@@ -633,7 +627,7 @@ if __name__ == '__main__' :
         # place a hefty card in the player's field
         playmat.player_field[2] = card_library.MooseBuck()
         playmat.player_field[2].play(zone=2)
-        playmat.player_field[2].sigil = 'hefty (right)'
+        playmat.player_field[2].sigil = ['hefty (right)']
         playmat.player_field[2].update_ASCII()
 
         # print the field
@@ -673,7 +667,7 @@ if __name__ == '__main__' :
         # place a hefty card in the player's field
         playmat.player_field[4] = card_library.MooseBuck()
         playmat.player_field[4].play(zone=4)
-        playmat.player_field[4].sigil = 'hefty (left)'
+        playmat.player_field[4].sigil = ['hefty (left)']
         playmat.player_field[4].update_ASCII()
 
         # print the field

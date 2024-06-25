@@ -34,7 +34,7 @@ def print_scales(score) :
         opponent_weight = ' '*8
     else :
         player_weight = ' '*8
-        opponent_weight = ' '*opponent_adv + 'O'*opponent_adv
+        opponent_weight = ' '*(8-opponent_adv) + 'O'*opponent_adv
         if len(opponent_weight) > 8 :
             opponent_weight = 'O'*8
     

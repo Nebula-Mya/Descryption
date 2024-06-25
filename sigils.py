@@ -49,10 +49,12 @@ if zone != 1 and attacking_field[zone-1].species == '' :
         ["  |  ","()|()","  |  "],
         'Splits into two cards when killed.',
         '''
-import card
-import copy
+import sigils
 
-if current_field[zone].status == 'dead' :
+if applicables == sigils.on_deaths and current_field[zone].status == 'dead' :
+    import card
+    import copy
+
     split_card = copy.deepcopy(current_field[zone])
 
     # play a copy to the left and right if possible
@@ -67,7 +69,6 @@ if current_field[zone].status == 'dead' :
             if current_field[shifted_zone].species == '' :
                 current_field[shifted_zone] = card.BlankCard(species=split_card.species, cost=split_card.saccs, attack=split_card.base_attack//2, life=split_card.base_life//2, sigil=split_card.sigil, zone=shifted_zone, blank_cost=True)
     
-                
     # remove the original card
     current_field[zone].die()
     self.graveyard.insert(0, current_field[zone])
@@ -151,6 +152,8 @@ else :
         '''
 import card_library
 
+other_sigil = ['airborne'] + [sigil for sigil in self.sigil if sigil != 'bees within']
+
 if self.species == '' or self.status == 'dead' or from_air:
     teeth = damage
 else :
@@ -158,7 +161,7 @@ else :
     self.current_life -= damage
     self.update_ASCII()
     if not (in_opp_field or in_bushes) : # only if opponent is attacking, as leshy's bees within wont do anything; he doesnt have a hand to add to
-        hand.append(card_library.Bee())
+        hand.append(card_library.Bee(sigil=other_sigil))
     if self.current_life <= 0 or deathtouch :
         self.status = 'dead'
         if in_opp_field and self.current_life <= 0 :
@@ -251,7 +254,9 @@ teeth = damage
         '''
 import card_library
 
-self.hand.append(card_library.Vole())
+other_sigil = [sigil for sigil in self.sigil if sigil != 'vole hole']
+
+self.hand.append(card_library.Vole(sigil=other_sigil))
 '''
         ],
 
@@ -290,6 +295,202 @@ for shifted_zone in poss_zones :
         ],
 }
 
+Combos = {
+    ('bifurcate', 'venom') : '''
+for target_card in [front_left_card, front_right_card] :
+    if (target_card.zone % 5) != 1 :
+        points += target_card.takeDamage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
+        target_card.is_poisoned = True
+''',
+    ('bifurcate', 'touch of death') : '''
+for target_card in [front_left_card, front_right_card] :
+    if (target_card.zone % 6) != 0 :
+        points += front_card.take_damage(self.current_attack, hand, deathtouch=True, in_opp_field=is_players, bushes=bushes)
+''',
+    ('airborne', 'bifurcate') : '''
+for target_card in [front_left_card, front_right_card] :
+    if (target_card.zone % 6) != 0 :
+        points += target_card.take_damage(self.current_attack, hand, from_air=True, in_opp_field=is_players, bushes=bushes)
+''',
+    ('touch of death', 'venom') : '''
+points += front_card.take_damage(self.current_attack, hand, deathtouch=True, in_opp_field=is_players, bushes=bushes)
+front_card.is_poisoned = True
+''',
+    ('airborne', 'venom') : '''
+points += front_card.take_damage(self.current_attack, hand, from_air=True, in_opp_field=is_players, bushes=bushes)
+front_card.is_poisoned = True
+''',
+    ('airborne', 'touch of death') : '''
+points += front_card.take_damage(self.current_attack, hand, deathtouch=True, from_air=True, in_opp_field=is_players, bushes=bushes)
+''', 
+    ('split', 'unkillable') : ''' # this is only called when applicable is on_deaths
+import card
+import copy
+
+if current_field[zone].status == 'dead' and current_field == self.player_field :
+    split_card = copy.deepcopy(current_field[zone])
+
+    # play a copy to the left and right if possible
+    if split_card.base_life > 1 :
+        if zone == 1 :
+            poss_zones = [2]
+        elif zone == 5 :
+            poss_zones = [4]
+        else :
+            poss_zones = [zone-1, zone+1]
+        for shifted_zone in poss_zones :
+            if current_field[shifted_zone].species == '' :
+                current_field[shifted_zone] = card.BlankCard(species=split_card.species, cost=split_card.saccs, attack=split_card.base_attack//2, life=split_card.base_life//2, sigil=split_card.sigil, zone=shifted_zone, blank_cost=True)
+
+    # remove the original card to hand
+    current_field[zone].die()
+    current_field[zone].status = 'alive'
+    self.hand.append(current_field[zone])
+    current_field[zone] = card.BlankCard()
+    current_field[zone].play(zone)
+
+elif current_field[zone].status == 'dead' :
+    split_card = copy.deepcopy(current_field[zone])
+
+    # play a copy to the left and right if possible
+    if split_card.base_life > 1 :
+        if zone == 1 :
+            poss_zones = [2]
+        elif zone == 5 :
+            poss_zones = [4]
+        else :
+            poss_zones = [zone-1, zone+1]
+        for shifted_zone in poss_zones :
+            if current_field[shifted_zone].species == '' :
+                current_field[shifted_zone] = card.BlankCard(species=split_card.species, cost=split_card.saccs, attack=split_card.base_attack//2, life=split_card.base_life//2, sigil=split_card.sigil, zone=shifted_zone, blank_cost=True)
+                
+    # remove the original card
+    current_field[zone].die()
+    self.graveyard.insert(0, current_field[zone])
+    current_field[zone] = card.BlankCard()
+    current_field[zone].play(zone)
+    corpses.append((zone, current_field))
+''',
+    ('dam builder', 'vole hole') : '''
+import card_library
+
+self.hand.append(card_library.Vole())
+
+if zone == 1 :
+    poss_zones = [2]
+elif zone == 5 :
+    poss_zones = [4]
+else :
+    poss_zones = [zone-1, zone+1]
+for shifted_zone in poss_zones :
+    if self.player_field[shifted_zone].species == '' :
+        self.player_field[shifted_zone] = card_library.Dam()
+        self.player_field[shifted_zone].play(zone=shifted_zone)
+''',
+    ('many lives', 'unkillable') : ''' # this is only called when applicable is on_sacrifices
+import card
+
+self.hand.append(self.player_field[ind])
+self.hand[-1].saccs = 0
+self.hand[-1].update_ASCII()
+self.player_field[ind] = card.BlankCard()
+''',
+    ('mighty leap', 'waterborne') : '''
+if from_air :
+    prev_life = self.current_life
+    self.current_life -= damage
+    self.update_ASCII()
+    if self.current_life <= 0 or deathtouch :
+        self.status = 'dead'
+        if in_opp_field and self.current_life <= 0 :
+            excess_damage = damage - prev_life
+            bushes[self.zone].take_damage(excess_damage, hand, from_air, in_bushes=True)
+else :
+    teeth = damage
+''',
+    ('bees within', 'mighty leap') : '''
+import card_library
+
+if self.species == '' or self.status == 'dead' :
+    teeth = damage
+else :
+    prev_life = self.current_life
+    self.current_life -= damage
+    self.update_ASCII()
+    if not (in_opp_field or in_bushes) : # only if opponent is attacking, as leshy's bees within wont do anything; he doesnt have a hand to add to
+        hand.append(card_library.Bee())
+    if self.current_life <= 0 or deathtouch :
+        self.status = 'dead'
+        if in_opp_field and self.current_life <= 0 :
+            excess_damage = damage - prev_life
+            bushes[self.zone].take_damage(excess_damage, hand, from_air, in_bushes=True)
+''',
+    ('bees within', 'touch of death') : '''
+teeth = damage
+''',
+    ('lane shift left', 'lane shift right') : '''
+pass
+''',
+    ('hefty (right)', 'lane shift right') : '''
+import QoL
+import card
+
+if zone == 5 :
+    attacking_field[zone].sigil = 'hefty (left)'
+    attacking_field[zone].update_ASCII()
+else :
+    push_count = QoL.hefty_check(attacking_field, zone + 1, 'right')
+    if push_count == 0 :
+        attacking_field[zone].sigil = 'hefty (left)'
+        attacking_field[zone].update_ASCII()
+    elif push_count == -1 :
+        attacking_field[zone+1] = attacking_field[zone]
+        attacking_field[zone+1].zone = zone+1
+        attacking_field[zone] = card.BlankCard()
+        attacking_field[zone].play(zone)
+        did_shift = True
+    elif push_count >= 1 :
+        for n in range(zone + push_count, zone - 1, -1) :
+            attacking_field[n+1] = attacking_field[n]
+            attacking_field[n+1].zone = n+1
+            attacking_field[n] = card.BlankCard()
+            attacking_field[n].play(n)
+        did_shift = True
+''',
+    ('hefty (right)', 'lane shift left') : '''
+pass
+''',
+    ('hefty (left)', 'lane shift left') : '''
+import QoL
+import card
+
+if zone == 1 :
+    attacking_field[zone].sigil = 'hefty (right)'
+    attacking_field[zone].update_ASCII()
+else :
+    push_count = QoL.hefty_check(attacking_field, zone - 1, 'left')
+    if push_count == 0:
+        attacking_field[zone].sigil = 'hefty (right)'
+        attacking_field[zone].update_ASCII()
+    elif push_count == -1 :
+            attacking_field[zone-1] = attacking_field[zone]
+            attacking_field[zone-1].zone = zone-1
+            attacking_field[zone] = card.BlankCard()
+            attacking_field[zone].play(zone)
+            did_shift = True
+    elif push_count >= 1 :
+        for n in range(zone - push_count, zone + 1) :
+            attacking_field[n-1] = attacking_field[n]
+            attacking_field[n-1].zone = n-1
+            attacking_field[n] = card.BlankCard()
+            attacking_field[n].play(n)
+        did_shift = True
+''',
+    ('hefty (left)', 'lane shift right') : '''
+pass
+''',
+}
+
 on_attacks = ['bifurcate','venom','touch of death', 'airborne']
 on_deaths = ['split','unkillable']
 on_plays = ['vole hole','dam builder']
@@ -310,7 +511,12 @@ if __name__ == '__main__':
         if key == '':
             continue
         print(tab + QoL.title_case(key) + ':')
-        example = card.BlankCard(sigil=key)
+        example = card.BlankCard(sigil=[key])
         example.species = 'EXAMPLE CARD'
         example.explain()
         print()
+
+    example = card.BlankCard(sigil=['bifurcate','venom'])
+    example.species = 'EXAMPLE CARD'
+    example.explain()
+    print()
