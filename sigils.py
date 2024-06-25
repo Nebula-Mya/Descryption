@@ -290,6 +290,15 @@ for shifted_zone in poss_zones :
         ],
 }
 
+Combos = {
+    sorted(['bifurcate', 'venom']) : '''
+for target_card in [front_left_card, front_right_card] :
+    if (target_card.zone % 5) != 1 :
+        points += target_card.takeDamage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
+        target_card.is_poisoned = True
+''',
+}
+
 on_attacks = ['bifurcate','venom','touch of death', 'airborne']
 on_deaths = ['split','unkillable']
 on_plays = ['vole hole','dam builder']

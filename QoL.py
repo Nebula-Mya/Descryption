@@ -200,23 +200,63 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None
         applicables: the sigils to execute (list)
         global_vars: the global variables to use (dict)
         local_vars: the local variables to use (dict)
-        vars_to_return: the variables to return (list of str)
+        vars_to_return: the variables to return (list[str])
     
     Returns:
         the variables to return (list)
     '''
+    def is_subset(child, parent) :
+        '''
+        determine if child list is a subset of a parent list
+        
+        Arguments:
+            child: a list
+            parent: a list
+        
+        Returns:
+            a boolean value
+        '''
+        if(all(x in parent for x in child)) :
+            return True
+        return False
+    
+    def get_combo_code(sigil) :
+        '''
+        get the code block for a combination of sigils
+        
+        Arguments:
+            sigil: the sigils to combine (list[str])
+        
+        Returns:
+            the code block (str)
+        '''
+        # imports
+        import sigils
+
+        # sort sigils
+        combo = sorted(sigil)
+
+        # get code block
+        return sigils.Combos.get(combo, None)
+    
     # imports
     import sigils
 
-    # set up variables
-    local_vars['applicables'] = applicables
+    # get code to execute
+    if len(current_card.sigil) == 2 and is_subset(current_card.sigil, applicables) :
+        code_block = get_combo_code(current_card.sigil)
+    else :
+        for sigil in current_card.sigil :
+            if sigil in applicables :
+                code_block = sigils.Dict[sigil][2]
+                break
 
-    # execute sigil code
-    if current_card.sigil in applicables :
-        exec(sigils.Dict[current_card.sigil][2], global_vars, local_vars)
+    if code_block != '' :
+        exec(code_block, global_vars, local_vars)
 
-    # return variables
-    return [local_vars[var] for var in vars_to_return]
+    returned_vars = [local_vars[var] for var in vars_to_return]
+
+    return returned_vars
 
 def hefty_check(field, zone, direction) :
     '''
@@ -321,6 +361,25 @@ def reps_int(string, increment=0) :
         return True, int(string) + increment
     except ValueError : # if not, default to 0 and return False
         return False, 0
+
+def sigil_in_category(sigil, category) :
+    '''
+    checks if a sigil is in a category
+
+    Arguments:
+        sigil: the sigil(s) to check (list[str])
+        category: the category to check (dict)
+    
+    Returns:
+        whether the sigil is in the category (bool)
+    '''
+    match len(sigil) :
+        case 1 :
+            return sigil[0] in category
+        case 2 :
+            return sigil[0] in category or sigil[1] in category
+        case _ :
+            raise ValueError('Sigil must be a list of length 1 or 2')
 
 def ping(locals={'ping':'pong'}) : # for testing
     '''
