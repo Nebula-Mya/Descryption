@@ -192,20 +192,20 @@ class BlankCard() :
 
         if len(self.sigil) == 1 : # one sigil, including no sigil currently
             # get sigil name
-            match self.sigil :
+            match self.sigil[0] :
                 case '' :
                     sigil_text = 'No Sigil'
-                case _ if 'hefty' in self.sigil:
+                case _ if 'hefty' in self.sigil[0]:
                     sigil_text = 'Hefty:'
                 case _ :
-                    sigil_text = QoL.title_case(self.sigil) + ':'
+                    sigil_text = QoL.title_case(self.sigil[0]) + ':'
 
             # get parameters for sigil description
             max_desc_first = term_cols - 18 - card_gaps*2 - len(sigil_text)
             max_desc_rest = term_cols - 14 - card_gaps*2
 
             # split description into lines
-            [desc_first_line, desc_second_line, desc_third_line] = QoL.split_nicely(sigils.Dict[self.sigil][1], max_desc_first, max_desc_rest, max_lines=3, add_blank_lines=True)
+            [desc_first_line, desc_second_line, desc_third_line] = QoL.split_nicely(sigils.Dict[self.sigil[0]][1], max_desc_first, max_desc_rest, max_lines=3, add_blank_lines=True)
             
             # create display text
             for line in range(1, 12) :
@@ -227,14 +227,47 @@ class BlankCard() :
         elif len(self.sigil) == 2 : # two sigils
             match self.sigil[0] :
                 case _ if 'hefty' in self.sigil[0]:
-                    sigil_text1 = 'Hefty:'
+                    sigil1_text = 'Hefty:'
                 case _ :
-                    sigil_text1 = QoL.title_case(self.sigil[0]) + ':'
+                    sigil1_text = QoL.title_case(self.sigil[0]) + ':'
             match self.sigil[1] :
                 case _ if 'hefty' in self.sigil[1]:
-                    sigil_text2 = 'Hefty:'
+                    sigil2_text = 'Hefty:'
                 case _ :
-                    sigil_text2 = QoL.title_case(self.sigil[1]) + ':'
+                    sigil2_text = QoL.title_case(self.sigil[1]) + ':'
+
+            # get parameters for sigil description
+            s1_max_desc_first = term_cols - 18 - card_gaps*2 - len(sigil1_text)
+            s2_max_desc_first = term_cols - 18 - card_gaps*2 - len(sigil2_text)
+            max_desc_rest = term_cols - 14 - card_gaps*2
+
+
+            # split description into lines
+            [s1_desc_first_line, s1_desc_second_line, s1_desc_third_line] = QoL.split_nicely(sigils.Dict[self.sigil[0]][1], s1_max_desc_first, max_desc_rest, max_lines=3, add_blank_lines=True)
+            [s2_desc_first_line, s2_desc_second_line, s2_desc_third_line] = QoL.split_nicely(sigils.Dict[self.sigil[1]][1], s2_max_desc_first, max_desc_rest, max_lines=3, add_blank_lines=True)
+
+            # create display text
+            for line in range(1, 12) :
+                if line != 1 : # go to next line
+                    explanation += '\n'
+                explanation += ' '*card_gaps + self.text_lines[line] # add the card line
+                match line : # add the explanation to the end of the line
+                    case 2 : # cost and species
+                        explanation += ' '*(card_gaps + 2) + self.species + ' requires ' + str(self.saccs) + ' sacrifices to summon.'
+                    case 4 : # sigil 1 and description line 1
+                        explanation += ' '*(card_gaps + 2) + sigil1_text + ' ' + s1_desc_first_line
+                    case 5 :
+                        explanation += ' '*(card_gaps + 6) + s1_desc_second_line
+                    case 6 :
+                        explanation += ' '*(card_gaps + 6) + s1_desc_third_line
+                    case 7 : # sigil 2 and description line 1
+                        explanation += ' '*(card_gaps + 2) + sigil2_text + ' ' + s2_desc_first_line
+                    case 8 :
+                        explanation += ' '*(card_gaps + 6) + s2_desc_second_line
+                    case 9 :
+                        explanation += ' '*(card_gaps + 6) + s2_desc_third_line
+                    case 10 : # stats
+                        explanation += ' '*(card_gaps + 2) + self.species + ' has an attack power of ' + str(self.current_attack) + ' and life points of ' + str(self.current_life) + ' of ' + str(self.base_life) + '.'
 
         else : 
             raise ValueError('Sigil must be a list of length 1 or 2')
@@ -273,7 +306,7 @@ class BlankCard() :
 |             |
 |          {S}|
 '-------------'
-        '''.format(species=self.name, C=self.cost, rw1=sigils.Dict[self.sigil][0][0], rw2=sigils.Dict[self.sigil][0][1], rw3=sigils.Dict[self.sigil][0][2], S=self.stats).split("\n")
+        '''.format(species=self.name, C=self.cost, rw1=sigils.Dict[self.sigil[0]][0][0], rw2=sigils.Dict[self.sigil[0]][0][1], rw3=sigils.Dict[self.sigil[0]][0][2], S=self.stats).split("\n")
                 
         elif len(self.sigil) == 2 : # two sigils
             self.text_lines = '''

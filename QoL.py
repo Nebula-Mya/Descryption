@@ -234,7 +234,7 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None
         import sigils
 
         # sort sigils
-        combo = sorted(sigil)
+        combo = tuple(sorted(sigil))
 
         # get code block
         return sigils.Combos.get(combo, None)

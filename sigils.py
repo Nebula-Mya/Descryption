@@ -291,7 +291,7 @@ for shifted_zone in poss_zones :
 }
 
 Combos = {
-    sorted(['bifurcate', 'venom']) : '''
+    ('bifurcate', 'venom') : '''
 for target_card in [front_left_card, front_right_card] :
     if (target_card.zone % 5) != 1 :
         points += target_card.takeDamage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
@@ -319,7 +319,12 @@ if __name__ == '__main__':
         if key == '':
             continue
         print(tab + QoL.title_case(key) + ':')
-        example = card.BlankCard(sigil=key)
+        example = card.BlankCard(sigil=[key])
         example.species = 'EXAMPLE CARD'
         example.explain()
         print()
+
+    example = card.BlankCard(sigil=['bifurcate','venom'])
+    example.species = 'EXAMPLE CARD'
+    example.explain()
+    print()
