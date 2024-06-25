@@ -228,6 +228,9 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None
     # imports
     import sigils
 
+    # set up variables
+    code_block = ''
+
     # get code to execute
     if len(current_card.sigil) == 2 and all(x in applicables for x in current_card.sigil) :
         code_block = get_combo_code(current_card.sigil)
