@@ -38,6 +38,8 @@ class BlankCard() :
         die() : resets stats and updates ASCII
         explain() : prints explanation of stats and sigil for player
         update_ASCII() : updates the ASCII art for the card
+        sigil_in_category(category) : checks if a sigil is in a category
+        has_sigil(sigil_name) : checks if a card has a sigil
     '''
     def __init__(self, species = '', cost = 0, attack = 0, life = 0, sigil = None, status = 'alive', zone = 0, blank_cost = False, blank_stats = False) :
         # manage mutable default arguments
@@ -105,7 +107,7 @@ class BlankCard() :
         points = 0
 
         # attack cards
-        if QoL.sigil_in_category(self.sigil, sigils.on_attacks) : # if sigil is a sigil that activates on attack
+        if self.sigil_in_category(sigils.on_attacks) : # if sigil includes a sigil that activates on attack
             [points] = QoL.exec_sigil_code(self, sigils.on_attacks, local_vars=locals(), vars_to_return=['points'])
         else : # if sigil is irrelevant or none existent, attack front
             points = front_card.take_damage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
@@ -148,7 +150,7 @@ class BlankCard() :
         teeth = 0
 
         # take damage
-        if QoL.sigil_in_category(self.sigil, sigils.on_damages) : # if sigil is a sigil that activates on damage
+        if self.sigil_in_category(sigils.on_damages) : # if sigil includes a sigil that activates on damage
             [teeth] = QoL.exec_sigil_code(self, sigils.on_damages, local_vars=locals(), vars_to_return=['teeth'])
         # if sigil is irrelevant or none existent, take damage
         elif self.species == '' or self.status == 'dead' or from_air : 
@@ -328,6 +330,36 @@ class BlankCard() :
         
         else :
             raise ValueError('Sigil must be a list of length 1 or 2')
+
+    def sigil_in_category(self, category) :
+        '''
+        checks if a sigil is in a category
+
+        Arguments:
+            category: the category to check (list or dict)
+        
+        Returns:
+            whether the sigil is in the category (bool)
+        '''
+        match len(self.sigil) :
+            case 1 :
+                return self.sigil[0] in category
+            case 2 :
+                return self.sigil[0] in category or self.sigil[1] in category
+            case _ :
+                raise ValueError('Sigil must be a list of length 1 or 2')
+
+    def has_sigil(self, sigil_name) :
+        '''
+        checks if a card has a sigil
+
+        Arguments:
+            sigil_name: the sigil to check (str)
+        
+        Returns:
+            whether the card has the sigil (bool)
+        '''
+        return any(sigil_name in sigil for sigil in self.sigil)
 
 if __name__ == "__main__" :
     testblank = BlankCard()

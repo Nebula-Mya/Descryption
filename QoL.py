@@ -348,25 +348,6 @@ def reps_int(string, increment=0) :
     except ValueError : # if not, default to 0 and return False
         return False, 0
 
-def sigil_in_category(sigil, category) :
-    '''
-    checks if a sigil is in a category
-
-    Arguments:
-        sigil: the sigil(s) to check (list[str])
-        category: the category to check (dict)
-    
-    Returns:
-        whether the sigil is in the category (bool)
-    '''
-    match len(sigil) :
-        case 1 :
-            return sigil[0] in category
-        case 2 :
-            return sigil[0] in category or sigil[1] in category
-        case _ :
-            raise ValueError('Sigil must be a list of length 1 or 2')
-
 def ping(locals={'ping':'pong'}) : # for testing
     '''
     writes local variables to ping.txt
