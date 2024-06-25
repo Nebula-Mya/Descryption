@@ -227,6 +227,19 @@ AI_categories = [
         },
 ]
 
+Better_AI_categories = [
+    # include the card to play's sigil and the opposing card's sigil AND stats
+
+    # sigils will probably work in the same manner as species have been working, though it may be more efficient to use lambda functions to check for sigils
+
+    # stats could be done via conditional lambda functions
+    ### example (for waterborne) :
+    ''' 
+    'stats' : (lambda self_attack, self_life, opp_attack, opp_life : opp_attack < 3 and self_life > 2 * opp_attack),
+    '''
+    ### then you just call 'waterborne'['stats'](self_attack, self_life, opp_attack, opp_life) to get the result and factor that into the decision
+]
+
 if __name__ == '__main__' :
     import deck
     Leshy_cardlist = deck.Deck([])

@@ -74,6 +74,19 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
 
     return in_strategy, out_of_strategy
 
+    # new code (use only stats and sigils to determine strategy)
+    pass
+
+    ### ideas
+    # for sigil strategies, use opposing card's stats and sigils
+
+    # when checking for counters, check for sigils and stats (ie avoid playing a card with airborne into a card with mighty leap, or a card with 1 attack into a card with bees within, or a waterborne into a card with high attack)
+
+    # most of the changes should be in the list itself
+
+    # both sigils will need to be checked for
+    ### could generate two seperate in_strategy lists, one for each sigil, and then union or intersect them to get the final in_strategy list, then generate the out_of_strategy list from that
+
 def get_corpse_eaters(hand) :
     '''
     gets the indexes of all corpse eaters in the hand
