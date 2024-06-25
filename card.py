@@ -39,7 +39,10 @@ class BlankCard() :
         explain() : prints explanation of stats and sigil for player
         update_ASCII() : updates the ASCII art for the card
     '''
-    def __init__(self, species = '', cost = 0, attack = 0, life = 0, sigil = [''], status = 'alive', zone = 0, blank_cost = False, blank_stats = False) :
+    def __init__(self, species = '', cost = 0, attack = 0, life = 0, sigil = None, status = 'alive', zone = 0, blank_cost = False, blank_stats = False) :
+        # manage mutable default arguments
+        if sigil is None :
+            sigil = ['']
 
         # basic variables
         self.is_poisoned = False
@@ -145,7 +148,7 @@ class BlankCard() :
         teeth = 0
 
         # take damage
-        if self.sigil in sigils.on_damages: # if sigil is a sigil that activates on damage
+        if QoL.sigil_in_category(self.sigil, sigils.on_damages) : # if sigil is a sigil that activates on damage
             [teeth] = QoL.exec_sigil_code(self, sigils.on_damages, local_vars=locals(), vars_to_return=['teeth'])
         # if sigil is irrelevant or none existent, take damage
         elif self.species == '' or self.status == 'dead' or from_air : 
@@ -164,7 +167,7 @@ class BlankCard() :
 
     def play(self, zone) :
         '''
-        activates sigils on entering field, resets stats, and updates zone
+        resets stats and updates zone
         '''
         if zone not in range (1, 6) : # error handling
             raise ValueError('Zone must be between 1 and 5')

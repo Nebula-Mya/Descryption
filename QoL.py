@@ -205,20 +205,6 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None
     Returns:
         the variables to return (list)
     '''
-    def is_subset(child, parent) :
-        '''
-        determine if child list is a subset of a parent list
-        
-        Arguments:
-            child: a list
-            parent: a list
-        
-        Returns:
-            a boolean value
-        '''
-        if(all(x in parent for x in child)) :
-            return True
-        return False
     
     def get_combo_code(sigil) :
         '''
@@ -243,7 +229,7 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None
     import sigils
 
     # get code to execute
-    if len(current_card.sigil) == 2 and is_subset(current_card.sigil, applicables) :
+    if len(current_card.sigil) == 2 and all(x in applicables for x in current_card.sigil) :
         code_block = get_combo_code(current_card.sigil)
     else :
         for sigil in current_card.sigil :

@@ -52,19 +52,53 @@ class Deck() :
         card = sorted_deck[index]
         self.cards.remove(card)
 
-    def change_sigil(self, index, sigil) :
+    def change_sigil(self, index, sigil, sigil_slot=1) :
         '''
         changes card's sigil
 
         Arguments:
             index: index of card to change (int)
             sigil: sigil to change to (str)
+            sigil_slot: slot to change sigil in, 1 or 2 (int)
         '''
-        self.check_index(index) # error handling
-        
+
+        # imports
+        import sigils
+
+        # set up variables
         sorted_deck = QoL.sort_deck(self.cards)
-        sorted_deck[index].sigil = sigil 
-        sorted_deck[index].update_ASCII()
+
+        # error handling
+        self.check_index(index)
+        try :
+            same_sigil = sorted_deck[index].sigil[0] == sorted_deck[index].sigil[1]
+        except IndexError :
+            same_sigil = False
+        try :
+            bad_pair = sorted_deck[index].sigil[0] in sigils.movers and sorted_deck[index].sigil[1] in sigils.movers
+        except IndexError :
+            bad_pair = False
+        if same_sigil or bad_pair :
+            raise ValueError(f"invalid sigil pair: {sorted_deck[index].sigil[0]} and {sorted_deck[index].sigil[1]}")
+        if sigil_slot not in [1, 2] :
+            raise ValueError(f"invalid sigil slot: {sigil_slot}")
+
+        # if first sigil is empty, always change it
+        if sorted_deck[index].sigil[0] == '' :
+            sigil_slot = 1
+        
+        # change sigil
+        match sigil_slot :
+            case 1 :
+                sorted_deck[index].sigil[0] = sigil
+            case 2 :
+                if len(sorted_deck[index].sigil) == 1 :
+                    sorted_deck[index].sigil.append('') # if only one sigil is given, add empty string
+                sorted_deck[index].sigil[1] = sigil
+        
+        # sorted_deck[index].update_ASCII()
+        for card in self.cards :
+            card.update_ASCII()
 
     def shuffle(self) :
         '''
@@ -97,6 +131,7 @@ if __name__ == '__main__' :
     print(testdeck.cards[4])
     testdeck.cards[4].take_damage(1, hand=[])
     testdeck.change_sigil(4, 'hefty (right)')
+    testdeck.change_sigil(1, 'hefty (left)', 2)
     QoL.clear()
     print(testdeck)
     slot5.explain()
