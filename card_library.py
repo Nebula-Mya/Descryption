@@ -181,12 +181,16 @@ class Louis(card.BlankCard) : # death card
             sigils = ['waterborne', 'lane shift left']
         super().__init__(species='Louis', cost=1, attack=1, life=1, sigils=sigils, blank_cost=blank_cost)
 
+class FlawPeacock(card.BlankCard) : # death card, referencing Flawed Peacock's video on Inscryption, which is how I found out about it
+    def __init__(self, blank_cost=False) :
+        super().__init__(species='Flaw Peacock', cost=3, attack=3, life=2, sigils=['bees within', 'many lives'], blank_cost=blank_cost)
+
 # Allowed cards:
 Poss_Playr = {
     0 : [Rabbit(), Shrew(), BlackGoat()],
     1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog(), Beehive(), Cat(), Warren(), Otter(), Kingfisher(), Louis()],
     2 : [Ouroboros(), Asp(), Falcon(), Cockroach(), Wolf(), Raven(), Beaver(), Adder(), CorpseMaggots(), Pronghorn(), Salmon()],
-    3 : [Lobster(), Grizzly(), BullShark()],
+    3 : [Lobster(), Grizzly(), BullShark(), FlawPeacock()],
     4 : [BoppitW(), Urayuli(), MooseBuck()]
 }
 Poss_Leshy = {
@@ -196,7 +200,7 @@ Poss_Leshy = {
     3 : [Lobster(True), Grizzly(True), BullShark(True), BoppitW(True)]
 }
 
-Rare_Cards = [Ouroboros(), Louis(), Urayuli()]
+Rare_Cards = [Ouroboros(), Louis(), Urayuli(), FlawPeacock()]
 
 # categories for Leshy's AI
 AI_categories = [
