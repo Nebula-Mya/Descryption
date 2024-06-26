@@ -74,9 +74,6 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
 
     return in_strategy, out_of_strategy
 
-    # new code (use only stats and sigils to determine strategy)
-    pass
-
     ### planning ###
     # both sigils will need to be checked for
 
@@ -91,6 +88,9 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
     # by going zone by zone rather than category by category, priority is no longer relevant, which makes expanding the categories easier
 
     # because species is not used in the new system, special handling of moving cards is not necessary
+
+    # new code (use only stats and sigils to determine strategy)
+    pass
 
 def get_corpse_eaters(hand) :
     '''

@@ -228,7 +228,7 @@ AI_categories = [
 ]
 
 Better_AI_categories = [
-    # good against airbornes (non airborne glass cannons and those with mighty leap)
+    # good against airbornes (glass cannons and those with mighty leap)
     {
         'category' : 'anti_air', 
         'self sigils' : ['mighty leap'],
@@ -238,51 +238,51 @@ Better_AI_categories = [
     # good against deathtouch (waterbornes and those with deathtouch)
     {
         'category' : 'anti_deathtouch',
-        'self sigils' : [],
-        'opp sigils' : [],
+        'self sigils' : ['waterborne','touch of death'],
+        'opp sigils' : ['touch of death'],
         'stats' : (lambda self_attack, self_life, opp_attack, opp_life : None)
         },
     # good against waterbornes (tanks and those with waterborne)
     {
         'category' : 'anti_water',
-        'self sigils' : [],
-        'opp sigils' : [],
-        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : None)
+        'self sigils' : ['waterborne'],
+        'opp sigils' : ['waterborne'],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : self_life >= opp_attack * 3)
         },
-    # good against bifurcates (non airborne glass cannons (airbornes wouldnt kill the bifurcate))
+    # good against bifurcates (glass cannons)
     {
         'category' : 'anti_bifurcate',
-        'self sigils' : [],
-        'opp sigils' : [],
-        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : None)
+        'self sigils' : ['touch of death','venom'],
+        'opp sigils' : ['bifurcate'],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : self_attack >= 3 and self_life <= opp_attack)
         },
-    # good against those with on death effects (tanks, airbornes, and bifurcates) (death effects are bees within, split, many lives, and unkillable)
+    # good against those with on hurt effects (pure tanks, airbornes, and bifurcates)
     {
-        'category' : 'wont_kill',
-        'self sigils' : [],
-        'opp sigils' : [],
-        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : None)
+        'category' : 'wont_hurt',
+        'self sigils' : ['airborne','bifurcate'],
+        'opp sigils' : ['bees within','split','unkillable'],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : self_attack == 0)
         },
-    # good against those with venom (fragiles and waterbornes)
+    # good against those with venom (tanks and waterbornes)
     {
         'category' : 'anti_venom',
-        'self sigils' : [],
-        'opp sigils' : [],
-        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : None)
+        'self sigils' : ['waterborne'],
+        'opp sigils' : ['venom'],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : self_life >= opp_attack * 2 + 2)
         },
-    # good against those moving right (moves with, bifurcate, or trifurcate)
+    # good against those moving right (heavy hitters, moves with, and bifurcate)
     {
         'category' : 'anti_right',
-        'self sigils' : [],
-        'opp sigils' : [],
-        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : None)
+        'self sigils' : ['lane shift right','hefty (right)', 'bifurcate'],
+        'opp sigils' : ['lane shift right','hefty (right)'],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : self_attack >= opp_life)
         },
-    # good against those moving left (moves with, bifurcate, or trifurcate)
+    # good against those moving left (heavy hitters, moves with, and bifurcate)
     {
         'category' : 'anti_left',
-        'self sigils' : [],
-        'opp sigils' : [],
-        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : None)
+        'self sigils' : ['lane shift left','hefty (left)', 'bifurcate'],
+        'opp sigils' : ['lane shift left','hefty (left)'],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : self_attack >= opp_life)
         },
 ]
 
