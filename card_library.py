@@ -240,7 +240,7 @@ Better_AI_categories = [
         'category' : 'anti_deathtouch',
         'self sigils' : ['waterborne','touch of death'],
         'opp sigils' : ['touch of death'],
-        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : None)
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : False)
         },
     # good against waterbornes (tanks and those with waterborne)
     {
