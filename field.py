@@ -79,24 +79,15 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
 
     ### planning ###
     # both sigils will need to be checked for
-    ### could generate and filter two seperate in_strategy lists, one for each sigil, and then union or intersect them to get the final in_strategy list, then generate the out_of_strategy list from that
-    ### store the seperate lists in a list and create them using a for loop across range(len(card.sigils)) and then union or intersect them at the end
-    '''
-    if len(strat_lists) == 1 :
-        in_strategy = strat_lists[0]
-    elif len(strat_lists) == 2 :
-        in_strategy = strat_lists[0] & strat_lists[1]
-    '''
 
-    # three included functions: one for creating a strategy list, one for filtering a strategy list, and one for determining if a category applies to a zone
+    # include a function to get a boolean of whether the zone is in strategy or not, combining the different factors
     
     # function structure :
-    ### def the three included functions (create_strat_list, filter_strat_list, category_applies)
-    ### for loop over sigils to create strat lists, which are stored in a list
-    ##### within the for loop, use the create and filter functions, which in turn use the category_applies function
-    ### union or intersect the strat lists
-    ### use a difference update to create the out_of_strategy list (out_of_strategy = range(1, 6) - in_strategy)
-    ### return in_strategy, out_of_strategy
+    ### def the included function for determining if a category applies to a zone
+    ### check if the threshold has been met for offensive play, if so, do that
+    ### iterate over the zones, adding them to the in_strategy list either sigil has them in strategy, unless both sigils have it out of strategy, otherwise add them to the out_of_strategy list
+    
+    # by going zone by zone rather than category by category, priority is no longer relevant, which makes expanding the categories easier
 
 def get_corpse_eaters(hand) :
     '''
@@ -651,7 +642,7 @@ if __name__ == '__main__' :
         # place a hefty card in the player's field
         playmat.player_field[2] = card_library.MooseBuck()
         playmat.player_field[2].play(zone=2)
-        playmat.player_field[2].sigil = ['hefty (right)']
+        playmat.player_field[2].sigils = ['hefty (right)','']
         playmat.player_field[2].update_ASCII()
 
         # print the field
@@ -691,7 +682,7 @@ if __name__ == '__main__' :
         # place a hefty card in the player's field
         playmat.player_field[4] = card_library.MooseBuck()
         playmat.player_field[4].play(zone=4)
-        playmat.player_field[4].sigil = ['hefty (left)']
+        playmat.player_field[4].sigils = ['hefty (left)','']
         playmat.player_field[4].update_ASCII()
 
         # print the field

@@ -11,7 +11,7 @@ class BlankCard() :
         cost : number of sacrifices needed for summoning (int)
         attack : base attack stat (int)
         life : base life stat (int)
-        sigil : the sigil(s) the card currently has (list[str])
+        sigils : the sigils the card currently has (list[str])
         status : whether the card is alive or dead (str)
         zone : the zone the card is in, with 0 as default (int)
         blank_cost : whether the card has a blank cost (bool)
@@ -41,10 +41,10 @@ class BlankCard() :
         sigil_in_category(category) : checks if a sigil is in a category
         has_sigil(sigil_name) : checks if a card has a sigil
     '''
-    def __init__(self, species = '', cost = 0, attack = 0, life = 0, sigil = None, status = 'alive', zone = 0, blank_cost = False, blank_stats = False) :
+    def __init__(self, species = '', cost = 0, attack = 0, life = 0, sigils = None, status = 'alive', zone = 0, blank_cost = False, blank_stats = False) :
         # manage mutable default arguments
-        if sigil is None :
-            sigil = ['']
+        if sigils is None :
+            sigils = ['','']
 
         # basic variables
         self.is_poisoned = False
@@ -54,7 +54,7 @@ class BlankCard() :
         self.current_attack = attack
         self.base_life = life
         self.current_life = life
-        self.sigil = sigil
+        self.sigils = sigils
         self.status = status
         self.zone = zone
         self.blank_cost = blank_cost
@@ -195,22 +195,32 @@ class BlankCard() :
         term_cols = os.get_terminal_size().columns
         card_gaps = (term_cols*55 // 100) // 5 - 15
 
-        if len(self.sigil) == 1 : # one sigil, including no sigil currently
+        # error handling
+        if len(self.sigils) != 2 :
+            raise ValueError('Sigils must be a list of length 2')
+
+        if self.has_sigil('') : # one sigil
+            # get sigil index
+            if self.sigils[0] == '' :
+                sigil_ind = 1
+            else :
+                sigil_ind = 0
+
             # get sigil name
-            match self.sigil[0] :
+            match self.sigils[sigil_ind] :
                 case '' :
                     sigil_text = 'No Sigil'
-                case _ if 'hefty' in self.sigil[0]:
+                case _ if 'hefty' in self.sigils[sigil_ind]:
                     sigil_text = 'Hefty:'
                 case _ :
-                    sigil_text = QoL.title_case(self.sigil[0]) + ':'
+                    sigil_text = QoL.title_case(self.sigils[sigil_ind]) + ':'
 
             # get parameters for sigil description
             max_desc_first = term_cols - 18 - card_gaps*2 - len(sigil_text)
             max_desc_rest = term_cols - 14 - card_gaps*2
 
             # split description into lines
-            [desc_first_line, desc_second_line, desc_third_line] = QoL.split_nicely(sigils.Dict[self.sigil[0]][1], max_desc_first, max_desc_rest, max_lines=3, add_blank_lines=True)
+            [desc_first_line, desc_second_line, desc_third_line] = QoL.split_nicely(sigils.Dict[self.sigils[sigil_ind]][1], max_desc_first, max_desc_rest, max_lines=3, add_blank_lines=True)
             
             # create display text
             for line in range(1, 12) :
@@ -229,17 +239,17 @@ class BlankCard() :
                     case 10 : # stats
                         explanation += ' '*(card_gaps + 2) + self.species + ' has an attack power of ' + str(self.current_attack) + ' and life points of ' + str(self.current_life) + ' of ' + str(self.base_life) + '.'
 
-        elif len(self.sigil) == 2 : # two sigils
-            match self.sigil[0] :
-                case _ if 'hefty' in self.sigil[0]:
+        else : # two sigils
+            match self.sigils[0] :
+                case _ if 'hefty' in self.sigils[0]:
                     sigil1_text = 'Hefty:'
                 case _ :
-                    sigil1_text = QoL.title_case(self.sigil[0]) + ':'
-            match self.sigil[1] :
-                case _ if 'hefty' in self.sigil[1]:
+                    sigil1_text = QoL.title_case(self.sigils[0]) + ':'
+            match self.sigils[1] :
+                case _ if 'hefty' in self.sigils[1]:
                     sigil2_text = 'Hefty:'
                 case _ :
-                    sigil2_text = QoL.title_case(self.sigil[1]) + ':'
+                    sigil2_text = QoL.title_case(self.sigils[1]) + ':'
 
             # get parameters for sigil description
             s1_max_desc_first = term_cols - 18 - card_gaps*2 - len(sigil1_text)
@@ -248,8 +258,8 @@ class BlankCard() :
 
 
             # split description into lines
-            [s1_desc_first_line, s1_desc_second_line, s1_desc_third_line] = QoL.split_nicely(sigils.Dict[self.sigil[0]][1], s1_max_desc_first, max_desc_rest, max_lines=3, add_blank_lines=True)
-            [s2_desc_first_line, s2_desc_second_line, s2_desc_third_line] = QoL.split_nicely(sigils.Dict[self.sigil[1]][1], s2_max_desc_first, max_desc_rest, max_lines=3, add_blank_lines=True)
+            [s1_desc_first_line, s1_desc_second_line, s1_desc_third_line] = QoL.split_nicely(sigils.Dict[self.sigils[0]][1], s1_max_desc_first, max_desc_rest, max_lines=3, add_blank_lines=True)
+            [s2_desc_first_line, s2_desc_second_line, s2_desc_third_line] = QoL.split_nicely(sigils.Dict[self.sigils[1]][1], s2_max_desc_first, max_desc_rest, max_lines=3, add_blank_lines=True)
 
             # create display text
             for line in range(1, 12) :
@@ -274,9 +284,6 @@ class BlankCard() :
                     case 10 : # stats
                         explanation += ' '*(card_gaps + 2) + self.species + ' has an attack power of ' + str(self.current_attack) + ' and life points of ' + str(self.current_life) + ' of ' + str(self.base_life) + '.'
 
-        else : 
-            raise ValueError('Sigil must be a list of length 1 or 2')
-
         print(explanation)
 
     def update_ASCII(self) :
@@ -296,9 +303,18 @@ class BlankCard() :
             self.stats = ' '*3
         else :
             self.stats = hex(self.current_attack % 16)[2] + "/" + hex(self.current_life % 16)[2]
+
+        # error handling
+        if len(self.sigils) != 2 :
+            raise ValueError('Sigils must be a list of length 2')
         
         # update ASCII art for card
-        if len(self.sigil) == 1 : # one sigil, including no sigil currently
+        if self.has_sigil('') : # one sigil
+            if self.sigils[0] == '' :
+                sigil_ind = 1
+            else :
+                sigil_ind = 0
+
             self.text_lines = '''
 ,-------------,
 |{species} {C}|
@@ -311,9 +327,9 @@ class BlankCard() :
 |             |
 |          {S}|
 '-------------'
-        '''.format(species=self.name, C=self.cost, rw1=sigils.Dict[self.sigil[0]][0][0], rw2=sigils.Dict[self.sigil[0]][0][1], rw3=sigils.Dict[self.sigil[0]][0][2], S=self.stats).split("\n")
+        '''.format(species=self.name, C=self.cost, rw1=sigils.Dict[self.sigils[sigil_ind]][0][0], rw2=sigils.Dict[self.sigils[sigil_ind]][0][1], rw3=sigils.Dict[self.sigils[sigil_ind]][0][2], S=self.stats).split("\n")
                 
-        elif len(self.sigil) == 2 : # two sigils
+        else : # two sigils
             self.text_lines = '''
 ,-------------,
 |{species} {C}|
@@ -326,10 +342,7 @@ class BlankCard() :
 | {s2r3}       |
 |          {S}|
 '-------------'
-        '''.format(species=self.name, C=self.cost, s1r1=sigils.Dict[self.sigil[0]][0][0], s1r2=sigils.Dict[self.sigil[0]][0][1], s1r3=sigils.Dict[self.sigil[0]][0][2], s2r1=sigils.Dict[self.sigil[1]][0][0], s2r2=sigils.Dict[self.sigil[1]][0][1], s2r3=sigils.Dict[self.sigil[1]][0][2], S=self.stats).split("\n")
-        
-        else :
-            raise ValueError('Sigil must be a list of length 1 or 2')
+        '''.format(species=self.name, C=self.cost, s1r1=sigils.Dict[self.sigils[0]][0][0], s1r2=sigils.Dict[self.sigils[0]][0][1], s1r3=sigils.Dict[self.sigils[0]][0][2], s2r1=sigils.Dict[self.sigils[1]][0][0], s2r2=sigils.Dict[self.sigils[1]][0][1], s2r3=sigils.Dict[self.sigils[1]][0][2], S=self.stats).split("\n")
 
     def sigil_in_category(self, category) :
         '''
@@ -341,13 +354,10 @@ class BlankCard() :
         Returns:
             whether the sigil is in the category (bool)
         '''
-        match len(self.sigil) :
-            case 1 :
-                return self.sigil[0] in category
-            case 2 :
-                return self.sigil[0] in category or self.sigil[1] in category
-            case _ :
-                raise ValueError('Sigil must be a list of length 1 or 2')
+        if len(self.sigils) != 2 :
+            raise ValueError('Sigils must be a list of length 2')
+
+        return self.sigils[0] in category or self.sigils[1] in category
 
     def has_sigil(self, sigil_name) :
         '''
@@ -359,11 +369,11 @@ class BlankCard() :
         Returns:
             whether the card has the sigil (bool)
         '''
-        return any(sigil_name in sigil for sigil in self.sigil)
+        return any(sigil_name in sigil for sigil in self.sigils)
 
 if __name__ == "__main__" :
     testblank = BlankCard()
-    testsigil = slot4 = BlankCard(species='test',cost=3,attack=1,life=2,sigil='bifurcate')
+    testsigil = slot4 = BlankCard(species='test',cost=3,attack=1,life=2,sigils=['bifurcate',''])
     print()
     print('Blank Card')
     print(testblank.text_lines)
