@@ -344,7 +344,7 @@ class BlankCard() :
 '-------------'
         '''.format(species=self.name, C=self.cost, s1r1=sigils.Dict[self.sigils[0]][0][0], s1r2=sigils.Dict[self.sigils[0]][0][1], s1r3=sigils.Dict[self.sigils[0]][0][2], s2r1=sigils.Dict[self.sigils[1]][0][0], s2r2=sigils.Dict[self.sigils[1]][0][1], s2r3=sigils.Dict[self.sigils[1]][0][2], S=self.stats).split("\n")
 
-    def sigil_in_category(self, category) :
+    def sigil_in_category(self, category, sigil_slot=None) :
         '''
         checks if a sigil is in a category
 
@@ -356,7 +356,10 @@ class BlankCard() :
         '''
         if len(self.sigils) != 2 :
             raise ValueError('Sigils must be a list of length 2')
-
+        
+        if sigil_slot :
+            return self.sigils[sigil_slot] in category
+        
         return self.sigils[0] in category or self.sigils[1] in category
 
     def has_sigil(self, sigil_name) :

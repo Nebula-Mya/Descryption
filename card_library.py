@@ -170,64 +170,6 @@ Poss_Leshy = {
 
 # categories of cards for intelligent Leshy in order of priority (dicts in list)
 AI_categories = [
-    # good against airbornes (non airborne glass cannons and those with mighty leap)
-    {
-        'category' : 'anti_air', 
-        'cards' : ['Bullfrog', 'Asp', 'Wolf'], 
-        'deals_with' : ['airborne']
-        },
-
-    # good against deathtouch (waterbornes and those with deathtouch)
-    {
-        'category' : 'anti_deathtouch',
-        'cards' : ['Adder', 'Otter', 'Bull Shark'], # maybe add some on death effects
-        'deals_with' : ['touch of death']
-    },
-
-    # good against waterbornes (tanks and those with waterborne)
-    {
-        'category' : 'anti_water',
-        'cards' : ['Otter', 'Bull Shark', 'Boppit Worm', 'Turtle', 'Grizzly', 'Urayuli'],
-        'deals_with' : ['waterborne']
-    },
-
-    # good against bifurcates (non airborne glass cannons (airbornes wouldnt kill the bifurcate))
-    {
-        'category' : 'anti_bifurcate', 
-        'cards' : ['Asp', 'Wolf'], 
-        'deals_with' : ['bifurcate']
-        },
-
-    # good against those with on death effects (tanks, airbornes, and bifurcates) (death effects are bees within, split, many lives, and unkillable)
-    {
-        'category' : 'wont_kill', 
-        'cards' : ['Turtle', 'Falcon', 'Raven', 'Lobster', 'Warren', 'Dam', 'Vole'], 
-        'deals_with' : ['bees within', 'split', 'many lives', 'unkillable']
-        },
-
-    # good against those with venom (fragiles and waterbornes(to be added))
-    {
-        'category' : 'anti_venom', 
-        'cards' : ['Asp', 'Cockroach', 'Dumpy Tree Frog', 'Otter', 'Bull Shark', 'Adder'], 
-        'deals_with' : ['venom']
-        },
-
-    # good against those moving right (moves with, bifurcate, or trifurcate(to be added))
-    {
-        'category' : 'anti_right', 
-        'cards' : ['Shrew', 'Lobster', 'Beaver'], 
-        'deals_with' : ['lane shift right', 'hefty (right)']
-        },
-
-    # good against those moving left (moves with, bifurcate, or trifurcate(to be added))
-    {
-        'category' : 'anti_left', 
-        'cards' : ['Rabbit', 'Lobster', 'Beaver'], 
-        'deals_with' : ['lane shift left', 'hefty (left)']
-        },
-]
-
-Better_AI_categories = [
     # good against airbornes (glass cannons and those with mighty leap)
     {
         'category' : 'anti_air', 

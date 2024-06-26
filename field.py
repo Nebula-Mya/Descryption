@@ -24,76 +24,70 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
         in_strategy: the zones in strategy (list)
         out_of_strategy: the zones out of strategy (list)
     '''
-    # set up variables
-    in_strategy = []
-    out_of_strategy = []
-    influenced = False
+    def is_in_strat(card_to_play, opp_card, sigil_slot) :
+        # set up variables
+        self_attack = card_to_play.current_attack
+        self_life = card_to_play.current_life
+        opp_attack = opp_card.current_attack
+        opp_life = opp_card.current_life
 
-    # steps of the strategy:
-    # 1. Check if Leshy is winning enough to go on the offensive, regardless of card category
-    # 2. Check for categories/strategies in order of priority
-    # 3. For those not in a category or whose category did not apply (defensive)
-    # 4. Remove zones that are countered by player's cards from the strategy
-
-    # Leshy winning enough to go on the offensive, regardless of card category
-    if (score['opponent'] - score['player'] >= strat_change_threshold) and (card_to_play.base_attack > 0): 
-        in_strategy += [zone for zone in range(1, 6) if bushes[zone].species == '' and player_field[zone].species == '']
-
-        out_of_strategy += [zone for zone in range(1, 6) if bushes[zone].species == '' and zone not in in_strategy]
-
-        influenced = bool(in_strategy) # only influence if strat applies to at least 1 zone, otherwise allow it to continue to the next strat
-
-    # check for categories/strategies in order of priority
-    for category in (category for category in categories if not influenced and card_to_play.species in category['cards']) : # generator to prevent checking categories if already influenced and reduce memory usage
-        out_of_strategy = [] # reset incase previous category didn't apply to any zones
-
-        in_strategy += [zone for zone in range(1, 6) if bushes[zone].species == '' and player_field[zone].sigil_in_category(category['deals_with'])]
-
-        out_of_strategy += [zone for zone in range(1, 6) if bushes[zone].species == '' and zone not in in_strategy]
-
-        influenced = bool(in_strategy) # only influence if strat applies to at least 1 zone, otherwise allow it to continue to the next strat
-
-    # for those not in a category or whose category did not apply (defensive)
-    if not influenced :
-        out_of_strategy = [] # reset incase previous category didn't apply to any zones
-
-        in_strategy += [zone for zone in range(1, 6) if bushes[zone].species == '' and player_field[zone].species != '']
-
-        out_of_strategy += [zone for zone in range(1, 6) if bushes[zone].species == '' and zone not in in_strategy]
+        # check for categories
+        for category in [category for category in categories if opp_card.sigil_in_category(category['opp sigils'])] :
+            if card_to_play.sigil_in_category(category['self sigils'], sigil_slot) or category['stats'](self_attack, self_life, opp_attack, opp_life) :
+                return True
+        
+        # if no categories apply
+        if opp_card.species != '' and (self_life > opp_attack or self_attack >= opp_life or opp_attack >= 4) :
+            return True
+        
+        return False
     
-    # check for cards that counter Leshy's cards
-    for zone in [zone for category in categories if card_to_play.sigil_in_category(category['deals_with']) for zone in range(1, 6)] : 
-        both_right = player_field[zone].has_sigil('right') and card_to_play.has_sigil('right')
-        both_left = player_field[zone].has_sigil('left') and card_to_play.has_sigil('left')
-        if both_right or both_left : # guard clause for opposing shifting cards, which counter eachother
-            continue
+    def is_out_strat(card_to_play, opp_card, sigil_slot) :
+        # set up variables
+        self_attack = card_to_play.current_attack
+        self_life = card_to_play.current_life
+        opp_attack = opp_card.current_attack
+        opp_life = opp_card.current_life
 
-        if card_to_play.species in category['cards'] and zone in in_strategy :
-            out_of_strategy.append(zone)
-            in_strategy.remove(zone)
+        # check for counters
+        for category in [category for category in categories if opp_card.sigil_in_category(category['self sigils'])] :
+            if card_to_play.sigil_in_category(category['opp sigils'], sigil_slot) or category['stats'](opp_attack, opp_life, self_attack, self_life) :
+                return True
+        
+        return False
+    
+    def add_to_in_strat(card_to_play, player_field, bushes, zone) :
+        # set up variables
+        opp_card = player_field[zone]
+        bush_empty = bushes[zone].species == ''
+
+        # if Leshy is winning enough to go on the offensive, regardless of card category
+        if (score['opponent'] - score['player'] >= strat_change_threshold) and (card_to_play.base_attack > 0) :
+            if bush_empty and opp_card.species == '' :
+                return True
+            else :
+                False
+        
+        # get booleans
+        s1_in_strat_check = is_in_strat(card_to_play, opp_card, 0)
+        s1_out_strat_check = is_out_strat(card_to_play, opp_card, 0)
+        s2_in_strat_check = is_in_strat(card_to_play, opp_card, 1)
+        s2_out_strat_check = is_out_strat(card_to_play, opp_card, 1)
+
+        # combine booleans
+        in_strat_check = s1_in_strat_check or s2_in_strat_check
+        out_strat_check = s1_out_strat_check or s2_out_strat_check
+
+        match (in_strat_check, out_strat_check, bush_empty) :
+            case (True, False, True) :
+                return True
+            case _ :
+                return False
+    
+    in_strategy = [zone for zone in range(1, 6) if add_to_in_strat(card_to_play, player_field, bushes, zone)]
+    out_of_strategy = [zone for zone in range(1, 6) if zone not in in_strategy]
 
     return in_strategy, out_of_strategy
-
-    ### planning ###
-    # both sigils will need to be checked for
-
-    # include a function to get a boolean of whether the zone is in strategy or not for a sigil, combining the different factors (if opp has sigil in [opp sigils] and (card has sigil in [self sigils] or [stats] is true) ), falling back on playing defensively if no categories apply
-    # include a function to get a boolean of whether the zone is out of strategy or not for a sigil, combining the different factors (opposite of above)
-    # include a function to get a boolean of whether a zone should be added to in_strategy based on both sigils and its stats (add zone to the in_strategy list if either sigil has it in strategy, unless both sigils have it out of strategy)
-    
-    # function structure :
-    ### def the included functions
-    ### check if the threshold has been met for offensive play, if so, do that
-    ### iterate over the zones, adding them to the in_strategy list if the 3rd included function returns true, otherwise add them to the out_of_strategy list
-    
-    # by going zone by zone rather than category by category, priority is no longer relevant, which makes expanding the categories easier
-
-    # because species is not used in the new system, special handling of moving cards is not necessary
-
-    # empty zones will just be ignored, as they aren't in any categories and are out of defensive play, so no extra checks are needed
-
-    # new code (use only stats and sigils to determine strategy)
-    pass
 
 def get_corpse_eaters(hand) :
     '''
