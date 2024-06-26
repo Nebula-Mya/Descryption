@@ -299,7 +299,7 @@ def sort_deck(deck) :
     deck = sorted(deck, key=lambda x: x.name) # sort by name (will be sub-sorting under cost)
     return sorted(deck, key=lambda x: x.saccs)
 
-def print_deck(deck, sort=False, fruitful=False) :
+def print_deck(deck, sort=False, fruitful=False, numbered=False) :
     '''
     prints a list of cards in a deck, with optional sorting
 
@@ -307,32 +307,49 @@ def print_deck(deck, sort=False, fruitful=False) :
         deck: deck to print (list)
         sort: whether to sort the deck before printing (bool)
         fruitful: whether to return the deck string instead of printing it (bool)
+        numbered: whether to number the cards (bool)
     '''
-    # sort deck if needed
-    if sort :
-        deck = sort_deck(deck)
+    def card_gap_numbered(card_gaps, number) :
+        number_str = str(number)
+        return ' ' * (card_gaps - len(number_str) - 1) + number_str + ' '
+    
+    def line_str(line, card_gaps, row, numbered) :
+        card_gaps_space = ' ' * card_gaps
+
+        if line == 0 and numbered :
+            text = ''
+            for card in row :
+                text += card_gap_numbered(card_gaps, card_number[0]) + card.text_by_line()
+                card_number[0] += 1
+        else :
+            text = card_gaps_space + card_gaps_space.join(card.text_by_line() for card in row)
+        
+        return text
+    
+    # set up variables
+    card_number = [1]
     
     # get terminal size
     term_cols = os.get_terminal_size().columns
     card_gaps = (term_cols*55 // 100) // 5 - 15
-    card_gaps_space = ' ' * card_gaps
 
     # get number of cards per row
-    cards_per_row = term_cols // (card_gaps + 15) 
+    cards_per_row = term_cols // (card_gaps + 15)
     if cards_per_row >= 9 :
         cards_per_row = 8
 
+    # sort deck if needed
+    if sort :
+        deck = sort_deck(deck)
+
     # split deck into rows
     chunked = [deck[i:i + cards_per_row] for i in range(0, len(deck), cards_per_row)]
-    
+
     # generate deck string
-    deck_string = '\n'.join(
-        '\n'.join(
-            card_gaps_space + card_gaps_space.join(card.text_by_line() for card in row)
-            for _ in range(11)
-        )
-        for row in chunked
-    )
+    deck_string = ''
+    for row in chunked :
+        line_strings = [line_str(line, card_gaps, row, numbered) for line in range(11)]
+        deck_string += '\n' + '\n'.join(line_strings)
     if fruitful :
         return deck_string
     print(deck_string)

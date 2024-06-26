@@ -104,7 +104,7 @@ class Deck() :
         return shuffled_deck
 
     def __str__(self) : 
-        return QoL.print_deck(self.cards, sort=True, fruitful=True)
+        return QoL.print_deck(self.cards, sort=True, fruitful=True, numbered=True)
 
 if __name__ == '__main__' :
     import card_library
