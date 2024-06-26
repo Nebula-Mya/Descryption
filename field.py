@@ -77,15 +77,26 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
     # new code (use only stats and sigils to determine strategy)
     pass
 
-    ### ideas
-    # for sigil strategies, use opposing card's stats and sigils
-
-    # when checking for counters, check for sigils and stats (ie avoid playing a card with airborne into a card with mighty leap, or a card with 1 attack into a card with bees within, or a waterborne into a card with high attack)
-
-    # most of the changes should be in the list itself
-
+    ### planning ###
     # both sigils will need to be checked for
-    ### could generate two seperate in_strategy lists, one for each sigil, and then union or intersect them to get the final in_strategy list, then generate the out_of_strategy list from that
+    ### could generate and filter two seperate in_strategy lists, one for each sigil, and then union or intersect them to get the final in_strategy list, then generate the out_of_strategy list from that
+    ### store the seperate lists in a list and create them using a for loop across range(len(card.sigils)) and then union or intersect them at the end
+    '''
+    if len(strat_lists) == 1 :
+        in_strategy = strat_lists[0]
+    elif len(strat_lists) == 2 :
+        in_strategy = strat_lists[0] & strat_lists[1]
+    '''
+
+    # three included functions: one for creating a strategy list, one for filtering a strategy list, and one for determining if a category applies to a zone
+    
+    # function structure :
+    ### def the three included functions (create_strat_list, filter_strat_list, category_applies)
+    ### for loop over sigils to create strat lists, which are stored in a list
+    ##### within the for loop, use the create and filter functions, which in turn use the category_applies function
+    ### union or intersect the strat lists
+    ### use a difference update to create the out_of_strategy list (out_of_strategy = range(1, 6) - in_strategy)
+    ### return in_strategy, out_of_strategy
 
 def get_corpse_eaters(hand) :
     '''

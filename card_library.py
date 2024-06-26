@@ -228,16 +228,20 @@ AI_categories = [
 ]
 
 Better_AI_categories = [
-    # include the card to play's sigil and the opposing card's sigil AND stats
+    ### planning ###
+    # each member will be a dict with the following keys :
+    ### 'category' : the category/strategy's name for reference (having it stored will be useful for debugging)
+    ### 'self sigils': a list of sigils that use the strategy
+    ### 'opp sigils' : a list of sigils that the strategy is good against
+    ### 'stats' : a lambda function that takes in the stats of the card and the opponent's card and returns a boolean of whether the card is good in the situation
 
-    # sigils will probably work in the same manner as species have been working, though it may be more efficient to use lambda functions to check for sigils
-
-    # stats could be done via conditional lambda functions
     ### example (for waterborne) :
     ''' 
     'stats' : (lambda self_attack, self_life, opp_attack, opp_life : opp_attack < 3 and self_life > 2 * opp_attack),
     '''
     ### then you just call 'waterborne'['stats'](self_attack, self_life, opp_attack, opp_life) to get the result and factor that into the decision
+
+    # use a function within ai_category_checking to get a boolean of whether the zone is in strategy or not, combining the different factors
 ]
 
 if __name__ == '__main__' :
