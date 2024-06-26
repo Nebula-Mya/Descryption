@@ -212,6 +212,8 @@ class BlankCard() :
                     sigil_text = 'No Sigil'
                 case _ if 'hefty' in self.sigils[sigil_ind]:
                     sigil_text = 'Hefty:'
+                case _ if 'lane shift' in self.sigils[sigil_ind]:
+                    sigil_text = 'Sprinter:'
                 case _ :
                     sigil_text = QoL.title_case(self.sigils[sigil_ind]) + ':'
 
@@ -243,11 +245,15 @@ class BlankCard() :
             match self.sigils[0] :
                 case _ if 'hefty' in self.sigils[0]:
                     sigil1_text = 'Hefty:'
+                case _ if 'lane shift' in self.sigils[0]:
+                    sigil_text = 'Sprinter:'
                 case _ :
                     sigil1_text = QoL.title_case(self.sigils[0]) + ':'
             match self.sigils[1] :
                 case _ if 'hefty' in self.sigils[1]:
                     sigil2_text = 'Hefty:'
+                case _ if 'lane shift' in self.sigils[1]:
+                    sigil_text = 'Sprinter:'
                 case _ :
                     sigil2_text = QoL.title_case(self.sigils[1]) + ':'
 

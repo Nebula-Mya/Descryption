@@ -17,11 +17,20 @@ for target_card in [front_left_card, front_right_card] :
 
     'lane shift right' : [
         [",-,  ","| |->","'-'  "], 
-        'Moves right after attacking if possible.',
+        'Moves to the right.',
         '''
 import card
+import QoL
 
-if zone != 5 and attacking_field[zone+1].species == '' :
+if attacking_field[zone].sigils[0] == 'lane shift right' :
+    changed_direction = ['lane shift left', attacking_field[zone].sigils[1]]
+else :
+    changed_direction = [attacking_field[zone].sigils[0], 'lane shift left']
+
+if zone == 5 or QoL.hefty_check(attacking_field, zone + 1, 'right') == 0 :
+    attacking_field[zone].sigils = changed_direction
+    attacking_field[zone].update_ASCII()
+elif attacking_field[zone+1].species == '' :
     attacking_field[zone+1] = attacking_field[zone]
     attacking_field[zone+1].zone = zone+1
     attacking_field[zone] = card.BlankCard()
@@ -32,11 +41,20 @@ if zone != 5 and attacking_field[zone+1].species == '' :
 
     'lane shift left' : [
         ["  ,-,","<-| |","  '-'"],
-        'Moves left after attacking if possible.',
+        'Moves to the left.',
         '''
 import card
+import QoL
 
-if zone != 1 and attacking_field[zone-1].species == '' :
+if attacking_field[zone].sigils[0] == 'lane shift left' :
+    changed_direction = ['lane shift right', attacking_field[zone].sigils[1]]
+else :
+    changed_direction = [attacking_field[zone].sigils[0], 'lane shift right']
+
+if zone == 1 or QoL.hefty_check(attacking_field, zone - 1, 'left') == 0 :
+    attacking_field[zone].sigils = changed_direction
+    attacking_field[zone].update_ASCII()
+elif attacking_field[zone-1].species == '' :
     attacking_field[zone-1] = attacking_field[zone]
     attacking_field[zone-1].zone = zone-1
     attacking_field[zone] = card.BlankCard()
@@ -67,7 +85,7 @@ if applicables == sigils.on_deaths and current_field[zone].status == 'dead' :
             poss_zones = [zone-1, zone+1]
         for shifted_zone in poss_zones :
             if current_field[shifted_zone].species == '' :
-                current_field[shifted_zone] = card.BlankCard(species=split_card.species, cost=split_card.saccs, attack=split_card.base_attack//2, life=split_card.base_life//2, sigils=split_card.sigils, zone=shifted_zone, blank_cost=True)
+                current_field[shifted_zone] = card.BlankCard(species=split_card.species, cost=split_card.saccs, attack=split_card.base_attack//2, life=split_card.base_life//2, sigil=split_card.sigils, zone=shifted_zone, blank_cost=True)
     
     # remove the original card
     current_field[zone].die()
@@ -168,7 +186,7 @@ else :
     self.current_life -= damage
     self.update_ASCII()
     if not (in_opp_field or in_bushes) : # only if opponent is attacking, as leshy's bees within wont do anything; he doesnt have a hand to add to
-        hand.append(card_library.Bee(sigils=other_sigil))
+        hand.append(card_library.Bee(sigil=other_sigil))
     if self.current_life <= 0 or deathtouch :
         self.status = 'dead'
         if in_opp_field and self.current_life <= 0 :
@@ -184,10 +202,10 @@ else :
 import QoL
 import card
 
-if self.sigils[0] == 'hefty (right)' :
-    changed_direction = ['hefty (left)', self.sigils[1]]
+if attacking_field[zone].sigils[0] == 'hefty (right)' :
+    changed_direction = ['hefty (left)', attacking_field[zone].sigils[1]]
 else :
-    changed_direction = [self.sigils[0], 'hefty (left)']
+    changed_direction = [attacking_field[zone].sigils[0], 'hefty (left)']
 
 if zone == 5 :
     attacking_field[zone].sigils = changed_direction
@@ -220,10 +238,10 @@ else :
 import QoL
 import card
 
-if self.sigils[0] == 'hefty (left)' :
-    changed_direction = ['hefty (right)', self.sigils[1]]
+if attacking_field[zone].sigils[0] == 'hefty (left)' :
+    changed_direction = ['hefty (right)', attacking_field[zone].sigils[1]]
 else :
-    changed_direction = [self.sigils[0], 'hefty (right)']
+    changed_direction = [attacking_field[zone].sigils[0], 'hefty (right)']
 
 if zone == 1 :
     attacking_field[zone].sigils = changed_direction
@@ -273,7 +291,7 @@ import card_library
 
 other_sigil = [sigil for sigil in self.sigils if sigil != 'vole hole'] + ['']
 
-self.hand.append(card_library.Vole(sigils=other_sigil))
+self.hand.append(card_library.Vole(sigil=other_sigil))
 '''
         ],
 
@@ -357,7 +375,7 @@ if current_field[zone].status == 'dead' and current_field == self.player_field :
             poss_zones = [zone-1, zone+1]
         for shifted_zone in poss_zones :
             if current_field[shifted_zone].species == '' :
-                current_field[shifted_zone] = card.BlankCard(species=split_card.species, cost=split_card.saccs, attack=split_card.base_attack//2, life=split_card.base_life//2, sigils=split_card.sigils, zone=shifted_zone, blank_cost=True)
+                current_field[shifted_zone] = card.BlankCard(species=split_card.species, cost=split_card.saccs, attack=split_card.base_attack//2, life=split_card.base_life//2, sigil=split_card.sigils, zone=shifted_zone, blank_cost=True)
 
     # remove the original card to hand
     current_field[zone].die()
@@ -379,7 +397,7 @@ elif current_field[zone].status == 'dead' :
             poss_zones = [zone-1, zone+1]
         for shifted_zone in poss_zones :
             if current_field[shifted_zone].species == '' :
-                current_field[shifted_zone] = card.BlankCard(species=split_card.species, cost=split_card.saccs, attack=split_card.base_attack//2, life=split_card.base_life//2, sigils=split_card.sigils, zone=shifted_zone, blank_cost=True)
+                current_field[shifted_zone] = card.BlankCard(species=split_card.species, cost=split_card.saccs, attack=split_card.base_attack//2, life=split_card.base_life//2, sigil=split_card.sigils, zone=shifted_zone, blank_cost=True)
                 
     # remove the original card
     current_field[zone].die()
@@ -538,12 +556,7 @@ if __name__ == '__main__':
         if key == '':
             continue
         print(tab + QoL.title_case(key) + ':')
-        example = card.BlankCard(sigils=[key])
+        example = card.BlankCard(sigils=[key, ''])
         example.species = 'EXAMPLE CARD'
         example.explain()
         print()
-
-    example = card.BlankCard(sigils=['bifurcate','venom'])
-    example.species = 'EXAMPLE CARD'
-    example.explain()
-    print()
