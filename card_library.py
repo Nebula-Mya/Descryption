@@ -228,18 +228,62 @@ AI_categories = [
 ]
 
 Better_AI_categories = [
-    ### planning ###
-    # each member will be a dict with the following keys :
-    ### 'category' : the category/strategy's name for reference (having it stored will be useful for debugging)
-    ### 'self sigils': a list of sigils that use the strategy
-    ### 'opp sigils' : a list of sigils that the strategy is good against
-    ### 'stats' : a lambda function that takes in the stats of the card and the opponent's card and returns a boolean of whether the card is good in the situation
-
-    ### example (for waterborne) :
-    ''' 
-    'stats' : (lambda self_attack, self_life, opp_attack, opp_life : opp_attack < 3 and self_life > 2 * opp_attack),
-    '''
-    ### then you just call 'waterborne'['stats'](self_attack, self_life, opp_attack, opp_life) to get the result and factor that into the decision
+    # good against airbornes (non airborne glass cannons and those with mighty leap)
+    {
+        'category' : 'anti_air', 
+        'self sigils' : ['mighty leap'],
+        'opp sigils' : ['airborne'],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : self_attack >= 3 and self_life <= opp_attack)
+        },
+    # good against deathtouch (waterbornes and those with deathtouch)
+    {
+        'category' : 'anti_deathtouch',
+        'self sigils' : [],
+        'opp sigils' : [],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : None)
+        },
+    # good against waterbornes (tanks and those with waterborne)
+    {
+        'category' : 'anti_water',
+        'self sigils' : [],
+        'opp sigils' : [],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : None)
+        },
+    # good against bifurcates (non airborne glass cannons (airbornes wouldnt kill the bifurcate))
+    {
+        'category' : 'anti_bifurcate',
+        'self sigils' : [],
+        'opp sigils' : [],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : None)
+        },
+    # good against those with on death effects (tanks, airbornes, and bifurcates) (death effects are bees within, split, many lives, and unkillable)
+    {
+        'category' : 'wont_kill',
+        'self sigils' : [],
+        'opp sigils' : [],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : None)
+        },
+    # good against those with venom (fragiles and waterbornes)
+    {
+        'category' : 'anti_venom',
+        'self sigils' : [],
+        'opp sigils' : [],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : None)
+        },
+    # good against those moving right (moves with, bifurcate, or trifurcate)
+    {
+        'category' : 'anti_right',
+        'self sigils' : [],
+        'opp sigils' : [],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : None)
+        },
+    # good against those moving left (moves with, bifurcate, or trifurcate)
+    {
+        'category' : 'anti_left',
+        'self sigils' : [],
+        'opp sigils' : [],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : None)
+        },
 ]
 
 if __name__ == '__main__' :

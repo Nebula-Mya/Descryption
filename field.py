@@ -80,14 +80,17 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
     ### planning ###
     # both sigils will need to be checked for
 
-    # include a function to get a boolean of whether the zone is in strategy or not, combining the different factors
+    # include a function to get a boolean of whether the zone is in strategy or not, combining the different factors (if opp has sigil in [opp sigils] and card has sigil in [self sigils] or [stats] is true)
+    # include a function to get a boolean of whether the zone is out of strategy or not, combining the different factors (opposite of above)
     
     # function structure :
-    ### def the included function for determining if a category applies to a zone
+    ### def the included functions
     ### check if the threshold has been met for offensive play, if so, do that
     ### iterate over the zones, adding them to the in_strategy list either sigil has them in strategy, unless both sigils have it out of strategy, otherwise add them to the out_of_strategy list
     
     # by going zone by zone rather than category by category, priority is no longer relevant, which makes expanding the categories easier
+
+    # because species is not used in the new system, special handling of moving cards is not necessary
 
 def get_corpse_eaters(hand) :
     '''
