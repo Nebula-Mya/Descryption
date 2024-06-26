@@ -77,17 +77,20 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
     ### planning ###
     # both sigils will need to be checked for
 
-    # include a function to get a boolean of whether the zone is in strategy or not, combining the different factors (if opp has sigil in [opp sigils] and card has sigil in [self sigils] or [stats] is true)
-    # include a function to get a boolean of whether the zone is out of strategy or not, combining the different factors (opposite of above)
+    # include a function to get a boolean of whether the zone is in strategy or not for a sigil, combining the different factors (if opp has sigil in [opp sigils] and (card has sigil in [self sigils] or [stats] is true) ), falling back on playing defensively if no categories apply
+    # include a function to get a boolean of whether the zone is out of strategy or not for a sigil, combining the different factors (opposite of above)
+    # include a function to get a boolean of whether a zone should be added to in_strategy based on both sigils and its stats (add zone to the in_strategy list if either sigil has it in strategy, unless both sigils have it out of strategy)
     
     # function structure :
     ### def the included functions
     ### check if the threshold has been met for offensive play, if so, do that
-    ### iterate over the zones, adding them to the in_strategy list either sigil has them in strategy, unless both sigils have it out of strategy, otherwise add them to the out_of_strategy list
+    ### iterate over the zones, adding them to the in_strategy list if the 3rd included function returns true, otherwise add them to the out_of_strategy list
     
     # by going zone by zone rather than category by category, priority is no longer relevant, which makes expanding the categories easier
 
     # because species is not used in the new system, special handling of moving cards is not necessary
+
+    # empty zones will just be ignored, as they aren't in any categories and are out of defensive play, so no extra checks are needed
 
     # new code (use only stats and sigils to determine strategy)
     pass
