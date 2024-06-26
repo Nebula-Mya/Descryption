@@ -298,11 +298,18 @@ def deck_gen(possible_cards, size) :
         raise ValueError('Possible cards dict must not be empty.')
 
     def random_card(possible_cards, alpha=2.2, beta=3.3) :
+        # get cost
         max_cost = max(possible_cards.keys())
         cost = math.floor((max_cost + 1) * random.betavariate(alpha, beta))
-        card = copy.deepcopy(random.choice(possible_cards[cost]))
 
-        return card
+        # get card type
+        template_card = random.choice(possible_cards[cost])
+        card_class = type(template_card)
+        if any(type(card) for card in card_library.Rare_Cards) == card_class: # lower chances of rare cards
+            template_card = random.choice(possible_cards[cost])
+            card_class = type(template_card)
+
+        return card_class(getattr(template_card, 'blank_cost', False))
     
     deck_list = [random_card(possible_cards) for _ in range(size)]
 
@@ -402,4 +409,8 @@ if __name__ == '__main__' :
     QoL.clear()
     deck_size = 20
     hand_size = 5
-    main(deck_size, hand_size)
+    Leshy_play_count_median = 2
+    Leshy_play_count_variance = 1
+    Leshy_in_strategy_chance = 75
+    Leshy_strat_change_threshold = 3
+    main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold)

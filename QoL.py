@@ -295,8 +295,9 @@ def sort_deck(deck) :
     Returns:
         the sorted deck (list)
     '''
+    deck = sorted(deck, key=lambda x: x.sigils) # sort by sigils
     deck = sorted(deck, key=lambda x: x.name) # sort by name (will be sub-sorting under cost)
-    return sorted(deck, key=lambda x: x.cost)
+    return sorted(deck, key=lambda x: x.saccs)
 
 def print_deck(deck, sort=False, fruitful=False) :
     '''

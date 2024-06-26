@@ -372,7 +372,7 @@ class BlankCard() :
         Returns:
             whether the card has the sigil (bool)
         '''
-        return any(sigil_name in sigil for sigil in self.sigils)
+        return any(sigil_name == sigil for sigil in self.sigils)
 
 if __name__ == "__main__" :
     testblank = BlankCard()

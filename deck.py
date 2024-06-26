@@ -108,26 +108,15 @@ class Deck() :
 
 if __name__ == '__main__' :
     import card_library
-    slot1 = card_library.Squirrel()
-    slot2 = card_library.Rabbit()
-    slot3 = card_library.Squirrel()
-    slot4 = card_library.Lobster()
-    slot5 = card_library.BoppitW()
-    slot6 = card_library.Ouroboros()
-    slot7 = card_library.Asp()
-    slot8 = card_library.Turtle()
-    slot9 = card_library.Falcon()
-    slot10 = card_library.DumpyTF()
-    decklist = [slot1, slot2, slot3, slot4, slot5, slot6, slot7, slot8, slot9, slot10]
-    for _ in range(2) :
-        decklist.append(card_library.Squirrel())
-    testdeck = Deck(decklist)
-    print(testdeck)
-    print(testdeck.cards[4])
-    testdeck.cards[4].take_damage(1, hand=[])
-    testdeck.change_sigil(4, 'hefty (right)', 1)
-    testdeck.change_sigil(1, 'hefty (left)', 2)
+    import duel
+
+    test_deck_player = duel.deck_gen(card_library.Poss_Playr, 16)
+    test_deck_opponent = duel.deck_gen(card_library.Poss_Leshy, 16)
+
+    # display decks
     QoL.clear()
-    print(testdeck)
-    slot5.explain()
-    print(testdeck.shuffle())
+    print('Possible player deck:')
+    print(test_deck_player)
+    print()
+    print('Possible opponent deck:')
+    print(test_deck_opponent)

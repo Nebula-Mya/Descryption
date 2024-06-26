@@ -153,20 +153,50 @@ class BullShark(card.BlankCard) :
     def __init__(self, blank_cost=False) :
         super().__init__(species='Bull Shark', cost=3, attack=4, life=2, sigils=['waterborne',''], blank_cost=blank_cost)
 
+class Kingfisher(card.BlankCard) :
+    def __init__(self, blank_cost=False) :
+        super().__init__(species='Kingfisher', cost=1, attack=1, life=1, sigils=['airborne','waterborne'], blank_cost=blank_cost)
+
+class Pronghorn(card.BlankCard) :
+    def __init__(self, blank_cost=False) :
+        if random.randint(0,1) == 0 :
+            sigils = ['lane shift right', 'bifurcate']
+        else :
+            sigils = ['lane shift left', 'bifurcate']
+        super().__init__(species='Pronghorn', cost=2, attack=1, life=3, sigils=sigils, blank_cost=blank_cost)
+
+class Salmon(card.BlankCard) : 
+    def __init__(self, blank_cost=False) :
+        if random.randint(0,1) == 0 :
+            sigils = ['waterborne', 'lane shift right']
+        else :
+            sigils = ['waterborne', 'lane shift left']
+        super().__init__(species='Salmon', cost=2, attack=2, life=2, sigils=sigils, blank_cost=blank_cost)
+
+class Louis(card.BlankCard) : # death card
+    def __init__(self, blank_cost=False) :
+        if random.randint(0,1) == 0 :
+            sigils = ['waterborne', 'lane shift right']
+        else :
+            sigils = ['waterborne', 'lane shift left']
+        super().__init__(species='Louis', cost=1, attack=1, life=1, sigils=sigils, blank_cost=blank_cost)
+
 # Allowed cards:
 Poss_Playr = {
     0 : [Rabbit(), Shrew(), BlackGoat()],
-    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog(), Beehive(), Cat(), Warren(), Otter()],
-    2 : [Asp(), Falcon(), Cockroach(), Wolf(), Raven(), Beaver(), Adder(), CorpseMaggots()]*3 + [Ouroboros()],
+    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog(), Beehive(), Cat(), Warren(), Otter(), Kingfisher(), Louis()],
+    2 : [Ouroboros(), Asp(), Falcon(), Cockroach(), Wolf(), Raven(), Beaver(), Adder(), CorpseMaggots(), Pronghorn(), Salmon()],
     3 : [Lobster(), Grizzly(), BullShark()],
     4 : [BoppitW(), Urayuli(), MooseBuck()]
 }
 Poss_Leshy = {
     0 : [OppositeRabbit(True), OppositeShrew(True)],
-    1 : [DumpyTF(True), Turtle(True), Stoat(True), Bullfrog(True), CorpseMaggots(True), Otter(True)],
-    2 : [Asp(True), Falcon(True), Cockroach(True), Wolf(True), Raven(True), Adder(True)],
+    1 : [DumpyTF(True), Turtle(True), Stoat(True), Bullfrog(True), CorpseMaggots(True), Otter(True), Kingfisher(True)],
+    2 : [Asp(True), Falcon(True), Cockroach(True), Wolf(True), Raven(True), Adder(True), Pronghorn(True), Salmon(True)],
     3 : [Lobster(True), Grizzly(True), BullShark(True), BoppitW(True)]
 }
+
+Rare_Cards = [Ouroboros(), Louis(), Urayuli()]
 
 # categories for Leshy's AI
 AI_categories = [
