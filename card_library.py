@@ -11,19 +11,19 @@ class Squirrel(card.BlankCard) :
 
 class Rabbit(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Rabbit', cost=0, attack=1, life=1, sigil=['lane shift right'], blank_cost=blank_cost)
+        super().__init__(species='Rabbit', cost=0, attack=1, life=1, sigils=['lane shift right',''], blank_cost=blank_cost)
     
 class OppositeRabbit(card.BlankCard) : # only for Leshy
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Rabbit', cost=0, attack=1, life=1, sigil=['lane shift left'], blank_cost=blank_cost)
+        super().__init__(species='Rabbit', cost=0, attack=1, life=1, sigils=['lane shift left',''], blank_cost=blank_cost)
 
 class Shrew(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Shrew', cost=0, attack=1, life=1, sigil=['lane shift left'], blank_cost=blank_cost)
+        super().__init__(species='Shrew', cost=0, attack=1, life=1, sigils=['lane shift left',''], blank_cost=blank_cost)
 
 class OppositeShrew(card.BlankCard) : # only for Leshy
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Shrew', cost=0, attack=1, life=1, sigil=['lane shift right'], blank_cost=blank_cost)
+        super().__init__(species='Shrew', cost=0, attack=1, life=1, sigils=['lane shift right',''], blank_cost=blank_cost)
 
 class DumpyTF(card.BlankCard) :
     def __init__(self, blank_cost=False) :
@@ -35,24 +35,24 @@ class Turtle(card.BlankCard) :
 
 class Asp(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Asp', cost=2, attack=2, life=2, sigil=['venom'], blank_cost=blank_cost)
+        super().__init__(species='Asp', cost=2, attack=2, life=2, sigils=['venom',''], blank_cost=blank_cost)
 
 class Falcon(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Falcon', cost=2, attack=3, life=1, sigil=['airborne'], blank_cost=blank_cost)
+        super().__init__(species='Falcon', cost=2, attack=3, life=1, sigils=['airborne',''], blank_cost=blank_cost)
 
 class Lobster(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Lobster', cost=3, attack=2, life=3, sigil=['bifurcate'], blank_cost=blank_cost)
+        super().__init__(species='Lobster', cost=3, attack=2, life=3, sigils=['bifurcate',''], blank_cost=blank_cost)
 
 class BoppitW(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Boppit Worm', cost=4, attack=3, life=5, sigil=['split'], blank_cost=blank_cost)
+        super().__init__(species='Boppit Worm', cost=4, attack=3, life=5, sigils=['split',''], blank_cost=blank_cost)
 
 class Ouroboros(card.BlankCard) :
     def __init__(self, blank_cost=False) :
         [oro_attack, oro_life] = QoL.read_data([['ouroboros', 'attack'], ['ouroboros', 'life']])
-        super().__init__(species='Ouroboros', cost=2, attack=oro_attack, life=oro_life, sigil=['unkillable'], blank_cost=blank_cost)
+        super().__init__(species='Ouroboros', cost=2, attack=oro_attack, life=oro_life, sigils=['unkillable',''], blank_cost=blank_cost)
 
     def die(self) :
         self.base_attack += 1
@@ -62,7 +62,7 @@ class Ouroboros(card.BlankCard) :
 
 class Cockroach(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Cockroach', cost=2, attack=1, life=1, sigil=['unkillable'], blank_cost=blank_cost)
+        super().__init__(species='Cockroach', cost=2, attack=1, life=1, sigils=['unkillable',''], blank_cost=blank_cost)
 
 class Stoat(card.BlankCard) :
     def __init__(self, blank_cost=False) :
@@ -82,27 +82,27 @@ class Urayuli(card.BlankCard) :
 
 class Raven(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Raven', cost=2, attack=2, life=3, sigil=['airborne'], blank_cost=blank_cost)
+        super().__init__(species='Raven', cost=2, attack=2, life=3, sigils=['airborne',''], blank_cost=blank_cost)
 
 class Bee(card.BlankCard) : # only given by a sigil
-    def __init__(self, blank_cost=False, sigil=['airborne']) :
-        super().__init__(species='Bee', cost=0, attack=1, life=1, sigil=sigil, blank_cost=blank_cost)
+    def __init__(self, blank_cost=False, sigils=['airborne','']) :
+        super().__init__(species='Bee', cost=0, attack=1, life=1, sigils=sigils, blank_cost=blank_cost)
 
 class Bullfrog(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Bullfrog', cost=1, attack=1, life=2, sigil=['mighty leap'], blank_cost=blank_cost)
+        super().__init__(species='Bullfrog', cost=1, attack=1, life=2, sigils=['mighty leap',''], blank_cost=blank_cost)
 
 class BlackGoat(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Black Goat', cost=1, attack=0, life=1, sigil=['worthy sacrifice'], blank_cost=blank_cost)
+        super().__init__(species='Black Goat', cost=1, attack=0, life=1, sigils=['worthy sacrifice',''], blank_cost=blank_cost)
 
 class Beehive(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Beehive', cost=1, attack=0, life=2, sigil=['bees within'], blank_cost=blank_cost)
+        super().__init__(species='Beehive', cost=1, attack=0, life=2, sigils=['bees within',''], blank_cost=blank_cost)
 
 class Cat(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Cat', cost=1, attack=0, life=1, sigil=['many lives'], blank_cost=blank_cost)
+        super().__init__(species='Cat', cost=1, attack=0, life=1, sigils=['many lives',''], blank_cost=blank_cost)
         self.spent_lives = 0
     
     def reset_stats(self):
@@ -116,42 +116,42 @@ class UndeadCat(card.BlankCard) :
 class MooseBuck(card.BlankCard) :
     def __init__(self, blank_cost=False) :
         if random.randint(0,1) == 0 :
-            sigil_direction = ['hefty (left)']
+            sigil_direction = ['hefty (left)','']
         else :
-            sigil_direction = ['hefty (right)']
-        super().__init__(species='Moose Buck', cost=4, attack=3, life=7, sigil=sigil_direction, blank_cost=blank_cost)
+            sigil_direction = ['hefty (right)','']
+        super().__init__(species='Moose Buck', cost=4, attack=3, life=7, sigils=sigil_direction, blank_cost=blank_cost)
 
 class Dam(card.BlankCard) : # only given by a sigil
     def __init__(self, blank_cost=True) :
         super().__init__(species='Dam', cost=0, attack=0, life=2, blank_cost=blank_cost)
 
 class Vole(card.BlankCard) : # only given by a sigil
-    def __init__(self, blank_cost=False, sigil=None) :
-        super().__init__(species='Vole', cost=0, attack=0, life=1, sigil=sigil, blank_cost=blank_cost)
+    def __init__(self, blank_cost=False, sigils=None) :
+        super().__init__(species='Vole', cost=0, attack=0, life=1, sigils=sigils, blank_cost=blank_cost)
 
 class Warren(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Warren', cost=1, attack=0, life=2, sigil=['vole hole'], blank_cost=blank_cost)
+        super().__init__(species='Warren', cost=1, attack=0, life=2, sigils=['vole hole',''], blank_cost=blank_cost)
 
 class Beaver(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Beaver', cost=2, attack=1, life=3, sigil=['dam builder'], blank_cost=blank_cost)
+        super().__init__(species='Beaver', cost=2, attack=1, life=3, sigils=['dam builder',''], blank_cost=blank_cost)
 
 class Adder(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Adder', cost=2, attack=1, life=1, sigil=['touch of death'], blank_cost=blank_cost)
+        super().__init__(species='Adder', cost=2, attack=1, life=1, sigils=['touch of death',''], blank_cost=blank_cost)
 
 class CorpseMaggots(card.BlankCard) : # in Leshy's 1 cost and the player's 2 cost groups due to the 3 cost mainly being a deterrent for the player
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Corpse Maggots', cost=3, attack=1, life=2, sigil=['corpse eater'], blank_cost=blank_cost)
+        super().__init__(species='Corpse Maggots', cost=3, attack=1, life=2, sigils=['corpse eater',''], blank_cost=blank_cost)
 
 class Otter(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Otter', cost=1, attack=1, life=1, sigil=['waterborne'], blank_cost=blank_cost)
+        super().__init__(species='Otter', cost=1, attack=1, life=1, sigils=['waterborne',''], blank_cost=blank_cost)
 
 class BullShark(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        super().__init__(species='Bull Shark', cost=3, attack=4, life=2, sigil=['waterborne'], blank_cost=blank_cost)
+        super().__init__(species='Bull Shark', cost=3, attack=4, life=2, sigils=['waterborne',''], blank_cost=blank_cost)
 
 # Allowed cards:
 Poss_Playr = {
@@ -170,60 +170,61 @@ Poss_Leshy = {
 
 # categories of cards for intelligent Leshy in order of priority (dicts in list)
 AI_categories = [
-    # good against airbornes (non airborne glass cannons and those with mighty leap)
+    # good against airbornes (glass cannons and those with mighty leap)
     {
         'category' : 'anti_air', 
-        'cards' : ['Bullfrog', 'Asp', 'Wolf'], 
-        'deals_with' : ['airborne']
+        'self sigils' : ['mighty leap'],
+        'opp sigils' : ['airborne'],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : self_attack >= 3 and self_life <= opp_attack)
         },
-
     # good against deathtouch (waterbornes and those with deathtouch)
     {
         'category' : 'anti_deathtouch',
-        'cards' : ['Adder', 'Otter', 'Bull Shark'], # maybe add some on death effects
-        'deals_with' : ['touch of death']
-    },
-
+        'self sigils' : ['waterborne','touch of death'],
+        'opp sigils' : ['touch of death'],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : False)
+        },
     # good against waterbornes (tanks and those with waterborne)
     {
         'category' : 'anti_water',
-        'cards' : ['Otter', 'Bull Shark', 'Boppit Worm', 'Turtle', 'Grizzly', 'Urayuli'],
-        'deals_with' : ['waterborne']
-    },
-
-    # good against bifurcates (non airborne glass cannons (airbornes wouldnt kill the bifurcate))
-    {
-        'category' : 'anti_bifurcate', 
-        'cards' : ['Asp', 'Wolf'], 
-        'deals_with' : ['bifurcate']
+        'self sigils' : ['waterborne'],
+        'opp sigils' : ['waterborne'],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : self_life >= opp_attack * 3)
         },
-
-    # good against those with on death effects (tanks, airbornes, and bifurcates) (death effects are bees within, split, many lives, and unkillable)
+    # good against bifurcates (glass cannons)
     {
-        'category' : 'wont_kill', 
-        'cards' : ['Turtle', 'Falcon', 'Raven', 'Lobster', 'Warren', 'Dam', 'Vole'], 
-        'deals_with' : ['bees within', 'split', 'many lives', 'unkillable']
+        'category' : 'anti_bifurcate',
+        'self sigils' : ['touch of death','venom'],
+        'opp sigils' : ['bifurcate'],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : self_attack >= 3 and self_life <= opp_attack)
         },
-
-    # good against those with venom (fragiles and waterbornes(to be added))
+    # good against those with on hurt effects (pure tanks, airbornes, and bifurcates)
     {
-        'category' : 'anti_venom', 
-        'cards' : ['Asp', 'Cockroach', 'Dumpy Tree Frog', 'Otter', 'Bull Shark', 'Adder'], 
-        'deals_with' : ['venom']
+        'category' : 'wont_hurt',
+        'self sigils' : ['airborne','bifurcate'],
+        'opp sigils' : ['bees within','split','unkillable'],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : self_attack == 0)
         },
-
-    # good against those moving right (moves with, bifurcate, or trifurcate(to be added))
+    # good against those with venom (tanks and waterbornes)
     {
-        'category' : 'anti_right', 
-        'cards' : ['Shrew', 'Lobster', 'Beaver'], 
-        'deals_with' : ['lane shift right', 'hefty (right)']
+        'category' : 'anti_venom',
+        'self sigils' : ['waterborne'],
+        'opp sigils' : ['venom'],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : self_life >= opp_attack * 2 + 2)
         },
-
-    # good against those moving left (moves with, bifurcate, or trifurcate(to be added))
+    # good against those moving right (heavy hitters, moves with, and bifurcate)
     {
-        'category' : 'anti_left', 
-        'cards' : ['Rabbit', 'Lobster', 'Beaver'], 
-        'deals_with' : ['lane shift left', 'hefty (left)']
+        'category' : 'anti_right',
+        'self sigils' : ['lane shift right','hefty (right)', 'bifurcate'],
+        'opp sigils' : ['lane shift right','hefty (right)'],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : self_attack >= opp_life)
+        },
+    # good against those moving left (heavy hitters, moves with, and bifurcate)
+    {
+        'category' : 'anti_left',
+        'self sigils' : ['lane shift left','hefty (left)', 'bifurcate'],
+        'opp sigils' : ['lane shift left','hefty (left)'],
+        'stats' : (lambda self_attack, self_life, opp_attack, opp_life : self_attack >= opp_life)
         },
 ]
 

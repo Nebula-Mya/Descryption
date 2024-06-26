@@ -233,10 +233,10 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None
     local_vars['applicables'] = applicables
 
     # get code to execute
-    if len(current_card.sigil) == 2 and all(x in applicables for x in current_card.sigil) :
-        code_block = get_combo_code(current_card.sigil)
+    if all(x in applicables for x in current_card.sigils) :
+        code_block = get_combo_code(current_card.sigils)
     else :
-        for sigil in current_card.sigil :
+        for sigil in current_card.sigils :
             if sigil in applicables :
                 code_block = sigils.Dict[sigil][2]
                 break

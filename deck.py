@@ -52,7 +52,7 @@ class Deck() :
         card = sorted_deck[index]
         self.cards.remove(card)
 
-    def change_sigil(self, index, sigil, sigil_slot=1) :
+    def change_sigil(self, index, sigil, sigil_slot) :
         '''
         changes card's sigil
 
@@ -65,28 +65,23 @@ class Deck() :
         sorted_deck = QoL.sort_deck(self.cards)
         same_sigil = False
 
-        # if first sigil is empty, always change it
-        if sorted_deck[index].sigil[0] == '' :
-            sigil_slot = 1
-
         # error handling
         self.check_index(index)
         if sigil_slot not in [1, 2] :
             raise ValueError(f"invalid sigil slot: {sigil_slot}")
-        if len(sorted_deck[index].sigil) == 2 :
-            match sigil_slot :
-                case 1 :
-                    same_sigil = (sorted_deck[index].sigil[1] == sigil) or ('hefty' in sorted_deck[index].sigil[1] and 'hefty' in sigil)
-                case 2 :
-                    same_sigil = (sorted_deck[index].sigil[0] == sigil) or ('hefty' in sorted_deck[index].sigil[0] and 'hefty' in sigil)
-        elif sigil_slot == 2 :
-            same_sigil = (sorted_deck[index].sigil[0] == sigil) or ('hefty' in sorted_deck[index].sigil[0] and 'hefty' in sigil)
+        if len(sorted_deck[index].sigils) != 2 :
+            raise ValueError('Sigils must be a list of length 2.')
+        match sigil_slot :
+            case 1 :
+                same_sigil = (sorted_deck[index].sigils[1] == sigil) or ('hefty' in sorted_deck[index].sigils[1] and 'hefty' in sigil)
+            case 2 :
+                same_sigil = (sorted_deck[index].sigils[0] == sigil) or ('hefty' in sorted_deck[index].sigils[0] and 'hefty' in sigil)
         if same_sigil :
             match sigil_slot :
+                case 1 :
+                    remaining_sigil = sorted_deck[index].sigils[1]
                 case 2 :
-                    remaining_sigil = sorted_deck[index].sigil[0]
-                case _ if len(sorted_deck[index].sigil) == 2 :
-                    remaining_sigil = sorted_deck[index].sigil[1]
+                    remaining_sigil = sorted_deck[index].sigils[0]
                 case _ :
                     remaining_sigil = ''
             raise ValueError(f"invalid sigil pair: {remaining_sigil} and {sigil}")
@@ -94,11 +89,9 @@ class Deck() :
         # change sigil
         match sigil_slot :
             case 1 :
-                sorted_deck[index].sigil[0] = sigil
+                sorted_deck[index].sigils[0] = sigil
             case 2 :
-                if len(sorted_deck[index].sigil) == 1 :
-                    sorted_deck[index].sigil.append('') # if only one sigil is given, add empty string
-                sorted_deck[index].sigil[1] = sigil
+                sorted_deck[index].sigils[1] = sigil
         
         sorted_deck[index].update_ASCII()
 
@@ -132,7 +125,7 @@ if __name__ == '__main__' :
     print(testdeck)
     print(testdeck.cards[4])
     testdeck.cards[4].take_damage(1, hand=[])
-    testdeck.change_sigil(4, 'hefty (right)')
+    testdeck.change_sigil(4, 'hefty (right)', 1)
     testdeck.change_sigil(1, 'hefty (left)', 2)
     QoL.clear()
     print(testdeck)
