@@ -168,7 +168,7 @@ Poss_Leshy = {
     3 : [Lobster(True), Grizzly(True), BullShark(True), BoppitW(True)]
 }
 
-# categories of cards for intelligent Leshy in order of priority (dicts in list)
+# categories for Leshy's AI
 AI_categories = [
     # good against airbornes (glass cannons and those with mighty leap)
     {
