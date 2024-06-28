@@ -185,6 +185,30 @@ class FlawPeacock(card.BlankCard) : # death card, referencing Flawed Peacock's v
     def __init__(self, blank_cost=False) :
         super().__init__(species='Flaw Peacock', cost=3, attack=3, life=2, sigils=['bees within', 'many lives'], blank_cost=blank_cost)
 
+class PlyrDeathCard(card.BlankCard) : # death card
+    def __init__(self, blank_cost=False) :
+        data_to_read = [
+                    ['death card', 'name'],
+                    ['death card', 'attack'],
+                    ['death card', 'life'],
+                    ['death card', 'cost'],
+                    ['death card', 'sigils']
+                ]
+        [death_name, death_attack, death_life, death_cost, death_sigils] = QoL.read_data(data_to_read)
+        super().__init__(species=death_name, cost=death_cost, attack=death_attack, life=death_life, sigils=death_sigils, blank_cost=blank_cost)
+
+class RabbitPelt(card.BlankCard) : # only given in campaign
+    def __init__(self, blank_cost=False) :
+        super().__init__(species='Rabbit Pelt', cost=0, attack=0, life=1, sigils=['',''], blank_cost=blank_cost)
+
+class WolfPelt(card.BlankCard) : # only given in campaign
+    def __init__(self, blank_cost=False) :
+        super().__init__(species='Wolf Pelt', cost=0, attack=0, life=2, sigils=['',''], blank_cost=blank_cost)
+
+class GoldenPelt(card.BlankCard) : # only given in campaign
+    def __init__(self, blank_cost=False) :
+        super().__init__(species='Golden Pelt', cost=0, attack=0, life=3, sigils=['',''], blank_cost=blank_cost)
+
 # Allowed cards:
 Poss_Playr = {
     0 : [Rabbit(), Shrew(), BlackGoat()],
@@ -200,7 +224,8 @@ Poss_Leshy = {
     3 : [Lobster(True), Grizzly(True), BullShark(True), BoppitW(True)]
 }
 
-Rare_Cards = [Ouroboros(), Louis(), Urayuli(), FlawPeacock()]
+Poss_Playr[QoL.read_data([['death card', 'cost']])[0]].append(PlyrDeathCard()) # cost will vary
+Rare_Cards = [Ouroboros(), Louis(), Urayuli(), FlawPeacock(), PlyrDeathCard()]
 
 # categories for Leshy's AI
 AI_categories = [

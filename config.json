@@ -14,5 +14,15 @@
     "ouroboros": {
         "attack": 1,
         "life": 1
+    },
+    "death card": {
+        "name": "Nebby",
+        "attack": 2,
+        "life": 1,
+        "cost": 2,
+        "sigils": [
+            "waterborne",
+            ""
+        ]
     }
 }

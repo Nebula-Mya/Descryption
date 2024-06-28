@@ -5,7 +5,6 @@ import QoL
 import ASCII_text
 import random
 import math
-import copy
 import os
 import sys
 
@@ -333,7 +332,7 @@ def resource_gen(size) :
 
     return deck.Deck(squirrels)
 
-def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold) :
+def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold, player_deck_obj=None, squirrels_deck_obj=None, opponent_deck_obj=None) :
     # error handling
     if deck_size < 1 :
         raise ValueError('Deck size must be at least 1.')
@@ -351,9 +350,18 @@ def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_varianc
         raise ValueError('Leshy strategy change threshold must be between -8 and 8.')
 
     # game setup
-    opponent_deck = deck_gen(card_library.Poss_Leshy, deck_size*2)
-    player_deck = deck_gen(card_library.Poss_Playr, deck_size)
-    squirrels_deck = resource_gen(deck_size - hand_size - 1)
+    if player_deck_obj :
+        player_deck = player_deck_obj
+    else :
+        player_deck = deck_gen(card_library.Poss_Playr, deck_size)
+    if opponent_deck_obj :
+        opponent_deck = opponent_deck_obj
+    else :
+        opponent_deck = deck_gen(card_library.Poss_Leshy, deck_size*2)
+    if squirrels_deck_obj :
+        squirrels_deck = squirrels_deck_obj
+    else :
+        squirrels_deck = resource_gen(deck_size - hand_size - 1)
 
     playfield = field.Playmat(player_deck.shuffle(), squirrels_deck.shuffle(), opponent_deck.shuffle(), Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold)
 

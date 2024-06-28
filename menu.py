@@ -27,6 +27,40 @@ def reset_oro() :
     if reset_choice == 'y' :
         QoL.write_data([(['ouroboros', 'attack'], 1), (['ouroboros', 'life'], 1)])
     
+def reset_death_card() :
+    '''
+    resets the death card to "the dev's death card" if the player chooses to
+    '''
+    # imports
+    import card_library
+
+    # set up variables
+    current_death_card = card_library.PlyrDeathCard()
+    
+    # print the menu
+    QoL.clear()
+    print(version_ID)
+    print('\n'*2)
+    ASCII_text.print_title()
+    print('\n'*4)
+    print(QoL.center_justified('Current death card:'))
+    current_death_card.explain()
+    print('\n'*2)
+
+    # get the user's choice
+    reset_choice = input(QoL.center_justified('Are you sure you want to delete your death card? y/n').rstrip() + ' ')
+
+    # reset the death card if the user chooses to
+    if reset_choice == 'y' :
+        data_to_write = [
+                    (['death card', 'name'], "Nebby"),
+                    (['death card', 'attack'], 2),
+                    (['death card', 'life'], 1),
+                    (['death card', 'cost'], 2),
+                    (['death card', 'sigils'], ["waterborne", ""]),
+                ]
+        QoL.write_data(data_to_write)
+
 def set_deck_size() :
     '''
     sets the deck size to the player's choice between the current hand size and 101
@@ -232,6 +266,7 @@ def settings() :
         print(QoL.center_justified('2.  Change deck size      '))
         print(QoL.center_justified('3.  Change hand size      '))
         print(QoL.center_justified('4.  Reset Ouroboros      '))
+        print(QoL.center_justified('5.  Delete death card    '))
 
     # set up variables
     invalid_choice = False
@@ -267,6 +302,8 @@ def settings() :
                 set_hand_size()
             case '4' :
                 reset_oro()
+            case '5' :
+                reset_death_card()
             case _ :
                 invalid_choice = True
 
@@ -276,6 +313,7 @@ def main_menu() :
     '''
     # set up variables
     invalid_choice = False
+    new_campaign = False
 
     while True :
         # print the menu
@@ -286,15 +324,21 @@ def main_menu() :
         print('\n'*6)
         print(QoL.center_justified('1.  Start a game      '))
         print()
-        print(QoL.center_justified('2.    Settings        '))
+        print(QoL.center_justified('2.  Play a round      '))
         print()
-        print(QoL.center_justified('3.      Quit          '))
+        print(QoL.center_justified('3.    Settings        '))
+        print()
+        print(QoL.center_justified('4.      Quit          '))
         print('\n')
 
         if invalid_choice :
             print(QoL.center_justified('Invalid choice'))
             print()
             invalid_choice = False
+        elif new_campaign : # temp, until roguelike gameplay is implemented
+            print(QoL.center_justified('Feature not yet implemented'))
+            print()
+            new_campaign = False
         else :
             print('\n')
 
@@ -303,6 +347,8 @@ def main_menu() :
 
         match choice :
             case '1' :
+                new_campaign = True
+            case '2' :
                 data_to_read = [
                     ['settings', 'deck size'],
                     ['settings', 'hand size'],
@@ -314,9 +360,9 @@ def main_menu() :
                 [deck_size, hand_size, play_median, play_var, opp_strat, opp_threshold] = QoL.read_data(data_to_read)
 
                 duel.main(deck_size, hand_size, play_median, play_var, opp_strat, opp_threshold)
-            case '2' :
-                settings()
             case '3' :
+                settings()
+            case '4' :
                 exit()
             case _ :
                 invalid_choice = True
