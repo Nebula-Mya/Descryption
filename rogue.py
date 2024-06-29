@@ -314,7 +314,7 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
     print(menu.version_ID)
     print('\n'*2)
     ASCII_text.print_title()
-    print('\n'*2)
+    print('\n'*4)
     ASCII_text.print_WiP()
     input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
     # test and develop this function in the if __name__ == '__main__' block, only move it here when it's ready

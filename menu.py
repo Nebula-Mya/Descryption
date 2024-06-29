@@ -44,12 +44,12 @@ def reset_death_card() :
     print('\n'*2)
     ASCII_text.print_title()
     print('\n'*4)
-    print(QoL.center_justified('    Current death cards:'))
+    print(QoL.center_justified('Current death cards: '))
     QoL.print_deck(current_death_cards, centered=True)
     print('\n'*2)
 
     # get the user's choice
-    reset_choice = input(QoL.center_justified('     Are you sure you want to delete your death cards? y/n').rstrip() + ' ')
+    reset_choice = input(QoL.center_justified('Are you sure you want to delete your death cards? y/n').rstrip() + ' ')
 
     # reset the death card if the user chooses to
     if reset_choice == 'y' :
@@ -94,14 +94,14 @@ def set_deck_size() :
         print(version_ID)
         print('\n'*2)
         ASCII_text.print_title()
-        print('\n'*5)
+        print('\n'*6)
         deck_size_str = 'Current deck size: ' + str(deck_size)
         hand_size_str = 'Current hand size: ' + str(hand_size)
         hand_size_str += ' '*(len(deck_size_str) - len(hand_size_str))
         print(QoL.center_justified(deck_size_str))
         print()
         print(QoL.center_justified(hand_size_str))
-        print('\n')
+        print()
 
         if invalid_choice :
             print(QoL.center_justified('Invalid choice'))
@@ -151,14 +151,14 @@ def set_hand_size() :
         print(version_ID)
         print('\n'*2)
         ASCII_text.print_title()
-        print('\n'*5)
+        print('\n'*6)
         deck_size_str = 'Current deck size: ' + str(deck_size)
         hand_size_str = 'Current hand size: ' + str(hand_size)
         hand_size_str += ' '*(len(deck_size_str) - len(hand_size_str))
         print(QoL.center_justified(deck_size_str))
         print()
         print(QoL.center_justified(hand_size_str))
-        print('\n')
+        print()
 
         if invalid_choice :
             print(QoL.center_justified('Invalid choice'))
@@ -241,7 +241,7 @@ def set_difficulty() :
         print(QoL.center_justified('3.  Normal' + difficulty_key[2] + ' '*2))
         print(QoL.center_justified('4.   Hard' + difficulty_key[3] + ' '*3))
         print(QoL.center_justified('5. Very Hard' + difficulty_key[4]))
-        print('\n')
+        print()
 
         if invalid_choice :
             print(QoL.center_justified('Invalid choice'))
@@ -293,7 +293,7 @@ def settings() :
         ASCII_text.print_title()
         print('\n'*5)
         print_settings_options()
-        print('\n')
+        print()
 
         if invalid_choice :
             print(QoL.center_justified('Invalid choice'))
@@ -342,7 +342,7 @@ def main_menu() :
         print(QoL.center_justified('3.    Settings        '))
         print()
         print(QoL.center_justified('4.      Quit          '))
-        print('\n')
+        print()
 
         if invalid_choice :
             print(QoL.center_justified('Invalid choice'))
