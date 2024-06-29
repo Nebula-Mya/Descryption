@@ -115,13 +115,17 @@ def winner_check(field) :
         field: the field object to check (field object)
 
     Returns:
-        True if the game is over, False if not (bool)
+        (win, winner, overkill, deck_out) (tuple)
+        win: whether the game is over (bool)
+        winner: the winner of the game (str)
+        overkill: the amount of overkill (int)
+        deck_out: whether the deck ran out (bool)
     '''
     # get variables from field
     (win, winner, overkill, deck_out) = field.check_win()
     
     if not win : # guard clause for game not being over
-        return False
+        return (win, winner, overkill, deck_out)
     
     # game is over
     QoL.clear()
@@ -130,7 +134,7 @@ def winner_check(field) :
             ASCII_text.print_win(overkill)
         case 'opponent' :
             ASCII_text.print_lose(deck_out)
-    return True
+    return (win, winner, overkill, deck_out)
 
 def view_remaining(field) : 
     '''
@@ -333,6 +337,22 @@ def resource_gen(size) :
     return deck.Deck(squirrels)
 
 def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold, player_deck_obj=None, squirrels_deck_obj=None, opponent_deck_obj=None) :
+    '''
+    main function for deck battles
+    
+    Arguments:
+        deck_size: size of the deck (int)
+        hand_size: size of the hand (int)
+        Leshy_play_count_median: median number of plays for Leshy (int)
+        Leshy_play_count_variance: variance in number of plays for Leshy (int)
+        Leshy_in_strategy_chance: chance of Leshy playing in strategy (int)
+        Leshy_strat_change_threshold: threshold for Leshy changing strategy (int)
+        player_deck_obj: the player's deck object, defaults to None (deck object)
+        squirrels_deck_obj: the squirrel deck object, defaults to None (deck object)
+        opponent_deck_obj: the opponent's deck object, defaults to None (deck object
+        
+    Returns:
+        (win, winner, overkill, deck_out) (tuple)'''
     # error handling
     if deck_size < 1 :
         raise ValueError('Deck size must be at least 1.')
@@ -353,7 +373,7 @@ def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_varianc
     if player_deck_obj :
         player_deck = player_deck_obj
     else :
-        player_deck = deck_gen(card_library.Poss_Playr, deck_size)
+        player_deck = deck_gen(card_library.Poss_Playr, (deck_size + hand_size - 1))
     if opponent_deck_obj :
         opponent_deck = opponent_deck_obj
     else :
@@ -361,7 +381,7 @@ def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_varianc
     if squirrels_deck_obj :
         squirrels_deck = squirrels_deck_obj
     else :
-        squirrels_deck = resource_gen(deck_size - hand_size - 1)
+        squirrels_deck = resource_gen(deck_size)
 
     playfield = field.Playmat(player_deck.shuffle(), squirrels_deck.shuffle(), opponent_deck.shuffle(), Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold)
 
@@ -385,8 +405,10 @@ def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_varianc
                 QoL.clear()
                 if playfield.score['player'] > playfield.score['opponent'] :
                     ASCII_text.print_win()
+                    (win, winner, overkill, deck_out) = (True, 'player', 0, False)
                 else :
                     ASCII_text.print_lose()
+                    (win, winner, overkill, deck_out) = (True, 'opponent', 0, False)
                 break
             
         # player turn
@@ -408,10 +430,12 @@ def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_varianc
 
         # switch turns
         playfield.switch()
-        if winner_check(playfield) :
+        (win, winner, overkill, deck_out) = winner_check(playfield)
+        if win :
             break
             
-    input('Press enter to return to menu.')
+    input('Press enter to continue.')
+    return (win, winner, overkill, deck_out)
 
 if __name__ == '__main__' :
     QoL.clear()

@@ -35,7 +35,7 @@ def reset_death_card() :
     import card_library
 
     # set up variables
-    current_death_card = card_library.PlyrDeathCard()
+    current_death_cards = [card_library.PlyrDeathCard1(), card_library.PlyrDeathCard2(), card_library.PlyrDeathCard3()]
     
     # print the menu
     QoL.clear()
@@ -43,21 +43,31 @@ def reset_death_card() :
     print('\n'*2)
     ASCII_text.print_title()
     print('\n'*4)
-    print(QoL.center_justified('Current death card:'))
-    current_death_card.explain()
+    print(QoL.center_justified('    Current death cards:'))
+    QoL.print_deck(current_death_cards, centered=True)
     print('\n'*2)
 
     # get the user's choice
-    reset_choice = input(QoL.center_justified('Are you sure you want to delete your death card? y/n').rstrip() + ' ')
+    reset_choice = input(QoL.center_justified('     Are you sure you want to delete your death card? y/n').rstrip() + ' ')
 
     # reset the death card if the user chooses to
     if reset_choice == 'y' :
         data_to_write = [
-                    (['death card', 'name'], "Nebby"),
-                    (['death card', 'attack'], 2),
-                    (['death card', 'life'], 1),
-                    (['death card', 'cost'], 2),
-                    (['death card', 'sigils'], ["waterborne", ""]),
+                    (['death cards', 'first', 'name'], "Nebby"), # my death card
+                    (['death cards', 'first', 'attack'], 2),
+                    (['death cards', 'first', 'life'], 1),
+                    (['death cards', 'first', 'cost'], 2),
+                    (['death cards', 'first', 'sigils'], ["waterborne", ""]),
+                    (['death cards', 'second', 'name'], "placeholder"), # Jacob's death card
+                    (['death cards', 'second', 'attack'], 1),
+                    (['death cards', 'second', 'life'], 1),
+                    (['death cards', 'second', 'cost'], 1),
+                    (['death cards', 'second', 'sigils'], ["", ""]),
+                    (['death cards', 'third', 'name'], "A Possum"), # Raina's death card
+                    (['death cards', 'third', 'attack'], 2),
+                    (['death cards', 'third', 'life'], 3),
+                    (['death cards', 'third', 'cost'], 3),
+                    (['death cards', 'third', 'sigils'], ["corpse eater", "bees within"])
                 ]
         QoL.write_data(data_to_write)
 

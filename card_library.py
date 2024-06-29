@@ -185,14 +185,38 @@ class FlawPeacock(card.BlankCard) : # death card, referencing Flawed Peacock's v
     def __init__(self, blank_cost=False) :
         super().__init__(species='Flaw Peacock', cost=3, attack=3, life=2, sigils=['bees within', 'many lives'], blank_cost=blank_cost)
 
-class PlyrDeathCard(card.BlankCard) : # death card
+class PlyrDeathCard1(card.BlankCard) : # death card
     def __init__(self, blank_cost=False) :
         data_to_read = [
-                    ['death card', 'name'],
-                    ['death card', 'attack'],
-                    ['death card', 'life'],
-                    ['death card', 'cost'],
-                    ['death card', 'sigils']
+                    ['death cards', 'first', 'name'],
+                    ['death cards', 'first', 'attack'],
+                    ['death cards', 'first', 'life'],
+                    ['death cards', 'first', 'cost'],
+                    ['death cards', 'first', 'sigils']
+                ]
+        [death_name, death_attack, death_life, death_cost, death_sigils] = QoL.read_data(data_to_read)
+        super().__init__(species=death_name, cost=death_cost, attack=death_attack, life=death_life, sigils=death_sigils, blank_cost=blank_cost)
+
+class PlyrDeathCard2(card.BlankCard) : # death card
+    def __init__(self, blank_cost=False) :
+        data_to_read = [
+                    ['death cards', 'second', 'name'],
+                    ['death cards', 'second', 'attack'],
+                    ['death cards', 'second', 'life'],
+                    ['death cards', 'second', 'cost'],
+                    ['death cards', 'second', 'sigils']
+                ]
+        [death_name, death_attack, death_life, death_cost, death_sigils] = QoL.read_data(data_to_read)
+        super().__init__(species=death_name, cost=death_cost, attack=death_attack, life=death_life, sigils=death_sigils, blank_cost=blank_cost)
+
+class PlyrDeathCard3(card.BlankCard) : # death card
+    def __init__(self, blank_cost=False) :
+        data_to_read = [
+                    ['death cards', 'third', 'name'],
+                    ['death cards', 'third', 'attack'],
+                    ['death cards', 'third', 'life'],
+                    ['death cards', 'third', 'cost'],
+                    ['death cards', 'third', 'sigils']
                 ]
         [death_name, death_attack, death_life, death_cost, death_sigils] = QoL.read_data(data_to_read)
         super().__init__(species=death_name, cost=death_cost, attack=death_attack, life=death_life, sigils=death_sigils, blank_cost=blank_cost)
@@ -212,9 +236,9 @@ class GoldenPelt(card.BlankCard) : # only given in campaign
 # Allowed cards:
 Poss_Playr = {
     0 : [Rabbit(), Shrew(), BlackGoat()],
-    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog(), Beehive(), Cat(), Warren(), Otter(), Kingfisher(), Louis()],
+    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog(), Beehive(), Cat(), Warren(), Otter(), Kingfisher()],
     2 : [Ouroboros(), Asp(), Falcon(), Cockroach(), Wolf(), Raven(), Beaver(), Adder(), CorpseMaggots(), Pronghorn(), Salmon()],
-    3 : [Lobster(), Grizzly(), BullShark(), FlawPeacock()],
+    3 : [Lobster(), Grizzly(), BullShark()],
     4 : [BoppitW(), Urayuli(), MooseBuck()]
 }
 Poss_Leshy = {
@@ -223,9 +247,8 @@ Poss_Leshy = {
     2 : [Asp(True), Falcon(True), Cockroach(True), Wolf(True), Raven(True), Adder(True), Pronghorn(True), Salmon(True)],
     3 : [Lobster(True), Grizzly(True), BullShark(True), BoppitW(True)]
 }
-
-Poss_Playr[QoL.read_data([['death card', 'cost']])[0]].append(PlyrDeathCard()) # cost will vary
-Rare_Cards = [Ouroboros(), Louis(), Urayuli(), FlawPeacock(), PlyrDeathCard()]
+Poss_Death = [Louis(), FlawPeacock(), PlyrDeathCard1(), PlyrDeathCard2(), PlyrDeathCard3()]
+Rare_Cards = [Ouroboros(), Urayuli()]
 
 # categories for Leshy's AI
 AI_categories = [

@@ -1,6 +1,6 @@
 {
     "settings": {
-        "deck size": 26,
+        "deck size": 20,
         "hand size": 5,
         "difficulty": {
             "current difficulty name": "Normal",
@@ -15,14 +15,40 @@
         "attack": 1,
         "life": 1
     },
-    "death card": {
-        "name": "Nebby",
-        "attack": 2,
-        "life": 1,
-        "cost": 2,
-        "sigils": [
-            "waterborne",
-            ""
-        ]
+    "death cards": {
+        "first": {
+            "name": "Nebby",
+            "attack": 2,
+            "life": 1,
+            "cost": 2,
+            "sigils": [
+                "waterborne",
+                ""
+            ]
+        },
+        "second": {
+            "name": "placeholder",
+            "attack": 1,
+            "life": 1,
+            "cost": 1,
+            "sigils": [
+                "",
+                ""
+            ]
+        },
+        "third": {
+            "name": "A Possum",
+            "attack": 2,
+            "life": 3,
+            "cost": 3,
+            "sigils": [
+                "corpse eater",
+                "bees within"
+            ]
+        }
+    },
+    "running stats": {
+        "wins": 0,
+        "losses": 0
     }
 }

@@ -299,7 +299,7 @@ def sort_deck(deck) :
     deck = sorted(deck, key=lambda x: x.name) # sort by name (will be sub-sorting under cost)
     return sorted(deck, key=lambda x: x.saccs)
 
-def print_deck(deck, sort=False, fruitful=False, numbered=False) :
+def print_deck(deck, sort=False, fruitful=False, numbered=False, centered=False) :
     '''
     prints a list of cards in a deck, with optional sorting
 
@@ -352,6 +352,10 @@ def print_deck(deck, sort=False, fruitful=False, numbered=False) :
         deck_string += '\n' + '\n'.join(line_strings)
     if fruitful :
         return deck_string
+    if centered :
+        for line in deck_string.split('\n') :
+            print(center_justified(line))
+        return
     print(deck_string)
 
 def reps_int(string, increment=0) :
