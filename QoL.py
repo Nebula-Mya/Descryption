@@ -354,7 +354,10 @@ def print_deck(deck, sort=False, fruitful=False, numbered=False, centered=False)
         return deck_string
     if centered :
         for line in deck_string.split('\n') :
-            print(center_justified(line))
+            if line == deck_string.split('\n')[1] :
+                print(center_justified(line.strip(' '))[1:])
+            else :
+                print(center_justified(line.strip(' ')))
         return
     print(deck_string)
 

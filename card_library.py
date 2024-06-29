@@ -254,7 +254,7 @@ Poss_Leshy = {
     3 : [Lobster(True), Grizzly(True), BullShark(True), BoppitW(True)]
 }
 Poss_Death = [Louis(), FlawPeacock(), PlyrDeathCard1(), PlyrDeathCard2(), PlyrDeathCard3()]
-Rare_Cards = [Ouroboros(), Urayuli()]
+Rare_Cards = [Ouroboros(), Urayuli(), MooseBuck(), BullShark(), BoppitW()]
 
 # categories for Leshy's AI
 AI_categories = [

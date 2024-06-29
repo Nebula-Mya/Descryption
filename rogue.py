@@ -4,8 +4,10 @@ import QoL
 import card_library
 import ASCII_text
 import menu
+import card
+import random
 
-class campaign : # stores the current campaign data, such as the current level, the current decks, teeth (money), progress in the level, candles, etc.
+class rogue_campaign :
     '''
     the current campaign data, such as the current level, the current decks, teeth (money), progress in the level, candles, etc.
     
@@ -87,11 +89,12 @@ class campaign : # stores the current campaign data, such as the current level, 
     def print_deck(self) :
         print(self.player_deck)
 
-def card_battle(Poss_Leshy=None, Squirrels=None) : # random encounter
+def card_battle(campaign, Poss_Leshy=None, Squirrels=None) :
     '''
     starts a card battle between the player and Leshy, with the player's deck being campaign.player_deck
     
     Arguments:
+        campaign: the current campaign object (rogue_campaign object)
         Poss_Leshy: the possible cards for Leshy's deck, defaults to None (list)
         Squirrels: the possible Squirrel deck, defaults to None (list)
 
@@ -129,27 +132,130 @@ def card_battle(Poss_Leshy=None, Squirrels=None) : # random encounter
 
     return True
 
-def card_choice(type=0) : # choose from 3 cards to add to deck
+def card_choice(campaign, type=0) : 
     '''
-    <placeholder description>
+    allows the player to choose a card to add to their deck from a list of 3, with the list being decided by the type of card choice
 
     Arguments:
+        campaign: the current campaign object (rogue_campaign object)
         type: the type of card choice, 0 for normal, 1 for cost, 2 for deathcards, defaults to 0 (int)
     '''
-    def normal_choice() : # choose a card from a list of 3 taken from card_library.Poss_Playr
-        pass
+    def card_choice(campaign, cards) : # choose a card from a list of 3 and add it to the player's deck
+        # set up variables
+        invalid_choice = False
 
-    def cost_choice() : # choose a card from a list of 3 taken from card_library.Poss_Cost, only seeing the costs of the cards
-        pass
+        while True :
+            # print the available cards and options
+            QoL.clear()
+            print('\n'*5)
+            print(QoL.center_justified('Available cards:'))
+            QoL.print_deck(cards, numbered=True, centered=True)
+            print()
+            print(QoL.center_justified('1. View a card'))
+            print(QoL.center_justified('2. View deck  '))
+            print(QoL.center_justified('3. Pick a card'))
+            print()
 
-    def death_choice() : # choose from 3 death cards taken from card_library.Poss_Death, only available after 5 deaths
-        pass
+            if invalid_choice :
+                print(QoL.center_justified('Invalid choice'))
+                print()
+                invalid_choice = False
+            else :
+                print('\n')
+
+            # get the user's choice
+            choice = input(QoL.center_justified(' '*2 + 'Choose an option:').rstrip() + ' ')
+
+            match choice :
+                case '1' : # view a card
+                    # print the available cards and options
+                    QoL.clear()
+                    print('\n'*5)
+                    print(QoL.center_justified('Available cards:'))
+                    QoL.print_deck(cards, numbered=True, centered=True)
+                    print()
+                    print(QoL.center_justified('1. View a card'))
+                    print(QoL.center_justified('2. View deck  '))
+                    print(QoL.center_justified('3. Pick a card'))
+                    print('\n'*2)
+
+                    # get the user's choice
+                    card_index = input(QoL.center_justified('Enter the number of the card to view:').rstrip() + ' ')
+                    (is_int, card_index) = QoL.reps_int(card_index, -1)
+
+                    if is_int and card_index in range(3) :
+                        QoL.clear()
+                        print('\n'*5)
+                        print(QoL.center_justified('Available cards:'))
+                        QoL.print_deck(cards, numbered=True, centered=True)
+                        print()
+                        cards[card_index].explain()
+                        input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
+                    
+                    else :
+                        invalid_choice = True
+                
+                case '2' :
+                    # print the player's deck
+                    QoL.clear()
+                    print('\n'*5)
+                    print(QoL.center_justified('Your deck:'))
+                    campaign.print_deck()
+                    print()
+                    input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
+                
+                case '3' :
+                    # print the available cards and options
+                    QoL.clear()
+                    print('\n'*5)
+                    print(QoL.center_justified('Available cards:'))
+                    QoL.print_deck(cards, numbered=True, centered=True)
+                    print()
+                    print(QoL.center_justified('1. View a card'))
+                    print(QoL.center_justified('2. View deck  '))
+                    print(QoL.center_justified('3. Pick a card'))
+                    print('\n'*2)
+
+                    # get the user's choice
+                    card_index = input(QoL.center_justified('Enter the number of the card to pick:').rstrip() + ' ')
+                    (is_int, card_index) = QoL.reps_int(card_index, -1)
+
+                    if is_int and card_index in range(3) :
+                        return card_index
+                    
+                    else :
+                        invalid_choice = True
+                
+                case _ :
+                    invalid_choice = True
+
+    def normal_cards(campaign) : # generate a list of 3 taken from card_library.Poss_Playr
+        card_options = duel.deck_gen(card_library.Poss_Playr, 3).cards
+        card_index = card_choice(campaign, card_options)
+        campaign.add_card(card_options[card_index])
+
+    def cost_cards(campaign) : # generate a list of 3 taken from card_library.Poss_Cost, only seeing the costs of the cards
+        card_options = duel.deck_gen(card_library.Poss_Playr, 3).cards
+        card_options_hidden = [card.BlankCard(species='???', cost=option.cost[-1], sigils=['???',''], blank_stats=True) for option in card_options]
+        card_index = card_choice(campaign, card_options_hidden)
+        campaign.add_card(card_options[card_index])
+
+    def death_cards(campaign) : # generate a list of 3 death cards taken from card_library.Poss_Death, only available after 5 deaths
+        card_options = random.sample(card_library.Poss_Death, 3)
+        card_index = card_choice(campaign, card_options)
+        campaign.add_card(card_options[card_index])
+
+    def rare_cards(campaign) : # generate a list of 3 rare cards taken from card_library.Rare_Cards, occurs after boss fights
+        card_options = random.sample(card_library.Rare_Cards, 3)
+        card_index = card_choice(campaign, card_options)
+        campaign.add_card(card_options[card_index])
 
     match type : 
-        case 0 : normal_choice()
-        case 1 : cost_choice()
-        case 2 : death_choice()
-        case _ : raise ValueError('Invalid type')
+        case 0 : normal_cards(campaign)
+        case 1 : cost_cards(campaign)
+        case 2 : death_cards(campaign)
+        case 3 : rare_cards(campaign)
+        case _ : raise ValueError(f'Invalid type: {type}')
 
 def sigil_sacrifice() : # sacrifice a card to give its sigil to another card
     pass
@@ -211,6 +317,13 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
     print('\n'*2)
     ASCII_text.print_WiP()
     input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
+    # test and develop this function in the if __name__ == '__main__' block, only move it here when it's ready
 
 if __name__ == '__main__' :
-    pass
+    import sys # testing card_choice function
+    campaign = rogue_campaign(duel.deck_gen(card_library.Poss_Playr, 20).cards, 0, 2)
+    campaign.print_deck()
+    input(QoL.center_justified('Press Enter to continue...').rstrip())
+    card_choice(campaign, int(sys.argv[1]))
+    input(QoL.center_justified('Press Enter to continue...').rstrip())
+    campaign.print_deck()

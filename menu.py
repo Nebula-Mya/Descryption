@@ -327,7 +327,6 @@ def main_menu() :
     '''
     # set up variables
     invalid_choice = False
-    new_campaign = False
 
     while True :
         # print the menu
