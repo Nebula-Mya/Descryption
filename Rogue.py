@@ -99,6 +99,7 @@ def card_choice(type=0) : # choose from 3 cards to add to deck
         case 0 : normal_choice()
         case 1 : cost_choice()
         case 2 : death_choice()
+        case _ : raise ValueError('Invalid type')
 
 def sigil_sacrifice() : # sacrifice a card to give its sigil to another card
     pass
