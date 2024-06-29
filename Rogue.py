@@ -4,7 +4,35 @@ import QoL
 import card_library
 
 class campaign : # stores the current campaign data, such as the current level, the current decks, teeth (money), progress in the level, candles, etc.
+    '''
+    the current campaign data, such as the current level, the current decks, teeth (money), progress in the level, candles, etc.
+    
+    Attributes:
+        level: the current level of the campaign (int)
+        progress: the current progress in the level (int)
+        player_deck: the player's deck (deck.Deck)
+        teeth: the player's money (int)
+        lives: the player's lives (int)
+
+    Methods:
+        add_teeth: adds teeth to the player's total
+        add_life: adds a life to the player's total
+        remove_life: removes a life from the player's total
+        add_card: adds a card to the player's deck
+        remove_card: removes a card from the player's deck
+        change_sigil: changes the sigil of a card in the player's deck
+        shuffle_deck: shuffles the player's deck
+        print_deck: prints the player's deck
+    '''
     def __init__(self, start_decklist, start_teeth=0, lives=2) :
+        '''
+        initializes the campaign object
+        
+        Arguments:
+            start_decklist: the starting decklist for the player (list)
+            start_teeth: the starting amount of teeth for the player, defaults to 0 (int)
+            lives: the starting amount of lives for the player, defaults to 2 (int)
+        '''
         self.level = 0
         self.progress = 0
         self.player_deck = deck.Deck(start_decklist)
@@ -23,12 +51,32 @@ class campaign : # stores the current campaign data, such as the current level, 
             self.lost_run()
 
     def add_card(self, card) :
+        '''
+        adds a card to the player's deck
+        
+        Arguments:
+            card: the card to add to the player's deck (card object)
+        '''
         self.player_deck.add_card(card)
 
     def remove_card(self, index) :
+        '''
+        removes a card from the player's deck
+        
+        Arguments:
+            index: the index of the card to remove (int)
+        '''
         self.player_deck.remove_card(index)
 
     def change_sigil(self, index, sigil, sigil_slot) :
+        '''
+        changes the sigil of a card in the player's deck
+        
+        Arguments:
+            index: index of card to change (int)
+            sigil: sigil to change to (str)
+            sigil_slot: slot to change sigil in, 1 or 2 (int)
+        '''
         self.player_deck.change_sigil(index, sigil, sigil_slot)
     
     def shuffle_deck(self) :
