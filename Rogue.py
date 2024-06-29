@@ -2,6 +2,8 @@ import deck
 import duel
 import QoL
 import card_library
+import ASCII_text
+import menu
 
 class campaign : # stores the current campaign data, such as the current level, the current decks, teeth (money), progress in the level, candles, etc.
     '''
@@ -202,7 +204,13 @@ def split_road() : # choose path, the main function that handles all others, mos
     pass
 
 def main() : # coordinates the game loop, calls split_road, manages losses, initiates the game, etc.
-    pass
+    QoL.clear()
+    print(menu.version_ID)
+    print('\n'*2)
+    ASCII_text.print_title()
+    print('\n'*2)
+    ASCII_text.print_WiP()
+    input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
 
 if __name__ == '__main__' :
     pass

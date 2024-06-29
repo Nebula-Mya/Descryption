@@ -3,6 +3,7 @@ import QoL
 import ASCII_text
 import card_library
 import card
+import rogue
 
 version_ID = 'v0.2.0a-alpha'
 
@@ -348,10 +349,6 @@ def main_menu() :
             print(QoL.center_justified('Invalid choice'))
             print()
             invalid_choice = False
-        elif new_campaign : # temp, until roguelike gameplay is implemented
-            print(QoL.center_justified('Feature not yet implemented'))
-            print()
-            new_campaign = False
         else :
             print('\n')
 
@@ -360,7 +357,7 @@ def main_menu() :
 
         match choice :
             case '1' :
-                new_campaign = True
+                rogue.main()
             case '2' :
                 data_to_read = [
                     ['settings', 'deck size'],
