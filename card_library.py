@@ -192,10 +192,12 @@ class PlyrDeathCard1(card.BlankCard) : # death card
                     ['death cards', 'first', 'attack'],
                     ['death cards', 'first', 'life'],
                     ['death cards', 'first', 'cost'],
-                    ['death cards', 'first', 'sigils']
+                    ['death cards', 'first', 'sigils'],
+                    ['death cards', 'first', 'easter']
                 ]
-        [death_name, death_attack, death_life, death_cost, death_sigils] = QoL.read_data(data_to_read)
+        [death_name, death_attack, death_life, death_cost, death_sigils, death_easter] = QoL.read_data(data_to_read)
         super().__init__(species=death_name, cost=death_cost, attack=death_attack, life=death_life, sigils=death_sigils, blank_cost=blank_cost)
+        self.easter = death_easter
 
 class PlyrDeathCard2(card.BlankCard) : # death card
     def __init__(self, blank_cost=False) :
@@ -204,10 +206,12 @@ class PlyrDeathCard2(card.BlankCard) : # death card
                     ['death cards', 'second', 'attack'],
                     ['death cards', 'second', 'life'],
                     ['death cards', 'second', 'cost'],
-                    ['death cards', 'second', 'sigils']
+                    ['death cards', 'second', 'sigils'],
+                    ['death cards', 'second', 'easter']
                 ]
-        [death_name, death_attack, death_life, death_cost, death_sigils] = QoL.read_data(data_to_read)
+        [death_name, death_attack, death_life, death_cost, death_sigils, death_easter] = QoL.read_data(data_to_read)
         super().__init__(species=death_name, cost=death_cost, attack=death_attack, life=death_life, sigils=death_sigils, blank_cost=blank_cost)
+        self.easter = death_easter
 
 class PlyrDeathCard3(card.BlankCard) : # death card
     def __init__(self, blank_cost=False) :
@@ -216,10 +220,12 @@ class PlyrDeathCard3(card.BlankCard) : # death card
                     ['death cards', 'third', 'attack'],
                     ['death cards', 'third', 'life'],
                     ['death cards', 'third', 'cost'],
-                    ['death cards', 'third', 'sigils']
+                    ['death cards', 'third', 'sigils'],
+                    ['death cards', 'third', 'easter']
                 ]
-        [death_name, death_attack, death_life, death_cost, death_sigils] = QoL.read_data(data_to_read)
+        [death_name, death_attack, death_life, death_cost, death_sigils, death_easter] = QoL.read_data(data_to_read)
         super().__init__(species=death_name, cost=death_cost, attack=death_attack, life=death_life, sigils=death_sigils, blank_cost=blank_cost)
+        self.easter = death_easter
 
 class RabbitPelt(card.BlankCard) : # only given in campaign
     def __init__(self, blank_cost=False) :

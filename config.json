@@ -24,17 +24,19 @@
             "sigils": [
                 "waterborne",
                 ""
-            ]
+            ],
+            "easter": true
         },
         "second": {
-            "name": "placeholder",
-            "attack": 1,
+            "name": "Glaucus",
+            "attack": 4,
             "life": 1,
-            "cost": 1,
+            "cost": 3,
             "sigils": [
-                "",
-                ""
-            ]
+                "airborne",
+                "unkillable"
+            ],
+            "easter": true
         },
         "third": {
             "name": "A Possum",
@@ -44,7 +46,8 @@
             "sigils": [
                 "corpse eater",
                 "bees within"
-            ]
+            ],
+            "easter": true
         }
     },
     "running stats": {

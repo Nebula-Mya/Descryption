@@ -1,6 +1,8 @@
 import duel
 import QoL
 import ASCII_text
+import card_library
+import card
 
 version_ID = 'v0.2.0a-alpha'
 
@@ -31,11 +33,9 @@ def reset_death_card() :
     '''
     resets the death card to "the dev's death card" if the player chooses to
     '''
-    # imports
-    import card_library
-
     # set up variables
-    current_death_cards = [card_library.PlyrDeathCard1(), card_library.PlyrDeathCard2(), card_library.PlyrDeathCard3()]
+    current_death_cards_unfiltered = [card_library.PlyrDeathCard1(), card_library.PlyrDeathCard2(), card_library.PlyrDeathCard3()]
+    current_death_cards = [death_card if not death_card.easter else card.BlankCard() for death_card in current_death_cards_unfiltered]
     
     # print the menu
     QoL.clear()
@@ -48,7 +48,7 @@ def reset_death_card() :
     print('\n'*2)
 
     # get the user's choice
-    reset_choice = input(QoL.center_justified('     Are you sure you want to delete your death card? y/n').rstrip() + ' ')
+    reset_choice = input(QoL.center_justified('     Are you sure you want to delete your death cards? y/n').rstrip() + ' ')
 
     # reset the death card if the user chooses to
     if reset_choice == 'y' :
@@ -58,16 +58,19 @@ def reset_death_card() :
                     (['death cards', 'first', 'life'], 1),
                     (['death cards', 'first', 'cost'], 2),
                     (['death cards', 'first', 'sigils'], ["waterborne", ""]),
-                    (['death cards', 'second', 'name'], "placeholder"), # Jacob's death card
-                    (['death cards', 'second', 'attack'], 1),
+                    (['death cards', 'first', 'easter'], True),
+                    (['death cards', 'second', 'name'], "Glaucus"), # Jacob's death card
+                    (['death cards', 'second', 'attack'], 4),
                     (['death cards', 'second', 'life'], 1),
-                    (['death cards', 'second', 'cost'], 1),
-                    (['death cards', 'second', 'sigils'], ["", ""]),
+                    (['death cards', 'second', 'cost'], 3),
+                    (['death cards', 'second', 'sigils'], ["airborne", "unkillable"]),
+                    (['death cards', 'second', 'easter'], True),
                     (['death cards', 'third', 'name'], "A Possum"), # Raina's death card
                     (['death cards', 'third', 'attack'], 2),
                     (['death cards', 'third', 'life'], 3),
                     (['death cards', 'third', 'cost'], 3),
-                    (['death cards', 'third', 'sigils'], ["corpse eater", "bees within"])
+                    (['death cards', 'third', 'sigils'], ["corpse eater", "bees within"]),
+                    (['death cards', 'third', 'easter'], True)
                 ]
         QoL.write_data(data_to_write)
 
