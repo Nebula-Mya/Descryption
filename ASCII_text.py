@@ -142,7 +142,7 @@ def print_WiP() :
  __________________________
 |System             |–|‡‡|×|
 |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|
-|This gamemode is still    |
+|This feature is still     |
 |in development. Sorry!    |
 |                    -Nebby|
  ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾

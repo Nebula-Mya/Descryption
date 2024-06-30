@@ -257,7 +257,7 @@ def card_choice(campaign, type=0) :
         case 3 : rare_cards(campaign)
         case _ : raise ValueError(f'Invalid type: {type}')
 
-def sigil_sacrifice() : # sacrifice a card to give its sigil to another card
+def sigil_sacrifice(campaign) : # sacrifice a card to give its sigil to another card
     pass
 
 def merge_cards() : # mycologists; merge two cards of the same species into one, with the new card having combined stats and sigils
@@ -320,10 +320,10 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
     # test and develop this function in the if __name__ == '__main__' block, only move it here when it's ready
 
 if __name__ == '__main__' :
-    import sys # testing card_choice function
+    import sys # testing sigil_sacrifice function
     campaign = rogue_campaign(duel.deck_gen(card_library.Poss_Playr, 20).cards, 0, 2)
     campaign.print_deck()
     input(QoL.center_justified('Press Enter to continue...').rstrip())
-    card_choice(campaign, int(sys.argv[1]))
+    sigil_sacrifice(campaign)
     input(QoL.center_justified('Press Enter to continue...').rstrip())
     campaign.print_deck()
