@@ -320,14 +320,14 @@ if __name__ == '__main__' :
     import deck
     Leshy_cardlist = deck.Deck([])
     for cost in Poss_Leshy :
-        for card in Poss_Leshy[cost] :
-            Leshy_cardlist.add_card(card)
+        for card_ in Poss_Leshy[cost] :
+            Leshy_cardlist.add_card(card_)
 
     Player_cardlist = deck.Deck([])
     for cost in Poss_Playr :
-        for card in Poss_Playr[cost] :
-            if card not in Player_cardlist.cards :
-                Player_cardlist.add_card(card)
+        for card_ in Poss_Playr[cost] :
+            if card_ not in Player_cardlist.cards :
+                Player_cardlist.add_card(card_)
 
     QoL.clear()
     print(QoL.center_justified('Leshy Card List'))

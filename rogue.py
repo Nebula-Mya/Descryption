@@ -89,7 +89,37 @@ class rogue_campaign :
     def print_deck(self) :
         print(self.player_deck)
 
-def card_battle(campaign, Poss_Leshy=None, Squirrels=None) :
+def card_equation(card1, card2, result) :
+    '''
+    generate the display text for combining cards
+
+    Arguments:
+        card1: the first card (card object)
+        card2: the second card (card object)
+        result: the resulting card (card object)
+    
+    Returns:
+        lines: the display text for combining the cards (list[str])
+    '''
+    # set up variables
+    plus_lines = '''{blank_lines}{spc}  |  {spc}
+{spc}――|――{spc}
+{spc}  |  {spc}
+{blank_lines}'''.format(blank_lines=(' '*9 + '\n')*5, spc=' '*2).split('\n')
+    equals_lines = '''{blank_lines}{spc}_____{spc}
+{spc}     {spc}
+{spc}‾‾‾‾‾{spc}
+{blank_lines}'''.format(blank_lines=(' '*9 + '\n')*5, spc=' '*2).split('\n')
+    card1_lines = card1.text_lines
+    card2_lines = card2.text_lines
+    result_lines = result.text_lines
+    
+    # combine the lines
+    new_lines = [card1_lines[i] + plus_lines[i] + card2_lines[i] + equals_lines[i] + result_lines[i] for i in range(1,12)]
+
+    return new_lines
+
+def card_battle(campaign, Poss_Leshy=None, Squirrels=None) : 
     '''
     starts a card battle between the player and Leshy, with the player's deck being campaign.player_deck
     
@@ -101,36 +131,39 @@ def card_battle(campaign, Poss_Leshy=None, Squirrels=None) :
     Returns:
         bool: True if the player wins, False if the player loses
     '''
-    data_to_read = [
-        ['settings', 'hand size'],
-        ['settings', 'difficulty', 'leshy median plays'],
-        ['settings', 'difficulty', 'leshy plays variance'],
-        ['settings', 'difficulty', 'leshy strat chance'],
-        ['settings', 'difficulty', 'leshy offense threshold']
-    ]
-    [hand_size, play_median, play_var, opp_strat, opp_threshold] = QoL.read_data(data_to_read)
+    def gameplay(campaign, Poss_Leshy, Squirrels) :
+        data_to_read = [
+            ['settings', 'hand size'],
+            ['settings', 'difficulty', 'leshy median plays'],
+            ['settings', 'difficulty', 'leshy plays variance'],
+            ['settings', 'difficulty', 'leshy strat chance'],
+            ['settings', 'difficulty', 'leshy offense threshold']
+        ]
+        [hand_size, play_median, play_var, opp_strat, opp_threshold] = QoL.read_data(data_to_read)
 
-    deck_size = len(campaign.player_deck)
+        deck_size = len(campaign.player_deck)
 
-    if Poss_Leshy :
-        leshy_deck = duel.deck_gen(Poss_Leshy, deck_size*2)
-    else :
-        leshy_deck = None
+        if Poss_Leshy :
+            leshy_deck = duel.deck_gen(Poss_Leshy, deck_size*2)
+        else :
+            leshy_deck = None
+        
+        if Squirrels :
+            squirrel_deck = deck.Deck(Squirrels)
+        else :
+            squirrel_deck = None
+
+        (_, winner, overkill, _) = duel.main(deck_size, hand_size, play_median, play_var, opp_strat, opp_threshold, player_deck_obj=campaign.player_deck, leshy_deck_obj=leshy_deck, squirrel_deck_obj=squirrel_deck)
+
+        if winner == 'opponent' :
+            campaign.remove_life()
+            return False
+        
+        campaign.add_teeth(overkill)
+
+        return True
     
-    if Squirrels :
-        squirrel_deck = deck.Deck(Squirrels)
-    else :
-        squirrel_deck = None
-
-    (_, winner, overkill, _) = duel.main(deck_size, hand_size, play_median, play_var, opp_strat, opp_threshold, player_deck_obj=campaign.player_deck, leshy_deck_obj=leshy_deck, squirrel_deck_obj=squirrel_deck)
-
-    if winner == 'opponent' :
-        campaign.remove_life()
-        return False
-    
-    campaign.add_teeth(overkill)
-
-    return True
+    gameplay(campaign, Poss_Leshy, Squirrels) # add flavor text, context, etc.
 
 def card_choice(campaign, type=0) : 
     '''
@@ -250,27 +283,65 @@ def card_choice(campaign, type=0) :
         card_index = card_choice(campaign, card_options)
         campaign.add_card(card_options[card_index])
 
-    match type : 
-        case 0 : normal_cards(campaign)
-        case 1 : cost_cards(campaign)
-        case 2 : death_cards(campaign)
-        case 3 : rare_cards(campaign)
-        case _ : raise ValueError(f'Invalid type: {type}')
+    def gameplay(campaign, type) :
+        match type : 
+            case 0 : normal_cards(campaign)
+            case 1 : cost_cards(campaign)
+            case 2 : death_cards(campaign)
+            case 3 : rare_cards(campaign)
+            case _ : raise ValueError(f'Invalid type: {type}')
+
+    gameplay(campaign, type) # add flavor text, context, etc.
 
 def sigil_sacrifice(campaign) : # sacrifice a card to give its sigil to another card
-    pass
+    '''
+    allows the player to sacrifice a card to give its sigil to another card
+    
+    Arguments:
+        campaign: the current campaign object (rogue_campaign object)
+    '''
+    def gameplay(campaign) :
+        # show deck (filter out those with 2 sigils); select a card to receive the sigil
+        ### will need to get the index in a sorted deck
+
+        # show deck (filter out those without sigils); select a card to sacrifice
+        ### will need to get the index in a sorted deck
+
+        # if sacrifice has 2 sigils and the recieving card doesn't have two open slots, ask which sigil to transfer
+
+        # confirm the sacrifice (visually show the sigil being transferred as an addition equation)
+
+        # add the sigil to the card
+
+        # remove the sacrificed card from the deck
+
+        pass
+
+    gameplay(campaign) # add flavor text, context, etc.
 
 def merge_cards() : # mycologists; merge two cards of the same species into one, with the new card having combined stats and sigils
-    pass
+    def gameplay() :
+        pass
+
+    gameplay() # add flavor text, context, etc.
 
 def pelt_shop() : # trader; buy pelts with teeth
-    pass
+    def gameplay() :
+        pass
+
+    gameplay() # add flavor text, context, etc.
 
 def card_shop() : # trader; buy cards with pelts
-    pass
+    def gameplay() :
+        pass
+
+    gameplay() # add flavor text, context, etc.
 
 def break_rocks() : # prospector; break 1 of 3 rocks for bug cards or golden pelt (bugs may have additional sigils, only one rock has golden pelt)
-    pass
+    def gameplay() :
+        pass
+
+    gameplay() # add flavor text, context, etc.
 
 def campfire() : # campfire; increase a cards health or damage, risking the card being destroyed
     '''
@@ -284,33 +355,61 @@ def campfire() : # campfire; increase a cards health or damage, risking the card
     3 buffs: 45% chance of destruction
     4 buffs: 67.5% chance of destruction
     '''
-    pass
+    def gameplay() :
+        pass
+
+    gameplay() # add flavor text, context, etc.
 
 def add_death_card() : # add a death card to config.json
-    pass # making a death card will shift the values of 'second' to 'third', 'first' to 'second', and the new death card will be written to 'first'
+    # making a death card will shift the values of 'second' to 'third', 'first' to 'second', and the new death card will be written to 'first'
+    def gameplay() :
+        pass
+
+    gameplay() # add flavor text, context, etc.
 
 def lost_run() : # death / loss ('cutscene' of sorts, with flavor text, etc., + make death card after 4 deaths)
-    pass
+    def gameplay() :
+        pass
+
+    gameplay() # add flavor text, context, etc.
 
 def beat_leshy() : # create 'win' card, largely the same as death / loss function, differing mostly in flavor
-    pass
+    def gameplay() :
+        pass
+
+    gameplay() # add flavor text, context, etc.
 
 ##### bosses will use the basic AI, but with higher difficulty settings and have their unique mechanics (pickaxe, ship, extra sigils, moon)
 
 def boss_fight_prospector() : # boss fight 1
-    pass
+    def gameplay() :
+        pass
+
+    gameplay() # add flavor text, context, etc.
 
 def boss_fight_angler() : # boss fight 2
-    pass
+    def gameplay() :
+        pass
+
+    gameplay() # add flavor text, context, etc.
 
 def boss_fight_trapper_trader() : # boss fight 3
-    pass
+    def gameplay() :
+        pass
+
+    gameplay() # add flavor text, context, etc.
 
 def boss_fight_leshy() : # boss fight 4
-    pass
+    def gameplay() :
+        pass
+
+    gameplay() # add flavor text, context, etc.
 
 def split_road() : # choose path, the main function that handles all others, most of the game loop will be here
-    pass
+    def gameplay() :
+        pass
+
+    gameplay() # add flavor text, context, etc.
 
 def main() : # coordinates the game loop, calls split_road, manages losses, initiates the game, etc.
     QoL.clear()
