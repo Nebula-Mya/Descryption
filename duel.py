@@ -373,7 +373,7 @@ def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_varianc
     if player_deck_obj :
         player_deck = player_deck_obj
     else :
-        player_deck = deck_gen(card_library.Poss_Playr, (deck_size + hand_size - 1))
+        player_deck = deck_gen(card_library.Poss_Playr, deck_size)
     if opponent_deck_obj :
         opponent_deck = opponent_deck_obj
     else :
