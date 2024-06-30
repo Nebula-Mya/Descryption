@@ -286,8 +286,11 @@ def campfire() : # campfire; increase a cards health or damage, risking the card
     '''
     pass
 
-def lost_run() : # death / loss ('cutscene' of sorts, with flavor text, etc., + make death card after 4 deaths)
+def add_death_card() : # add a death card to config.json
     pass # making a death card will shift the values of 'second' to 'third', 'first' to 'second', and the new death card will be written to 'first'
+
+def lost_run() : # death / loss ('cutscene' of sorts, with flavor text, etc., + make death card after 4 deaths)
+    pass
 
 def beat_leshy() : # create 'win' card, largely the same as death / loss function, differing mostly in flavor
     pass
