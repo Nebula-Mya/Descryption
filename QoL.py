@@ -99,18 +99,37 @@ def write_data(data_to_write) :
     with open(data_file, 'w') as file :
         json.dump(data, file, indent=4)
 
-def center_justified(text) :
+def center_justified(text, blocked=False, shift=0) :
     '''
     centers text in the console
 
     Arguments:
         text: the text to center (str)
+        blocked: whether to center the text in a blocked manner, defaults to False (bool)
+        shift: the amount to shift the text to the right, defaults to 0 (int)
     
     Returns:
         the centered text (str)
     '''
-    width = os.get_terminal_size().columns
-    return text.center(width)
+    # set up variables
+    text_lines = text.split('\n')
+    term_width = os.get_terminal_size().columns
+    center_space = lambda line_width : (term_width - line_width) // 2
+    centered_text = ''
+
+    if blocked :
+        text_width = max([len(line) for line in text_lines])
+
+        for line in text_lines :
+            centered_text += ' ' * (center_space(text_width) + shift) + line + '\n'
+    
+    else :
+        for line in text_lines :
+            text_width = len(line)
+
+            centered_text += ' ' * (center_space(text_width) + shift) + line + '\n'
+    
+    return centered_text
 
 def split_nicely(text, first_line_length, gen_line_length, max_lines=10, add_blank_lines=False) :
     '''
@@ -299,7 +318,7 @@ def sort_deck(deck) :
     deck = sorted(deck, key=lambda x: x.name) # sort by name (will be sub-sorting under cost)
     return sorted(deck, key=lambda x: x.saccs)
 
-def print_deck(deck, sort=False, fruitful=False, numbered=False, centered=False) :
+def print_deck(deck, sort=False, fruitful=False, numbered=False, centered=False, blocked=False) :
     '''
     prints a list of cards in a deck, with optional sorting
 
@@ -308,6 +327,8 @@ def print_deck(deck, sort=False, fruitful=False, numbered=False, centered=False)
         sort: whether to sort the deck before printing (bool)
         fruitful: whether to return the deck string instead of printing it (bool)
         numbered: whether to number the cards (bool)
+        centered: whether to center the deck (bool)
+        blocked: whether to block the deck when centered (bool)
     '''
     def card_gap_numbered(card_gaps, number) :
         number_str = str(number)
@@ -350,15 +371,12 @@ def print_deck(deck, sort=False, fruitful=False, numbered=False, centered=False)
     for row in chunked :
         line_strings = [line_str(line, card_gaps, row, numbered) for line in range(11)]
         deck_string += '\n' + '\n'.join(line_strings)
+
+    if centered :
+        deck_string = center_justified(deck_string, blocked, -2)
     if fruitful :
         return deck_string
-    if centered :
-        for line in deck_string.split('\n') :
-            if line == deck_string.split('\n')[1] and numbered :
-                print(center_justified(line.strip(' '))[1:])
-            else :
-                print(center_justified(line.strip(' ')))
-        return
+    
     print(deck_string)
 
 def reps_int(string, increment=0) :

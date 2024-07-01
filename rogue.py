@@ -63,24 +63,35 @@ class rogue_campaign :
         '''
         self.player_deck.add_card(card)
 
-    def remove_card(self, index) :
+    def remove_card(self, card) :
         '''
         removes a card from the player's deck
         
         Arguments:
             index: the index of the card to remove (int)
         '''
+        sorted_deck = QoL.sort_deck(self.player_deck.cards)
+        index = sorted_deck.index(card)
         self.player_deck.remove_card(index)
 
-    def change_sigil(self, index, sigil, sigil_slot) :
+    def add_sigil(self, card, sigil) :
         '''
         changes the sigil of a card in the player's deck
         
         Arguments:
             index: index of card to change (int)
             sigil: sigil to change to (str)
-            sigil_slot: slot to change sigil in, 1 or 2 (int)
         '''
+        sorted_deck = QoL.sort_deck(self.player_deck.cards)
+        index = sorted_deck.index(card)
+
+        if self.player_deck.cards[index].has_sigil(sigil) :
+            raise ValueError(f'Card already has sigil {sigil}')
+        elif not self.player_deck.cards[index].has_sigil('') :
+            raise ValueError('Card already has two sigils')
+        
+        sigil_slot = self.player_deck.cards[index].sigils.index('')
+        
         self.player_deck.change_sigil(index, sigil, sigil_slot)
     
     def shuffle_deck(self) :
@@ -183,15 +194,15 @@ def card_choice(campaign, type=0) :
             print('\n'*5)
             print(QoL.center_justified('Available cards:'))
             QoL.print_deck(cards, numbered=True, centered=True)
-            print()
-            print(QoL.center_justified('1. View a card'))
-            print(QoL.center_justified('2. View deck  '))
-            print(QoL.center_justified('3. Pick a card'))
-            print()
+            options = '''
+1. View a card
+2. View deck
+3. Pick a card
+'''
+            print(QoL.center_justified(options, blocked=True))
 
             if invalid_choice :
-                print(QoL.center_justified('Invalid choice'))
-                print()
+                print(QoL.center_justified('Invalid choice') + '\n')
                 invalid_choice = False
             else :
                 print('\n')
@@ -206,11 +217,13 @@ def card_choice(campaign, type=0) :
                     print('\n'*5)
                     print(QoL.center_justified('Available cards:'))
                     QoL.print_deck(cards, numbered=True, centered=True)
-                    print()
-                    print(QoL.center_justified('1. View a card'))
-                    print(QoL.center_justified('2. View deck  '))
-                    print(QoL.center_justified('3. Pick a card'))
-                    print('\n'*2)
+                    options = '''
+1. View a card
+2. View deck
+3. Pick a card
+
+'''
+                    print(QoL.center_justified(options))
 
                     # get the user's choice
                     card_index = input(QoL.center_justified('Enter the number of the card to view:').rstrip() + ' ')
@@ -243,11 +256,13 @@ def card_choice(campaign, type=0) :
                     print('\n'*5)
                     print(QoL.center_justified('Available cards:'))
                     QoL.print_deck(cards, numbered=True, centered=True)
-                    print()
-                    print(QoL.center_justified('1. View a card'))
-                    print(QoL.center_justified('2. View deck  '))
-                    print(QoL.center_justified('3. Pick a card'))
-                    print('\n'*2)
+                    options = '''
+1. View a card
+2. View deck
+3. Pick a card
+
+'''
+                    print(QoL.center_justified(options))
 
                     # get the user's choice
                     card_index = input(QoL.center_justified('Enter the number of the card to pick:').rstrip() + ' ')
@@ -293,29 +308,204 @@ def card_choice(campaign, type=0) :
 
     gameplay(campaign, type) # add flavor text, context, etc.
 
-def sigil_sacrifice(campaign) : # sacrifice a card to give its sigil to another card
+def sigil_sacrifice(campaign) : # format visuals
     '''
     allows the player to sacrifice a card to give its sigil to another card
     
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
     '''
+    def get_reciever(deck_list) :
+        '''
+        allows the player to choose a card to receive a sigil
+        
+        Arguments:
+            deck_list: the list of cards to choose from (list[card object])
+            
+        Returns:
+            card object: the card to receive the sigil
+        '''
+        # set up variables
+        invalid_choice = False
+        
+        while True :
+            # print the player's deck with only cards that have open sigil slots
+            QoL.clear()
+            deck_open_sigil = QoL.sort_deck([card_ for card_ in deck_list if card_.has_sigil('')])
+            QoL.print_deck(deck_open_sigil, numbered=True, centered=True, blocked=True)
+
+            if invalid_choice :
+                print(QoL.center_justified('Invalid choice'))
+                print()
+                invalid_choice = False
+
+            # get user input
+            card_index = input(QoL.center_justified('Enter the number of the card to receive a new sigil:').rstrip() + ' ')
+            (is_int, card_index) = QoL.reps_int(card_index, -1)
+            if not is_int or card_index not in range(len(deck_open_sigil)) :
+                invalid_choice = True
+                continue
+
+            # get confirmation from the player
+            deck_open_sigil[card_index].explain()
+            input_affirm = input(QoL.center_justified('Are you sure you want to give a sigil to this card? (y/n)').rstrip() + ' ')
+            if input_affirm.lower() != 'y' :
+                continue
+
+            return deck_open_sigil[card_index]
+        
+    def get_sacrifice(deck_list, reciever) :
+        '''
+        allows the player to choose a card to sacrifice
+        
+        Arguments:
+            deck_list: the list of cards to choose from (list[card object])
+            reciever: the card to receive the sigil (card object)
+            
+        Returns:
+            card object: the card to sacrifice
+        '''
+        # set up variables
+        invalid_choice = False
+
+        # set up functions
+        same_sigil = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) # check if two sigils are the same or variations of the same sigil
+        good_sigil = lambda reciever, sigil : sigil != '' and not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be transferred
+        poss_transfers = lambda reciever, sacrifice : sum([good_sigil(reciever, sigil) for sigil in sacrifice.sigils]) # check how many sigils can be transferred
+        good_sigils = lambda reciever, sacrifice : poss_transfers(reciever, sacrifice) > 0 # check if any sigils can be transferred
+
+        while True :
+            # print the player's deck with only cards that have sigils
+            QoL.clear()
+            deck_have_sigil = QoL.sort_deck([card_ for card_ in deck_list if good_sigils(reciever, card_)])
+            QoL.print_deck(deck_have_sigil, numbered=True, centered=True, blocked=True)
+
+            if invalid_choice :
+                print(QoL.center_justified('Invalid choice'))
+                print()
+                invalid_choice = False
+
+            # get user input
+            card_index = input(QoL.center_justified('Enter the number of the card to sacrifice for its sigil:').rstrip() + ' ')
+            (is_int, card_index) = QoL.reps_int(card_index, -1)
+            if not is_int or card_index not in range(len(deck_have_sigil)) :
+                invalid_choice = True
+                continue
+
+            # get confirmation from the player
+            deck_have_sigil[card_index].explain()
+            input_affirm = input(QoL.center_justified('Are you sure you want to sacrifice this card? (y/n)').rstrip() + ' ')
+            if input_affirm.lower() != 'y' :
+                continue
+
+            return deck_have_sigil[card_index]
+
+    def get_sigil_slot(reciever, sacrifice) :
+        '''
+        allows the player to choose which sigil to transfer
+        
+        Arguments:
+            reciever: the card to receive the sigil (card object)
+            sacrifice: the card to sacrifice (card object)
+            
+        Returns:
+            int: the index of the sigil to transfer
+        '''
+        # set up variables
+        def sigil_name(sigil) :
+            match sigil :
+                case '' : return 'No Sigil'
+                case _ if 'hefty' in sigil : return 'Hefty'
+                case _ if 'lane shift' in sigil : return 'Sprinter'
+                case _ : return QoL.title_case(sigil)
+        sigil_names = [sigil_name(sacrifice.sigils[i]) for i in range(2)]
+
+        # set up functions
+        same_sigil = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) # check if two sigils are the same or variations of the same sigil
+        good_sigil = lambda reciever, sigil : sigil != '' and not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be transferred
+        poss_transfers = lambda reciever, sacrifice : sum([good_sigil(reciever, sigil) for sigil in sacrifice.sigils]) # check how many sigils can be transferred
+
+        match poss_transfers(reciever, sacrifice) :
+            case 2 :
+                # print sacrifice explanation
+                invalid_choice = False
+
+                while True :
+                    # print the sacrifice card
+                    QoL.clear()
+                    sacrifice.explain()
+
+                    if invalid_choice :
+                        print(QoL.center_justified('Invalid choice'))
+                        print()
+                        invalid_choice = False
+
+                    (is_int, sigil_index) = QoL.reps_int( input(QoL.center_justified(f'Would you like to transfer 1) {sigil_names[0]} or 2) {sigil_names[1]}? ').rstrip() + ' ' ), -1)
+
+                    if is_int or sigil_index not in range(1) :
+                        return sigil_index
+                    invalid_choice = True
+
+            case 1 : return 1 - good_sigil(reciever, sacrifice.sigils[0])
+
+            case _ : raise ValueError('No sigils can be transferred')
+
+    def confirm_choice(reciever, sacrifice, sigil_index) :
+        '''
+        allows the player to confirm their choice of cards and sigils
+        
+        Arguments:
+            reciever: the card to receive the sigil (card object)
+            sacrifice: the card to sacrifice (card object)
+            sigil_index: the index of the sigil to transfer (int)
+        
+        Returns:
+            bool: True if the player confirms their choice, False if they do not
+        '''
+        # set up variables
+        result_sigils = [og_sigil if og_sigil != '' else sacrifice.sigils[sigil_index] for og_sigil in reciever.sigils]
+        result_card = card.BlankCard(species=reciever.species, cost=reciever.saccs, attack=reciever.base_attack, life=reciever.base_life, sigils=result_sigils)
+
+        # generate the equation
+        equation = '\n'.join(card_equation(reciever, sacrifice, result_card))
+
+        # print the equation
+        QoL.clear()
+        print(QoL.center_justified(equation, blocked=True))
+
+        # get confirmation from the player
+        confirm_input = input(QoL.center_justified('Are you sure these are the cards you want to use? (y/n)').rstrip() + ' ')
+
+        if confirm_input.lower() != 'y' :
+            return False
+        
+        return True
+
     def gameplay(campaign) :
-        # show deck (filter out those with 2 sigils); select a card to receive the sigil
-        ### will need to get the index in a sorted deck
+        # set up variables
+        deck_list = campaign.player_deck.cards
 
-        # show deck (filter out those without sigils); select a card to sacrifice
-        ### will need to get the index in a sorted deck
+        while True :
+            # show deck (filter out those with 2 sigils); select a card to receive the sigil
+            reciever = get_reciever(deck_list)
 
-        # if sacrifice has 2 sigils and the recieving card doesn't have two open slots, ask which sigil to transfer
+            # show deck (filter out those without sigils); select a card to sacrifice
+            sacrifice = get_sacrifice(deck_list, reciever)
 
-        # confirm the sacrifice (visually show the sigil being transferred as an addition equation)
+            # if sacrifice has 2 sigils and the recieving card doesn't have two open slots, ask which sigil to transfer
+            sigil_index = get_sigil_slot(reciever, sacrifice)
 
-        # add the sigil to the card
+            # confirm the sacrifice (visually show the sigil being transferred as an addition equation)
+            if not confirm_choice(reciever, sacrifice, sigil_index) :
+                continue
 
-        # remove the sacrificed card from the deck
+            # add the sigil to the card
+            campaign.add_sigil(reciever, sacrifice.sigils[sigil_index])
 
-        pass
+            # remove the sacrificed card from the deck
+            campaign.remove_card(sacrifice)
+
+            break
 
     gameplay(campaign) # add flavor text, context, etc.
 

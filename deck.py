@@ -59,7 +59,7 @@ class Deck() :
         Arguments:
             index: index of card to change (int)
             sigil: sigil to change to (str)
-            sigil_slot: slot to change sigil in, 1 or 2 (int)
+            sigil_slot: slot to change sigil in, 0 or 1 (int)
         '''
         # set up variables
         sorted_deck = QoL.sort_deck(self.cards)
@@ -67,20 +67,20 @@ class Deck() :
 
         # error handling
         self.check_index(index)
-        if sigil_slot not in [1, 2] :
+        if sigil_slot not in [0,1] :
             raise ValueError(f"invalid sigil slot: {sigil_slot}")
         if len(sorted_deck[index].sigils) != 2 :
             raise ValueError('Sigils must be a list of length 2.')
         match sigil_slot :
+            case 0 :
+                same_sigil = (sorted_deck[index].sigils[1] == sigil) or ('hefty' in sorted_deck[index].sigils[1] and 'hefty' in sigil) or ('lane shift' in sorted_deck[index].sigils[1] and 'lane shift' in sigil)
             case 1 :
-                same_sigil = (sorted_deck[index].sigils[1] == sigil) or ('hefty' in sorted_deck[index].sigils[1] and 'hefty' in sigil)
-            case 2 :
-                same_sigil = (sorted_deck[index].sigils[0] == sigil) or ('hefty' in sorted_deck[index].sigils[0] and 'hefty' in sigil)
+                same_sigil = (sorted_deck[index].sigils[0] == sigil) or ('hefty' in sorted_deck[index].sigils[0] and 'hefty' in sigil) or ('lane shift' in sorted_deck[index].sigils[0] and 'lane shift' in sigil)
         if same_sigil :
             match sigil_slot :
-                case 1 :
+                case 0 :
                     remaining_sigil = sorted_deck[index].sigils[1]
-                case 2 :
+                case 1 :
                     remaining_sigil = sorted_deck[index].sigils[0]
                 case _ :
                     remaining_sigil = ''
@@ -88,9 +88,9 @@ class Deck() :
         
         # change sigil
         match sigil_slot :
-            case 1 :
+            case 0 :
                 sorted_deck[index].sigils[0] = sigil
-            case 2 :
+            case 1 :
                 sorted_deck[index].sigils[1] = sigil
         
         sorted_deck[index].update_ASCII()

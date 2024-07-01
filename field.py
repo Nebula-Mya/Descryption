@@ -459,6 +459,10 @@ class Playmat :
         field_string = ''
         term_cols = os.get_terminal_size().columns
         card_gaps = (term_cols*55 // 100) // 5 - 15
+        if card_gaps <= 0 :
+            score_gap = 28
+        else :
+            score_gap = card_gaps*9 + 28
         vis_bushes = [self.bushes[n] for n in range(1, 6)]
         vis_opponent_field = [self.opponent_field[n] for n in range(1, 6)]
         vis_player_field = [self.player_field[n] for n in range(1, 6)]
@@ -473,7 +477,7 @@ class Playmat :
         # print field
         QoL.clear()
         print(field_string, end='')
-        ASCII_text.print_scales(self.score)
+        ASCII_text.print_scales(self.score, score_gap)
 
     def print_full_field(self) :
         '''

@@ -13,24 +13,10 @@ def print_title() :
 ████████▀    ██████████  ▄████████▀   ████████▀    ███    ███   ▀█████▀   ▄████▀         ▄████▀   █▀    ▀██████▀    ▀█   █▀ 
                                                    █▀     ██▀                                                               
 {gap}An MS-DOS style demake of Daniel Mullin's "Inscryption"'''.format(gap=' '*66)
-    
-    title_lines = title.split('\n')
-    
-    term_cols = os.get_terminal_size().columns
-    string_len = max([len(line) for line in title_lines])
-    center_space = (term_cols - string_len) // 2
 
-    for line in title_lines :
-        print(' '*(center_space) + line)
+    print(QoL.center_justified(title, blocked=True))
 
-def print_scales(score) :
-    term_cols = os.get_terminal_size().columns
-    card_gaps = (term_cols*55 // 100) // 5 - 15
-    if card_gaps <= 0 :
-        score_gap = 28
-    else :
-        score_gap = card_gaps*9 + 28
-
+def print_scales(score, score_gap) :
     player_adv = max(0, score['player'] - score['opponent'])
     opponent_adv = max(0, score['opponent'] - score['player'])
     if player_adv :
@@ -85,14 +71,7 @@ __/\\\\\\______________/\\\\\\__/\\\\\\\\\\\\\\\\\\\\\\__/\\\\\\\\\\_____/\\\\\\
     {ovr}
 '''.format(ovr=overkill_display)
     
-    win_lines = win.split('\n')
-    
-    term_cols = os.get_terminal_size().columns
-    string_len = max([len(line) for line in win_lines])
-    center_space = (term_cols - string_len) // 2
-
-    for line in win_lines :
-        print(' '*(center_space) + line)
+    print(QoL.center_justified(win, blocked=True))
 
 def print_lose(deck_out=False) :
     '''
@@ -128,14 +107,7 @@ __/\\\\\\___________________/\\\\\\\\\\__________/\\\\\\\\\\\\\\\\\\\\\\____/\\\
     {deck}
 '''.format(deck=deck_out_display)
     
-    lose_lines = lose.split('\n')
-    
-    term_cols = os.get_terminal_size().columns
-    string_len = max([len(line) for line in lose_lines])
-    center_space = (term_cols - string_len) // 2
-
-    for line in lose_lines :
-        print(' '*(center_space) + line)
+    print(QoL.center_justified(lose, blocked=True))
 
 def print_WiP() :
     WiP = '''
@@ -148,22 +120,24 @@ def print_WiP() :
  ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 '''
 
-    WiP_lines = WiP.split('\n')
-
-    term_cols = os.get_terminal_size().columns
-    string_len = max([len(line) for line in WiP_lines])
-    center_space = (term_cols - string_len) // 2
-
-    for line in WiP_lines :
-        print(' '*(center_space) + line)
+    print(QoL.center_justified(WiP, blocked=True))
 
 if __name__ == '__main__' :
     QoL.clear()
     term_cols = os.get_terminal_size().columns
     overkill = 3
+    score = {'player': 6, 'opponent': 2}
+    card_gaps = (term_cols*55 // 100) // 5 - 15
+    if card_gaps <= 0 :
+        score_gap = 28
+    else :
+        score_gap = card_gaps*9 + 28
+    print_title()
+    print('-'*term_cols)
     print_win(overkill)
     print('-'*term_cols)
     print_lose()
     print('-'*term_cols)
-    score = {'player': 6, 'opponent': 2}
-    print_scales(score)
+    print_scales(score, score_gap)
+    print('-'*term_cols)
+    print_WiP()
