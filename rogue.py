@@ -6,7 +6,8 @@ import ASCII_text
 import menu
 import card
 import random
-
+import sigils
+### all of this will need to be refactored
 class rogue_campaign :
     '''
     the current campaign data, such as the current level, the current decks, teeth (money), progress in the level, candles, etc.
@@ -327,32 +328,34 @@ def sigil_sacrifice(campaign) : # format visuals
         '''
         # set up variables
         invalid_choice = False
+        no_slots = False
+        sorted_deck = QoL.sort_deck(deck_list)
         
         while True :
-            # print the player's deck with only cards that have open sigil slots
+            # print the player's deck
             QoL.clear()
-            deck_open_sigil = QoL.sort_deck([card_ for card_ in deck_list if card_.has_sigil('')])
-            QoL.print_deck(deck_open_sigil, numbered=True, centered=True, blocked=True)
+            QoL.print_deck(sorted_deck, numbered=True, centered=True, blocked=True)
 
             if invalid_choice :
                 print(QoL.center_justified('Invalid choice'))
                 print()
                 invalid_choice = False
+            elif no_slots :
+                print(QoL.center_justified('That card has no open sigil slots'))
+                print()
+                no_slots = False
 
             # get user input
             card_index = input(QoL.center_justified('Enter the number of the card to receive a new sigil:').rstrip() + ' ')
             (is_int, card_index) = QoL.reps_int(card_index, -1)
-            if not is_int or card_index not in range(len(deck_open_sigil)) :
+            if not is_int or card_index not in range(len(sorted_deck)) :
                 invalid_choice = True
                 continue
-
-            # get confirmation from the player
-            deck_open_sigil[card_index].explain()
-            input_affirm = input(QoL.center_justified('Are you sure you want to give a sigil to this card? (y/n)').rstrip() + ' ')
-            if input_affirm.lower() != 'y' :
+            elif not sorted_deck[card_index].has_sigil('') :
+                no_slots = True
                 continue
 
-            return deck_open_sigil[card_index]
+            return sorted_deck[card_index]
         
     def get_sacrifice(deck_list, reciever) :
         '''
@@ -367,6 +370,7 @@ def sigil_sacrifice(campaign) : # format visuals
         '''
         # set up variables
         invalid_choice = False
+        deck_have_sigil = QoL.sort_deck([card_ for card_ in deck_list if good_sigils(reciever, card_)])
 
         # set up functions
         same_sigil = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) # check if two sigils are the same or variations of the same sigil
@@ -377,7 +381,6 @@ def sigil_sacrifice(campaign) : # format visuals
         while True :
             # print the player's deck with only cards that have sigils
             QoL.clear()
-            deck_have_sigil = QoL.sort_deck([card_ for card_ in deck_list if good_sigils(reciever, card_)])
             QoL.print_deck(deck_have_sigil, numbered=True, centered=True, blocked=True)
 
             if invalid_choice :
@@ -390,12 +393,6 @@ def sigil_sacrifice(campaign) : # format visuals
             (is_int, card_index) = QoL.reps_int(card_index, -1)
             if not is_int or card_index not in range(len(deck_have_sigil)) :
                 invalid_choice = True
-                continue
-
-            # get confirmation from the player
-            deck_have_sigil[card_index].explain()
-            input_affirm = input(QoL.center_justified('Are you sure you want to sacrifice this card? (y/n)').rstrip() + ' ')
-            if input_affirm.lower() != 'y' :
                 continue
 
             return deck_have_sigil[card_index]
@@ -486,7 +483,7 @@ def sigil_sacrifice(campaign) : # format visuals
         deck_list = campaign.player_deck.cards
 
         while True :
-            # show deck (filter out those with 2 sigils); select a card to receive the sigil
+            # show deck; select a card to receive the sigil
             reciever = get_reciever(deck_list)
 
             # show deck (filter out those without sigils); select a card to sacrifice
@@ -509,31 +506,230 @@ def sigil_sacrifice(campaign) : # format visuals
 
     gameplay(campaign) # add flavor text, context, etc.
 
-def merge_cards() : # mycologists; merge two cards of the same species into one, with the new card having combined stats and sigils
+def merge_cards(campaign) : # format visuals
+    '''
+    allows the player to merge two cards of the same species into one, with the new card having combined stats and sigils
+    
+    Arguments:
+        campaign: the current campaign object (rogue_campaign object)
+    '''
+    def select_first(deck_list) :
+        '''
+        allows the player to choose the first card to merge
+        
+        Arguments:
+            deck_list: the list of cards to choose from (list[card object])
+        
+        Returns:
+            card object: the card to merge
+        '''
+        # set up variables
+        invalid_choice = False
+        sorted_deck = QoL.sort_deck(deck_list)
+        
+        while True :
+            # print the player's deck
+            QoL.clear()
+            QoL.print_deck(sorted_deck, numbered=True, centered=True, blocked=True)
+
+            if invalid_choice :
+                print(QoL.center_justified('Invalid choice'))
+                print()
+                invalid_choice = False
+
+            # get user input
+            card_index = input(QoL.center_justified('Enter the number of the first card to merge:').rstrip() + ' ')
+            (is_int, card_index) = QoL.reps_int(card_index, -1)
+            if not is_int or card_index not in range(len(sorted_deck)) :
+                invalid_choice = True
+                continue
+
+            return sorted_deck[card_index]
+
+    def select_second(deck_list, card_1) :
+        '''
+        allows the player to choose the second card to merge
+        
+        Arguments:
+            deck_list: the list of cards to choose from (list[card object])
+            card_1: the first card to merge (card object)
+            
+        Returns:
+            card object: the card to merge with
+        '''
+        # set up variables
+        invalid_choice = False
+        same_species = QoL.sort_deck([card_ for card_ in deck_list if card_.species == card_1.species and card_ != card_1])
+
+        while True :
+            # print the player's deck
+            QoL.clear()
+            QoL.print_deck(same_species, numbered=True, centered=True, blocked=True)
+
+            if invalid_choice :
+                print(QoL.center_justified('Invalid choice'))
+                print()
+                invalid_choice = False
+
+            # get user input
+            card_index = input(QoL.center_justified('Enter the number of the second card to merge:').rstrip() + ' ')
+            (is_int, card_index) = QoL.reps_int(card_index, -1)
+            if not is_int or card_index not in range(len(same_species)) or same_species[card_index].species != card_1.species :
+                invalid_choice = True
+                continue
+
+            return same_species[card_index]
+
+    def get_sigils(card_1, card_2) :
+        '''
+        allows the player to choose which sigils to keep
+        
+        Arguments:
+            card_1: the first card to merge (card object)
+            card_2: the second card to merge (card object)
+            
+        Returns:
+            list[str]: the sigils to keep
+        '''
+        def sigil_name(sigil) :
+            match sigil :
+                case '' : return 'No Sigil'
+                case _ if 'hefty' in sigil : return 'Hefty'
+                case _ if 'lane shift' in sigil : return 'Sprinter'
+                case _ : return QoL.title_case(sigil)
+
+        unique_sigils = []
+        for sigil in card_1.sigils + card_2.sigils :
+            if sigil != '' and not any(sigil_name(sigil) == sigil_name(sigil_) for sigil_ in unique_sigils) :
+                unique_sigils.append(sigil)
+
+        if len(unique_sigils) <= 2 : # if there are 2 or fewer unique sigils, return all sigils
+            if len(unique_sigils) < 2 : # make sure there are 2 sigils
+                unique_sigils += [''] * (2 - len(unique_sigils))
+            
+            return unique_sigils
+        
+        # set up variables
+        all_sigils = [sigil for sigil in card_1.sigils + card_2.sigils if sigil != '']
+        options = '\n' + '\n'.join([f'{i+1}. {sigil_name(sigil)}: {sigils.Dict[sigil][1]}' for i, sigil in enumerate(all_sigils)]) + '\n'
+        invalid_choice = False
+        iter = -1
+        iter_names = ['first', 'second']
+        final_sigils = []
+
+        while True :
+            # print the sigils and their effects
+            QoL.clear()
+            print(QoL.center_justified('Sigils to choose from:'))
+            print(QoL.center_justified(options, blocked=True))
+
+            if invalid_choice :
+                print(QoL.center_justified('Invalid choice'))
+                print()
+                invalid_choice = False
+            else :
+                iter += 1
+
+            # get user input
+            sigil_index = input(QoL.center_justified(f'Enter the number of the {iter_names[iter]} sigil to keep:').rstrip() + ' ')
+            (is_int, sigil_index) = QoL.reps_int(sigil_index, -1)
+
+            if not is_int or sigil_index not in range(len(all_sigils)) :
+                invalid_choice = True
+                continue
+
+            final_sigils.append(all_sigils[sigil_index])
+
+            if iter > 0 :
+                return final_sigils
+
+    def confirm_choice(card_1, card_2, result_sigils) :
+        '''
+        allows the player to confirm their choice of cards and sigils
+        
+        Arguments:
+            card_1: the first card to merge (card object)
+            card_2: the second card to merge (card object)
+            result_sigils: the sigils to keep (list[str])
+            
+        Returns:
+            bool: True if the player confirms their choice, False if they do not
+            result: the resulting card (card object)
+        '''
+        # set up variables
+        result = {
+            'species': card_1.species,
+            'cost': card_1.saccs + card_2.saccs,
+            'attack': card_1.base_attack + card_2.base_attack,
+            'life': card_1.base_life + card_2.base_life,
+            'sigils': result_sigils
+        }
+        card_result = card.BlankCard(**result)
+
+        # generate the equation
+        equation = '\n'.join(card_equation(card_1, card_2, card.BlankCard(**result)))
+
+        # print the equation
+        QoL.clear()
+        print(QoL.center_justified(equation, blocked=True))
+
+        # get confirmation from the player
+        confirm_input = input(QoL.center_justified('Are you sure these are the cards you want to use? (y/n)').rstrip() + ' ')
+
+        if confirm_input.lower() != 'y' :
+            return False, None
+        
+        return True, card_result
+
+    def gameplay(campaign) :
+        # set up variables
+        deck_list = campaign.player_deck.cards
+
+        while True :
+            # show deck (numbered); select a card to merge
+            card_1 = select_first(deck_list)
+
+            # show cards of the same species; select a card to merge with
+            card_2 = select_second(deck_list, card_1)
+
+            # if more than 2 unique sigils, ask which sigils to keep
+            result_sigils = get_sigils(card_1, card_2)
+
+            # confirm the merge (visually show the cards being combined as an addition equation)
+            confirm, result = confirm_choice(card_1, card_2, result_sigils)
+            if not confirm :
+                continue
+
+            # add the new card to the deck
+            campaign.add_card(result)
+
+            # remove the merged cards from the deck
+            campaign.remove_card(card_1)
+            campaign.remove_card(card_2)
+
+            break
+
+    gameplay(campaign) # add flavor text, context, etc.
+
+def pelt_shop(campaign) : # trader; buy pelts with teeth
     def gameplay() :
         pass
 
     gameplay() # add flavor text, context, etc.
 
-def pelt_shop() : # trader; buy pelts with teeth
+def card_shop(campaign) : # trader; buy cards with pelts
     def gameplay() :
         pass
 
     gameplay() # add flavor text, context, etc.
 
-def card_shop() : # trader; buy cards with pelts
+def break_rocks(campaign) : # prospector; break 1 of 3 rocks for bug cards or golden pelt (bugs may have additional sigils, only one rock has golden pelt)
     def gameplay() :
         pass
 
     gameplay() # add flavor text, context, etc.
 
-def break_rocks() : # prospector; break 1 of 3 rocks for bug cards or golden pelt (bugs may have additional sigils, only one rock has golden pelt)
-    def gameplay() :
-        pass
-
-    gameplay() # add flavor text, context, etc.
-
-def campfire() : # campfire; increase a cards health or damage, risking the card being destroyed
+def campfire(campaign) : # campfire; increase a cards health or damage, risking the card being destroyed
     '''
     each time a card rests by the Campfire, it gains a buff to its Power(+1) or Health(+2) (the stat is set before the player 'arrives')
 
@@ -550,20 +746,20 @@ def campfire() : # campfire; increase a cards health or damage, risking the card
 
     gameplay() # add flavor text, context, etc.
 
-def add_death_card() : # add a death card to config.json
+def add_death_card(campaign) : # add a death card to config.json
     # making a death card will shift the values of 'second' to 'third', 'first' to 'second', and the new death card will be written to 'first'
     def gameplay() :
         pass
 
     gameplay() # add flavor text, context, etc.
 
-def lost_run() : # death / loss ('cutscene' of sorts, with flavor text, etc., + make death card after 4 deaths)
+def lost_run(campaign) : # death / loss ('cutscene' of sorts, with flavor text, etc., + make death card after 4 deaths)
     def gameplay() :
         pass
 
     gameplay() # add flavor text, context, etc.
 
-def beat_leshy() : # create 'win' card, largely the same as death / loss function, differing mostly in flavor
+def beat_leshy(campaign) : # create 'win' card, largely the same as death / loss function, differing mostly in flavor
     def gameplay() :
         pass
 
@@ -571,31 +767,31 @@ def beat_leshy() : # create 'win' card, largely the same as death / loss functio
 
 ##### bosses will use the basic AI, but with higher difficulty settings and have their unique mechanics (pickaxe, ship, extra sigils, moon)
 
-def boss_fight_prospector() : # boss fight 1
+def boss_fight_prospector(campaign) : # boss fight 1
     def gameplay() :
         pass
 
     gameplay() # add flavor text, context, etc.
 
-def boss_fight_angler() : # boss fight 2
+def boss_fight_angler(campaign) : # boss fight 2
     def gameplay() :
         pass
 
     gameplay() # add flavor text, context, etc.
 
-def boss_fight_trapper_trader() : # boss fight 3
+def boss_fight_trapper_trader(campaign) : # boss fight 3
     def gameplay() :
         pass
 
     gameplay() # add flavor text, context, etc.
 
-def boss_fight_leshy() : # boss fight 4
+def boss_fight_leshy(campaign) : # boss fight 4
     def gameplay() :
         pass
 
     gameplay() # add flavor text, context, etc.
 
-def split_road() : # choose path, the main function that handles all others, most of the game loop will be here
+def split_road(campaign) : # choose path, the main function that handles all others, most of the game loop will be here
     def gameplay() :
         pass
 
@@ -616,6 +812,6 @@ if __name__ == '__main__' :
     campaign = rogue_campaign(duel.deck_gen(card_library.Poss_Playr, 20).cards, 0, 2)
     campaign.print_deck()
     input(QoL.center_justified('Press Enter to continue...').rstrip())
-    sigil_sacrifice(campaign)
+    pelt_shop(campaign)
     input(QoL.center_justified('Press Enter to continue...').rstrip())
     campaign.print_deck()
