@@ -112,7 +112,8 @@ def center_justified(text, blocked=False, shift=0) :
         the centered text (str)
     '''
     # set up variables
-    text_lines = text.split('\n')
+    # text_lines = text.split('\n')
+    text_lines = [line.rstrip() for line in text.split('\n')]
     term_width = os.get_terminal_size().columns
     center_space = lambda line_width : (term_width - line_width) // 2
     centered_text = ''
@@ -394,6 +395,40 @@ def reps_int(string, increment=0) :
         return True, int(string) + increment
     except ValueError : # if not, default to 0 and return False
         return False, 0
+
+def bind_int(value, lower_bound=None, upper_bound=None) :
+    '''
+    binds an integer to a range (inclusive)
+
+    when one unspecified bound is given, it is taken as the floor
+    when two unspecified bounds are given, the first is taken as the floor and the second as the ceiling
+
+    Arguments:
+        value: the integer to bind (int)
+        lower_bound: the lower bound to bind to, defaults to None (int)
+        upper_bound: the upper bound to bind to, defaults to None (int)
+    '''
+    # error handling
+    if type(value) != int :
+        raise ValueError('value must be an integer')
+    if lower_bound == None and upper_bound == None :
+        raise ValueError('at least one bound must be specified')
+    if lower_bound != None and upper_bound != None and lower_bound > upper_bound :
+        raise ValueError('lower bound must be less than or equal to upper bound')
+    if lower_bound != None and type(lower_bound) != int :
+        raise ValueError('lower bound must be an integer')
+    if upper_bound != None and type(upper_bound) != int :
+        raise ValueError('upper bound must be an integer')
+    
+    match (lower_bound != None, upper_bound != None) :
+        case (True, False) : # only lower bound
+            return max(value, lower_bound)
+        case (False, True) : # only upper bound
+            return min(value, upper_bound)
+        case (True, True) : # both bounds
+            return min(max(value, lower_bound), upper_bound)
+        case _ : # misc errors
+            raise ValueError('invalid bounds')
 
 def ping(locals={'ping':'pong'}) : # for testing
     '''

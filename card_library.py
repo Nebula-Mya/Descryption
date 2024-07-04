@@ -51,13 +51,13 @@ class BoppitW(card.BlankCard) :
 
 class Ouroboros(card.BlankCard) :
     def __init__(self, blank_cost=False) :
-        [oro_attack, oro_life] = QoL.read_data([['ouroboros', 'attack'], ['ouroboros', 'life']])
-        super().__init__(species='Ouroboros', cost=2, attack=oro_attack, life=oro_life, sigils=['unkillable',''], blank_cost=blank_cost)
+        [oro_level] = QoL.read_data([['progress markers', 'ouro level']])
+        super().__init__(species='Ouroboros', cost=2, attack=oro_level, life=oro_level, sigils=['unkillable',''], blank_cost=blank_cost)
 
     def die(self) :
         self.base_attack += 1
         self.base_life += 1
-        QoL.write_data([(['ouroboros', 'attack'], self.base_attack), (['ouroboros', 'life'], self.base_life)])
+        QoL.write_data([(['progress markers', 'ouro level'], self.base_attack)])
         super().die()
 
 class Cockroach(card.BlankCard) :

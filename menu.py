@@ -7,28 +7,34 @@ import rogue
 
 version_ID = 'v0.2.0a-alpha'
 
-def reset_oro() :
+def reset_progress() : 
     '''
-    resets Ouroboros to level 1 if the player chooses to
+    resets player progress if the player chooses to
     '''
     # set up variables
-    [oro_level] = QoL.read_data([['ouroboros', 'attack']])
+    data_to_write = [
+        (['progress markers', 'ouro level'], 1),
+        (['progress markers', 'beat prospector'], False),
+        (['progress markers', 'beat angler'], False),
+        (['progress markers', 'beat trapper'], False),
+        (['progress markers', 'beat leshy'], False),
+        (['progress markers', 'wins'], 0),
+        (['progress markers', 'losses'], 0)
+    ]
 
     # print the menu
     QoL.clear()
     print(version_ID)
     print('\n'*2)
     ASCII_text.print_title()
-    print('\n'*6)
-    print(QoL.center_justified('Orouboros level: ' + str(oro_level)))
-    print('\n'*2)
+    print('\n'*8)
 
     # get the user's choice
-    reset_choice = input(QoL.center_justified('Are you sure you want to reset Ouroboros? y/n').rstrip() + ' ')
+    reset_choice = input(QoL.center_justified('Are you sure you want to reset your progress? This cannot be undone. y/n').rstrip() + ' ')
 
     # reset Ouroboros if the user chooses to
     if reset_choice == 'y' :
-        QoL.write_data([(['ouroboros', 'attack'], 1), (['ouroboros', 'life'], 1)])
+        QoL.write_data(data_to_write)
     
 def reset_death_card() :
     '''
@@ -279,8 +285,8 @@ def settings() :
         print(QoL.center_justified('1.  Change difficulty     '))
         print(QoL.center_justified('2.  Change deck size      '))
         print(QoL.center_justified('3.  Change hand size      '))
-        print(QoL.center_justified('4.  Reset Ouroboros      '))
-        print(QoL.center_justified('5.  Delete death card    '))
+        print(QoL.center_justified('4.  Delete death cards   '))
+        print(QoL.center_justified('5.  Reset progress       '))
 
     # set up variables
     invalid_choice = False
@@ -315,9 +321,9 @@ def settings() :
             case '3' :
                 set_hand_size()
             case '4' :
-                reset_oro()
-            case '5' :
                 reset_death_card()
+            case '5' :
+                reset_progress()
             case _ :
                 invalid_choice = True
 

@@ -7,6 +7,8 @@ import menu
 import card
 import random
 import sigils
+import os
+
 ### all of this will need to be refactored
 class rogue_campaign :
     '''
@@ -711,11 +713,108 @@ def merge_cards(campaign) : # format visuals
 
     gameplay(campaign) # add flavor text, context, etc.
 
-def pelt_shop(campaign) : # trader; buy pelts with teeth
-    def gameplay() :
-        pass
+def pelt_shop(campaign) : # format visuals
+    '''
+    allow the player to buy pelts from the trapper with teeth
 
-    gameplay() # add flavor text, context, etc.
+    one free rabbit pelt is given, and costs increase with current area/level
+
+    costs permanently decrease after trapper boss fight has been beaten
+
+    Arguments:
+        campaign: the current campaign object (rogue_campaign object)
+    '''
+    def display_shop(campaign, pelt_dict, new_pelts) :
+        # set up variables
+        card_gap_spaces = ' '*((os.get_terminal_size().columns*55 // 100) // 5 - 15)
+        # price_tags = QoL.center_justified(f'Rabbit Pelt: {str(rabbit_cost).ljust(2)}{card_gap_spaces}Wolf Pelt: {str(wolf_cost).ljust(4)}{card_gap_spaces}Golden Pelt: {str(golden_cost).ljust(2)}')
+        price_tags = QoL.center_justified(card_gap_spaces.join([f'{pelt_name.title()}: {str(pelt_dict[pelt_name][0]).ljust(13 - len(pelt_name))}' for pelt_name in pelt_dict]))
+        pelt_displays = QoL.print_deck([pelt_dict[pelt_name][1] for pelt_name in pelt_dict], centered=True, blocked=True, fruitful=True)
+        shop_display = f'{price_tags}{pelt_displays}'
+        cart = QoL.print_deck(new_pelts, fruitful=True)
+
+        # print the shop
+        QoL.clear()
+        print('\n')
+        print(QoL.center_justified('You have ' + str(campaign.teeth) + ' teeth to spend') + '\n')
+        print(shop_display)
+        print(f'{card_gap_spaces}Cart:', end='')
+        print(cart, end='')
+
+    def buy_pelt(campaign, pelt_name, pelt_dict, new_pelts) :
+        if campaign.teeth >= pelt_dict[pelt_name][0] :
+            campaign.add_teeth(-pelt_dict[pelt_name][0])
+            # pelt_to_add = type(pelt_dict[pelt_name][1])()
+            new_pelts.append(type(pelt_dict[pelt_name][1])())
+        else :
+            display_shop(campaign, pelt_dict, new_pelts)
+            print('\n')
+            input(QoL.center_justified(f'You do not have enough teeth to buy a {pelt_name.lower()} (press enter to go back)').rstrip() + ' ')
+
+    def gameplay(campaign, cost_modifier) :
+        # set up variables
+        pelt_dict = {
+            'rabbit pelt': [QoL.bind_int((1 + cost_modifier), 1, 2), card_library.RabbitPelt()],
+            'wolf pelt': [QoL.bind_int((2 + cost_modifier), 2, 6), card_library.WolfPelt()],
+            'golden pelt': [QoL.bind_int((3 + cost_modifier), 3, 11), card_library.GoldenPelt()]
+        }
+        new_pelts = [card_library.RabbitPelt()] # give the player a free rabbit pelt
+        invalid_choice = False
+
+        while True :
+            # display the shop
+            display_shop(campaign, pelt_dict, new_pelts)
+
+            # get user input
+            options = '''
+1. Buy a pelt
+2. View deck
+3. Leave the shop'''
+            print(QoL.center_justified(options, blocked=True))
+
+            if invalid_choice :
+                print(QoL.center_justified('Invalid choice'))
+                invalid_choice = False
+            else :
+                print('\n')
+
+            # get the user's choice
+            choice = input(QoL.center_justified(' '*2 + 'Choose an option:').rstrip() + ' ')
+            
+            match choice :
+                case '1' :
+                    # display the shop
+                    display_shop(campaign, pelt_dict, new_pelts)
+                    print()
+                    match input(QoL.center_justified('Would you like to buy 1) a Rabbit Pelt, 2) a Wolf Pelt, or 3) a Golden Pelt? (press enter to go back)').rstrip() + ' ') :
+                        case '1' : 
+                            buy_pelt(campaign, 'rabbit pelt', pelt_dict, new_pelts)
+                        case '2' :
+                            buy_pelt(campaign, 'wolf pelt', pelt_dict, new_pelts)
+                        case '3' :
+                            buy_pelt(campaign, 'golden pelt', pelt_dict, new_pelts)
+                        case _ : 
+                            invalid_choice = True
+                case '2' :
+                    # print the player's deck
+                    QoL.clear()
+                    print('\n'*5)
+                    print(QoL.center_justified('Your deck:'))
+                    campaign.print_deck()
+                    print()
+                    input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
+                case '3' : break
+                case _ : invalid_choice = True
+
+        # add pelts to the player's deck
+        QoL.ping(locals=locals())
+        for pelt in new_pelts :
+            campaign.add_card(pelt)
+
+    [beat_trapper] = QoL.read_data([['progress markers', 'beat trapper']])
+    cost_modifier = 0 + campaign.level - beat_trapper
+
+    gameplay(campaign, cost_modifier) # add flavor text, context, etc.
 
 def card_shop(campaign) : # trader; buy cards with pelts
     def gameplay() :
@@ -812,6 +911,6 @@ if __name__ == '__main__' :
     campaign = rogue_campaign(duel.deck_gen(card_library.Poss_Playr, 20).cards, 0, 2)
     campaign.print_deck()
     input(QoL.center_justified('Press Enter to continue...').rstrip())
-    pelt_shop(campaign)
+    card_shop(campaign)
     input(QoL.center_justified('Press Enter to continue...').rstrip())
     campaign.print_deck()

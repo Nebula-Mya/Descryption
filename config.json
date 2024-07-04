@@ -11,9 +11,14 @@
             "leshy offense threshold": 3
         }
     },
-    "ouroboros": {
-        "attack": 1,
-        "life": 1
+    "progress markers": {
+        "ouro level": 1,
+        "beat prospector": false,
+        "beat angler": false,
+        "beat trapper": false,
+        "beat leshy": false,
+        "wins": 0,
+        "losses": 0
     },
     "death cards": {
         "first": {
@@ -49,9 +54,5 @@
             ],
             "easter": true
         }
-    },
-    "stats": {
-        "wins": 0,
-        "losses": 0
     }
 }

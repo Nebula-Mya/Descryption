@@ -1,88 +1,20 @@
-__name__: __main__
+campaign: <__main__.rogue_campaign object at 0x7f28a5b2acb0>
 
-__doc__: None
+cost_modifier: 0
 
-__package__: None
+pelt_dict: {'rabbit pelt': [1, <card_library.RabbitPelt object at 0x7f28a5a74370>], 'wolf pelt': [2, <card_library.WolfPelt object at 0x7f28a5a743d0>], 'golden pelt': [3, <card_library.GoldenPelt object at 0x7f28a5a74430>]}
 
-__loader__: <_frozen_importlib_external.SourceFileLoader object at 0x7f102e254c10>
+new_pelts: [<card_library.RabbitPelt object at 0x7f28a5a74400>, <card_library.RabbitPelt object at 0x7f28a5a743a0>, <card_library.RabbitPelt object at 0x7f28a5a745b0>, <card_library.WolfPelt object at 0x7f28a5a744f0>, <card_library.GoldenPelt object at 0x7f28a5a74610>, <card_library.WolfPelt object at 0x7f28a5a74580>, <card_library.RabbitPelt object at 0x7f28a5a74730>]
 
-__spec__: None
+invalid_choice: False
 
-__annotations__: {}
+options: 
+1. Buy a pelt
+2. View deck
+3. Leave the shop
 
-__builtins__: <module 'builtins' (built-in)>
+choice: 3
 
-__file__: /mnt/c/Users/MaWmM/Documents/GitHub/Descryption/deck.py
+buy_pelt: <function pelt_shop.<locals>.buy_pelt at 0x7f28a5a297e0>
 
-__cached__: None
-
-QoL: <module 'QoL' from '/mnt/c/Users/MaWmM/Documents/GitHub/Descryption/QoL.py'>
-
-random: <module 'random' from '/usr/lib/python3.10/random.py'>
-
-copy: <module 'copy' from '/usr/lib/python3.10/copy.py'>
-
-Deck: <class '__main__.Deck'>
-
-card_library: <module 'card_library' from '/mnt/c/Users/MaWmM/Documents/GitHub/Descryption/card_library.py'>
-
-slot1: Squirrel 
-
-slot2: Rabbit   
-
-slot3: Squirrel 
-
-slot4: Lobster  
-
-slot5: Boppit W.
-
-slot6: Ouroboros
-
-slot7: Asp      
-
-slot8: Turtle   
-
-slot9: Falcon   
-
-slot10: Dumpy Tr.
-
-decklist: [<card_library.Squirrel object at 0x7f102e12bdc0>, <card_library.Rabbit object at 0x7f102e12bd90>, <card_library.Squirrel object at 0x7f102e12bd60>, <card_library.Lobster object at 0x7f102e307070>, <card_library.BoppitW object at 0x7f102e3069b0>, <card_library.Ouroboros object at 0x7f102e131db0>, <card_library.Asp object at 0x7f102e133e50>, <card_library.Turtle object at 0x7f102e133f10>, <card_library.Falcon object at 0x7f102e133eb0>, <card_library.DumpyTF object at 0x7f102e133ee0>, <card_library.Squirrel object at 0x7f102e133f40>, <card_library.Squirrel object at 0x7f102e133fa0>]
-
-_: 1
-
-testdeck:      ,-------------,     ,-------------,     ,-------------,     ,-------------,     ,-------------,     ,-------------,     ,-------------,     ,-------------,
-     |Rabbit    C:0|     |Squirrel  C:0|     |Squirrel  C:0|     |Squirrel  C:0|     |Squirrel  C:0|     |Dumpy Tr. C:1|     |Turtle    C:1|     |Asp       C:2|
-     |             |     |             |     |             |     |             |     |             |     |             |     |             |     |             |
-     |             |     |             |     |             |     |             |     |             |     |             |     |             |     |             |
-     |    ,-,      |     |    <<< .    |     |    <<< .    |     |    <<< .    |     |    <<< .    |     |    <<< .    |     |    <<< .    |     |     ___     |
-     |    | |->    |     |    []_(|    |     |    []_(|    |     |    []_(|    |     |    []_(|    |     |    []_(|    |     |    []_(|    |     |     \ /     |
-     |    '-'      |     |    '———'    |     |    '———'    |     |    '———'    |     |    '———'    |     |    '———'    |     |    '———'    |     |     ·V·     |
-     |             |     |             |     |             |     |             |     |             |     |             |     |             |     |             |
-     |             |     |             |     |             |     |             |     |             |     |             |     |             |     |             |
-     |          1/1|     |          0/1|     |          0/1|     |          0/1|     |          0/1|     |          2/2|     |          0/4|     |          2/2|
-     '-------------'     '-------------'     '-------------'     '-------------'     '-------------'     '-------------'     '-------------'     '-------------'
-     ,-------------,     ,-------------,     ,-------------,     ,-------------,
-     |Falcon    C:2|     |Ouroboros C:2|     |Lobster   C:3|     |Boppit W. C:4|
-     |             |     |             |     |             |     |             |
-     |             |     |             |     |             |     |             |
-     |      _      |     |    ,->-,    |     |    _   _    |     |      |      |
-     |    ɩΞΞɭ     |     |    | X |    |     |     \ /     |     |    ()|()    |
-     |     ɩΞΞð    |     |    '-<-'    |     |      |      |     |      |      |
-     |             |     |             |     |             |     |             |
-     |             |     |             |     |             |     |             |
-     |          3/1|     |          1/1|     |          2/3|     |          3/4|
-     '-------------'     '-------------'     '-------------'     '-------------'
-
-sorted_deck: [<card_library.Rabbit object at 0x7f102e12bd90>, <card_library.Squirrel object at 0x7f102e12bdc0>, <card_library.Squirrel object at 0x7f102e12bd60>, <card_library.Squirrel object at 0x7f102e133f40>, <card_library.Squirrel object at 0x7f102e133fa0>, <card_library.DumpyTF object at 0x7f102e133ee0>, <card_library.Turtle object at 0x7f102e133f10>, <card_library.Asp object at 0x7f102e133e50>, <card_library.Falcon object at 0x7f102e133eb0>, <card_library.Ouroboros object at 0x7f102e131db0>, <card_library.Lobster object at 0x7f102e307070>, <card_library.BoppitW object at 0x7f102e3069b0>]
-
-subject_card_4: Squirrel 
-
-subject_card_4_sigils: ['hefty (left)']
-
-subject_card_1: Squirrel 
-
-subject_card_1_sigils: ['hefty (left)']
-
-subject_card_8: Falcon   
-
-subject_card_8_sigils: ['airborne']
+display_shop: <function pelt_shop.<locals>.display_shop at 0x7f28a5a29870>
