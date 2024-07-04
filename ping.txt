@@ -1,10 +1,10 @@
-campaign: <__main__.rogue_campaign object at 0x7f28a5b2acb0>
+campaign: <__main__.rogue_campaign object at 0x7f5a1685de40>
 
 cost_modifier: 0
 
-pelt_dict: {'rabbit pelt': [1, <card_library.RabbitPelt object at 0x7f28a5a74370>], 'wolf pelt': [2, <card_library.WolfPelt object at 0x7f28a5a743d0>], 'golden pelt': [3, <card_library.GoldenPelt object at 0x7f28a5a74430>]}
+pelt_dict: {'rabbit pelt': [1, <card_library.RabbitPelt object at 0x7f5a16836380>], 'wolf pelt': [2, <card_library.WolfPelt object at 0x7f5a168363b0>], 'golden pelt': [3, <card_library.GoldenPelt object at 0x7f5a16836440>]}
 
-new_pelts: [<card_library.RabbitPelt object at 0x7f28a5a74400>, <card_library.RabbitPelt object at 0x7f28a5a743a0>, <card_library.RabbitPelt object at 0x7f28a5a745b0>, <card_library.WolfPelt object at 0x7f28a5a744f0>, <card_library.GoldenPelt object at 0x7f28a5a74610>, <card_library.WolfPelt object at 0x7f28a5a74580>, <card_library.RabbitPelt object at 0x7f28a5a74730>]
+new_pelts: [<card_library.RabbitPelt object at 0x7f5a16836410>]
 
 invalid_choice: False
 
@@ -15,6 +15,6 @@ options:
 
 choice: 3
 
-buy_pelt: <function pelt_shop.<locals>.buy_pelt at 0x7f28a5a297e0>
+buy_pelt: <function pelt_shop.<locals>.buy_pelt at 0x7f5a16755510>
 
-display_shop: <function pelt_shop.<locals>.display_shop at 0x7f28a5a29870>
+display_shop: <function pelt_shop.<locals>.display_shop at 0x7f5a167555a0>

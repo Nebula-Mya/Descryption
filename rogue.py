@@ -727,7 +727,6 @@ def pelt_shop(campaign) : # format visuals
     def display_shop(campaign, pelt_dict, new_pelts) :
         # set up variables
         card_gap_spaces = ' '*((os.get_terminal_size().columns*55 // 100) // 5 - 15)
-        # price_tags = QoL.center_justified(f'Rabbit Pelt: {str(rabbit_cost).ljust(2)}{card_gap_spaces}Wolf Pelt: {str(wolf_cost).ljust(4)}{card_gap_spaces}Golden Pelt: {str(golden_cost).ljust(2)}')
         price_tags = QoL.center_justified(card_gap_spaces.join([f'{pelt_name.title()}: {str(pelt_dict[pelt_name][0]).ljust(13 - len(pelt_name))}' for pelt_name in pelt_dict]))
         pelt_displays = QoL.print_deck([pelt_dict[pelt_name][1] for pelt_name in pelt_dict], centered=True, blocked=True, fruitful=True)
         shop_display = f'{price_tags}{pelt_displays}'
@@ -744,7 +743,6 @@ def pelt_shop(campaign) : # format visuals
     def buy_pelt(campaign, pelt_name, pelt_dict, new_pelts) :
         if campaign.teeth >= pelt_dict[pelt_name][0] :
             campaign.add_teeth(-pelt_dict[pelt_name][0])
-            # pelt_to_add = type(pelt_dict[pelt_name][1])()
             new_pelts.append(type(pelt_dict[pelt_name][1])())
         else :
             display_shop(campaign, pelt_dict, new_pelts)
@@ -911,6 +909,6 @@ if __name__ == '__main__' :
     campaign = rogue_campaign(duel.deck_gen(card_library.Poss_Playr, 20).cards, 0, 2)
     campaign.print_deck()
     input(QoL.center_justified('Press Enter to continue...').rstrip())
-    card_shop(campaign)
+    pelt_shop(campaign)
     input(QoL.center_justified('Press Enter to continue...').rstrip())
     campaign.print_deck()

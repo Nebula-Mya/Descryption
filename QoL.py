@@ -112,8 +112,8 @@ def center_justified(text, blocked=False, shift=0) :
         the centered text (str)
     '''
     # set up variables
-    # text_lines = text.split('\n')
-    text_lines = [line.rstrip() for line in text.split('\n')]
+    text_lines = text.split('\n')
+    # text_lines = [line.lstrip() for line in text.split('\n')]
     term_width = os.get_terminal_size().columns
     center_space = lambda line_width : (term_width - line_width) // 2
     centered_text = ''
@@ -345,7 +345,9 @@ def print_deck(deck, sort=False, fruitful=False, numbered=False, centered=False,
                 card_number[0] += 1
         else :
             text = card_gaps_space + card_gaps_space.join(card.text_by_line() for card in row)
-        
+
+        if centered or numbered :
+            return text[1:]
         return text
     
     # set up variables
