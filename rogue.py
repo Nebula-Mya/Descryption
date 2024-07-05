@@ -805,7 +805,6 @@ def pelt_shop(campaign) : # format visuals
                 case _ : invalid_choice = True
 
         # add pelts to the player's deck
-        QoL.ping(locals=locals())
         for pelt in new_pelts :
             campaign.add_card(pelt)
 
@@ -814,11 +813,123 @@ def pelt_shop(campaign) : # format visuals
 
     gameplay(campaign, cost_modifier) # add flavor text, context, etc.
 
-def card_shop(campaign) : # trader; buy cards with pelts
-    def gameplay() :
-        pass
+def card_shop(campaign) : # format visuals
+    '''
+    allow the player to buy cards from the trader with pelts from their deck
 
-    gameplay() # add flavor text, context, etc.
+    arguments:
+        campaign: the current campaign object (rogue_campaign object)
+    '''
+    # set up functions
+    same_sigil = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) 
+
+    def add_sigil_wolf(card_) :
+        allowed_sigils = [sigil for sigil in sigils.Dict if not any(same_sigil(sigil, sigil_) for sigil_ in card_.sigils)]
+        sigil_slot = card_.sigils.index('')
+        card_.sigils[sigil_slot] = random.choice(allowed_sigils)
+        card_.update_ASCII()
+        return card_
+    
+    def pelt_trade(campaign, pelt, available_cards) : 
+        '''
+        allows the player to trade a pelt for a card
+
+        arguments:
+            campaign: the current campaign object (rogue_campaign object)
+            pelt: the pelt to trade (card object)
+            available_cards: the cards available for trade (list[card object])
+
+        returns:
+            bool: True if the trade is successful, False if it is not
+        '''
+        # set up variables
+        invalid_choice = False
+
+        while True :
+            # display the trade options
+            QoL.clear()
+            print('\n'*3)
+            QoL.print_deck([pelt])
+            print()
+            QoL.print_deck(available_cards, numbered=True, centered=True, blocked=True)
+
+            if invalid_choice :
+                print(QoL.center_justified('Invalid choice'))
+                invalid_choice = False
+            else :
+                print('\n')
+
+            # get user input
+            match input(QoL.center_justified(f'Which card will you trade your {pelt.species.lower()} for? (press enter to go back)').rstrip() + ' ').lower() :
+                case index if QoL.reps_int(index)[0] and int(index) - 1 in range(len(available_cards)) : # trade the pelt for the card
+                    campaign.add_card(available_cards[int(index) - 1])
+                    campaign.remove_card(pelt)
+                    available_cards.remove(available_cards[int(index) - 1])
+                    return True
+                case '' : return False
+                case _ : invalid_choice = True
+
+    def random_card(possible_cards, alpha=2.2, beta=3.3, rare=False, open_sigil=False) :
+        import math
+
+        # get card
+        if rare :
+            template_card = random.choice(possible_cards)
+            card_class = type(template_card)
+        else :
+            # get cost
+            max_cost = max(possible_cards.keys())
+            cost = math.floor((max_cost + 1) * random.betavariate(alpha, beta))
+
+            while True :
+                template_card = random.choice(possible_cards[cost])
+                card_class = type(template_card)
+                if not any(type(card) == card_class for card in card_library.Rare_Cards) and not (open_sigil and not template_card.has_sigil('')): break
+
+        return card_class(getattr(template_card, 'blank_cost', False))
+
+    def gameplay(campaign) :
+        # set up variables
+        invalid_choice = False
+        pelt_order = lambda pelt : ['rabbit pelt', 'wolf pelt', 'golden pelt'].index(pelt.species.lower())
+        deck_pelts = [card_ for card_ in campaign.player_deck.cards if 'pelt' in card_.species.lower()]
+        deck_pelts.sort(key=pelt_order)
+        rabbit_available = [random_card(card_library.Poss_Playr) for _ in range(8)]
+        wolf_available = [add_sigil_wolf(random_card(card_library.Poss_Playr, open_sigil=True)) for _ in range(8)]
+        golden_available = [random_card(card_library.Rare_Cards, rare=True) for _ in range(4)]
+
+        while True :
+            # player picks which pelt to trade (select from a filtered deck)
+            if not deck_pelts :
+                return
+            QoL.clear()
+            print('\n'*5)
+            print(QoL.center_justified('Your pelts:'))
+            QoL.print_deck(deck_pelts, numbered=True, centered=True, blocked=True)
+
+            if invalid_choice :
+                print(QoL.center_justified('Invalid choice'))
+                invalid_choice = False
+            else :
+                print('\n')
+
+            # get user input
+            match input(QoL.center_justified('Which pelt will you trade for cards? (press enter to go back)').rstrip() + ' ') :
+                case index if QoL.reps_int(index)[0] and int(index) - 1 in range(len(deck_pelts)) : # trade the pelt
+                    pelt = deck_pelts[int(index) - 1]
+                    match pelt.species.lower() :
+                        case 'rabbit pelt' if pelt_trade(campaign, pelt, rabbit_available) : deck_pelts.remove(pelt)
+                        case 'wolf pelt' if pelt_trade(campaign, pelt, wolf_available) : deck_pelts.remove(pelt)
+                        case 'golden pelt' if pelt_trade(campaign, pelt, golden_available) : deck_pelts.remove(pelt)
+                case '' : return
+                case _ : invalid_choice = True
+    
+    # if player has no pelts in their deck, give them 5 teeth
+    if not any(type(card_) in [card_library.RabbitPelt, card_library.WolfPelt, card_library.GoldenPelt] for card_ in campaign.player_deck.cards) :
+        ### dialogue from trader on player's lack of pelts
+        campaign.add_teeth(5)
+    else :
+        gameplay(campaign) # add flavor text, context, etc.
 
 def break_rocks(campaign) : # prospector; break 1 of 3 rocks for bug cards or golden pelt (bugs may have additional sigils, only one rock has golden pelt)
     def gameplay() :
@@ -905,10 +1016,11 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
     # test and develop this function in the if __name__ == '__main__' block, only move it here when it's ready
 
 if __name__ == '__main__' :
-    import sys # testing sigil_sacrifice function
+    import sys # testing functions
+    import copy
     campaign = rogue_campaign(duel.deck_gen(card_library.Poss_Playr, 20).cards, 0, 2)
     campaign.print_deck()
     input(QoL.center_justified('Press Enter to continue...').rstrip())
-    card_shop(campaign)
+    break_rocks(campaign)
     input(QoL.center_justified('Press Enter to continue...').rstrip())
     campaign.print_deck()
