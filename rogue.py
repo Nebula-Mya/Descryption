@@ -909,6 +909,6 @@ if __name__ == '__main__' :
     campaign = rogue_campaign(duel.deck_gen(card_library.Poss_Playr, 20).cards, 0, 2)
     campaign.print_deck()
     input(QoL.center_justified('Press Enter to continue...').rstrip())
-    pelt_shop(campaign)
+    card_shop(campaign)
     input(QoL.center_justified('Press Enter to continue...').rstrip())
     campaign.print_deck()

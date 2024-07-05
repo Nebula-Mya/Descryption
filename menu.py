@@ -19,7 +19,25 @@ def reset_progress() :
         (['progress markers', 'beat trapper'], False),
         (['progress markers', 'beat leshy'], False),
         (['progress markers', 'wins'], 0),
-        (['progress markers', 'losses'], 0)
+        (['progress markers', 'losses'], 0),
+        (['death cards', 'first', 'name'], "Nebby"), # my death card
+        (['death cards', 'first', 'attack'], 2),
+        (['death cards', 'first', 'life'], 1),
+        (['death cards', 'first', 'cost'], 2),
+        (['death cards', 'first', 'sigils'], ["waterborne", ""]),
+        (['death cards', 'first', 'easter'], True),
+        (['death cards', 'second', 'name'], "Glaucus"), # Jacob's death card
+        (['death cards', 'second', 'attack'], 4),
+        (['death cards', 'second', 'life'], 1),
+        (['death cards', 'second', 'cost'], 3),
+        (['death cards', 'second', 'sigils'], ["airborne", "unkillable"]),
+        (['death cards', 'second', 'easter'], True),
+        (['death cards', 'third', 'name'], "A Possum"), # Raina's death card
+        (['death cards', 'third', 'attack'], 2),
+        (['death cards', 'third', 'life'], 3),
+        (['death cards', 'third', 'cost'], 3),
+        (['death cards', 'third', 'sigils'], ["corpse eater", "bees within"]),
+        (['death cards', 'third', 'easter'], True)
     ]
 
     # print the menu
@@ -38,7 +56,7 @@ def reset_progress() :
     
 def reset_death_card() :
     '''
-    resets the death card to "the dev's death card" if the player chooses to
+    resets the death cards to the easter egg death cards if the player chooses to
     '''
     # set up variables
     current_death_cards_unfiltered = [card_library.PlyrDeathCard1(), card_library.PlyrDeathCard2(), card_library.PlyrDeathCard3()]
