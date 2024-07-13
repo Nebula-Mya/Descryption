@@ -12,7 +12,7 @@ def print_title() :
 ███   ▄███   ███    ███    ▄█    ███  ███    ███   ███   ▀███  ███   ███   ███            ███     ███  ███    ███  ███   ███
 ████████▀    ██████████  ▄████████▀   ████████▀    ███    ███   ▀█████▀   ▄████▀         ▄████▀   █▀    ▀██████▀    ▀█   █▀ 
                                                    █▀     ██▀                                                               
-{gap}An MS-DOS style demake of Daniel Mullin's "Inscryption"'''.format(gap=' '*66)
+{gap}An MS-DOS style demake of Daniel Mullins' "Inscryption"'''.format(gap=' '*66)
 
     print(QoL.center_justified(title, blocked=True))
 
