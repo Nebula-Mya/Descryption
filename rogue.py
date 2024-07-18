@@ -931,8 +931,124 @@ def card_shop(campaign) : # format visuals
     else :
         gameplay(campaign) # add flavor text, context, etc.
 
-def break_rocks(campaign) : # prospector; break 1 of 3 rocks for bug cards or golden pelt (bugs may have additional sigils, only one rock has golden pelt)
+def break_rocks(campaign) : # format visuals
+    '''
+    allows the player to break one of three rocks to receive a bug card or (rarely) a golden pelt (prospector event)
+    
+    bugs may have additional sigils
+    
+    only one rock has a golden pelt
+    
+    Arguments:
+        campaign: the current campaign object (rogue_campaign object)
+    '''
+    # set up variables for functions
+    number_sprites = {
+        1 : [' , ','/| ',' | ','‾‾‾'],
+        2 : ['/‾\\','  /',' / ',' ‾‾'],
+        3 : ['/‾\\',' _/',' ‾\\','\_/']
+    }
+    rock_sprites = {
+        'round' : r'''
+           __________
+       ___/          \
+     _/               \
+    /         {0}      \___
+ __/          {1}          \
+/             {2}           |
+\             {3}           |
+ \                         /
+  \_______________________/
+''',
+        'spiky' : r'''
+           _
+          / \    _
+    _    /   \__/ \
+   / \__/      /   \
+  /     \      \    \  _
+ /      /\  {0}      \/ \
+|        /  {1}      /   \
+|           {2}           |
+|           {3}           |
+ \_______________________/
+''',
+    }
+    broken_rock_sprites = {
+        'round' : [
+                r'''
+           ___
+       ___/   \
+     _/        \
+    /         {0[0]}/
+ __/          {1[0]}\
+/             {2[0]}/
+\             /
+ \           /
+  \__________\
+''',
+                r'''
+ _______
+ \      \
+  \      \
+  /{0[1]}{0[2]}     \___
+  \{1[1]}{1[2]}         \
+  /{2[1]}{2[2]}          |
+ /{3}          |
+/             /
+\____________/
+'''
+        ],
+    }
+
+    def display_rocks(displayed_rocks) :
+        '''
+        display the available rocks to break to the player
+        
+        Arguments:
+            displayed_rocks: the rocks to display (list[key(str), key(str), key(str)])
+        '''
+        # at least 5 different rock sprites that can be numbered with string formatting
+
+        # set up functions
+        longest_line = lambda lines: max([len(line) for line in lines])
+        regular_width = lambda line, width: line + (width - len(line))*' '
+
+        # insert numbers into the rock sprites
+        numbered_rocks = [rock_sprites[display_rocks[ind]].format(*number_sprites[ind+1]) for ind in range(3)]
+
+        # separate sprites into lines
+        rock_lines = [[line for line in rock.split('\n') if line != ''] for rock in numbered_rocks]
+
+        # make sure the 2nd and 3rd rocks are the same height
+        if len(rock_lines[1]) < len(rock_lines[2]) :
+            rock_lines[1] = ['']*(len(rock_lines[2]) - len(rock_lines[1])) + rock_lines[1]
+        elif len(rock_lines[2]) < len(rock_lines[1]) :
+            rock_lines[2] = ['']*(len(rock_lines[1]) - len(rock_lines[2])) + rock_lines[2]
+
+        # get the width of each rock
+        rock_widths = [longest_line(rock_lines[ind]) for ind in range(3)]
+
+        # combine the 2nd and 3rd rocks into one string
+        rocks_2_3 = '\n'.join([regular_width(rock_lines[1][ind], rock_widths[1]) + (rock_widths[0] // 2)*' ' + regular_width(rock_lines[2][ind], rock_widths[2]) for ind in range(len(rock_lines[1]))])
+
+        rocks_str = QoL.center_justified(numbered_rocks[0]) + QoL.center_justified(rocks_2_3,True)
+
+        print(rocks_str)
+    
+    def display_reward(selected, reward) :
+        '''
+        display the selected rock (broken in half) and the reward received
+
+        Arguments:
+            selected: the rock selected (str)
+            reward: the reward received (card object)
+        '''
+
+        pass
+
     def gameplay() :
+        # randomly select 3 rocks to display (not sure if repeats should be allowed yet)
+
         pass
 
     gameplay() # add flavor text, context, etc.
