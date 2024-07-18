@@ -949,7 +949,7 @@ def break_rocks(campaign) : # format visuals
         3 : ['/‾\\',' _/',' ‾\\','\_/']
     }
     rock_sprites = {
-        'round' : r'''
+        'chunky' : r'''
            __________
        ___/          \
      _/               \
@@ -972,10 +972,22 @@ def break_rocks(campaign) : # format visuals
 |           {3}           |
  \_______________________/
 ''',
+        'round' : r'''
+            ___________
+       ____/           \____
+    __/                     \__
+  _/                           \_
+ /              {0}              \
+|               {1}               |
+|               {2}               |
+ \_             {3}             _/
+   \__                       __/
+      \_____________________/
+''',
     }
     broken_rock_sprites = {
-        'round' : [
-                r'''
+        'chunky' : [
+            r'''
            ___
        ___/   \
      _/        \
@@ -986,7 +998,7 @@ def break_rocks(campaign) : # format visuals
  \           /
   \__________\
 ''',
-                r'''
+            r'''
  _______
  \      \
   \      \
@@ -996,6 +1008,58 @@ def break_rocks(campaign) : # format visuals
  /{3[1]}{3[2]}           |
 /             /
 \____________/
+'''
+        ],
+        'spiky' : [
+            r'''
+           _
+          / \
+    _    /   \
+   / \__/     \
+  /     \     /
+ /      /\  {0[0]}/
+|        /  {1[0]}\
+|           {2[0]}{2[1]}\
+|           {3[0]}{3[1]}/
+ \____________\
+''',
+            r'''
+
+    _
+ __/ \
+ \/   \
+ /\    \  _
+/{0[2]}      \/ \
+\{1[2]}      /   \
+ \           |
+ /           |
+ \__________/
+ '''
+        ],
+        'round' : [
+            r'''
+            ______
+       ____/     /
+    __/          \
+  _/             /
+ /              {0[0]}\
+|               {1[0]}/
+|               {2[0]}\
+ \_             {3[0]}/
+   \__           \
+      \__________/
+''',
+            r'''
+ _____
+/     \____
+\          \__
+/             \_
+\{0[2]}              \
+/{1[2]}               |
+\{2[2]}               |
+/{3[2]}             _/
+\           __/
+/__________/
 '''
         ],
     }
@@ -1017,7 +1081,7 @@ def break_rocks(campaign) : # format visuals
         numbered_rocks = [rock_sprites[display_rocks[ind]].format(*number_sprites[ind+1]) for ind in range(3)]
 
         # separate sprites into lines
-        rock_lines = [[line for line in rock.split('\n') if line != ''] for rock in numbered_rocks]
+        rock_lines = [[rock.split('\n')[2:-1]] for rock in numbered_rocks]
 
         # make sure the 2nd and 3rd rocks are the same height
         if len(rock_lines[1]) < len(rock_lines[2]) :
