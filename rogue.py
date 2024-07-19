@@ -20,6 +20,7 @@ class rogue_campaign :
         player_deck: the player's deck (deck.Deck)
         teeth: the player's money (int)
         lives: the player's lives (int)
+        dead_campfire : if the survivors have been poisoned (bool)
 
     Methods:
         add_teeth: adds teeth to the player's total
@@ -45,6 +46,7 @@ class rogue_campaign :
         self.player_deck = deck.Deck(start_decklist)
         self.teeth = start_teeth
         self.lives = lives
+        self.dead_campfire = False
 
     def add_teeth(self, amount) :
         self.teeth += amount
@@ -1210,22 +1212,136 @@ def break_rocks(campaign) : # format visuals
 
     gameplay(campaign) # add flavor text, context, etc.
 
-def campfire(campaign) : # campfire; increase a cards health or damage, risking the card being destroyed
+def campfire(campaign) : # format visuals
     '''
     each time a card rests by the Campfire, it gains a buff to its Power(+1) or Health(+2) (the stat is set before the player 'arrives')
 
     prior to 5 runs, the player can buff only once
 
-    a card can be buffed up to 4 times, with the following chances of destruction:
+    a card can be buffed up to 4 times per event, with the following chances of destruction:
     1 buff: 0% chance of destruction
     2 buffs: 22.5% chance of destruction
     3 buffs: 45% chance of destruction
     4 buffs: 67.5% chance of destruction
     '''
-    def gameplay() :
-        pass
+    def get_buffee(deck_list) :
+        '''
+        allows the player to choose a card to buff
+        
+        Arguments:
+            deck_list: the list of cards to choose from (list[card object])
+        
+        Returns:
+            card object: the card to buff
+        '''
+        # set up variables
+        invalid_choice = False
+        sorted_deck = QoL.sort_deck(deck_list)
 
-    gameplay() # add flavor text, context, etc.
+        while True :
+            # print the player's deck
+            QoL.clear()
+            QoL.print_deck(sorted_deck, numbered=True, centered=True, blocked=True)
+
+            if invalid_choice :
+                print(QoL.center_justified('Invalid choice'))
+                print()
+                invalid_choice = False
+
+            # get user input
+            card_index = input(QoL.center_justified('Enter the number of the card to buff:').rstrip() + ' ')
+
+            (is_int, card_index) = QoL.reps_int(card_index, -1)
+
+            if not is_int or card_index not in range(len(sorted_deck)) :
+                invalid_choice = True
+                continue
+
+            return sorted_deck[card_index]
+        
+    def buff_card(card, stat) :
+        '''
+        buff a card's stat
+
+        Arguments:
+            card: the card to buff (card object)
+            stat: the stat to buff (str)
+        '''
+        match stat :
+            case 'attack' : card.base_attack += 1
+            case 'life' : card.base_life += 2
+
+        card.reset_stats()
+
+    def eaten_card(card, campaign) :
+        '''
+        destroy a card
+
+        Arguments:
+            card: the card to destroy (card object)
+            campaign: the current campaign object (rogue_campaign object)
+        '''
+        campaign.remove_card(card)
+        QoL.clear()
+        print('\n'*5)
+        print(QoL.center_justified(f'{card.species} has been eaten by the survivors'))
+        if card.species in ['Adder'] :
+            campaign.dead_campfire = True
+            print(QoL.center_justified('The survivors are now sick'))
+        
+    def gameplay(campaign) :
+        # set up variables
+        stat = random.choice(['attack', 'life'])
+        [wins, losses] = QoL.read_data([['progress markers', 'wins'], ['progress markers', 'losses']])
+        total_runs = wins + losses
+        eat_chances = {
+            1 : 0,
+            2 : 225,
+            3 : 450,
+            4 : 675
+        }
+        not_eaten = lambda buff_number, campaign : campaign.dead_campfire or random.randint(1, 1000) > eat_chances[buff_number]
+
+        # get the player's choice of card to buff
+        card_choice = get_buffee(campaign.player_deck.cards)
+
+        # first buff
+        buff_card(card_choice, stat)
+
+        # display the buffed card
+        QoL.clear()
+        print('\n'*5)
+        card_choice.explain()
+
+        # end if prior to 5 runs
+        if total_runs < 5 :
+            input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+            return
+
+        # second to fourth buffs
+        number_of_buffs = 1
+
+        while number_of_buffs < 4 :
+            # check if player wants to buff the card again
+            QoL.clear()
+            print('\n'*5)
+            card_choice.explain()
+            print('\n')
+            if input(QoL.center_justified('Would you like to buff this card again? (y/n)').rstrip() + ' ').lower() != 'y' :
+                break
+
+            # increase the number of buffs
+            number_of_buffs += 1
+
+            # buff the card
+            if not_eaten(number_of_buffs, campaign) :
+                buff_card(card_choice, stat)
+            else :
+                eaten_card(card_choice, campaign)
+                input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+                return
+
+    gameplay(campaign) # add flavor text, context, etc.
 
 def add_death_card(campaign) : # add a death card to config.json
     # making a death card will shift the values of 'second' to 'third', 'first' to 'second', and the new death card will be written to 'first'
@@ -1294,5 +1410,5 @@ if __name__ == '__main__' :
     campaign = rogue_campaign(duel.deck_gen(card_library.Poss_Playr, 20).cards, 0, 2)
     campaign.print_deck()
     input(QoL.center_justified('Press Enter to continue...').rstrip())
-    break_rocks(campaign)
+    campfire(campaign)
     campaign.print_deck()
