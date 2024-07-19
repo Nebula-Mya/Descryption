@@ -11,6 +11,16 @@ import rogue
 
 ##### bosses will use the basic AI, but with higher difficulty settings and have their unique mechanics (pickaxe, ship, extra sigils, moon)
 
+##### bosses essentially work as two duels, but winning the first duel triggers a special event (the bosses unique mechanic) and the second duel starts from where the first left off
+
+##### before boss fights, all but one candle will be extinguished, and a smoke card will be added to the deck for each candle extinguished 
+
+##### after a boss fight, remove all smoke cards from the deck
+
+##### if the player loses to a boss, set campaign.has_lost = True, as lives arent updated during the previous thing
+
+##### if the player wins, relight candles and update config file
+
 def boss_fight_prospector(campaign) : # boss fight 1
     def gameplay() :
         rogue.card_battle() # for testing prior to implementation

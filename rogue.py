@@ -1595,6 +1595,8 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
     input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
     # test and develop this function in the if __name__ == '__main__' block, only move it here when it's ready
 
+    # after the player has won, start with three lives
+
 if __name__ == '__main__' :
     import sys # testing functions
     import copy
