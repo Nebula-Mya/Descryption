@@ -1580,6 +1580,15 @@ def beat_leshy(campaign) : # create 'win' card, largely the same as death / loss
     gameplay() # add flavor text, context, etc.
 
 def split_road(campaign) : # choose path, the main function that handles all others, most of the game loop will be here
+    '''
+    presents the player with a choice from 1-3 paths, each with a different event, which will be known to the player before they choose
+    
+    Arguments:
+        campaign: the current campaign object (rogue_campaign object)
+    '''
+
+    ## 50% chance for two paths, 25% for one and three
+    ## for now, each event will be equally likely to occur (generate a random int and use match/case to find the range it falls in, then call the range's corresponding event)
     def gameplay() :
         pass
 
@@ -1596,6 +1605,18 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
     # test and develop this function in the if __name__ == '__main__' block, only move it here when it's ready
 
     # after the player has won, start with three lives
+
+    # loop is:
+    ### check if area boss is next event (campaign.progress >= 10)
+    ###     if it is, and its Leshy (campaign.level == 3), check if player has won
+    ###         if they have, run beat_leshy, and return (to main menu)
+    ###     if it is, run boss event according to the current level and check if player has won
+    ###         if they have, update the level, reset the progress, and print flavor text for the new area
+    ###     else, run split_road
+    ### check campagin.has_lost
+    ###     if True, run lost_run, and return (to main menu)
+    ###     else, increment campaign.level and continue loop
+
 
 if __name__ == '__main__' :
     import sys # testing functions
