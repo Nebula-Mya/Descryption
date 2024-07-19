@@ -174,21 +174,21 @@ def card_battle(campaign, Poss_Leshy=None, Squirrels=None) :
 
         if winner == 'opponent' :
             campaign.remove_life()
+            ##### have a loss screen with ASCII of the players candle being blown out
             return False
         
         campaign.add_teeth(overkill)
-
+        ##### have a win screen with ASCII of the player's candle remaining lit
         return True
     
-    gameplay(campaign, Poss_Leshy, Squirrels) # add flavor text, context, etc.
+    return gameplay(campaign, Poss_Leshy, Squirrels) # add flavor text, context, etc.
 
-def card_choice(campaign, type=0) : 
+def card_choice(campaign) : 
     '''
-    allows the player to choose a card to add to their deck from a list of 3, with the list being decided by the type of card choice
+    allows the player to choose a card to add to their deck from a list of 3, with the list being generated from different card categories
 
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
-        type: the type of card choice, 0 for normal, 1 for cost, 2 for deathcards, defaults to 0 (int)
     '''
     def card_choice(campaign, cards) : # choose a card from a list of 3 and add it to the player's deck
         # set up variables
@@ -304,15 +304,19 @@ def card_choice(campaign, type=0) :
         card_index = card_choice(campaign, card_options)
         campaign.add_card(card_options[card_index])
 
-    def gameplay(campaign, type) :
-        match type : 
-            case 0 : normal_cards(campaign)
-            case 1 : cost_cards(campaign)
-            case 2 : death_cards(campaign)
-            case 3 : rare_cards(campaign)
-            case _ : raise ValueError(f'Invalid type: {type}')
+    def gameplay(campaign) :
+        choice_categories = ['normal', 'cost', 'rare']
+        [wins, losses] = QoL.read_data([['progress markers', 'wins'], ['progress markers', 'losses']])
+        if wins + losses >= 5 :
+            choice_categories.append('death')
+        
+        match random.choice(choice_categories) :
+            case 'normal' : normal_cards(campaign)
+            case 'cost' : cost_cards(campaign)
+            case 'rare' : rare_cards(campaign)
+            case 'death' : death_cards(campaign)
 
-    gameplay(campaign, type) # add flavor text, context, etc.
+    gameplay(campaign) # add flavor text, context, etc.
 
 def sigil_sacrifice(campaign) : # format visuals
     '''
@@ -1344,22 +1348,234 @@ def campfire(campaign) : # format visuals
 
     gameplay(campaign) # add flavor text, context, etc.
 
-def add_death_card(campaign) : # add a death card to config.json
-    # making a death card will shift the values of 'second' to 'third', 'first' to 'second', and the new death card will be written to 'first'
-    def gameplay() :
-        pass
+def add_death_card(campaign) : # format visuals
+    '''
+    allow the player to add a death card to the card pool
+    
+    Arguments:
+        campaign: the current campaign object (rogue_campaign object)
+    '''
 
-    gameplay() # add flavor text, context, etc.
+    # making a death card will shift the values of 'second' to 'third', 'first' to 'second', and the new death card will be written to 'first'
+    # flavoring should not mention it being a death card vs a victory card, as that will be handled in lost_run() and beat_leshy()
+
+    def rotate_cards() :
+        '''
+        rotate the cards in the config file to empty the first slot and shift the others up
+        
+        Arguments:
+            campaign: the current campaign object (rogue_campaign object)
+        '''
+        # set up variables
+        data_to_read = [
+            ['death cards', 'first', 'name'],
+            ['death cards', 'first', 'attack'],
+            ['death cards', 'first', 'life'],
+            ['death cards', 'first', 'cost'],
+            ['death cards', 'first', 'sigils'],
+            ['death cards', 'first', 'easter'],
+            ['death cards', 'second', 'name'],
+            ['death cards', 'second', 'attack'],
+            ['death cards', 'second', 'life'],
+            ['death cards', 'second', 'cost'],
+            ['death cards', 'second', 'sigils'],
+            ['death cards', 'second', 'easter']
+        ]
+        [name_1, attack_1, life_1, cost_1, sigils_1, easter_1, name_2, attack_2, life_2, cost_2, sigils_2, easter_2] = QoL.read_data(data_to_read)
+        data_to_write = [
+            (['death cards', 'first', 'name'], None),
+            (['death cards', 'first', 'attack'], None),
+            (['death cards', 'first', 'life'], None),
+            (['death cards', 'first', 'cost'], None),
+            (['death cards', 'first', 'sigils'], None),
+            (['death cards', 'first', 'easter'], None),
+            (['death cards', 'second', 'name'], name_1),
+            (['death cards', 'second', 'attack'], attack_1),
+            (['death cards', 'second', 'life'], life_1),
+            (['death cards', 'second', 'cost'], cost_1),
+            (['death cards', 'second', 'sigils'], sigils_1),
+            (['death cards', 'second', 'easter'], easter_1),
+            (['death cards', 'third', 'name'], name_2),
+            (['death cards', 'third', 'attack'], attack_2),
+            (['death cards', 'third', 'life'], life_2),
+            (['death cards', 'third', 'cost'], cost_2),
+            (['death cards', 'third', 'sigils'], sigils_2),
+            (['death cards', 'third', 'easter'], easter_2)
+        ]
+        QoL.write_data(data_to_write)
+
+    def choose_card(dialogue, used_cards, campaign) :
+        '''
+        allow the player to choose a card from a list of three
+        
+        Arguments:
+            dialogue: the dialogue to display (str)
+            used_cards: the cards that have already been used (list[card object])
+            campaign: the current campaign object (rogue_campaign object)
+            
+        Returns:
+            card object: the card chosen
+        '''
+        # set up variables
+        invalid_choice = False
+        options = '''
+1. View a card
+2. Pick a card
+
+'''
+        card_pool = [card_ for card_ in campaign.player_deck.cards if not any(type(card_) == type(card__) for card__ in card_library.Poss_Death + used_cards)]
+        option_cards = random.sample(card_pool, k=min(3, len(card_pool)))
+        used_cards += option_cards
+
+        # set up functions
+        def print_top() :
+            QoL.clear()
+            print('\n'*5)
+            print(QoL.center_justified(dialogue))
+            QoL.print_deck(option_cards, numbered=True, centered=True)
+            print(QoL.center_justified(options, blocked=True))
+
+        while True :
+            # print the available cards and options
+            print_top()
+
+            if invalid_choice :
+                print(QoL.center_justified('Invalid choice') + '\n')
+                invalid_choice = False
+            else :
+                print('\n')
+
+            # get the user's choice
+            choice = input(QoL.center_justified(' '*2 + 'Choose an option:').rstrip() + ' ')
+
+            match choice :
+                case '1' : # view a card
+                    # print the available cards and options
+                    print_top()
+
+                    # get the user's choice
+                    card_index = input(QoL.center_justified('Enter the number of the card to view:').rstrip() + ' ')
+                    (is_int, card_index) = QoL.reps_int(card_index, -1)
+
+                    if is_int and card_index in range(3) :
+                        QoL.clear()
+                        print('\n'*5)
+                        print(QoL.center_justified(dialogue))
+                        QoL.print_deck(option_cards, numbered=True, centered=True)
+                        print()
+                        option_cards[card_index].explain()
+                        input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
+                    
+                    else :
+                        invalid_choice = True
+                
+                case '2' :
+                    # print the available cards and options
+                    print_top()
+
+                    # get the user's choice
+                    card_index = input(QoL.center_justified('Enter the number of the card to pick:').rstrip() + ' ')
+                    (is_int, card_index) = QoL.reps_int(card_index, -1)
+
+                    if is_int and card_index in range(3) :
+                        return option_cards[card_index]
+                    
+                    else :
+                        invalid_choice = True
+                
+                case _ :
+                    invalid_choice = True
+
+    def gameplay(campaign) :
+        # set up variables
+        used_cards = []
+        cost_dialogue = 'Choose a card to take the cost from:'
+        stat_dialogue = 'Choose a card to take the attack and life from:'
+        sigil_dialogue = 'Choose a card to take the sigils from:'
+        flavor_pic = '''
+    After you finish your work, Leshy hands you a blank card and takes a picture. The last thing you remember is the flash of the camera and this card in your hand.
+'''
+
+        # get cost choice card
+        cost_card = choose_card(cost_dialogue, used_cards, campaign)
+        new_cost = cost_card.saccs
+
+        # get stat choice card
+        stat_card = choose_card(stat_dialogue, used_cards, campaign)
+        new_attack = stat_card.base_attack
+        new_life = stat_card.base_life
+
+        # get sigil choice card
+        sigil_card = choose_card(sigil_dialogue, used_cards, campaign)
+        new_sigils = sigil_card.sigils
+
+        # get the name of the death card
+        QoL.clear()
+        print('\n'*4)
+        # show the WiP card with ??? for name
+        WiP_card = card.BlankCard(species='???', attack=new_attack, life=new_life, cost=new_cost, sigils=new_sigils)
+        QoL.print_deck([WiP_card], centered=True)
+        print()
+        new_name = input(QoL.center_justified('Enter the name of your new card:').rstrip() + ' ')
+
+        # write the death card to config.json
+        rotate_cards()
+
+        data_to_write = [
+            (['death cards', 'first', 'name'], new_name),
+            (['death cards', 'first', 'attack'], new_attack),
+            (['death cards', 'first', 'life'], new_life),
+            (['death cards', 'first', 'cost'], new_cost),
+            (['death cards', 'first', 'sigils'], new_sigils),
+            (['death cards', 'first', 'easter'], False)
+        ]
+        QoL.write_data(data_to_write)
+
+        # show the player the death card
+        new_card = card_library.PlyrDeathCard1()
+        QoL.clear()
+        print('\n'*5)
+        print(flavor_pic)
+        print(QoL.center_justified('Your new card:'), end='')
+        QoL.print_deck([new_card], centered=True)
+
+        # wait for input before ending event
+        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+
+    gameplay(campaign) # add flavor text, context, etc.
 
 def lost_run(campaign) : # death / loss ('cutscene' of sorts, with flavor text, etc., + make death card after 4 deaths)
-    def gameplay() :
-        pass
+    def gameplay(campaign) :
+        # manage save data
+        [losses] = QoL.read_data([['progress markers', 'losses']])
+        QoL.write_data([(['progress markers', 'losses'], losses + 1)])
 
-    gameplay() # add flavor text, context, etc.
+        if losses + 1 >= 4 :
+            add_death_card(campaign)
+
+        # visuals
+        QoL.clear()
+        ASCII_text.print_lose()
+
+        # wait for input before ending run (which returns the player to the main menu)
+        input(QoL.center_justified('Press Enter to return to the main menu...').rstrip() + ' ')
+
+    gameplay(campaign) # add flavor text, context, etc.
 
 def beat_leshy(campaign) : # create 'win' card, largely the same as death / loss function, differing mostly in flavor
     def gameplay() :
-        pass
+        # manage save data
+        [wins] = QoL.read_data([['progress markers', 'wins']])
+        QoL.write_data([(['progress markers', 'wins'], wins + 1)])
+
+        add_death_card(campaign)
+
+        # visuals
+        QoL.clear()
+        ASCII_text.print_win()
+
+        # wait for input before ending run (which returns the player to the main menu)
+        input(QoL.center_justified('Press Enter to return to the main menu...').rstrip() + ' ')
 
     gameplay() # add flavor text, context, etc.
 
@@ -1383,7 +1599,42 @@ if __name__ == '__main__' :
     import sys # testing functions
     import copy
     campaign = rogue_campaign(duel.deck_gen(card_library.Poss_Playr, 20).cards, 0, 2)
-    campaign.print_deck()
+    # campaign.print_deck()
+
+    def print_death_cards() :
+        # set up variables
+        current_death_cards_unfiltered = [card_library.PlyrDeathCard1(), card_library.PlyrDeathCard2(), card_library.PlyrDeathCard3()]
+        current_death_cards = [death_card for death_card in current_death_cards_unfiltered]
+        
+        # print the menu
+        print()
+        print(QoL.center_justified('Current death cards: '))
+        QoL.print_deck(current_death_cards, centered=True)
+
+    print_death_cards()
     input(QoL.center_justified('Press Enter to continue...').rstrip())
-    campfire(campaign)
-    campaign.print_deck()
+    add_death_card(campaign)
+    print_death_cards()
+    input(QoL.center_justified('Press Enter to reset death cards...').rstrip())
+    data_to_write = [
+                (['death cards', 'first', 'name'], "Nebby"), # my death card
+                (['death cards', 'first', 'attack'], 2),
+                (['death cards', 'first', 'life'], 1),
+                (['death cards', 'first', 'cost'], 2),
+                (['death cards', 'first', 'sigils'], ["waterborne", ""]),
+                (['death cards', 'first', 'easter'], True),
+                (['death cards', 'second', 'name'], "Glaucus"), # Jacob's death card
+                (['death cards', 'second', 'attack'], 4),
+                (['death cards', 'second', 'life'], 1),
+                (['death cards', 'second', 'cost'], 3),
+                (['death cards', 'second', 'sigils'], ["airborne", "unkillable"]),
+                (['death cards', 'second', 'easter'], True),
+                (['death cards', 'third', 'name'], "A Possum"), # Raina's death card
+                (['death cards', 'third', 'attack'], 2),
+                (['death cards', 'third', 'life'], 3),
+                (['death cards', 'third', 'cost'], 3),
+                (['death cards', 'third', 'sigils'], ["corpse eater", "bees within"]),
+                (['death cards', 'third', 'easter'], True)
+            ]
+    QoL.write_data(data_to_write)
+    # campaign.print_deck()

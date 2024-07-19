@@ -1,21 +1,17 @@
-selected: round
+campaign: <__main__.rogue_campaign object at 0x7f1262cb9e40>
 
-number: 1
+invalid_choice: False
 
-reward: Bee      
+card_pool: [<card_library.Rabbit object at 0x7f1262b46470>, <card_library.Rabbit object at 0x7f1262cb9ae0>, <card_library.Pronghorn object at 0x7f1262e0b190>, <card_library.Pronghorn object at 0x7f1262e36740>, <card_library.Bullfrog object at 0x7f1262e34730>, <card_library.Stoat object at 0x7f1262e34760>, <card_library.Pronghorn object at 0x7f1262e347f0>, <card_library.Cat object at 0x7f1262e34820>, <card_library.Wolf object at 0x7f1262e34850>, <card_library.Rabbit object at 0x7f1262e34880>, <card_library.Grizzly object at 0x7f1262e348b0>]
 
-longest_line: <function break_rocks.<locals>.display_reward.<locals>.<lambda> at 0x7f801a119ea0>
+dialogue: Choose a card to take the sigils from:
 
-line_difference: 1
+option_cards: [<card_library.Pronghorn object at 0x7f1262e0b190>, <card_library.Rabbit object at 0x7f1262e34880>, <card_library.Wolf object at 0x7f1262e34850>]
 
-y_offset: 0
+options: 
+1. View a card
+2. Pick a card
 
-index_offset: 1
 
-add_rock_lines: [False, True, True, True, True, True, True, True, True, True, True]
 
-half_rock_width: 18
-
-broken_rock_sprites: {'chunky': ['\n           ___\n       ___/   \\\n     _/        \\\n    /         {0[0]}/\n __/          {1[0]}\\\n/             {2[0]}/\n\\             /\n \\           /\n  \\__________\\\n', '\n _______\n \\      \\\n  \\      \\\n  /{0[1]}      \\___\n  \\{1[1]}          \\\n  /{2[1]}           |\n /{3[1]}{3[2]}           |\n/             /\n\\____________/\n'], 'spiky': ['\n           _\n          / \\\n    _    /   \\\n   / \\__/     \\\n  /     \\     /\n /      /\\  {0[0]}/\n|        /  {1[0]}\\\n|           {2[0]}{2[1]}\\\n|           {3[0]}{3[1]}/\n \\____________\\\n', '\n\n    _\n __/ \\\n \\/   \\\n /\\    \\  _\n/{0[2]}      \\/ \\\n\\{1[2]}      /   \\\n \\           |\n /           |\n \\__________/\n '], 'round': ['\n            ______\n       ____/     /\n    __/          \\\n  _/             /\n /              {0[0]}\\\n|               {1[0]}/\n|               {2[0]}\\\n \\_             {3[0]}/\n   \\__           \\\n      \\__________/\n', '\n _____\n/     \\____\n\\          \\__\n/             \\_\n\\{0[2]}              \\\n/{1[2]}               |\n\\{2[2]}               |\n/{3[2]}             _/\n\\           __/\n/__________/\n']}
-
-number_sprites: {1: [' , ', '/| ', ' | ', '‾‾‾'], 2: ['/‾\\', '  /', ' / ', ' ‾‾'], 3: ['/‾\\', ' _/', ' ‾\\', '\\_/']}
+used_cards: [<card_library.BlackGoat object at 0x7f1262e34790>, <card_library.Lobster object at 0x7f1262e0b9d0>, <card_library.Ouroboros object at 0x7f1262e0a1a0>, <card_library.Turtle object at 0x7f1262e346d0>, <card_library.MooseBuck object at 0x7f1262cb9e70>, <card_library.Adder object at 0x7f1262cb99c0>]
