@@ -8,6 +8,7 @@ import card
 import random
 import sigils
 import os
+import bosses
 
 ### all of this will need to be refactored
 class rogue_campaign :
@@ -1357,32 +1358,6 @@ def lost_run(campaign) : # death / loss ('cutscene' of sorts, with flavor text, 
     gameplay() # add flavor text, context, etc.
 
 def beat_leshy(campaign) : # create 'win' card, largely the same as death / loss function, differing mostly in flavor
-    def gameplay() :
-        pass
-
-    gameplay() # add flavor text, context, etc.
-
-##### bosses will use the basic AI, but with higher difficulty settings and have their unique mechanics (pickaxe, ship, extra sigils, moon)
-
-def boss_fight_prospector(campaign) : # boss fight 1
-    def gameplay() :
-        pass
-
-    gameplay() # add flavor text, context, etc.
-
-def boss_fight_angler(campaign) : # boss fight 2
-    def gameplay() :
-        pass
-
-    gameplay() # add flavor text, context, etc.
-
-def boss_fight_trapper_trader(campaign) : # boss fight 3
-    def gameplay() :
-        pass
-
-    gameplay() # add flavor text, context, etc.
-
-def boss_fight_leshy(campaign) : # boss fight 4
     def gameplay() :
         pass
 
