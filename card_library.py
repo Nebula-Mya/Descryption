@@ -256,6 +256,13 @@ Poss_Leshy = {
 Poss_Death = [Louis(), FlawPeacock(), PlyrDeathCard1(), PlyrDeathCard2(), PlyrDeathCard3()]
 Rare_Cards = [Ouroboros(), Urayuli(), MooseBuck(), BullShark(), BoppitW()]
 
+# Tribes
+Reptiles = [] # need to fill in
+Insects = [BoppitW(), Beehive(), Bee(), Cockroach(), CorpseMaggots()]
+Avians = [] # need to fill in
+Canines = [] # need to fill in
+Hooved = [] # need to fill in
+
 # categories for Leshy's AI
 AI_categories = [
     # good against airbornes (glass cannons and those with mighty leap)

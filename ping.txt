@@ -1,20 +1,21 @@
-campaign: <__main__.rogue_campaign object at 0x7fd54c4785e0>
+selected: round
 
-cost_modifier: 0
+number: 1
 
-pelt_dict: {'rabbit pelt': [1, <card_library.RabbitPelt object at 0x7fd54c38eda0>], 'wolf pelt': [2, <card_library.WolfPelt object at 0x7fd54c38ee30>], 'golden pelt': [3, <card_library.GoldenPelt object at 0x7fd54c38ee60>]}
+reward: Bee      
 
-new_pelts: [<card_library.RabbitPelt object at 0x7fd54c38ee90>, <card_library.RabbitPelt object at 0x7fd54c38edd0>, <card_library.WolfPelt object at 0x7fd54c38efe0>, <card_library.WolfPelt object at 0x7fd54c38f010>, <card_library.GoldenPelt object at 0x7fd54c38f040>, <card_library.WolfPelt object at 0x7fd54c38f070>]
+longest_line: <function break_rocks.<locals>.display_reward.<locals>.<lambda> at 0x7f801a119ea0>
 
-invalid_choice: False
+line_difference: 1
 
-options: 
-1. Buy a pelt
-2. View deck
-3. Leave the shop
+y_offset: 0
 
-choice: 3
+index_offset: 1
 
-buy_pelt: <function pelt_shop.<locals>.buy_pelt at 0x7fd54c31dab0>
+add_rock_lines: [False, True, True, True, True, True, True, True, True, True, True]
 
-display_shop: <function pelt_shop.<locals>.display_shop at 0x7fd54c31db40>
+half_rock_width: 18
+
+broken_rock_sprites: {'chunky': ['\n           ___\n       ___/   \\\n     _/        \\\n    /         {0[0]}/\n __/          {1[0]}\\\n/             {2[0]}/\n\\             /\n \\           /\n  \\__________\\\n', '\n _______\n \\      \\\n  \\      \\\n  /{0[1]}      \\___\n  \\{1[1]}          \\\n  /{2[1]}           |\n /{3[1]}{3[2]}           |\n/             /\n\\____________/\n'], 'spiky': ['\n           _\n          / \\\n    _    /   \\\n   / \\__/     \\\n  /     \\     /\n /      /\\  {0[0]}/\n|        /  {1[0]}\\\n|           {2[0]}{2[1]}\\\n|           {3[0]}{3[1]}/\n \\____________\\\n', '\n\n    _\n __/ \\\n \\/   \\\n /\\    \\  _\n/{0[2]}      \\/ \\\n\\{1[2]}      /   \\\n \\           |\n /           |\n \\__________/\n '], 'round': ['\n            ______\n       ____/     /\n    __/          \\\n  _/             /\n /              {0[0]}\\\n|               {1[0]}/\n|               {2[0]}\\\n \\_             {3[0]}/\n   \\__           \\\n      \\__________/\n', '\n _____\n/     \\____\n\\          \\__\n/             \\_\n\\{0[2]}              \\\n/{1[2]}               |\n\\{2[2]}               |\n/{3[2]}             _/\n\\           __/\n/__________/\n']}
+
+number_sprites: {1: [' , ', '/| ', ' | ', '‾‾‾'], 2: ['/‾\\', '  /', ' / ', ' ‾‾'], 3: ['/‾\\', ' _/', ' ‾\\', '\\_/']}

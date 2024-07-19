@@ -1078,10 +1078,10 @@ def break_rocks(campaign) : # format visuals
         regular_width = lambda line, width: line + (width - len(line))*' '
 
         # insert numbers into the rock sprites
-        numbered_rocks = [rock_sprites[display_rocks[ind]].format(*number_sprites[ind+1]) for ind in range(3)]
+        numbered_rocks = [rock_sprites[displayed_rocks[ind]].format(*number_sprites[ind+1]) for ind in range(3)]
 
         # separate sprites into lines
-        rock_lines = [[rock.split('\n')[2:-1]] for rock in numbered_rocks]
+        rock_lines = [rock.split('\n')[1:-1] for rock in numbered_rocks]
 
         # make sure the 2nd and 3rd rocks are the same height
         if len(rock_lines[1]) < len(rock_lines[2]) :
@@ -1095,27 +1095,120 @@ def break_rocks(campaign) : # format visuals
         # combine the 2nd and 3rd rocks into one string
         rocks_2_3 = '\n'.join([regular_width(rock_lines[1][ind], rock_widths[1]) + (rock_widths[0] // 2)*' ' + regular_width(rock_lines[2][ind], rock_widths[2]) for ind in range(len(rock_lines[1]))])
 
-        rocks_str = QoL.center_justified(numbered_rocks[0]) + QoL.center_justified(rocks_2_3,True)
+        rocks_str = QoL.center_justified(numbered_rocks[0], True) + QoL.center_justified(rocks_2_3,True)
 
         print(rocks_str)
     
-    def display_reward(selected, reward) :
+    def display_reward(selected, number, reward) :
         '''
         display the selected rock (broken in half) and the reward received
 
         Arguments:
             selected: the rock selected (str)
+            number: the number of the rock selected (int)
             reward: the reward received (card object)
         '''
+        # set up functions
+        longest_line = lambda lines: max([len(line) for line in lines])
 
-        pass
+        # set up variables
+        line_difference = 13 - len(broken_rock_sprites[selected][0].split('\n'))
+        y_offset = line_difference // 2
+        index_offset = line_difference - y_offset
+        add_rock_lines = [False]*index_offset + [True]*(len(broken_rock_sprites[selected][0].split('\n')) - 2) + [False]*y_offset
+        half_rock_width = max(longest_line(broken_rock_sprites[selected][0].format(*number_sprites[number]).split('\n')), longest_line(broken_rock_sprites[selected][1].format(*number_sprites[number]).split('\n')))
 
-    def gameplay() :
-        # randomly select 3 rocks to display (not sure if repeats should be allowed yet)
+        # combine the rock halves and the reward into one string
+        final_str = ''
+        for ind in range(11) :
+            left_rock_line = broken_rock_sprites[selected][0].format(*number_sprites[number]).split('\n')[ind - index_offset + 1]
+            left_rock_line += ' '*(half_rock_width - len(left_rock_line))
+            right_rock_line = broken_rock_sprites[selected][1].format(*number_sprites[number]).split('\n')[ind - index_offset + 1]
+            right_rock_line += ' '*(half_rock_width - len(right_rock_line))
+            reward_line = reward.text_lines[ind + 1]
+            if add_rock_lines[ind] :
+                final_str += left_rock_line
+                final_str += ' '*7
+                final_str += reward_line
+                final_str += ' '*7
+                final_str += right_rock_line
+                final_str += '\n'
+            else :
+                final_str += reward_line
+                final_str += '\n'
 
-        pass
+        print(QoL.center_justified(final_str))
 
-    gameplay() # add flavor text, context, etc.
+    def random_insect() :
+        chosen_card = random.choice(card_library.Insects)
+        card_class = type(chosen_card)
+        if any(type(card_) == card_class for card_ in card_library.Rare_Cards) :
+            chosen_card = random.choice(card_library.Insects)
+            card_class = type(chosen_card)
+        
+        return card_class(getattr(chosen_card, 'blank_cost', False))
+
+    def gameplay(campaign) :
+        # randomly select 3 insect cards
+        available_rocks = random.sample(list(rock_sprites.keys()), 3)
+        hidden_rewards = {
+            0: random_insect(),
+            1: random_insect(),
+            2: random_insect()
+        }
+
+        # give sigils to the hidden rewards
+        for hidden_reward in hidden_rewards.values() :
+            if random.randint(1, 100) <= 50 and hidden_reward.has_sigil('') :
+
+                same_sigil = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) # check if two sigils are the same or variations of the same sigil
+                good_sigil = lambda reciever, sigil : sigil != '' and not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be transferred
+
+                selected_sigil = ''
+
+                while not good_sigil(hidden_reward, selected_sigil) : selected_sigil = random.choice(list(sigils.Dict.keys()))
+
+                sigil_slot = hidden_reward.sigils.index('')
+
+                hidden_reward.sigils[sigil_slot] = selected_sigil
+                hidden_reward.update_ASCII()
+
+        # one of the rewards is a golden pelt
+        hidden_rewards[random.randrange(3)] = card_library.GoldenPelt()
+
+        # set up variables
+        invalid_choice = False
+
+        while True :
+            # print the available cards and options
+            QoL.clear()
+            print('\n'*5)
+            display_rocks(available_rocks)
+
+            if invalid_choice :
+                print(QoL.center_justified('Invalid choice') + '\n')
+                invalid_choice = False
+            else :
+                print('\n')
+
+            # get the user's choice
+            match input(QoL.center_justified(' '*2 + 'Choose an option:').rstrip() + ' ') :
+                case index if QoL.reps_int(index)[0] and int(index) - 1 in range(3) : # break the rock
+                    # show the reward
+                    QoL.clear()
+                    print('\n'*5)
+                    display_reward(available_rocks[int(index) - 1], int(index), hidden_rewards[int(index) - 1])
+
+                    campaign.add_card(hidden_rewards[int(index) - 1])
+                    
+                    # wait for input before ending event
+                    input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+
+                    return
+                
+                case _ : invalid_choice = True
+
+    gameplay(campaign) # add flavor text, context, etc.
 
 def campfire(campaign) : # campfire; increase a cards health or damage, risking the card being destroyed
     '''
@@ -1202,5 +1295,4 @@ if __name__ == '__main__' :
     campaign.print_deck()
     input(QoL.center_justified('Press Enter to continue...').rstrip())
     break_rocks(campaign)
-    input(QoL.center_justified('Press Enter to continue...').rstrip())
     campaign.print_deck()
