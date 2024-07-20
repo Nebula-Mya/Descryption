@@ -262,6 +262,7 @@ Insects = [BoppitW(), Beehive(), Bee(), Cockroach(), CorpseMaggots()]
 Avians = [Kingfisher(), Falcon(), Raven()]
 Canines = [Wolf()]
 Hooved = [BlackGoat(), MooseBuck(), Pronghorn()]
+Squirrels = [Squirrel()]
 
 # categories for Leshy's AI
 AI_categories = [

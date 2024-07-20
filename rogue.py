@@ -18,6 +18,7 @@ class rogue_campaign :
         level: the current level of the campaign (int)
         progress: the current progress in the level (int)
         player_deck: the player's deck (deck.Deck)
+        squirrel_deck: the squirrel deck (deck.Deck)
         teeth: the player's money (int)
         lives: the player's lives (int)
         dead_campfire : if the survivors have been poisoned (bool)
@@ -44,6 +45,7 @@ class rogue_campaign :
         self.level = 0
         self.progress = 0
         self.player_deck = deck.Deck(start_decklist)
+        self.squirrel_deck = duel.resource_gen(10)
         self.teeth = start_teeth
         self.lives = lives
         self.dead_campfire = False
@@ -135,7 +137,7 @@ def card_equation(card1, card2, result) :
 
     return new_lines
 
-def card_battle(campaign, Poss_Leshy=None, Squirrels=None) : 
+def card_battle(campaign, Poss_Leshy=None) : 
     '''
     starts a card battle between the player and Leshy, with the player's deck being campaign.player_deck
     
@@ -147,7 +149,7 @@ def card_battle(campaign, Poss_Leshy=None, Squirrels=None) :
     Returns:
         bool: True if the player wins, False if the player loses
     '''
-    def gameplay(campaign, Poss_Leshy, Squirrels) :
+    def gameplay(campaign, Poss_Leshy) :
         data_to_read = [
             ['settings', 'hand size'],
             ['settings', 'difficulty', 'leshy median plays'],
@@ -155,7 +157,7 @@ def card_battle(campaign, Poss_Leshy=None, Squirrels=None) :
             ['settings', 'difficulty', 'leshy strat chance'],
             ['settings', 'difficulty', 'leshy offense threshold']
         ]
-        [hand_size, play_median, play_var, opp_strat, opp_threshold] = QoL.read_data(data_to_read)
+        [play_median, play_var, opp_strat, opp_threshold] = QoL.read_data(data_to_read)
 
         deck_size = len(campaign.player_deck)
 
@@ -163,24 +165,31 @@ def card_battle(campaign, Poss_Leshy=None, Squirrels=None) :
             leshy_deck = duel.deck_gen(Poss_Leshy, deck_size*2)
         else :
             leshy_deck = None
-        
-        if Squirrels :
-            squirrel_deck = deck.Deck(Squirrels)
-        else :
-            squirrel_deck = None
 
-        (_, winner, overkill, _) = duel.main(deck_size, hand_size, play_median, play_var, opp_strat, opp_threshold, player_deck_obj=campaign.player_deck, leshy_deck_obj=leshy_deck, squirrel_deck_obj=squirrel_deck)
+        (_, winner, overkill, _) = duel.main(deck_size, 4, play_median, play_var, opp_strat, opp_threshold, player_deck_obj=campaign.player_deck, leshy_deck_obj=leshy_deck, squirrel_deck_obj=campaign.squirrel_deck)
 
         if winner == 'opponent' :
             campaign.remove_life()
-            ##### have a loss screen with ASCII of the players candle being blown out
+            QoL.clear()
+            print('\n'*3)
+            wick_states = (campaign.lives) * [2] + [3]
+            wick_states += [0] * (3 - len(wick_states))
+            ASCII_text.print_candelabra(wick_states)
+            print()
+            input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
             return False
         
         campaign.add_teeth(overkill)
-        ##### have a win screen with ASCII of the player's candle remaining lit
+        QoL.clear()
+        print('\n'*3)
+        wick_states = (campaign.lives) * [2]
+        wick_states += [0] * (3 - len(wick_states))
+        ASCII_text.print_candelabra(wick_states)
+        print()
+        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
         return True
     
-    return gameplay(campaign, Poss_Leshy, Squirrels) # add flavor text, context, etc.
+    return gameplay(campaign, Poss_Leshy) # add flavor text, context, etc.
 
 def card_choice(campaign) : 
     '''
@@ -1614,7 +1623,14 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
     input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
     # test and develop this function in the if __name__ == '__main__' block, only move it here when it's ready
 
-    # after the player has won, start with three lives
+if __name__ == '__main__' :
+    # after the player has won a run, start with three lives
+
+    # create starting deck list (the usual starter deck)
+
+    # initialize campaign object
+
+    # dialogue, flavor text, etc.
 
     # loop is:
     ### check if area boss is next event (campaign.progress >= 10)
@@ -1626,47 +1642,4 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
     ### check campagin.has_lost
     ###     if True, run lost_run, and return (to main menu)
     ###     else, increment campaign.level and continue loop
-
-if __name__ == '__main__' :
-    import sys # testing functions
-    import copy
-    campaign = rogue_campaign(duel.deck_gen(card_library.Poss_Playr, 20).cards, 0, 2)
-    # campaign.print_deck()
-
-    def print_death_cards() :
-        # set up variables
-        current_death_cards_unfiltered = [card_library.PlyrDeathCard1(), card_library.PlyrDeathCard2(), card_library.PlyrDeathCard3()]
-        current_death_cards = [death_card for death_card in current_death_cards_unfiltered]
-        
-        # print the menu
-        print()
-        print(QoL.center_justified('Current death cards: '))
-        QoL.print_deck(current_death_cards, centered=True)
-
-    print_death_cards()
-    input(QoL.center_justified('Press Enter to continue...').rstrip())
-    add_death_card(campaign)
-    print_death_cards()
-    input(QoL.center_justified('Press Enter to reset death cards...').rstrip())
-    data_to_write = [
-                (['death cards', 'first', 'name'], "Nebby"), # my death card
-                (['death cards', 'first', 'attack'], 2),
-                (['death cards', 'first', 'life'], 1),
-                (['death cards', 'first', 'cost'], 2),
-                (['death cards', 'first', 'sigils'], ["waterborne", ""]),
-                (['death cards', 'first', 'easter'], True),
-                (['death cards', 'second', 'name'], "Glaucus"), # Jacob's death card
-                (['death cards', 'second', 'attack'], 4),
-                (['death cards', 'second', 'life'], 1),
-                (['death cards', 'second', 'cost'], 3),
-                (['death cards', 'second', 'sigils'], ["airborne", "unkillable"]),
-                (['death cards', 'second', 'easter'], True),
-                (['death cards', 'third', 'name'], "A Possum"), # Raina's death card
-                (['death cards', 'third', 'attack'], 2),
-                (['death cards', 'third', 'life'], 3),
-                (['death cards', 'third', 'cost'], 3),
-                (['death cards', 'third', 'sigils'], ["corpse eater", "bees within"]),
-                (['death cards', 'third', 'easter'], True)
-            ]
-    QoL.write_data(data_to_write)
-    # campaign.print_deck()
+    pass

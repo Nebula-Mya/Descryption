@@ -122,6 +122,98 @@ def print_WiP() :
 
     print(QoL.center_justified(WiP, blocked=True))
 
+def print_candelabra(wick_states) :
+    '''
+    Prints the ASCII art for the candelabra.
+    
+    Arguments:
+        wick_states: the states of the wicks in the order middle, right, left [int, int, int]
+            0 = unlit
+            1 = lit (newly)
+            2 = lit (continuing)
+            3 = extinguished
+    '''
+    wick_sprites = [
+        [ # unlit
+            '       ',
+            '       ',
+            '   |   ',
+            'ˏ₋-|-₋ˎ',
+            '|ˋ⁻⁻⁻ˊ|',
+            '|     |'
+        ],
+        [ # lit (newly)
+            '  /(   ',
+            ' ( ;)ˎ ',
+            ' \(_)/ ',
+            'ˏ₋-|-₋ˎ',
+            '|ˋ⁻⁻⁻ˊ|',
+            '|     |'
+        ],
+        [ # lit (continuing)
+            '  /(   ',
+            ' ( ;)ˎ ',
+            ' \(_)/ ',
+            'ˏ₋-|-₋ˎ',
+            '|ˋʅȷᵕȣ|',
+            '| ₍₎ ᵕ|'
+        ],
+        [ # extinguished
+            '       ',
+            '     ʃ ',
+            '   Ϛ᾽  ',
+            'ˏ₋-|-₋ˎ',
+            '|ˋ⁻⁻⁻ˊ|',
+            '|     |'
+        ]
+    ]
+
+    candelabra = r'''                       {0[0]}
+                       {0[1]}
+                       {0[2]}
+                       {0[3]}
+                       {0[4]}             {1[0]}
+                       {0[5]}             {1[1]}
+                       |     |             {1[2]}
+                       |     |             {1[3]}
+   {2[0]}             |     |             {1[4]}
+   {2[1]}             |     |             {1[5]}
+   {2[2]}             |     |             |     |
+   {2[3]}             |     |             |     |
+   {2[4]}             |     |             |     |
+   {2[5]}            ˏ|     |ˎ            |     |
+   |     |            |ˋ⁻⁻⁻⁻⁻ˊ|            |     |
+   |     |            |       |            |     |
+   |     |            |       |            |     |
+   |     |            |       |\          ˏ|     |ˎ
+   |     |            |       | 'ˌ        |ˋ⁻⁻⁻⁻⁻ˊ|
+   |     |            |       |   ʽˎ      |       |
+   |     |            |       |·ˌ   ˋ·.ˍ__|       |
+  ˏ|     |ˎ          /|       |  ʽ.ˎ      |       |
+  |ˋ⁻⁻⁻⁻⁻ˊ|        ˌ' |       |     ˋ·.ˍ__|       |
+  |       |      ˏʼ   |       |           |       |
+  |       |__ˍ.·ˊ   ˌ·|       |           |       |
+  |       |      ˏ.ʼ  |       |           |       |
+  |       |__ˍ.·ˊ     |       |           |       |
+  |       |           |       |            ˋ⁻⁻⁻⁻⁻ˊ
+  |       |           |       |
+  |       |           |       |
+  |       |           |       |
+   ˋ⁻⁻⁻⁻⁻ˊ            |       |
+                      |       |
+                      |       |
+                      |       |
+                      |       |
+                     ʃˋ⁻--―--⁻ˊʅ
+ ˏ₋₋₋--------⁻⁻⁻⁻⁻⁻⁻ˊˋ⁻--―――--⁻ˊˋ⁻⁻⁻⁻⁻⁻⁻--------₋₋₋ˎ
+ʃ                                                   ʅ
+ˋ⁻⁻⁻-------₋₋₋₋₋₋₋₋₋₋₋₋₋₋₋₋₋₋₋₋₋₋₋₋₋₋₋₋₋₋₋-------⁻⁻⁻ˊ
+'''
+
+    wicks = [wick_sprites[wick_states[0]], wick_sprites[wick_states[1]], wick_sprites[wick_states[2]]]
+
+    print(QoL.center_justified(candelabra.format(*wicks), blocked=True))
+
 if __name__ == '__main__' :
     QoL.clear()
     term_cols = os.get_terminal_size().columns
@@ -141,3 +233,5 @@ if __name__ == '__main__' :
     print_scales(score, score_gap)
     print('-'*term_cols)
     print_WiP()
+    print('-'*term_cols)
+    print_candelabra([2, 3, 0])
