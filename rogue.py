@@ -1589,10 +1589,21 @@ def split_road(campaign) : # choose path, the main function that handles all oth
 
     ## 50% chance for two paths, 25% for one and three
     ## for now, each event will be equally likely to occur (generate a random int and use match/case to find the range it falls in, then call the range's corresponding event)
-    def gameplay() :
+    def get_event() :
+        '''
+        generate an event for a path according to weights
+        
+        could change weights depending on campaign level, etc.
+        
+        returns:
+            str: the event to run
+        '''
         pass
 
-    gameplay() # add flavor text, context, etc.
+    def gameplay(campaign) :
+        pass
+
+    gameplay(campaign) # add flavor text, context, etc.
 
 def main() : # coordinates the game loop, calls split_road, manages losses, initiates the game, etc.
     QoL.clear()
@@ -1616,7 +1627,6 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
     ### check campagin.has_lost
     ###     if True, run lost_run, and return (to main menu)
     ###     else, increment campaign.level and continue loop
-
 
 if __name__ == '__main__' :
     import sys # testing functions

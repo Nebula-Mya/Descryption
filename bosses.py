@@ -21,6 +21,10 @@ import rogue
 
 ##### if the player wins, relight candles and update config file
 
+def pre_boss_flavor(campaign) :
+    # pre fight flavor text, extra lives being extinguished, etc.
+    pass
+
 def boss_fight_prospector(campaign) : # boss fight 1
     def gameplay() :
         rogue.card_battle() # for testing prior to implementation
