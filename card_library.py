@@ -257,11 +257,11 @@ Poss_Death = [Louis(), FlawPeacock(), PlyrDeathCard1(), PlyrDeathCard2(), PlyrDe
 Rare_Cards = [Ouroboros(), Urayuli(), MooseBuck(), BullShark(), BoppitW()]
 
 # Tribes
-Reptiles = [] # need to fill in
+Reptiles = [Bullfrog(), DumpyTF(), Turtle(), Adder(), Asp(), Ouroboros()] # also includes amphibians for accuracy to Inscryption
 Insects = [BoppitW(), Beehive(), Bee(), Cockroach(), CorpseMaggots()]
-Avians = [] # need to fill in
-Canines = [] # need to fill in
-Hooved = [] # need to fill in
+Avians = [Kingfisher(), Falcon(), Raven()]
+Canines = [Wolf()]
+Hooved = [BlackGoat(), MooseBuck(), Pronghorn()]
 
 # categories for Leshy's AI
 AI_categories = [
