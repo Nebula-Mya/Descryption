@@ -10,7 +10,6 @@ import sigils
 import os
 import bosses
 
-### all of this will need to be refactored
 class rogue_campaign :
     '''
     the current campaign data, such as the current level, the current decks, teeth (money), progress in the level, candles, etc.
