@@ -116,7 +116,7 @@ def print_WiP() :
 |‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|
 |This feature is still     |
 |in development. Sorry!    |
-|                    -Nebby|
+|                    - Neb |
  ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 '''
 

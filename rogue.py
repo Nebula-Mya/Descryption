@@ -143,15 +143,13 @@ def card_battle(campaign, Poss_Leshy=None) :
     
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
-        Poss_Leshy: the possible cards for Leshy's deck, defaults to None (list)
-        Squirrels: the possible Squirrel deck, defaults to None (list)
+        Poss_Leshy: the possible cards for Leshy's deck, defaults to all allowed Leshy cards with costs <= to player's max cost (list)
 
     Returns:
         bool: True if the player wins, False if the player loses
     '''
     def gameplay(campaign, Poss_Leshy) :
         data_to_read = [
-            ['settings', 'hand size'],
             ['settings', 'difficulty', 'leshy median plays'],
             ['settings', 'difficulty', 'leshy plays variance'],
             ['settings', 'difficulty', 'leshy strat chance'],
@@ -162,9 +160,11 @@ def card_battle(campaign, Poss_Leshy=None) :
         deck_size = len(campaign.player_deck)
 
         if Poss_Leshy :
-            leshy_deck = duel.deck_gen(Poss_Leshy, deck_size*2)
+            leshy_deck = duel.deck_gen(Poss_Leshy, int(deck_size * 1.5))
         else :
-            leshy_deck = None
+            player_max_cost = max([card.saccs for card in campaign.player_deck.cards])
+            fair_poss_leshy = {cost: [card for card in card_library.Poss_Leshy[cost]] for cost in range(0, player_max_cost+1)} # may be changed later for balancing
+            leshy_deck = duel.deck_gen(fair_poss_leshy, int(deck_size * 1.5))
 
         (_, winner, overkill, _) = duel.main(deck_size, 4, play_median, play_var, opp_strat, opp_threshold, player_deck_obj=campaign.player_deck, leshy_deck_obj=leshy_deck, squirrel_deck_obj=campaign.squirrel_deck)
 
@@ -1626,7 +1626,8 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
 if __name__ == '__main__' :
     # after the player has won a run, start with three lives
 
-    # create starting deck list (the usual starter deck)
+    # create starting deck list (switch rabbit for opossum once bones are implemented)
+    starting_deck = [card_library.Wolf(), card_library.Stoat(), card_library.Bullfrog(), card_library.Rabbit()]
 
     # initialize campaign object
 
