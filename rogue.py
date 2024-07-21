@@ -1552,7 +1552,7 @@ def add_death_card(campaign) : # format visuals
 
     gameplay(campaign) # add flavor text, context, etc.
 
-def lost_run(campaign) : # death / loss ('cutscene' of sorts, with flavor text, etc., + make death card after 4 deaths)
+def lost_run(campaign) : # format visuals
     def gameplay(campaign) :
         # manage save data
         [losses] = QoL.read_data([['progress markers', 'losses']])
@@ -1570,7 +1570,7 @@ def lost_run(campaign) : # death / loss ('cutscene' of sorts, with flavor text, 
 
     gameplay(campaign) # add flavor text, context, etc.
 
-def beat_leshy(campaign) : # create 'win' card, largely the same as death / loss function, differing mostly in flavor
+def beat_leshy(campaign) : # format visuals
     def gameplay() :
         # manage save data
         [wins] = QoL.read_data([['progress markers', 'wins']])
@@ -1587,16 +1587,13 @@ def beat_leshy(campaign) : # create 'win' card, largely the same as death / loss
 
     gameplay() # add flavor text, context, etc.
 
-def split_road(campaign) : # choose path, the main function that handles all others, most of the game loop will be here
+def split_road(campaign) : # format visuals
     '''
     presents the player with a choice from 1-3 paths, each with a different event, which will be known to the player before they choose
     
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
     '''
-
-    ## 50% chance for two paths, 25% for one and three
-    ## for now, each event will be equally likely to occur (generate a random int and use match/case to find the range it falls in, then call the range's corresponding event)
     def get_event() :
         '''
         generate an event for a path according to weights
@@ -1604,13 +1601,53 @@ def split_road(campaign) : # choose path, the main function that handles all oth
         could change weights depending on campaign level, etc.
         
         returns:
-            str: the event to run
+            list[str]: the event to run and the function to run it
         '''
-        pass
+        # for now, each event will be equally likely to occur (generate a random int and use match/case to find the range it falls in, then call the range's corresponding event)
+        match random.randint(1, 14) :
+            case 1 : return ['A choice of cards', 'card_choice(campaign)']
+            case 2 : return ['A set of mysterious stones', 'sigil_sacrifice(campaign)']
+            case 3 : return ['The mycologists', 'merge_cards(campaign)']
+            case 4 : return ['The trapper', 'pelt_shop(campaign)']
+            case 5 : return ['The trader', 'card_shop(campaign)']
+            case 6 : return ['The prospector', 'break_rocks(campaign)']
+            case 7 : return ['Survivors huddled around a campfire', 'campfire(campaign)']
+            case _ : return ['A card battle', 'battle(campaign)']
 
     def gameplay(campaign) :
-        pass
+        # set up variables
+        term_cols = os.get_terminal_size().columns
+        card_gap = ((term_cols*55 // 100) // 5 - 15) * ' '
 
+        # get the paths
+        ## 50% chance for two paths, 25% for one and three
+        match random.randint(1, 4) :
+            case 1 : # one path
+                path_list = [get_event()]
+            case 2 : # three paths
+                path_list = [get_event(), get_event(), get_event()]
+            case _ : # two paths
+                path_list = [get_event(), get_event()]
+
+        invalid_choice = False
+        while True :
+
+            # display the paths
+            QoL.clear()
+            print('\n'*5)
+            for ind in range(len(path_list)) : print(f'{card_gap}Path {str(ind + 1)}: {path_list[ind][0]}')
+
+            if invalid_choice :
+                print(QoL.center_justified('Invalid choice') + '\n')
+                invalid_choice = False
+            else :
+                print('\n')
+
+            # get the player's choice
+            match QoL.reps_int(input(QoL.center_justified('Which path will you take?').rstrip() + ' '), -1) :
+                case [False, _] : invalid_choice = True
+                case [True, choice] : return exec(path_list[choice][1], globals(), locals())
+        
     gameplay(campaign) # add flavor text, context, etc.
 
 def main() : # coordinates the game loop, calls split_road, manages losses, initiates the game, etc.
