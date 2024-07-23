@@ -18,7 +18,7 @@ pass
         'Attacks diagonally, dealing damage to two targets.',
         '''
 for target_card in [front_left_card, front_right_card] :
-    if (target_card.zone % 6) != 0 :
+    if (target_card.zone % 5) != 0 :
         points += target_card.take_damage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
 '''
         ],
@@ -35,7 +35,7 @@ if attacking_field[zone].sigils[0] == 'lane shift right' :
 else :
     changed_direction = [attacking_field[zone].sigils[0], 'lane shift left']
 
-if zone == 5 or QoL.hefty_check(attacking_field, zone + 1, 'right') == 0 :
+if zone == 4 or QoL.hefty_check(attacking_field, zone + 1, 'right') == 0 :
     attacking_field[zone].sigils = changed_direction
     attacking_field[zone].update_ASCII()
 elif attacking_field[zone+1].species == '' :
@@ -87,8 +87,8 @@ if applicables == sigils.on_deaths and current_field[zone].status == 'dead' :
     if split_card.base_life > 1 :
         if zone == 1 :
             poss_zones = [2]
-        elif zone == 5 :
-            poss_zones = [4]
+        elif zone == 4 :
+            poss_zones = [3]
         else :
             poss_zones = [zone-1, zone+1]
         for shifted_zone in poss_zones :
@@ -215,7 +215,7 @@ if attacking_field[zone].sigils[0] == 'hefty (right)' :
 else :
     changed_direction = [attacking_field[zone].sigils[0], 'hefty (left)']
 
-if zone == 5 :
+if zone == 4 :
     attacking_field[zone].sigils = changed_direction
     attacking_field[zone].update_ASCII()
 else :
@@ -319,8 +319,8 @@ import card_library
 
 if zone == 1 :
     poss_zones = [2]
-elif zone == 5 :
-    poss_zones = [4]
+elif zone == 4 :
+    poss_zones = [3]
 else :
     poss_zones = [zone-1, zone+1]
 for shifted_zone in poss_zones :
@@ -334,6 +334,7 @@ for shifted_zone in poss_zones :
         ["ᴦ==ͽ ","L(Ō) "," \'\"\' "],
         'Plays itself to a zone a card died in.',
         '''
+pass
 '''
         ],
 }
@@ -341,18 +342,18 @@ for shifted_zone in poss_zones :
 Combos = {
     ('bifurcate', 'venom') : '''
 for target_card in [front_left_card, front_right_card] :
-    if (target_card.zone % 5) != 1 :
+    if (target_card.zone % 5) != 0 :
         points += target_card.takeDamage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
         target_card.is_poisoned = True
 ''',
     ('bifurcate', 'touch of death') : '''
 for target_card in [front_left_card, front_right_card] :
-    if (target_card.zone % 6) != 0 :
+    if (target_card.zone % 5) != 0 :
         points += front_card.take_damage(self.current_attack, hand, deathtouch=True, in_opp_field=is_players, bushes=bushes)
 ''',
     ('airborne', 'bifurcate') : '''
 for target_card in [front_left_card, front_right_card] :
-    if (target_card.zone % 6) != 0 :
+    if (target_card.zone % 5) != 0 :
         points += target_card.take_damage(self.current_attack, hand, from_air=True, in_opp_field=is_players, bushes=bushes)
 ''',
     ('touch of death', 'venom') : '''
@@ -377,8 +378,8 @@ if current_field[zone].status == 'dead' and current_field == self.player_field :
     if split_card.base_life > 1 :
         if zone == 1 :
             poss_zones = [2]
-        elif zone == 5 :
-            poss_zones = [4]
+        elif zone == 4 :
+            poss_zones = [3]
         else :
             poss_zones = [zone-1, zone+1]
         for shifted_zone in poss_zones :
@@ -399,8 +400,8 @@ elif current_field[zone].status == 'dead' :
     if split_card.base_life > 1 :
         if zone == 1 :
             poss_zones = [2]
-        elif zone == 5 :
-            poss_zones = [4]
+        elif zone == 4 :
+            poss_zones = [3]
         else :
             poss_zones = [zone-1, zone+1]
         for shifted_zone in poss_zones :
@@ -421,8 +422,8 @@ self.hand.append(card_library.Vole(sigils=['dam builder', '']))
 
 if zone == 1 :
     poss_zones = [2]
-elif zone == 5 :
-    poss_zones = [4]
+elif zone == 4 :
+    poss_zones = [3]
 else :
     poss_zones = [zone-1, zone+1]
 for shifted_zone in poss_zones :
@@ -469,7 +470,17 @@ else :
             bushes[self.zone].take_damage(excess_damage, hand, from_air, in_bushes=True)
 ''',
     ('bees within', 'touch of death') : '''
-teeth = damage
+if self.species == '' or self.status == 'dead' or from_air : 
+            teeth = damage
+        else :
+            prev_life = self.current_life
+            self.current_life -= damage
+            self.update_ASCII()
+            if self.current_life <= 0 or deathtouch :
+                self.status = 'dead'
+                if in_opp_field and self.current_life <= 0 :
+                    excess_damage = damage - prev_life
+                    bushes[self.zone].take_damage(excess_damage, hand, in_bushes=True)
 ''',
     ('lane shift left', 'lane shift right') : '''
 pass
@@ -483,7 +494,7 @@ if self.sigils[0] == 'hefty (right)' :
 else :
     changed_direction = [self.sigils[0], 'hefty (left)']
 
-if zone == 5 :
+if zone == 4 :
     attacking_field[zone].sigils = changed_direction
     attacking_field[zone].update_ASCII()
 else :

@@ -18,7 +18,7 @@ def choose_and_play(field) :
     '''
     # get terminal size
     term_cols = os.get_terminal_size().columns
-    card_gaps = (term_cols*55 // 100) // 5 - 15
+    card_gaps = (term_cols*55 // 100) // 4 - 15
 
     # set up variables
     invalid_index = False
@@ -56,7 +56,7 @@ def choose_and_play(field) :
 
             (is_int, zone_to_play) = QoL.reps_int(zone_to_play)
 
-            if not is_int or zone_to_play not in range(1, 6) : # guard clause for invalid zone
+            if not is_int or zone_to_play not in range(1, 5) : # guard clause for invalid zone
                 invalid_zone = True
             elif not field.play_card(play_index, zone_to_play) :
                 continue
@@ -217,7 +217,7 @@ def view_cards(field) :
                 break
 
             (is_int, col_choice) = QoL.reps_int(col_choice)
-            if is_int and col_choice in range(1, 6) and row[col_choice].species != '' :
+            if is_int and col_choice in range(1, 5) and row[col_choice].species != '' :
                 field.print_field()
                 row[col_choice].explain()
                 input('Press enter to continue.')
@@ -367,8 +367,8 @@ def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_varianc
         raise ValueError('Leshy play count variance must be at least 0.')
     if Leshy_in_strategy_chance < 0 or Leshy_in_strategy_chance > 100 :
         raise ValueError('Leshy in strategy chance must be between 0 and 100.')
-    if Leshy_strat_change_threshold < -8 or Leshy_strat_change_threshold > 8 :
-        raise ValueError('Leshy strategy change threshold must be between -8 and 8.')
+    if Leshy_strat_change_threshold < -5 or Leshy_strat_change_threshold > 5 :
+        raise ValueError('Leshy strategy change threshold must be between -5 and 5.')
 
     # game setup
     if player_deck_obj :

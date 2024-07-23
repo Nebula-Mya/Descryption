@@ -57,6 +57,10 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
         return False
     
     def add_to_in_strat(card_to_play, player_field, bushes, zone) :
+        # error handling
+        if zone not in range(1, 5) :
+            raise ValueError('Invalid zone.')
+        
         # set up variables
         opp_card = player_field[zone]
         bush_empty = bushes[zone].species == ''
@@ -84,8 +88,8 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
             case _ :
                 return False
     
-    in_strategy = [zone for zone in range(1, 6) if add_to_in_strat(card_to_play, player_field, bushes, zone)]
-    out_of_strategy = [zone for zone in range(1, 6) if zone not in in_strategy]
+    in_strategy = [zone for zone in range(1, 5) if add_to_in_strat(card_to_play, player_field, bushes, zone)]
+    out_of_strategy = [zone for zone in range(1, 5) if zone not in in_strategy]
 
     return in_strategy, out_of_strategy
 
@@ -155,7 +159,7 @@ class Playmat :
         self.Leshy_strat_change_threshold = Leshy_strat_change_threshold
 
         # create the rows of the field
-        gen_blank_row = lambda: {column: card.BlankCard() for column in range(7)}
+        gen_blank_row = lambda: {column: card.BlankCard() for column in range(6)}
         self.bushes = gen_blank_row()
         self.player_field = gen_blank_row()
         self.opponent_field = gen_blank_row()
@@ -199,7 +203,7 @@ class Playmat :
         # error handling
         if index not in range(len(self.hand)) :
             raise ValueError('Invalid index.')
-        if zone not in range(1, 6) :
+        if zone not in range(1, 5) :
             raise ValueError('Invalid zone.')
 
         # set up variables
@@ -225,7 +229,7 @@ class Playmat :
             if sacc_index_list == '' : # go back if user presses enter
                 return False
             
-            sacc_indexes = [int(sacc) for sacc in sacc_index_list if sacc in [str(n) for n in range(1, 6)]] # get valid saccs
+            sacc_indexes = [int(sacc) for sacc in sacc_index_list if sacc in [str(n) for n in range(1, 5)]] # get valid saccs
 
             for _ in [sacc for sacc in sacc_indexes if self.player_field[sacc].has_sigil('worthy sacrifice')] : # decrease cost for cards with worthy sacrifice
                 cost -= 2 
@@ -238,7 +242,7 @@ class Playmat :
                 continue
 
             for sacc_index in sacc_indexes :
-                if sacc_index not in range(1, 6) or sacc_index in sacc_list or self.player_field[sacc_index].species == '' : # invalid zone
+                if sacc_index not in range(1, 5) or sacc_index in sacc_list or self.player_field[sacc_index].species == '' : # invalid zone
                     print(str(sacc_index), 'is an invalid zone.')
                     break # do not reset, just don't add the sacc, may change if alternate behavior is desired
                 else :
@@ -299,7 +303,7 @@ class Playmat :
 
         # attacking
         for zone in attacking_field :
-            if attacking_field[zone].species != '' and attacking_field[zone].zone != 0 and attacking_field[zone].zone != 6 :
+            if attacking_field[zone].species != '' and attacking_field[zone].zone != 0 and attacking_field[zone].zone != 5 :
                 attacker_points = attacking_field[zone].attack(defending_field[zone-1],defending_field[zone],defending_field[zone+1], self.hand, is_players=is_players, bushes=self.bushes)
 
                 # score update
@@ -353,15 +357,15 @@ class Playmat :
         player_card_count = len([card_in_play for card_in_play in self.player_field.values() if card_in_play.species != ''])
         play_count_median = self.Leshy_play_count_median + (player_card_count > 3) - (player_card_count < 2) # shift range slightly to match amount of cards on player's field
         play_count = random.randint(play_count_median - self.Leshy_play_count_variance, play_count_median + self.Leshy_play_count_variance)
-        play_count = max(min(play_count, len(self.opponent_deck), 5), 1) if self.opponent_deck else 0 # clamp play count
+        play_count = max(min(play_count, len(self.opponent_deck), 4), 1) if self.opponent_deck else 0 # clamp play count
 
         # advance from bushes to field
-        for zone in [zone for zone in self.opponent_field if self.opponent_field[zone].species == '' and zone % 6 != 0] :
+        for zone in [zone for zone in self.opponent_field if self.opponent_field[zone].species == '' and zone % 5 != 0] :
             self.opponent_field[zone] = self.bushes[zone]
             self.opponent_field[zone].play(zone=zone)
             self.bushes[zone] = card.BlankCard()
         
-        while played < play_count and [zone for zone in range(1, 6) if self.bushes[zone].species == ''] :
+        while played < play_count and [zone for zone in range(1, 5) if self.bushes[zone].species == ''] :
             # intelligent choosing of zones to prioritize
             in_strategy, out_of_strategy = ai_category_checking(card_library.AI_categories, self.player_field, self.opponent_deck[0], self.bushes, self.score, self.Leshy_strat_change_threshold)
 
@@ -398,13 +402,13 @@ class Playmat :
             overkill: how much the player overkilled by (int)
             deck_out: if the player lost by running out of cards (bool)
         '''
-        if abs(self.score['player'] - self.score['opponent']) < 8 and (self.player_deck != [] or self.player_squirrels != [] or self.active != 'player') : # no win condition
+        if abs(self.score['player'] - self.score['opponent']) < 5 and (self.player_deck != [] or self.player_squirrels != [] or self.active != 'player') : # no win condition
             return False, '', 0, False
         
-        if self.score['player'] - self.score['opponent'] >= 8 : # player wins
-            return True, 'player', self.score['player'] - self.score['opponent'] - 8, False
+        if self.score['player'] - self.score['opponent'] >= 5 : # player wins
+            return True, 'player', self.score['player'] - self.score['opponent'] - 5, False
         
-        elif self.score['opponent'] - self.score['player'] >= 8 : # opponent wins via score
+        elif self.score['opponent'] - self.score['player'] >= 5 : # opponent wins via score
             return True, 'opponent', 0, False
         
         return True, 'opponent', 0, True # opponent wins via deck out
@@ -458,14 +462,14 @@ class Playmat :
         # set up variables
         field_string = ''
         term_cols = os.get_terminal_size().columns
-        card_gaps = (term_cols*55 // 100) // 5 - 15
+        card_gaps = (term_cols*55 // 100) // 4 - 15
         if card_gaps <= 0 :
-            score_gap = 28
+            score_gap = 23
         else :
-            score_gap = card_gaps*9 + 28
-        vis_bushes = [self.bushes[n] for n in range(1, 6)]
-        vis_opponent_field = [self.opponent_field[n] for n in range(1, 6)]
-        vis_player_field = [self.player_field[n] for n in range(1, 6)]
+            score_gap = card_gaps*9 + 23
+        vis_bushes = [self.bushes[n] for n in range(1, 5)]
+        vis_opponent_field = [self.opponent_field[n] for n in range(1, 5)]
+        vis_player_field = [self.player_field[n] for n in range(1, 5)]
 
         # generate field string
         for row in [vis_bushes, vis_opponent_field, vis_player_field] :
@@ -504,7 +508,7 @@ if __name__ == '__main__' :
                 for species in card_library.Poss_Playr[cost] :
                     card_list.append(species)
                     card_list.append(card.BlankCard())
-            for zone in range(1, 6) :
+            for zone in range(1, 5) :
                 playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
 
             # Call the advance method
@@ -528,7 +532,7 @@ if __name__ == '__main__' :
             for species in card_library.Poss_Playr[cost] :
                 card_list.append(species)
                 card_list.append(card.BlankCard())
-        for zone in range(1, 6) :
+        for zone in range(1, 5) :
             if zone == 3 :
                 playmat.player_field[zone] = card.BlankCard()
                 continue
@@ -578,11 +582,11 @@ if __name__ == '__main__' :
             for species in card_library.Poss_Playr[cost] :
                 card_list.append(species)
                 card_list.append(card.BlankCard())
-        for zone in range(1, 6) :
+        for zone in range(1, 5) :
             playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
         
         # populate hand
-        for n in range(6) :
+        for _ in range(5) :
             if random.randint(1, 2) == 1 :
                 playmat.hand.append(card_library.CorpseMaggots(blank_cost=True))
             else :
@@ -596,7 +600,7 @@ if __name__ == '__main__' :
 
         # kill 2 cards and check states
         cards_to_kill = []
-        for zone in range(1, 6) :
+        for zone in range(1, 5) :
             if playmat.player_field[zone].species != '' :
                 cards_to_kill.append(zone)
         kill_count = 2
@@ -639,7 +643,7 @@ if __name__ == '__main__' :
             for species in card_library.Poss_Playr[cost] :
                 card_list.append(species)
                 card_list.append(card.BlankCard())
-        for zone in range(1, 6) :
+        for zone in range(1, 5) :
             playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
             playmat.player_field[zone].zone = zone
 
@@ -679,7 +683,7 @@ if __name__ == '__main__' :
             for species in card_library.Poss_Playr[cost] :
                 card_list.append(species)
                 card_list.append(card.BlankCard())
-        for zone in range(1, 6) :
+        for zone in range(1, 5) :
             playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
             playmat.player_field[zone].zone = zone
         
@@ -723,7 +727,7 @@ if __name__ == '__main__' :
             for species in card_library.Poss_Playr[cost] :
                 card_list.append(species)
                 card_list.append(card.BlankCard())
-        for zone in range(1, 6) :
+        for zone in range(1, 5) :
             playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
             playmat.player_field[zone].zone = zone
         playmat.print_full_field()

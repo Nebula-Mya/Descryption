@@ -238,9 +238,9 @@ def set_difficulty() :
         
         match difficulty_index :
             case 0 :
-                write_difficulty('Very Easy', 0, 1, 0, 40, 10)
+                write_difficulty('Very Easy', 0, 1, 0, 40, 5)
             case 1 :
-                write_difficulty('Easy', 1, 2, 0, 60, 5)
+                write_difficulty('Easy', 1, 2, 0, 60, 4)
             case 2 :
                 write_difficulty('Normal', 2, 2, 1, 75, 3)
             case 3 :

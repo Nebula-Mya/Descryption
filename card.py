@@ -171,8 +171,8 @@ class BlankCard() :
         '''
         resets stats and updates zone
         '''
-        if zone not in range (1, 6) : # error handling
-            raise ValueError('Zone must be between 1 and 5')
+        if zone not in range (1, 5) : # error handling
+            raise ValueError('Zone must be between 1 and 4')
         self.reset_stats()
         self.zone = zone
         self.update_ASCII()
@@ -193,7 +193,7 @@ class BlankCard() :
 
         # get terminal size
         term_cols = os.get_terminal_size().columns
-        card_gaps = (term_cols*55 // 100) // 5 - 15
+        card_gaps = (term_cols*55 // 100) // 4 - 15
 
         # error handling
         if len(self.sigils) != 2 :

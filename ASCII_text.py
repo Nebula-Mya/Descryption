@@ -20,21 +20,21 @@ def print_scales(score, score_gap) :
     player_adv = max(0, score['player'] - score['opponent'])
     opponent_adv = max(0, score['opponent'] - score['player'])
     if player_adv :
-        player_weight = 'O'*player_adv + ' '*(8-player_adv)
-        if len(player_weight) > 8 :
-            player_weight = 'O'*8
-        opponent_weight = ' '*8
+        player_weight = 'O'*player_adv + ' '*(5-player_adv)
+        if len(player_weight) > 5 :
+            player_weight = 'O'*5
+        opponent_weight = ' '*5
     else :
-        player_weight = ' '*8
-        opponent_weight = ' '*(8-opponent_adv) + 'O'*opponent_adv
-        if len(opponent_weight) > 8 :
-            opponent_weight = 'O'*8
+        player_weight = ' '*5
+        opponent_weight = ' '*(5-opponent_adv) + 'O'*opponent_adv
+        if len(opponent_weight) > 5 :
+            opponent_weight = 'O'*5
     
 
-    scales = '''{spc} PLAYER      LESHY
+    scales = '''{spc} PLAYER  LESHY
 {spc}{plr}   {lsh}
-{spc}‾‾‾‾‾‾‾‾/‾\\‾‾‾‾‾‾‾‾
-{spc}       /___\\'''.format(plr=player_weight, lsh=opponent_weight, spc=' '*score_gap)
+{spc}‾‾‾‾‾/‾\\‾‾‾‾‾
+{spc}    /___\\'''.format(plr=player_weight, lsh=opponent_weight, spc=' '*score_gap)
     print(scales)
 
 def print_win(overkill=0) :

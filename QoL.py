@@ -283,7 +283,7 @@ def hefty_check(field, zone, direction) :
     # set up variables
     match direction :
         case 'right' :
-            edge_check = zone < 5
+            edge_check = zone < 4
             dir_shift = 1
         case 'left' :
             edge_check = zone > 1
