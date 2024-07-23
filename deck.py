@@ -104,7 +104,7 @@ class Deck() :
             fair_hand: whether to shuffle the deck in a way that ensures a playable hand (bool)
         '''
         hand_size = QoL.read_data(['settings', 'hand size'])[0]
-        fair_check = lambda list : max([card.saccs for card in list[:hand_size]]) <= sum([card_ for card_ in list[:hand_size] if card_.saccs == 0]) # check if hand is playable
+        fair_check = lambda list : max([card.saccs for card in list[:hand_size - 1]]) <= (1 + sum([card_ for card_ in list[:hand_size - 1] if card_.saccs == 0])) # check if hand is playable
         
         while True :
             shuffled_deck = copy.deepcopy(self.cards) # avoid changing original deck
