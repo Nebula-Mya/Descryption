@@ -1651,7 +1651,7 @@ def split_road(campaign) : # format visuals
             bool_to_bin(any(type(card_) in [card_library.WolfPelt, card_library.RabbitPelt, card_library.GoldenPelt] for card_ in campaign.player_deck.cards) and 5 not in previous_events), # card shop
             bool_to_bin(6 not in previous_events), # break rocks
             bool_to_bin(7 not in previous_events), # campfire
-            bool_to_bin(8 not in previous_events, 2 and len(campaign.player_deck.cards) > 3) # card battle
+            bool_to_bin(8 not in previous_events and len(campaign.player_deck.cards, int_=7) > 3) # card battle
         ]
 
         match random.choices(range(1, 9), weights=weights)[0] :
