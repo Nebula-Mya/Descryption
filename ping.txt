@@ -1,19 +1,25 @@
-life_count: 2
+index: 0
 
-starting_deck: [<card_library.Wolf object at 0x7fa0d63cbfa0>, <card_library.Stoat object at 0x7fa0d6617c10>, <card_library.Bullfrog object at 0x7fa0d62dc3d0>, <card_library.Rabbit object at 0x7fa0d62dc370>]
+zone: 2
 
-campaign: <rogue.rogue_campaign object at 0x7fa0d62dc400>
+cost: 1
 
-campaign level: 0
+sacc_list: [1]
 
-campaign progress: 0
+fail_saccs: <function Playmat.play_card.<locals>.fail_saccs at 0x7f57051c2dd0>
 
-campaign lives: 2
+sacc_index_list: 1
 
-campaign teeth: 0
+sacc_indexes: [1]
 
-campaign player deck: [<card_library.Wolf object at 0x7fa0d63cbfa0>, <card_library.Stoat object at 0x7fa0d6617c10>, <card_library.Bullfrog object at 0x7fa0d62dc3d0>, <card_library.Rabbit object at 0x7fa0d62dc370>]
+sacc_index: 1
 
-campaign squirrel deck: [<card_library.Squirrel object at 0x7fa0d62dc490>, <card_library.Squirrel object at 0x7fa0d62dc4f0>, <card_library.Squirrel object at 0x7fa0d62dc520>, <card_library.Squirrel object at 0x7fa0d62dc550>, <card_library.Squirrel object at 0x7fa0d62dc040>, <card_library.Squirrel object at 0x7fa0d62dc2b0>, <card_library.Squirrel object at 0x7fa0d62dc3a0>, <card_library.Squirrel object at 0x7fa0d62dc580>, <card_library.Squirrel object at 0x7fa0d62dc310>, <card_library.Squirrel object at 0x7fa0d62dc340>]
+ind: 1
 
-campaign dead campfire: False
+og_cost: 1
+
+applicables: ['vole hole', 'dam builder']
+
+self: <field.Playmat object at 0x7f570510fc70>
+
+QoL: <module 'QoL' from '/mnt/c/Users/MaWmM/Documents/GitHub/Descryption/QoL.py'>

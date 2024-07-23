@@ -462,11 +462,11 @@ class Playmat :
         # set up variables
         field_string = ''
         term_cols = os.get_terminal_size().columns
-        card_gaps = (term_cols*55 // 100) // 4 - 15
+        card_gaps = (term_cols*55 // 100) // 5 - 15
         if card_gaps <= 0 :
-            score_gap = 23
+            score_gap = 31
         else :
-            score_gap = card_gaps*9 + 23
+            score_gap = card_gaps*6 + 31
         vis_bushes = [self.bushes[n] for n in range(1, 5)]
         vis_opponent_field = [self.opponent_field[n] for n in range(1, 5)]
         vis_player_field = [self.player_field[n] for n in range(1, 5)]
@@ -476,7 +476,7 @@ class Playmat :
             for _ in range(11) :
                 field_string += ' '*card_gaps*3 + ''.join(card.text_by_line() + ' ' * (card_gaps * 3) for card in row) + '\n'
 
-            field_string += ' '*card_gaps + '-'*(card_gaps*16 + 75) + '\n' if row == vis_opponent_field else '' # add a divider between opponent and player fields
+            field_string += ' '*card_gaps + '-'*(card_gaps*13 + 60) + '\n' if row == vis_opponent_field else '' # add a divider between opponent and player fields
 
         # print field
         QoL.clear()

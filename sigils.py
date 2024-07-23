@@ -297,9 +297,9 @@ teeth = damage
         '''
 import card_library
 
-other_sigil = [sigil for sigil in self.sigils if sigil != 'vole hole'] + ['']
+other_sigil = [sigil for sigil in self.player_field[zone].sigils if sigil != 'vole hole'] + ['']
 
-self.hand.append(card_library.Vole(sigil=other_sigil))
+self.hand.append(card_library.Vole(sigils=other_sigil))
 '''
         ],
 

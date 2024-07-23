@@ -18,7 +18,7 @@ def choose_and_play(field) :
     '''
     # get terminal size
     term_cols = os.get_terminal_size().columns
-    card_gaps = (term_cols*55 // 100) // 4 - 15
+    card_gaps = (term_cols*55 // 100) // 5 - 15
 
     # set up variables
     invalid_index = False

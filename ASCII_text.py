@@ -31,7 +31,7 @@ def print_scales(score, score_gap) :
             opponent_weight = 'O'*5
     
 
-    scales = '''{spc} PLAYER  LESHY
+    scales = '''{spc}PLAYER  LESHY
 {spc}{plr}   {lsh}
 {spc}‾‾‾‾‾/‾\\‾‾‾‾‾
 {spc}    /___\\'''.format(plr=player_weight, lsh=opponent_weight, spc=' '*score_gap)

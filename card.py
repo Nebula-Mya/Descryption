@@ -193,7 +193,7 @@ class BlankCard() :
 
         # get terminal size
         term_cols = os.get_terminal_size().columns
-        card_gaps = (term_cols*55 // 100) // 4 - 15
+        card_gaps = (term_cols*55 // 100) // 5 - 15
 
         # error handling
         if len(self.sigils) != 2 :
