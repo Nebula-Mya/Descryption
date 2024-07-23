@@ -384,7 +384,7 @@ def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_varianc
     else :
         squirrels_deck = resource_gen(deck_size)
 
-    playfield = field.Playmat(player_deck.shuffle(), squirrels_deck.shuffle(), opponent_deck.shuffle(), Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold)
+    playfield = field.Playmat(player_deck.shuffle(fair_hand=True), squirrels_deck.shuffle(), opponent_deck.shuffle(), Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold)
 
     # advance from bushes
     playfield.advance()

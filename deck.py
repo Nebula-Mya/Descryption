@@ -14,6 +14,7 @@ class Deck() :
         remove_card(index) : removes card from deck
         change_sigil(index, sigil): changes card's sigil
         shuffle(): generates a shuffled list of cards
+        refresh_ASCII(): refreshes ASCII art for all cards in deck
         print(): prints decklist
     '''
     def __init__(self, cards) :
@@ -95,13 +96,28 @@ class Deck() :
         
         sorted_deck[index].update_ASCII()
 
-    def shuffle(self) :
+    def shuffle(self, fair_hand=False) :
         '''
         generates a shuffled list of cards
+
+        Arguments:
+            fair_hand: whether to shuffle the deck in a way that ensures a playable hand (bool)
         '''
-        shuffled_deck = copy.deepcopy(self.cards) # avoid changing original deck
-        random.shuffle(shuffled_deck)
-        return shuffled_deck
+        hand_size = QoL.read_data(['settings', 'hand size'])[0]
+        fair_check = lambda list : max([card.saccs for card in list[:hand_size]]) <= sum([card_ for card_ in list[:hand_size] if card_.saccs == 0]) # check if hand is playable
+        
+        while True :
+            shuffled_deck = copy.deepcopy(self.cards) # avoid changing original deck
+            random.shuffle(shuffled_deck)
+            if not fair_hand or fair_check(shuffled_deck) :
+                return shuffled_deck
+
+    def refresh_ASCII(self) :
+        '''
+        refreshes ASCII art for all cards in deck
+        '''
+        for card in self.cards :
+            card.update_ASCII()
 
     def __str__(self) : 
         return QoL.print_deck(self.cards, sort=True, fruitful=True, numbered=True)

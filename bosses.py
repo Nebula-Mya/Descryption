@@ -20,6 +20,7 @@ def card_battle(campaign, Poss_Leshy=None) :
     '''
     def gameplay(campaign, Poss_Leshy) :
         import duel
+
         data_to_read = [
             ['settings', 'difficulty', 'leshy median plays'],
             ['settings', 'difficulty', 'leshy plays variance'],
@@ -34,8 +35,18 @@ def card_battle(campaign, Poss_Leshy=None) :
             leshy_deck = duel.deck_gen(Poss_Leshy, int(deck_size * 1.5))
         else :
             player_max_cost = max([card.saccs for card in campaign.player_deck.cards])
-            fair_poss_leshy = {cost: [card for card in card_library.Poss_Leshy[cost]] for cost in range(0, player_max_cost+1)} # may be changed later for balancing
+            fair_poss_leshy = {cost: [card for card in card_library.Poss_Leshy[cost]] for cost in range(0, max(3, player_max_cost+1))} # may be changed later for balancing
             leshy_deck = duel.deck_gen(fair_poss_leshy, int(deck_size * 1.5))
+        
+        QoL.clear()
+        print('\n')
+        wick_states = [2] + [3] * (campaign.lives - 1)
+        wick_states += [0] * (3 - len(wick_states))
+        ASCII_text.print_candelabra(wick_states)
+        print(QoL.center_justified('As you approach the figure, Leshy blows out all but one of your candles.').rstrip())
+        print(QoL.center_justified('"Beat this boss and I\'ll relight your candles."').rstrip())
+        print()
+        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
 
         (_, winner, overkill, _) = duel.main(deck_size, 4, play_median, play_var, opp_strat, opp_threshold, player_deck_obj=campaign.player_deck, opponent_deck_obj=leshy_deck, squirrels_deck_obj=campaign.squirrel_deck, print_results=False)
 
@@ -57,7 +68,6 @@ def card_battle(campaign, Poss_Leshy=None) :
         wick_states += [0] * (3 - len(wick_states))
         ASCII_text.print_candelabra(wick_states)
         print()
-        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
         return True
     
     return gameplay(campaign, Poss_Leshy) # add flavor text, context, etc.

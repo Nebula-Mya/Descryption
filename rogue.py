@@ -58,7 +58,7 @@ class rogue_campaign :
     def remove_life(self) :
         self.lives -= 1
         if self.lives <= 0 :
-            self.lost_run()
+            lost_run(self)
 
     def add_card(self, card) :
         '''
@@ -85,18 +85,18 @@ class rogue_campaign :
         changes the sigil of a card in the player's deck
         
         Arguments:
-            index: index of card to change (int)
+            card: the card to change the sigil of (card object)
             sigil: sigil to change to (str)
         '''
         sorted_deck = QoL.sort_deck(self.player_deck.cards)
         index = sorted_deck.index(card)
 
-        if self.player_deck.cards[index].has_sigil(sigil) :
+        if card.has_sigil(sigil) :
             raise ValueError(f'Card already has sigil {sigil}')
-        elif not self.player_deck.cards[index].has_sigil('') :
+        elif not card.has_sigil('') :
             raise ValueError('Card already has two sigils')
         
-        sigil_slot = self.player_deck.cards[index].sigils.index('')
+        sigil_slot = card.sigils.index('')
         
         self.player_deck.change_sigil(index, sigil, sigil_slot)
     
@@ -296,22 +296,46 @@ def card_choice(campaign) :
     def normal_cards(campaign) : # generate a list of 3 taken from card_library.Poss_Playr
         card_options = duel.deck_gen(card_library.Poss_Playr, 3).cards
         card_index = card_choice(campaign, card_options)
+        QoL.clear()
+        print('\n'*5)
+        print('You chose:')
+        card_options[card_index].explain()
+        print()
+        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
         campaign.add_card(card_options[card_index])
 
     def cost_cards(campaign) : # generate a list of 3 taken from card_library.Poss_Cost, only seeing the costs of the cards
         card_options = duel.deck_gen(card_library.Poss_Playr, 3).cards
         card_options_hidden = [card.BlankCard(species='???', cost=option.cost[-1], sigils=['???',''], blank_stats=True) for option in card_options]
         card_index = card_choice(campaign, card_options_hidden)
+        QoL.clear()
+        print('\n'*5)
+        print('You chose:')
+        card_options[card_index].explain()
+        print()
+        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
         campaign.add_card(card_options[card_index])
 
     def death_cards(campaign) : # generate a list of 3 death cards taken from card_library.Poss_Death, only available after 5 deaths
         card_options = random.sample(card_library.Poss_Death, 3)
         card_index = card_choice(campaign, card_options)
+        QoL.clear()
+        print('\n'*5)
+        print('You chose:')
+        card_options[card_index].explain()
+        print()
+        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
         campaign.add_card(card_options[card_index])
 
     def rare_cards(campaign) : # generate a list of 3 rare cards taken from card_library.Rare_Cards, occurs after boss fights
         card_options = random.sample(card_library.Rare_Cards, 3)
         card_index = card_choice(campaign, card_options)
+        QoL.clear()
+        print('\n'*5)
+        print('You chose:')
+        card_options[card_index].explain()
+        print()
+        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
         campaign.add_card(card_options[card_index])
 
     def gameplay(campaign) :
@@ -387,15 +411,15 @@ def sigil_sacrifice(campaign) : # format visuals
         Returns:
             card object: the card to sacrifice
         '''
-        # set up variables
-        invalid_choice = False
-        deck_have_sigil = QoL.sort_deck([card_ for card_ in deck_list if good_sigils(reciever, card_)])
-
         # set up functions
         same_sigil = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) # check if two sigils are the same or variations of the same sigil
         good_sigil = lambda reciever, sigil : sigil != '' and not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be transferred
         poss_transfers = lambda reciever, sacrifice : sum([good_sigil(reciever, sigil) for sigil in sacrifice.sigils]) # check how many sigils can be transferred
         good_sigils = lambda reciever, sacrifice : poss_transfers(reciever, sacrifice) > 0 # check if any sigils can be transferred
+
+        # set up variables
+        invalid_choice = False
+        deck_have_sigil = QoL.sort_deck([card_ for card_ in deck_list if good_sigils(reciever, card_)])
 
         while True :
             # print the player's deck with only cards that have sigils
@@ -425,7 +449,7 @@ def sigil_sacrifice(campaign) : # format visuals
             sacrifice: the card to sacrifice (card object)
             
         Returns:
-            int: the index of the sigil to transfer
+            list: the indexes of the sigils to transfer
         '''
         # set up variables
         def sigil_name(sigil) :
@@ -443,6 +467,9 @@ def sigil_sacrifice(campaign) : # format visuals
 
         match poss_transfers(reciever, sacrifice) :
             case 2 :
+                # both sigils can be transferred
+                if reciever.sigils == ['', ''] : return [0,1]
+
                 # print sacrifice explanation
                 invalid_choice = False
 
@@ -458,28 +485,30 @@ def sigil_sacrifice(campaign) : # format visuals
 
                     (is_int, sigil_index) = QoL.reps_int( input(QoL.center_justified(f'Would you like to transfer 1) {sigil_names[0]} or 2) {sigil_names[1]}? ').rstrip() + ' ' ), -1)
 
-                    if is_int or sigil_index not in range(1) :
-                        return sigil_index
+                    if is_int and sigil_index in range(2) :
+                        return [sigil_index]
                     invalid_choice = True
 
-            case 1 : return 1 - good_sigil(reciever, sacrifice.sigils[0])
+            case 1 : return [1 - good_sigil(reciever, sacrifice.sigils[0])]
 
             case _ : raise ValueError('No sigils can be transferred')
 
-    def confirm_choice(reciever, sacrifice, sigil_index) :
+    def confirm_choice(reciever, sacrifice, sigil_indexes) :
         '''
         allows the player to confirm their choice of cards and sigils
         
         Arguments:
             reciever: the card to receive the sigil (card object)
             sacrifice: the card to sacrifice (card object)
-            sigil_index: the index of the sigil to transfer (int)
+            sigil_indexes: the indexes of the sigil to transfer (list)
         
         Returns:
             bool: True if the player confirms their choice, False if they do not
         '''
         # set up variables
-        result_sigils = [og_sigil if og_sigil != '' else sacrifice.sigils[sigil_index] for og_sigil in reciever.sigils]
+        if len(sigil_indexes) == 2 : result_sigils = sacrifice.sigils
+        elif reciever.sigils[0] == '' : result_sigils = [sacrifice.sigils[sigil_indexes[0]], reciever.sigils[1]]
+        else : result_sigils = [reciever.sigils[0], sacrifice.sigils[sigil_indexes[0]]]
         result_card = card.BlankCard(species=reciever.species, cost=reciever.saccs, attack=reciever.base_attack, life=reciever.base_life, sigils=result_sigils)
 
         # generate the equation
@@ -509,14 +538,15 @@ def sigil_sacrifice(campaign) : # format visuals
             sacrifice = get_sacrifice(deck_list, reciever)
 
             # if sacrifice has 2 sigils and the recieving card doesn't have two open slots, ask which sigil to transfer
-            sigil_index = get_sigil_slot(reciever, sacrifice)
+            sigil_indexes = get_sigil_slot(reciever, sacrifice)
 
             # confirm the sacrifice (visually show the sigil being transferred as an addition equation)
-            if not confirm_choice(reciever, sacrifice, sigil_index) :
+            if not confirm_choice(reciever, sacrifice, sigil_indexes) :
                 continue
 
             # add the sigil to the card
-            campaign.add_sigil(reciever, sacrifice.sigils[sigil_index])
+            for index in sigil_indexes :
+                campaign.add_sigil(reciever, sacrifice.sigils[index])
 
             # remove the sacrificed card from the deck
             campaign.remove_card(sacrifice)
@@ -1179,7 +1209,7 @@ def break_rocks(campaign) : # format visuals
             if random.randint(1, 100) <= 50 and hidden_reward.has_sigil('') :
 
                 same_sigil = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) # check if two sigils are the same or variations of the same sigil
-                good_sigil = lambda reciever, sigil : sigil != '' and not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be transferred
+                good_sigil = lambda reciever, sigil : sigil != '' and not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) and sigil != '???' # check if a sigil can be added
 
                 selected_sigil = ''
 
@@ -1615,22 +1645,22 @@ def split_road(campaign) : # format visuals
         # set up variables
         weights = [
             bool_to_bin(1 not in previous_events), # card choice
-            bool_to_bin(2 not in previous_events), # sigil sacrifice
-            bool_to_bin(any(type(card_1) == type(card_2) for card_1 in campaign.player_deck.cards for card_2 in campaign.player_deck.cards) and 3 not in previous_events), # merge cards
+            bool_to_bin(2 not in previous_events and len(campaign.player_deck.cards) > 4), # sigil sacrifice
+            bool_to_bin(any(type(card_1) == type(card_2) and card_1 != card_2 for card_1 in campaign.player_deck.cards for card_2 in campaign.player_deck.cards) and 3 not in previous_events and len(campaign.player_deck.cards) > 4), # merge cards
             bool_to_bin(4 not in previous_events), # pelt shop
             bool_to_bin(any(type(card_) in [card_library.WolfPelt, card_library.RabbitPelt, card_library.GoldenPelt] for card_ in campaign.player_deck.cards) and 5 not in previous_events), # card shop
             bool_to_bin(6 not in previous_events), # break rocks
             bool_to_bin(7 not in previous_events), # campfire
-            bool_to_bin(8 not in previous_events, 2) # card battle
+            bool_to_bin(8 not in previous_events, 2 and len(campaign.player_deck.cards) > 3) # card battle
         ]
 
         match random.choices(range(1, 9), weights=weights)[0] :
             case 1 : return ['A choice of cards', 'card_choice(campaign)', 1]
             case 2 : return ['A set of mysterious stones', 'sigil_sacrifice(campaign)', 2]
-            case 3 : return ['The mycologists', 'merge_cards(campaign)', 3]
-            case 4 : return ['The trapper', 'pelt_shop(campaign)', 4]
-            case 5 : return ['The trader', 'card_shop(campaign)', 5]
-            case 6 : return ['The prospector', 'break_rocks(campaign)', 6]
+            case 3 : return ['The Mycologists', 'merge_cards(campaign)', 3]
+            case 4 : return ['The Trapper', 'pelt_shop(campaign)', 4]
+            case 5 : return ['The Trader', 'card_shop(campaign)', 5]
+            case 6 : return ['The Prospector', 'break_rocks(campaign)', 6]
             case 7 : return ['Survivors huddled around a campfire', 'campfire(campaign)', 7]
             case 8 : return ['A card battle', 'card_battle(campaign)', 8]
 
@@ -1678,15 +1708,6 @@ def split_road(campaign) : # format visuals
     gameplay(campaign) # add flavor text, context, etc.
 
 def main() : # coordinates the game loop, calls split_road, manages losses, initiates the game, etc.
-    # QoL.clear()
-    # print(menu.version_ID)
-    # print('\n'*2)
-    # ASCII_text.print_title()
-    # print('\n'*4)
-    # ASCII_text.print_WiP()
-    # input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
-
-
 
     # after the player has won a run, start with three lives
     if QoL.read_data([['progress markers', 'wins']])[0] > 0 : life_count = 3
@@ -1702,7 +1723,8 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
 
     # loop is:
     while True :
-            ping_vars = locals()
+            # ping variables
+            ping_vars={}
             ping_vars['campaign level'] = campaign.level
             ping_vars['campaign progress'] = campaign.progress
             ping_vars['campaign lives'] = campaign.lives
@@ -1710,7 +1732,16 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
             ping_vars['campaign player deck'] = campaign.player_deck.cards
             ping_vars['campaign squirrel deck'] = campaign.squirrel_deck.cards
             ping_vars['campaign dead campfire'] = campaign.dead_campfire
+            for card_ in campaign.player_deck.cards :
+                ping_vars[f'campaign player deck {card_.species}'] = {
+                    'attack' : card_.base_attack,
+                    'life' : card_.base_life,
+                    'cost' : card_.saccs,
+                    'sigils' : card_.sigils
+                }
             QoL.ping(ping_vars)
+
+
     ###     check if area boss is next event (campaign.progress >= 10)
             if campaign.progress >= 10 :
     ###         if it is, and its Leshy (campaign.level == 3), check if player has won
@@ -1724,6 +1755,8 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
                     campaign.level += 1
                     campaign.progress = 0
                     print(f'You have reached the {campaign.level}th area')
+                    print()
+                    input('Press Enter to continue...')
     ###     else, run split_road
             else : 
                 # playtest feature to quick quit
@@ -1743,6 +1776,7 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
     ###         else, increment campaign.progress and continue loop
             else :
                 campaign.progress += 1
+                campaign.player_deck.refresh_ASCII()
 
 if __name__ == '__main__' :
     pass
