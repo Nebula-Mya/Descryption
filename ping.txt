@@ -1,17 +1,19 @@
-campaign: <__main__.rogue_campaign object at 0x7f1262cb9e40>
+life_count: 2
 
-invalid_choice: False
+starting_deck: [<card_library.Wolf object at 0x7fa0d63cbfa0>, <card_library.Stoat object at 0x7fa0d6617c10>, <card_library.Bullfrog object at 0x7fa0d62dc3d0>, <card_library.Rabbit object at 0x7fa0d62dc370>]
 
-card_pool: [<card_library.Rabbit object at 0x7f1262b46470>, <card_library.Rabbit object at 0x7f1262cb9ae0>, <card_library.Pronghorn object at 0x7f1262e0b190>, <card_library.Pronghorn object at 0x7f1262e36740>, <card_library.Bullfrog object at 0x7f1262e34730>, <card_library.Stoat object at 0x7f1262e34760>, <card_library.Pronghorn object at 0x7f1262e347f0>, <card_library.Cat object at 0x7f1262e34820>, <card_library.Wolf object at 0x7f1262e34850>, <card_library.Rabbit object at 0x7f1262e34880>, <card_library.Grizzly object at 0x7f1262e348b0>]
+campaign: <rogue.rogue_campaign object at 0x7fa0d62dc400>
 
-dialogue: Choose a card to take the sigils from:
+campaign level: 0
 
-option_cards: [<card_library.Pronghorn object at 0x7f1262e0b190>, <card_library.Rabbit object at 0x7f1262e34880>, <card_library.Wolf object at 0x7f1262e34850>]
+campaign progress: 0
 
-options: 
-1. View a card
-2. Pick a card
+campaign lives: 2
 
+campaign teeth: 0
 
+campaign player deck: [<card_library.Wolf object at 0x7fa0d63cbfa0>, <card_library.Stoat object at 0x7fa0d6617c10>, <card_library.Bullfrog object at 0x7fa0d62dc3d0>, <card_library.Rabbit object at 0x7fa0d62dc370>]
 
-used_cards: [<card_library.BlackGoat object at 0x7f1262e34790>, <card_library.Lobster object at 0x7f1262e0b9d0>, <card_library.Ouroboros object at 0x7f1262e0a1a0>, <card_library.Turtle object at 0x7f1262e346d0>, <card_library.MooseBuck object at 0x7f1262cb9e70>, <card_library.Adder object at 0x7f1262cb99c0>]
+campaign squirrel deck: [<card_library.Squirrel object at 0x7fa0d62dc490>, <card_library.Squirrel object at 0x7fa0d62dc4f0>, <card_library.Squirrel object at 0x7fa0d62dc520>, <card_library.Squirrel object at 0x7fa0d62dc550>, <card_library.Squirrel object at 0x7fa0d62dc040>, <card_library.Squirrel object at 0x7fa0d62dc2b0>, <card_library.Squirrel object at 0x7fa0d62dc3a0>, <card_library.Squirrel object at 0x7fa0d62dc580>, <card_library.Squirrel object at 0x7fa0d62dc310>, <card_library.Squirrel object at 0x7fa0d62dc340>]
+
+campaign dead campfire: False

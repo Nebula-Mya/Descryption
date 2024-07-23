@@ -3,7 +3,6 @@ import duel
 import QoL
 import card_library
 import ASCII_text
-import menu
 import card
 import random
 import sigils
@@ -107,6 +106,9 @@ class rogue_campaign :
     def print_deck(self) :
         print(self.player_deck)
 
+    def has_lost(self) :
+        return self.lives <= 0
+
 def card_equation(card1, card2, result) :
     '''
     generate the display text for combining cards
@@ -157,16 +159,16 @@ def card_battle(campaign, Poss_Leshy=None) :
         ]
         [play_median, play_var, opp_strat, opp_threshold] = QoL.read_data(data_to_read)
 
-        deck_size = len(campaign.player_deck)
+        deck_size = len(campaign.player_deck.cards)
 
         if Poss_Leshy :
             leshy_deck = duel.deck_gen(Poss_Leshy, int(deck_size * 1.5))
         else :
             player_max_cost = max([card.saccs for card in campaign.player_deck.cards])
-            fair_poss_leshy = {cost: [card for card in card_library.Poss_Leshy[cost]] for cost in range(0, player_max_cost+1)} # may be changed later for balancing
+            fair_poss_leshy = {cost: [card for card in card_library.Poss_Leshy[cost]] for cost in range(0, player_max_cost)} # may be changed later for balancing
             leshy_deck = duel.deck_gen(fair_poss_leshy, int(deck_size * 1.5))
 
-        (_, winner, overkill, _) = duel.main(deck_size, 4, play_median, play_var, opp_strat, opp_threshold, player_deck_obj=campaign.player_deck, leshy_deck_obj=leshy_deck, squirrel_deck_obj=campaign.squirrel_deck)
+        (_, winner, overkill, _) = duel.main(deck_size, 4, play_median, play_var, opp_strat, opp_threshold, player_deck_obj=campaign.player_deck, opponent_deck_obj=leshy_deck, squirrels_deck_obj=campaign.squirrel_deck, print_results=False)
 
         if winner == 'opponent' :
             campaign.remove_life()
@@ -237,7 +239,7 @@ def card_choice(campaign) :
 3. Pick a card
 
 '''
-                    print(QoL.center_justified(options))
+                    print(QoL.center_justified(options, blocked=True))
 
                     # get the user's choice
                     card_index = input(QoL.center_justified('Enter the number of the card to view:').rstrip() + ' ')
@@ -276,7 +278,7 @@ def card_choice(campaign) :
 3. Pick a card
 
 '''
-                    print(QoL.center_justified(options))
+                    print(QoL.center_justified(options, blocked=True))
 
                     # get the user's choice
                     card_index = input(QoL.center_justified('Enter the number of the card to pick:').rstrip() + ' ')
@@ -1594,25 +1596,43 @@ def split_road(campaign) : # format visuals
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
     '''
-    def get_event() :
+    def get_event(campaign, previous_events=[]) :
         '''
         generate an event for a path according to weights
         
         could change weights depending on campaign level, etc.
+
+        Arguments:
+            campaign: the current campaign object (rogue_campaign object)
+            previous_events: the events that have already been generated (list[int])
         
-        returns:
-            list[str]: the event to run and the function to run it
+        Returns:
+            list[str, str, int]: the event to run, the function to run it, and the number of the event
         '''
-        # for now, each event will be equally likely to occur (generate a random int and use match/case to find the range it falls in, then call the range's corresponding event)
-        match random.randint(1, 14) :
-            case 1 : return ['A choice of cards', 'card_choice(campaign)']
-            case 2 : return ['A set of mysterious stones', 'sigil_sacrifice(campaign)']
-            case 3 : return ['The mycologists', 'merge_cards(campaign)']
-            case 4 : return ['The trapper', 'pelt_shop(campaign)']
-            case 5 : return ['The trader', 'card_shop(campaign)']
-            case 6 : return ['The prospector', 'break_rocks(campaign)']
-            case 7 : return ['Survivors huddled around a campfire', 'campfire(campaign)']
-            case _ : return ['A card battle', 'battle(campaign)']
+        # set up functions
+        bool_to_bin = lambda bool_, int_=1 : int_ if bool_ else 0
+
+        # set up variables
+        weights = [
+            bool_to_bin(1 not in previous_events), # card choice
+            bool_to_bin(2 not in previous_events), # sigil sacrifice
+            bool_to_bin(any(type(card_1) == type(card_2) for card_1 in campaign.player_deck.cards for card_2 in campaign.player_deck.cards) and 3 not in previous_events), # merge cards
+            bool_to_bin(4 not in previous_events), # pelt shop
+            bool_to_bin(any(type(card_) in [card_library.WolfPelt, card_library.RabbitPelt, card_library.GoldenPelt] for card_ in campaign.player_deck.cards) and 5 not in previous_events), # card shop
+            bool_to_bin(6 not in previous_events), # break rocks
+            bool_to_bin(7 not in previous_events), # campfire
+            bool_to_bin(8 not in previous_events, 2) # card battle
+        ]
+
+        match random.choices(range(1, 9), weights=weights)[0] :
+            case 1 : return ['A choice of cards', 'card_choice(campaign)', 1]
+            case 2 : return ['A set of mysterious stones', 'sigil_sacrifice(campaign)', 2]
+            case 3 : return ['The mycologists', 'merge_cards(campaign)', 3]
+            case 4 : return ['The trapper', 'pelt_shop(campaign)', 4]
+            case 5 : return ['The trader', 'card_shop(campaign)', 5]
+            case 6 : return ['The prospector', 'break_rocks(campaign)', 6]
+            case 7 : return ['Survivors huddled around a campfire', 'campfire(campaign)', 7]
+            case 8 : return ['A card battle', 'card_battle(campaign)', 8]
 
     def gameplay(campaign) :
         # set up variables
@@ -1623,11 +1643,18 @@ def split_road(campaign) : # format visuals
         ## 50% chance for two paths, 25% for one and three
         match random.randint(1, 4) :
             case 1 : # one path
-                path_list = [get_event()]
+                path_list = [get_event(campaign)]
             case 2 : # three paths
-                path_list = [get_event(), get_event(), get_event()]
+                # path_list = [get_event(campaign), get_event(campaign), get_event(campaign)]
+                path_list = [get_event(campaign)]
+                previous_events = [path_list[0][2]]
+                path_list.append(get_event(campaign, previous_events))
+                previous_events.append(path_list[1][2])
+                path_list.append(get_event(campaign, previous_events))
             case _ : # two paths
-                path_list = [get_event(), get_event()]
+                path_list = [get_event(campaign)]
+                previous_events = [path_list[0][2]]
+                path_list.append(get_event(campaign, previous_events))
 
         invalid_choice = False
         while True :
@@ -1651,33 +1678,71 @@ def split_road(campaign) : # format visuals
     gameplay(campaign) # add flavor text, context, etc.
 
 def main() : # coordinates the game loop, calls split_road, manages losses, initiates the game, etc.
-    QoL.clear()
-    print(menu.version_ID)
-    print('\n'*2)
-    ASCII_text.print_title()
-    print('\n'*4)
-    ASCII_text.print_WiP()
-    input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
-    # test and develop this function in the if __name__ == '__main__' block, only move it here when it's ready
+    # QoL.clear()
+    # print(menu.version_ID)
+    # print('\n'*2)
+    # ASCII_text.print_title()
+    # print('\n'*4)
+    # ASCII_text.print_WiP()
+    # input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
 
-if __name__ == '__main__' :
+
+
     # after the player has won a run, start with three lives
+    if QoL.read_data([['progress markers', 'wins']])[0] > 0 : life_count = 3
+    else : life_count = 2
 
     # create starting deck list (switch rabbit for opossum once bones are implemented)
     starting_deck = [card_library.Wolf(), card_library.Stoat(), card_library.Bullfrog(), card_library.Rabbit()]
 
     # initialize campaign object
+    campaign = rogue_campaign(starting_deck, lives=life_count)
 
     # dialogue, flavor text, etc.
 
     # loop is:
-    ### check if area boss is next event (campaign.progress >= 10)
-    ###     if it is, and its Leshy (campaign.level == 3), check if player has won
-    ###         if they have, run beat_leshy, and return (to main menu)
-    ###     if it is, run boss event according to the current level and check if player has won
-    ###         if they have, update the level, reset the progress, and print flavor text for the new area
+    while True :
+            ping_vars = locals()
+            ping_vars['campaign level'] = campaign.level
+            ping_vars['campaign progress'] = campaign.progress
+            ping_vars['campaign lives'] = campaign.lives
+            ping_vars['campaign teeth'] = campaign.teeth
+            ping_vars['campaign player deck'] = campaign.player_deck.cards
+            ping_vars['campaign squirrel deck'] = campaign.squirrel_deck.cards
+            ping_vars['campaign dead campfire'] = campaign.dead_campfire
+            QoL.ping(ping_vars)
+    ###     check if area boss is next event (campaign.progress >= 10)
+            if campaign.progress >= 10 :
+    ###         if it is, and its Leshy (campaign.level == 3), check if player has won
+                if campaign.level == 3 and bosses.boss_fight_leshy(campaign) :
+    ###             if they have, run beat_leshy, and return (to main menu)
+                    beat_leshy(campaign)
+                    return
+    ###         if it is, run boss event according to the current level and check if player has won
+                elif (campaign.level == 0 and bosses.boss_fight_prospector(campaign)) or (campaign.level == 1 and bosses.boss_fight_angler(campaign)) or (campaign.level == 2 and bosses.boss_fight_trapper_trader(campaign)) :
+    ###             if they have, update the level, reset the progress, and print flavor text for the new area
+                    campaign.level += 1
+                    campaign.progress = 0
+                    print(f'You have reached the {campaign.level}th area')
     ###     else, run split_road
-    ### check campagin.has_lost
-    ###     if True, run lost_run, and return (to main menu)
-    ###     else, increment campaign.level and continue loop
+            else : 
+                # playtest feature to quick quit
+                import sys
+                QoL.clear()
+                print('\n'*5)
+                if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) :
+                    quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
+                    if quit_game == 'y' :
+                        return
+                split_road(campaign)
+    ###     check campagin.has_lost
+            if campaign.has_lost() :
+    ###         if True, run lost_run, and return (to main menu)
+                lost_run(campaign)
+                return
+    ###         else, increment campaign.progress and continue loop
+            else :
+                campaign.progress += 1
+
+if __name__ == '__main__' :
     pass

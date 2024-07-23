@@ -336,7 +336,7 @@ def resource_gen(size) :
 
     return deck.Deck(squirrels)
 
-def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold, player_deck_obj=None, squirrels_deck_obj=None, opponent_deck_obj=None) :
+def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold, player_deck_obj=None, squirrels_deck_obj=None, opponent_deck_obj=None, print_results=True) :
     '''
     main function for deck battles
     
@@ -350,6 +350,7 @@ def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_varianc
         player_deck_obj: the player's deck object, defaults to None (deck object)
         squirrels_deck_obj: the squirrel deck object, defaults to None (deck object)
         opponent_deck_obj: the opponent's deck object, defaults to None (deck object
+        print_results: whether to print the results of the game, defaults to True (bool)
         
     Returns:
         (win, winner, overkill, deck_out) (tuple)'''
@@ -404,10 +405,10 @@ def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_varianc
             if quit_game == 'y' :
                 QoL.clear()
                 if playfield.score['player'] > playfield.score['opponent'] :
-                    ASCII_text.print_win()
+                    if print_results : ASCII_text.print_win()
                     (win, winner, overkill, deck_out) = (True, 'player', 0, False)
                 else :
-                    ASCII_text.print_lose()
+                    if print_results : ASCII_text.print_lose()
                     (win, winner, overkill, deck_out) = (True, 'opponent', 0, False)
                 break
             
@@ -434,7 +435,7 @@ def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_varianc
         if win :
             break
             
-    input('Press enter to continue.')
+    if print_results : input('Press enter to continue.')
     return (win, winner, overkill, deck_out)
 
 if __name__ == '__main__' :
