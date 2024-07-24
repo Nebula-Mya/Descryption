@@ -1651,7 +1651,7 @@ def split_road(campaign) : # format visuals
             bool_to_bin(any(type(card_) in [card_library.WolfPelt, card_library.RabbitPelt, card_library.GoldenPelt] for card_ in campaign.player_deck.cards) and 5 not in previous_events), # card shop
             bool_to_bin(6 not in previous_events), # break rocks
             bool_to_bin(7 not in previous_events), # campfire
-            bool_to_bin(8 not in previous_events and len(campaign.player_deck.cards, int_=7) > 3) # card battle
+            bool_to_bin(8 not in previous_events and len(campaign.player_deck.cards) > 3, int_=7) # card battle
         ]
 
         match random.choices(range(1, 9), weights=weights)[0] :
@@ -1779,4 +1779,79 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
                 campaign.player_deck.refresh_ASCII()
 
 if __name__ == '__main__' :
-    pass
+    import sys
+
+    # run main or tests based on command line arguments
+    if len(sys.argv) == 1 : main()
+    else :
+        def print_info(command_arg) :
+            if command_arg in ['death_card', 'lost', 'win'] : # print death cards
+                current_death_cards = [card_library.PlyrDeathCard1(), card_library.PlyrDeathCard2(), card_library.PlyrDeathCard3()]
+
+                # print the menu
+                print()
+                print(QoL.center_justified('Current death cards: '))
+                QoL.print_deck(current_death_cards, centered=True)
+            else :
+                print()
+                print(QoL.center_justified('Current deck: '))
+                campaign.print_deck()
+
+        # set up variables
+        campaign = rogue_campaign(duel.deck_gen(card_library.Poss_Playr, 20).cards, 0, 2)
+
+        # get death cards if necessary
+        if sys.argv[1] in ['death_card', 'lost', 'win'] :
+            data_to_read = [
+                ['death cards', 'first', 'name'],
+                ['death cards', 'first', 'attack'],
+                ['death cards', 'first', 'life'],
+                ['death cards', 'first', 'cost'],
+                ['death cards', 'first', 'sigils'],
+                ['death cards', 'first', 'easter'],
+                ['death cards', 'second', 'name'],
+                ['death cards', 'second', 'attack'],
+                ['death cards', 'second', 'life'],
+                ['death cards', 'second', 'cost'],
+                ['death cards', 'second', 'sigils'],
+                ['death cards', 'second', 'easter'],
+                ['death cards', 'third', 'name'],
+                ['death cards', 'third', 'attack'],
+                ['death cards', 'third', 'life'],
+                ['death cards', 'third', 'cost'],
+                ['death cards', 'third', 'sigils'],
+                ['death cards', 'third', 'easter']
+            ]
+            death_card_data = QoL.read_data(data_to_read)
+            death_card_write = [(data_to_read[ind], death_card_data[ind]) for ind in range(len(data_to_read))]
+
+        # print deck or death cards
+        print_info(sys.argv[1])
+
+        input(QoL.center_justified('Press Enter to continue...').rstrip())
+
+        match sys.argv[1] :
+            case 'duel' : card_battle(campaign)
+            case 'choice' : card_choice(campaign)
+            case 'stones' : sigil_sacrifice(campaign)
+            case 'merge' : merge_cards(campaign)
+            case 'pelt' : pelt_shop(campaign)
+            case 'shop' : card_shop(campaign)
+            case 'rocks' : break_rocks(campaign)
+            case 'campfire' : campfire(campaign)
+            case 'death_card' : add_death_card(campaign)
+            case 'lost' : lost_run(campaign)
+            case 'win' : beat_leshy(campaign)
+            case 'split' : split_road(campaign)
+            case 'boss_1' : bosses.boss_fight_prospector(campaign)
+            case 'boss_2' : bosses.boss_fight_angler(campaign)
+            case 'boss_3' : bosses.boss_fight_trapper_trader(campaign)
+            case 'boss_4' : bosses.boss_fight_leshy(campaign)
+            case _ : pass
+
+        print_info(sys.argv[1])
+
+        # restore death cards
+        if sys.argv[1] in ['death_card', 'lost', 'win'] :
+            input(QoL.center_justified('Press Enter to restore death cards...').rstrip())
+            QoL.write_data(death_card_write)
