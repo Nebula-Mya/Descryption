@@ -355,7 +355,7 @@ class Playmat :
         # set up variables
         played = 0
         player_card_count = len([card_in_play for card_in_play in self.player_field.values() if card_in_play.species != ''])
-        play_count_median = self.Leshy_play_count_median + (player_card_count > 3) - (player_card_count < 2) # shift range slightly to match amount of cards on player's field
+        play_count_median = self.Leshy_play_count_median + (player_card_count > 2) - (player_card_count < 2) # shift range slightly to match amount of cards on player's field
         play_count = random.randint(play_count_median - self.Leshy_play_count_variance, play_count_median + self.Leshy_play_count_variance)
         play_count = max(min(play_count, len(self.opponent_deck), 4), 1) if self.opponent_deck else 0 # clamp play count
 
