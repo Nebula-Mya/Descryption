@@ -1,21 +1,27 @@
-campaign level: 0
+hand: [<card_library.Kingfisher object at 0x7ff95ea8fa30>]
 
-campaign progress: 0
+graveyard: [<card_library.GoldNugget object at 0x7ff95ea86e90>, <card_library.GoldNugget object at 0x7ff95ea87490>, <card_library.Squirrel object at 0x7ff95ea8f4c0>, <card_library.Squirrel object at 0x7ff95ea8f580>, <card_library.Squirrel object at 0x7ff95ea98880>, <card_library.Squirrel object at 0x7ff95ea8f760>]
 
-campaign lives: 2
+score: {'player': 2, 'opponent': 6}
 
-campaign teeth: 0
+active: opponent
 
-campaign player deck: [<card_library.Wolf object at 0x7f0998abdf00>, <card_library.Stoat object at 0x7f0998c31570>, <card_library.Bullfrog object at 0x7f0998c315d0>, <card_library.Rabbit object at 0x7f0998c315a0>]
+player_deck: [<card_library.Falcon object at 0x7ff95ea8fa90>, <card_library.CorpseMaggots object at 0x7ff95ea8fbb0>, <card_library.Grizzly object at 0x7ff95ea8fd90>, <card_library.Cat object at 0x7ff95ea8feb0>, <card_library.Turtle object at 0x7ff95ea8f850>, <card_library.Warren object at 0x7ff95ea8f970>, <card_library.Smoke object at 0x7ff95ea8f7f0>, <card_library.Lobster object at 0x7ff95ea8f8b0>, <card_library.BlackGoat object at 0x7ff95ea8fb50>, <card_library.Pronghorn object at 0x7ff95ea8f9d0>, <card_library.Grizzly object at 0x7ff95ea8ff70>, <card_library.Cat object at 0x7ff95ea8fc10>, <card_library.Lobster object at 0x7ff95ea8f910>, <card_library.Asp object at 0x7ff95ea8ff10>, <card_library.Otter object at 0x7ff95ea8fd30>, <card_library.Bullfrog object at 0x7ff95ea8fdf0>, <card_library.DumpyTF object at 0x7ff95ea8faf0>]
 
-campaign squirrel deck: [<card_library.Squirrel object at 0x7f0998c31420>, <card_library.Squirrel object at 0x7f0998c313c0>, <card_library.Squirrel object at 0x7f0998c31390>, <card_library.Squirrel object at 0x7f0998c31360>, <card_library.Squirrel object at 0x7f0998c31330>, <card_library.Squirrel object at 0x7f0998c31300>, <card_library.Squirrel object at 0x7f0998c312d0>, <card_library.Squirrel object at 0x7f0998c312a0>, <card_library.Squirrel object at 0x7f0998c31270>, <card_library.Squirrel object at 0x7f0998c31240>]
+player_squirrels: [<card_library.Squirrel object at 0x7ff95ea8f5e0>, <card_library.Squirrel object at 0x7ff95ea8f520>, <card_library.Squirrel object at 0x7ff95ea8f700>, <card_library.Squirrel object at 0x7ff95ea8f790>, <card_library.Squirrel object at 0x7ff95ea8f6a0>, <card_library.Squirrel object at 0x7ff95ea8f640>]
 
-campaign dead campfire: False
+opponent_deck: [<card_library.CorpseMaggots object at 0x7ff95ea8ed10>, <card_library.OppositeShrew object at 0x7ff95ea8ea10>, <card_library.Cockroach object at 0x7ff95ea8ee90>, <card_library.Bullfrog object at 0x7ff95ea8f310>, <card_library.OppositeShrew object at 0x7ff95ea8f070>, <card_library.Otter object at 0x7ff95ea8ecb0>, <card_library.OppositeRabbit object at 0x7ff95ea8f1f0>, <card_library.OppositeRabbit object at 0x7ff95ea8efb0>, <card_library.Falcon object at 0x7ff95ea8e950>, <card_library.OppositeRabbit object at 0x7ff95ea8f0d0>, <card_library.Asp object at 0x7ff95ea8ed70>, <card_library.DumpyTF object at 0x7ff95ea8f370>, <card_library.OppositeRabbit object at 0x7ff95ea8ec50>, <card_library.OppositeShrew object at 0x7ff95ea8ef50>, <card_library.OppositeRabbit object at 0x7ff95ea8f3d0>, <card_library.OppositeShrew object at 0x7ff95ea8edd0>, <card_library.CorpseMaggots object at 0x7ff95ea8eb30>, <card_library.OppositeRabbit object at 0x7ff95ea8ebf0>, <card_library.OppositeShrew object at 0x7ff95ea8f2b0>, <card_library.Turtle object at 0x7ff95ea8eef0>, <card_library.OppositeShrew object at 0x7ff95ea8ead0>, <card_library.Turtle object at 0x7ff95ea8e9b0>, <card_library.OppositeShrew object at 0x7ff95ea8f430>, <card_library.Bloodhound object at 0x7ff95ea8f250>]
 
-campaign player deck Wolf: {'attack': 3, 'life': 2, 'cost': 2, 'sigils': ['', '']}
+Leshy_play_count_median: 2
 
-campaign player deck Stoat: {'attack': 1, 'life': 3, 'cost': 1, 'sigils': ['', '']}
+Leshy_play_count_variance: 1
 
-campaign player deck Bullfrog: {'attack': 1, 'life': 2, 'cost': 1, 'sigils': ['mighty leap', '']}
+Leshy_in_strategy_chance: 90
 
-campaign player deck Rabbit: {'attack': 1, 'life': 1, 'cost': 0, 'sigils': ['lane shift right', '']}
+Leshy_strat_change_threshold: 3
+
+bushes: {0: <card.BlankCard object at 0x7ff95ea98040>, 1: <card_library.CorpseMaggots object at 0x7ff95ea8f010>, 2: <card_library.OppositeRabbit object at 0x7ff95ea8f130>, 3: <card_library.OppositeShrew object at 0x7ff95ea8eb90>, 4: <card_library.Stoat object at 0x7ff95ea8ee30>, 5: <card.BlankCard object at 0x7ff95ea8c5b0>}
+
+player_field: {0: <card.BlankCard object at 0x7ff95ea98850>, 1: <card.BlankCard object at 0x7ff95ea8c5e0>, 2: <card.BlankCard object at 0x7ff95ea8c3d0>, 3: <card_library.Lobster object at 0x7ff95ea8fe50>, 4: <card.BlankCard object at 0x7ff95ea8c4c0>, 5: <card.BlankCard object at 0x7ff95ea8c490>}
+
+opponent_field: {0: <card.BlankCard object at 0x7ff95ea8c580>, 1: <card_library.Coyote object at 0x7ff95ea987c0>, 2: <card_library.Bloodhound object at 0x7ff95ea874c0>, 3: <card_library.Stoat object at 0x7ff95ea8f190>, 4: <card_library.PackMule object at 0x7ff95ea98820>, 5: <card.BlankCard object at 0x7ff95ea8c370>}

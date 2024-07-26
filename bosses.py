@@ -1,12 +1,11 @@
 import card_library
-import deck
 import field
 import QoL
 import ASCII_text
 import random
-import math
-import os
 import sys
+import duel
+
 def card_battle(campaign, Poss_Leshy=None) : 
     '''
     starts a card battle between the player and Leshy, with the player's deck being campaign.player_deck
@@ -54,9 +53,7 @@ def card_battle(campaign, Poss_Leshy=None) :
             campaign.lives = 0
             QoL.clear()
             print('\n'*3)
-            wick_states = (campaign.lives) * [2] + [3]
-            wick_states += [0] * (3 - len(wick_states))
-            ASCII_text.print_candelabra(wick_states)
+            ASCII_text.print_candelabra([3, 0, 0])
             print()
             input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
             return False
@@ -84,13 +81,296 @@ def card_battle(campaign, Poss_Leshy=None) :
 
 ##### if the player wins, relight candles and update config file
 
+def random_card(possible_cards) :
+    '''
+    gets a random card from a list of possible cards
+    '''
+    # get card type
+    template_card = random.choice(possible_cards)
+    card_class = type(template_card)
+    if any(type(card) for card in card_library.Rare_Cards) == card_class: # lower chances of rare cards
+        template_card = random.choice(possible_cards)
+        card_class = type(template_card)
+
+    return card_class(getattr(template_card, 'blank_cost', False))
+
+def get_higher_difficulty() :
+    '''
+    gets the higher difficulty settings for bosses
+    
+    Returns:
+        tuple: the higher difficulty settings for bosses
+    '''
+    difficulty_number = QoL.read_data([['settings', 'difficulty', 'current difficulty index']])[0]
+    difficulty_settings = [
+        { # very easy
+            'leshy median plays' : 1,
+            'leshy plays variance' : 0,
+            'leshy strat chance' : 40,
+            'leshy offense threshold' : 5
+            },
+        { # easy
+            'leshy median plays' : 2,
+            'leshy plays variance' : 0,
+            'leshy strat chance' : 60,
+            'leshy offense threshold' : 4
+            },
+        { # normal
+            'leshy median plays' : 2,
+            'leshy plays variance' : 1,
+            'leshy strat chance' : 75,
+            'leshy offense threshold' : 3
+            },
+        { # hard
+            'leshy median plays' : 3,
+            'leshy plays variance' : 2,
+            'leshy strat chance' : 90,
+            'leshy offense threshold' : 3
+            },
+        { # very hard
+            'leshy median plays' : 4,
+            'leshy plays variance' : 1,
+            'leshy strat chance' : 100,
+            'leshy offense threshold' : 2
+            }
+    ]
+    match difficulty_number :
+        case 4 : # already max difficulty
+            return (difficulty_settings[4]['leshy median plays'], difficulty_settings[4]['leshy plays variance'], difficulty_settings[4]['leshy strat chance'], difficulty_settings[4]['leshy offense threshold'])
+        case value if value in range(0, 4) :
+            return (difficulty_settings[value]['leshy median plays'], difficulty_settings[value]['leshy plays variance'], difficulty_settings[value + 1]['leshy strat chance'], difficulty_settings[value + 1]['leshy offense threshold'])
+        case _ :
+            raise ValueError(f"invalid difficulty number: {difficulty_number}")
+
+def error_checks(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold) :
+    if deck_size < 1 :
+        raise ValueError('Deck size must be at least 1.')
+    if hand_size < 1 :
+        raise ValueError('Hand size must be at least 1.')
+    if hand_size > deck_size :
+        raise ValueError('Hand size must be less than or equal to deck size.')
+    if Leshy_play_count_median < 1 :
+        raise ValueError('Leshy play count median must be at least 1.')
+    if Leshy_play_count_variance < 0 :
+        raise ValueError('Leshy play count variance must be at least 0.')
+    if Leshy_in_strategy_chance < 0 or Leshy_in_strategy_chance > 100 :
+        raise ValueError('Leshy in strategy chance must be between 0 and 100.')
+    if Leshy_strat_change_threshold < -5 or Leshy_strat_change_threshold > 5 :
+        raise ValueError('Leshy strategy change threshold must be between -5 and 5.')
+
 def pre_boss_flavor(campaign) :
+    '''
+    prints pre boss fight flavor text and displays
+    adds smoke cards to the player's deck
+    
+    Arguments:
+        campaign: the current campaign object (rogue_campaign object)
+    '''
     # pre fight flavor text, extra lives being extinguished, etc.
-    pass
+    QoL.clear()
+    print('\n')
+    wick_states = [2] + [3] * (campaign.lives - 1)
+    wick_states += [0] * (3 - len(wick_states))
+    for _ in range(0, campaign.lives - 1) :
+        campaign.add_card(card_library.Smoke())
+    ASCII_text.print_candelabra(wick_states)
+    print(QoL.center_justified('As you approach the figure, Leshy blows out all but one of your candles.').rstrip())
+    print(QoL.center_justified('"Beat this boss and I\'ll relight your candles."').rstrip())
+    print()
+    input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+
+def post_boss_flavor(campaign, result) :
+    '''
+    prints post boss fight flavor text and displays
+    removes smoke cards from the player's deck
+
+    Arguments:
+        campaign: the current campaign object (rogue_campaign object)
+        result: whether the player won (bool)
+    '''
+    # remove smoke cards
+    all_smoke = [card_ for card_ in campaign.player_deck.cards if card_.species == 'The Smoke']
+    for smoke in all_smoke :
+        campaign.remove_card(smoke)
+
+    if not result : # player lost
+        QoL.clear()
+        print('\n'*3)
+        ASCII_text.print_candelabra([3, 0, 0])
+        print()
+        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+    else : # player won
+        QoL.clear()
+        print('\n'*3)
+        wick_states = (campaign.lives) * [2]
+        wick_states += [0] * (3 - len(wick_states))
+        ASCII_text.print_candelabra(wick_states)
+        print()
+
+def turn_structure(playfield) :
+    '''
+    the turn structure for boss fights, excluding checking for win conditions and switching turns
+
+    Arguments:
+        playfield: the current playfield object (field object)
+
+    Returns:
+        tuple: (win, winner, overkill, deck_out) (bool, str, int, bool)
+    '''
+    # playtest feature to quick quit
+    if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) :
+        if playfield.active == 'player' :
+            playfield.print_full_field()
+        quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
+        if quit_game == 'y' :
+            QoL.clear()
+            if playfield.score['player'] > playfield.score['opponent'] :
+                (win, winner, overkill, deck_out) = (True, 'player', 0, False)
+            else :
+                (win, winner, overkill, deck_out) = (True, 'opponent', 0, False)
+            return (win, winner, overkill, deck_out)
+        
+    # player turn
+    if playfield.active == 'player' :
+        duel.choose_draw(playfield)
+        duel.view_play_attack(playfield)
+
+    # leshy turn
+    else :
+        playfield.advance()
+        playfield.print_field()
+        input('Press enter to continue.')
+
+    # attack (both turns)
+    playfield.attack()
+    playfield.check_states()
+    playfield.print_field()
+    input('Press enter to continue.')
+
+    return (False, '', 0, False)
+
+def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None) :
+    '''
+    creates the playfield for a boss fight
+
+    Arguments:
+        campaign: the current campaign object (rogue_campaign object)
+        Poss_Leshy: the possible cards for Leshy's deck, defaults to all allowed Leshy cards with costs <= to player's max cost (list)
+        first_cards: the first cards to be drawn by Leshy, from first to last (list)
+    '''
+    # set variables
+    (play_median, play_var, opp_strat, opp_threshold) = get_higher_difficulty()
+
+    deck_size = len(campaign.player_deck.cards)
+
+    if Poss_Leshy :
+        leshy_deck = duel.deck_gen(Poss_Leshy, int(deck_size * 1.5))
+    else :
+        player_max_cost = max([card.saccs for card in campaign.player_deck.cards])
+        leshy_max_cost = max(cost for cost in card_library.Poss_Leshy.keys())
+        fair_poss_leshy = {cost: [card for card in card_library.Poss_Leshy[cost]] for cost in range(0, min(leshy_max_cost, player_max_cost+1))} # may be changed later for balancing
+        leshy_deck = duel.deck_gen(fair_poss_leshy, int(deck_size * 1.5))
+
+    playfield = field.Playmat(campaign.player_deck.shuffle(fair_hand=True), campaign.squirrel_deck.shuffle(), leshy_deck.shuffle(), play_median, play_var, opp_strat, opp_threshold)
+
+    # add first cards to top of deck
+    if first_cards :
+        first_cards.reverse()
+        for _ in range(len(first_cards)) :
+            playfield.opponent_deck.pop()
+        for card_ in first_cards :
+            playfield.opponent_deck.insert(0, card_)
+
+    # advance from bushes
+    playfield.advance()
+
+    # draw squirrel and hand_size - 1 card
+    playfield.draw('resource')
+    for _ in range(3) :
+        playfield.draw('main')
+    playfield.print_field()
+
+    return playfield
 
 def boss_fight_prospector(campaign) : # boss fight 1
     def gameplay(campaign) :
-        return card_battle(campaign) # for testing prior to implementation
+        # return card_battle(campaign) # for testing prior to implementation
+        pre_boss_flavor(campaign)
+
+        playfield = init_boss_playfield(campaign, first_cards=[card_library.PackMule(True), card_library.Coyote(True)])
+
+        # game loop
+        second_phase = False
+        pack_mule_killed = False
+        while True :
+            # gameplay
+            (win, winner, overkill, deck_out) = turn_structure(playfield)
+            if win : # playtest feature to quick quit
+                result = winner == 'player'
+                post_boss_flavor(campaign, result)
+                if result :
+                    QoL.write_data([(['progress markers', 'beat prospector'], True)])
+                else :
+                    campaign.lives = 0
+                break
+
+            # check if pack mule was killed
+            if not pack_mule_killed and all([card_.species != 'Pack Mule' for card_ in playfield.opponent_field.values()] + [card_.species != 'Pack Mule' for card_ in playfield.bushes.values()]) :
+                pack_mule_killed = True
+                playfield.hand.append(card_library.Squirrel())
+                one_cost = random_card(card_library.Poss_Playr[1])
+                two_cost = random_card(card_library.Poss_Playr[2])
+                bone_card = random_card(card_library.Poss_Playr[1]) # until bones are implemented
+                playfield.hand.append(one_cost)
+                playfield.hand.append(two_cost)
+                playfield.hand.append(bone_card)
+
+            # switch turns
+            playfield.switch()
+            (win, winner, overkill, deck_out) = duel.winner_check(playfield)
+
+            if win and winner == 'opponent' :
+                post_boss_flavor(campaign, False)
+                campaign.lives = 0
+                break
+
+            elif win and not second_phase :
+                # update variables
+                win = False
+                second_phase = True
+
+                # flavor text expaining whats happening (why cards are replaced with gold nuggets, etc.)
+                QoL.clear()
+                print('\n'*5)
+                print(QoL.center_justified('Clearly weakened, the prospector takes his pickaxe and strikes your cards.'))
+                print(QoL.center_justified('The cards shatter into gold nuggets.'))
+                print()
+                input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+
+                # kill player's cards
+                nugget_zones = [zone for zone in range(1,5) if playfield.player_field[zone].species != '']
+                for card_ in playfield.player_field.values() :
+                    if card_.species != '' :
+                        card_.status = 'dead'
+                playfield.check_states()
+
+                # replace player's cards with gold nuggets
+                for zone in nugget_zones :
+                    playfield.player_field[zone] = card_library.GoldNugget(True)
+
+                # start with bloodhound
+                playfield.opponent_deck.insert(0, card_library.Bloodhound(True))
+
+                # reset stats
+                playfield.score = {'player': 0, 'opponent': 0}
+                playfield.active = 'player'
+
+            elif win and second_phase:
+                post_boss_flavor(campaign, True)
+                QoL.write_data([(['progress markers', 'beat prospector'], True)])
+                break
+
+        return (win, winner, overkill, deck_out)
 
     return gameplay(campaign) # add flavor text, context, etc.
 

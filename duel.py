@@ -26,7 +26,7 @@ def choose_and_play(field) :
 
     while True :
         field.print_full_field()
-        if invalid_index : # need to print this after the field is printed so it's not cleared
+        if invalid_index :
             print('Invalid index.')
             invalid_index = False
 

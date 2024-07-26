@@ -89,7 +89,7 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
                 return False
     
     in_strategy = [zone for zone in range(1, 5) if add_to_in_strat(card_to_play, player_field, bushes, zone)]
-    out_of_strategy = [zone for zone in range(1, 5) if zone not in in_strategy]
+    out_of_strategy = [zone for zone in range(1, 5) if zone not in in_strategy and bushes[zone].species == '']
 
     return in_strategy, out_of_strategy
 
@@ -220,10 +220,12 @@ class Playmat :
         def fail_saccs() :
                 sacc_list = []
                 cost = og_cost # to prevent goat cheesing
-                return [sacc_list, cost]
+                worthy_sacc = False
+                return [sacc_list, cost, worthy_sacc]
 
         # get sacrifices
-        while not (len(sacc_list) == cost) :
+        worthy_sacc = False
+        while not (len(sacc_list) >= cost) :
             sacc_index_list = input('')
 
             if sacc_index_list == '' : # go back if user presses enter
@@ -232,13 +234,14 @@ class Playmat :
             sacc_indexes = [int(sacc) for sacc in sacc_index_list if sacc in [str(n) for n in range(1, 5)]] # get valid saccs
 
             for _ in [sacc for sacc in sacc_indexes if self.player_field[sacc].has_sigil('worthy sacrifice')] : # decrease cost for cards with worthy sacrifice
+                worthy_sacc = True
                 cost -= 2 
                 if cost < 0 :
                     cost = 0
 
-            if len(sacc_indexes) > cost - len(sacc_list) : # too many saccs, serves as guard clause
+            if len(sacc_indexes) > cost - len(sacc_list) and not worthy_sacc : # too many saccs, serves as guard clause
                 print('Too many sacrifices.')
-                [sacc_list, cost] = fail_saccs() # reset saccs and cost to prevent player confusion, may change if alternate behavior is desired
+                [sacc_list, cost, worthy_sacc] = fail_saccs() # reset saccs and cost to prevent player confusion, may change if alternate behavior is desired
                 continue
 
             for sacc_index in sacc_indexes :
@@ -252,10 +255,10 @@ class Playmat :
                 continue
             if zone not in sacc_list : # playing on top of a card that wasn't sacrificed
                 print('Cannot play on top of a non sacrificed card.')
-                [sacc_list, cost] = fail_saccs()
+                [sacc_list, cost, worthy_sacc] = fail_saccs()
             elif self.player_field[zone].has_sigil('many lives') : # playing on top of a card with many lives
                 print('Cannot play on top of a card with many lives.')
-                [sacc_list, cost] = fail_saccs()
+                [sacc_list, cost, worthy_sacc] = fail_saccs()
         
         # remove saccs
         for ind in sacc_list :
@@ -310,11 +313,19 @@ class Playmat :
                 self.score[self.active] += attacker_points
 
         # moving sigils
+        shifted_card = None
         for zone in attacking_field :
-            if did_shift :
+            # if did_shift :
+            #     did_shift = False
+            # else :
+            #     [did_shift] = QoL.exec_sigil_code(attacking_field[zone], sigils.movers, None, locals(), ['did_shift'])
+            zone_card = attacking_field[zone]
+            if shifted_card == zone_card :
                 did_shift = False
             else :
                 [did_shift] = QoL.exec_sigil_code(attacking_field[zone], sigils.movers, None, locals(), ['did_shift'])
+            if did_shift :
+                shifted_card = zone_card
 
     def check_states(self) :
         '''
@@ -324,7 +335,7 @@ class Playmat :
         corpses = []
 
         # check for dead cards
-        for current_field, zone in [(current_field, zone) for current_field in [self.player_field, self.opponent_field, self.bushes] for zone in current_field] :
+        for current_field, zone in [(current_field, zone) for current_field in [self.player_field, self.opponent_field, self.bushes] for zone in range(1, 5)] :
             # if a sigil applies
             [corpses] = QoL.exec_sigil_code(current_field[zone], sigils.on_deaths, None, locals(), ['corpses'])
 

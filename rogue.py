@@ -1724,27 +1724,8 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
 
     # loop is:
     while True :
-            # ping variables
-            ping_vars={}
-            ping_vars['campaign level'] = campaign.level
-            ping_vars['campaign progress'] = campaign.progress
-            ping_vars['campaign lives'] = campaign.lives
-            ping_vars['campaign teeth'] = campaign.teeth
-            ping_vars['campaign player deck'] = campaign.player_deck.cards
-            ping_vars['campaign squirrel deck'] = campaign.squirrel_deck.cards
-            ping_vars['campaign dead campfire'] = campaign.dead_campfire
-            for card_ in campaign.player_deck.cards :
-                ping_vars[f'campaign player deck {card_.species}'] = {
-                    'attack' : card_.base_attack,
-                    'life' : card_.base_life,
-                    'cost' : card_.saccs,
-                    'sigils' : card_.sigils
-                }
-            QoL.ping(ping_vars)
-
-
     ###     check if area boss is next event (campaign.progress >= 10)
-            if campaign.progress >= 10 :
+            if campaign.progress >= 15 :
     ###         if it is, and its Leshy (campaign.level == 3), check if player has won
                 if campaign.level == 3 and bosses.boss_fight_leshy(campaign) :
     ###             if they have, run beat_leshy, and return (to main menu)
