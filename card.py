@@ -27,11 +27,11 @@ class BlankCard() :
         current_life : the current life stat (int)
         text_lines : the ASCII art for the card split by line (list)
         line_cursor : the current line to print (int)
+        hooked : whether the card is hooked by the angler (bool)
 
     Methods :
         reset_stats() : sets current stats to base stats
         attack(front_left_card, front_card, front_right_card, left_card, right_card) : attacks zone(s) in front
-        print() : prints self.name
         text_by_line() : returns one line of the card's ASCII art at a time
         take_damage(damage) : reduces current life by damage 
         play(zone) : activates sigils on entering field, resets stats, and updates zone
@@ -40,6 +40,10 @@ class BlankCard() :
         update_ASCII() : updates the ASCII art for the card
         sigil_in_category(category) : checks if a sigil is in a category
         has_sigil(sigil_name) : checks if a card has a sigil
+        hook() : hooks or unhooks the card
+
+    Functions :
+        print() : prints self.name
     '''
     def __init__(self, species = '', cost = 0, attack = 0, life = 0, sigils = None, status = 'alive', zone = 0, blank_cost = False, blank_stats = False) :
         # manage mutable default arguments
@@ -48,6 +52,7 @@ class BlankCard() :
 
         # basic variables
         self.is_poisoned = False
+        self.hooked = False
         self.species = species
         self.saccs = cost
         self.base_attack = attack
@@ -84,6 +89,7 @@ class BlankCard() :
         self.zone = 0
         self.status = 'alive'
         self.is_poisoned = False
+        self.hooked = False
         self.current_attack = self.base_attack
         self.current_life = self.base_life
         self.update_ASCII()
@@ -119,7 +125,7 @@ class BlankCard() :
         return points
 
     def __str__(self) :
-        return self.name
+        return '<' + str(type(self))[8:-2] + ' object at ' + hex(id(self)) + '>'
 
     def text_by_line(self) :
         '''
@@ -296,8 +302,15 @@ class BlankCard() :
         '''
         updates the ASCII art for the card
         '''
+        # error handling
+        if len(self.sigils) != 2 : raise ValueError('Sigils must be a list of length 2')
+        
         # reset line cursor
         self.line_cursor = 1
+
+        # get hook indicator if hooked
+        if self.hooked : hook_indicator = ['ʆ\ ', 'ʖ \\']
+        else : hook_indicator = [' '*3, ' '*3]
 
         # update cost and stats for displaying card
         if self.blank_cost or self.species == '':
@@ -309,10 +322,6 @@ class BlankCard() :
             self.stats = ' '*3
         else :
             self.stats = hex(self.current_attack % 16)[2] + "/" + hex(self.current_life % 16)[2]
-
-        # error handling
-        if len(self.sigils) != 2 :
-            raise ValueError('Sigils must be a list of length 2')
         
         # update ASCII art for card
         if self.has_sigil('') : # one sigil
@@ -324,8 +333,8 @@ class BlankCard() :
             self.text_lines = '''
 ,-------------,
 |{species} {C}|
-|             |
-|             |
+|{h1}          |
+|{h2}          |
 |    {rw1}    |
 |    {rw2}    |
 |    {rw3}    |
@@ -333,14 +342,14 @@ class BlankCard() :
 |             |
 |          {S}|
 '-------------'
-        '''.format(species=self.name, C=self.cost, rw1=sigils.Dict[self.sigils[sigil_ind]][0][0], rw2=sigils.Dict[self.sigils[sigil_ind]][0][1], rw3=sigils.Dict[self.sigils[sigil_ind]][0][2], S=self.stats).split("\n")
+        '''.format(species=self.name, C=self.cost, h1=hook_indicator[0], h2=hook_indicator[1], rw1=sigils.Dict[self.sigils[sigil_ind]][0][0], rw2=sigils.Dict[self.sigils[sigil_ind]][0][1], rw3=sigils.Dict[self.sigils[sigil_ind]][0][2], S=self.stats).split("\n")
                 
         else : # two sigils
             self.text_lines = '''
 ,-------------,
 |{species} {C}|
-|             |
-|       {s1r1} |
+|{h1}          |
+|{h2}    {s1r1} |
 |       {s1r2} |
 |       {s1r3} |
 | {s2r1}       |
@@ -348,7 +357,7 @@ class BlankCard() :
 | {s2r3}       |
 |          {S}|
 '-------------'
-        '''.format(species=self.name, C=self.cost, s1r1=sigils.Dict[self.sigils[0]][0][0], s1r2=sigils.Dict[self.sigils[0]][0][1], s1r3=sigils.Dict[self.sigils[0]][0][2], s2r1=sigils.Dict[self.sigils[1]][0][0], s2r2=sigils.Dict[self.sigils[1]][0][1], s2r3=sigils.Dict[self.sigils[1]][0][2], S=self.stats).split("\n")
+        '''.format(species=self.name, C=self.cost, h1=hook_indicator[0], h2=hook_indicator[1], s1r1=sigils.Dict[self.sigils[0]][0][0], s1r2=sigils.Dict[self.sigils[0]][0][1], s1r3=sigils.Dict[self.sigils[0]][0][2], s2r1=sigils.Dict[self.sigils[1]][0][0], s2r2=sigils.Dict[self.sigils[1]][0][1], s2r3=sigils.Dict[self.sigils[1]][0][2], S=self.stats).split("\n")
 
     def sigil_in_category(self, category, sigil_slot=None) :
         '''
@@ -380,9 +389,15 @@ class BlankCard() :
         '''
         return any(sigil_name == sigil for sigil in self.sigils)
 
+    def hook(self) :
+        '''
+        hooks or unhooks the card
+        '''
+        self.hooked = (self.hooked == False)
+        self.update_ASCII()
+
 if __name__ == "__main__" :
     testblank = BlankCard()
-    testsigil = slot4 = BlankCard(species='test',cost=3,attack=1,life=2,sigils=['bifurcate',''])
     print()
     print('Blank Card')
     print(testblank.text_lines)

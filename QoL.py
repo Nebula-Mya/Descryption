@@ -439,9 +439,121 @@ def ping(locals={'ping':'pong'}) : # for testing
     Arguments:
         locals: the local variables to write (dict)
     '''
+    def depth(object) :
+        '''
+        gets the depth of a list or dictionary
+
+        1 is a flat list or dictionary
+
+        Arguments:
+            object: the object to check
+
+        Returns:
+            the depth of the object (int)
+        '''
+        if type(object) not in [dict, list] :
+            return 0
+
+        return 1 + max([depth(value) for value in object.values()])
+
+    def format_list(list) :
+        '''
+        formats a list as a string with lines and indentation
+
+        Arguments:
+            list: the list to format (list)
+
+        Returns:
+            the formatted list (str)
+        '''
+        lines = ['[']
+        for item in list :
+            if item == list[-1] : comma = ''
+            else : comma = ','
+
+            if type(item) == dict : 
+                item = format_dict(item)
+            elif type(item) == list : 
+                item = format_list(item)
+            elif type(item) == str :
+                item = [f"\'{item}\'"]
+            else :
+                item = [item]
+            
+            for line in item :
+                if line == item[0] and len(item) != 1 :
+                    lines.append(f"    {line}")
+                elif line == item[-1] :
+                    lines.append(f"    {line}{comma}")
+                else :
+                    lines.append(f"    {line}")
+
+        lines.append(']')
+
+        return lines
+
+    def format_dict(dictionary) :
+        '''
+        formats a dictionary as a string with lines and indentation
+
+        Arguments:
+            dictionary: the dictionary to format (dict)
+
+        Returns:
+            the formatted dictionary (str)
+        '''
+        lines = ['{']
+        for key in dictionary :
+            if key == list(dictionary.keys())[-1] : comma = ''
+            else : comma = ','
+
+            if type(dictionary[key]) == dict :
+                value = format_dict(dictionary[key])
+            elif type(dictionary[key]) == list :
+                value = format_list(dictionary[key])
+            elif type(dictionary[key]) == str :
+                value = [f"\'{dictionary[key]}\'"]
+            else :
+                value = [dictionary[key]]
+            
+            for line in value :
+                if line == value[0] and len(value) == 1 :
+                    lines.append(f"    {key}: {line}{comma}")
+                elif line == value[0] :
+                    lines.append(f"    {key}: {line}")
+                elif line == value[-1] :
+                    lines.append(f"    {line}{comma}")
+                else : 
+                    lines.append(f"    {line}")
+
+        lines.append('}')
+
+        return lines
+
+    def format_values(dictionary) :
+        '''
+        formats the values of a dictionary as strings with lines and indentation
+
+        Arguments:
+            dictionary: the dictionary to format (dict)
+        '''
+        for key in dictionary :
+            if type(dictionary[key]) not in [dict, list] : # guard clause for non-dict/list values
+                continue
+            if type(dictionary[key]) == dict :
+                dictionary[key] = '\n'.join(format_dict(dictionary[key]))
+            elif type(dictionary[key]) == list :
+                dictionary[key] = '\n'.join(format_list(dictionary[key]))
+        
+        return dictionary
+
+    ### to do: clean the output (split dicts and lists across lines, indent, etc.)
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS') : # guard clause to prevent pinging after compilation
         return
     
+    # format values for writing
+    locals = format_values(locals)
+
     # get string of local variables
     data_to_write = '\n\n'.join(f"{key}: {value}" for key, value in locals.items()).rstrip()
     

@@ -1,4 +1,5 @@
 import card_library
+import card
 import field
 import QoL
 import ASCII_text
@@ -28,7 +29,7 @@ def card_battle(campaign, Poss_Leshy=None) :
         ]
         [play_median, play_var, opp_strat, opp_threshold] = QoL.read_data(data_to_read)
 
-        deck_size = len(campaign.player_deck.cards)
+        deck_size = len(campaign.player_deck)
 
         if Poss_Leshy :
             leshy_deck = duel.deck_gen(Poss_Leshy, int(deck_size * 1.5))
@@ -215,8 +216,11 @@ def turn_structure(playfield) :
         playfield: the current playfield object (field object)
 
     Returns:
-        tuple: (win, winner, overkill, deck_out) (bool, str, int, bool)
+        tuple: win, winner, overkill, deck_out, played (bool, str, int, bool, list)
     '''
+    # set up variables
+    played = []
+
     # playtest feature to quick quit
     if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) :
         if playfield.active == 'player' :
@@ -228,12 +232,12 @@ def turn_structure(playfield) :
                 (win, winner, overkill, deck_out) = (True, 'player', 0, False)
             else :
                 (win, winner, overkill, deck_out) = (True, 'opponent', 0, False)
-            return (win, winner, overkill, deck_out)
+            return (win, winner, overkill, deck_out, [])
         
     # player turn
     if playfield.active == 'player' :
         duel.choose_draw(playfield)
-        duel.view_play_attack(playfield)
+        played = duel.view_play_attack(playfield)
 
     # leshy turn
     else :
@@ -247,9 +251,9 @@ def turn_structure(playfield) :
     playfield.print_field()
     input('Press enter to continue.')
 
-    return (False, '', 0, False)
+    return (False, '', 0, False, played)
 
-def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None) :
+def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=True) :
     '''
     creates the playfield for a boss fight
 
@@ -257,11 +261,12 @@ def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None) :
         campaign: the current campaign object (rogue_campaign object)
         Poss_Leshy: the possible cards for Leshy's deck, defaults to all allowed Leshy cards with costs <= to player's max cost (list)
         first_cards: the first cards to be drawn by Leshy, from first to last (list)
+        advance: whether to advance from bushes (bool)
     '''
     # set variables
     (play_median, play_var, opp_strat, opp_threshold) = get_higher_difficulty()
 
-    deck_size = len(campaign.player_deck.cards)
+    deck_size = len(campaign.player_deck)
 
     if Poss_Leshy :
         leshy_deck = duel.deck_gen(Poss_Leshy, int(deck_size * 1.5))
@@ -282,7 +287,7 @@ def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None) :
             playfield.opponent_deck.insert(0, card_)
 
     # advance from bushes
-    playfield.advance()
+    if advance : playfield.advance()
 
     # draw squirrel and hand_size - 1 card
     playfield.draw('resource')
@@ -294,7 +299,6 @@ def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None) :
 
 def boss_fight_prospector(campaign) : # boss fight 1
     def gameplay(campaign) :
-        # return card_battle(campaign) # for testing prior to implementation
         pre_boss_flavor(campaign)
 
         playfield = init_boss_playfield(campaign, first_cards=[card_library.PackMule(True), card_library.Coyote(True)])
@@ -304,7 +308,7 @@ def boss_fight_prospector(campaign) : # boss fight 1
         pack_mule_killed = False
         while True :
             # gameplay
-            (win, winner, overkill, deck_out) = turn_structure(playfield)
+            (win, winner, overkill, deck_out, _) = turn_structure(playfield)
             if win : # playtest feature to quick quit
                 result = winner == 'player'
                 post_boss_flavor(campaign, result)
@@ -315,7 +319,7 @@ def boss_fight_prospector(campaign) : # boss fight 1
                 break
 
             # check if pack mule was killed
-            if not pack_mule_killed and all([card_.species != 'Pack Mule' for card_ in playfield.opponent_field.values()] + [card_.species != 'Pack Mule' for card_ in playfield.bushes.values()]) :
+            if not pack_mule_killed and all([type(card_) != card_library.PackMule for card_ in playfield.opponent_field.values()] + [type(card_) != card_library.PackMule for card_ in playfield.bushes.values()]) :
                 pack_mule_killed = True
                 playfield.hand.append(card_library.Squirrel())
                 one_cost = random_card(card_library.Poss_Playr[1])
@@ -327,7 +331,7 @@ def boss_fight_prospector(campaign) : # boss fight 1
 
             # switch turns
             playfield.switch()
-            (win, winner, overkill, deck_out) = duel.winner_check(playfield)
+            (win, winner, overkill, deck_out) = duel.winner_check(playfield, silent=True)
 
             if win and winner == 'opponent' :
                 post_boss_flavor(campaign, False)
@@ -355,8 +359,7 @@ def boss_fight_prospector(campaign) : # boss fight 1
                 playfield.check_states()
 
                 # replace player's cards with gold nuggets
-                for zone in nugget_zones :
-                    playfield.player_field[zone] = card_library.GoldNugget(True)
+                for zone in nugget_zones : playfield.summon_card(card=card_library.GoldNugget(True), zone=zone, field=playfield.player_field)
 
                 # start with bloodhound
                 playfield.opponent_deck.insert(0, card_library.Bloodhound(True))
@@ -376,7 +379,130 @@ def boss_fight_prospector(campaign) : # boss fight 1
 
 def boss_fight_angler(campaign) : # boss fight 2
     def gameplay(campaign) :
-        return card_battle(campaign) # for testing prior to implementation
+        pre_boss_flavor(campaign)
+
+        poss_angler_p1 = {
+            1 : [card_library.Kingfisher(True), card_library.Otter(True)]
+        }
+        poss_angler_p2 = {
+            0 : [card_library.BaitBucket(True)]
+        }
+        playfield = init_boss_playfield(campaign, Poss_Leshy=poss_angler_p1, advance=False)
+
+        # game loop
+        second_phase = False
+        turn_count = 0
+        played = []
+        while True :
+            # gameplay
+            (win, winner, overkill, deck_out, played_new) = turn_structure(playfield)
+            played += played_new
+            if win : # playtest feature to quick quit
+                result = winner == 'player'
+                post_boss_flavor(campaign, result)
+                if result :
+                    QoL.write_data([(['progress markers', 'beat angler'], True)])
+                else :
+                    campaign.lives = 0
+                break
+
+            # hook and use hook
+            if playfield.active == 'opponent' :
+                if turn_count % 2 == 0 : # aim hook at most recently played card
+                    if turn_count == 0 : # only explain the first time
+                        # flavor text expaining whats happening (why a card is hooked, etc.)
+                        QoL.clear()
+                        print('\n'*5)
+                        print(QoL.center_justified('The angler casts his line and hooks one of your cards.'))
+                        print()
+                        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+                    
+                    to_hook = None
+                    while to_hook not in playfield.player_field.values() : # ensure a card is hooked
+                        to_hook = played[-1]
+                        played.pop()
+                    to_hook.hook()
+
+                else : # use hook
+                    if turn_count == 1 : # only explain the first time
+                        # flavor text expaining whats happening (why a hooked card switches sides, etc.)
+                        QoL.clear()
+                        print('\n'*5)
+                        print(QoL.center_justified('The angler reels in his line and pulls your card to his side.'))
+                        print()
+                        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+                    
+                    # check if a card is hooked and pull it to the opponent's field
+                    if any([card_.hooked for card_ in playfield.player_field.values()]) :
+                        for zone in range(1, 5) :
+                            if playfield.player_field[zone].hooked :
+                                if playfield.opponent_field[zone].species != '' : # shift to bushes
+                                    playfield.summon_card(card=playfield.opponent_field[zone], zone=zone, field=playfield.bushes)
+                                playfield.summon_card(card=playfield.player_field[zone], zone=zone, field=playfield.opponent_field)
+                                playfield.summon_card(card=card.BlankCard(), zone=zone, field=playfield.player_field)
+                                break
+
+            # switch turns
+            if playfield.active == 'opponent' :
+                turn_count += 1
+            playfield.switch()
+            (win, winner, overkill, deck_out) = duel.winner_check(playfield, silent=True)
+
+            if win and winner == 'opponent' :
+                post_boss_flavor(campaign, False)
+                campaign.lives = 0
+                break
+
+            elif win and not second_phase :
+                # update variables
+                win = False
+                second_phase = True
+
+                has_lost_prior = QoL.read_data([['progress markers', 'losses']])[0] != 0
+
+                if has_lost_prior : # normal behavior
+                    # flavor text expaining whats happening (why cards are being replaced with bait buckets, etc.)
+                    QoL.clear()
+                    print('\n'*5)
+                    print(QoL.center_justified('The angler clears his field and drops bait buckets into the water.'))
+                    print(QoL.center_justified('You can see the fins of sharks circling.'))
+                    print()
+                    input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+
+                    # clear angler's field
+                    for zone in range(1, 5) :
+                        for field in [playfield.opponent_field, playfield.bushes] : playfield.summon_card(card=card.BlankCard(), zone=zone, field=field)
+
+                    # summon bait buckets to anglers field (not bushes) infront of player's cards
+                    for zone in range(1, 5) :
+                        if playfield.player_field[zone].species != '' : playfield.summon_card(card=card_library.BaitBucket(True), zone=zone, field=playfield.opponent_field)
+
+                else :
+                    # flavor text expaining whats happening (why cards are being replaced with grizzly bears, etc.)
+                    QoL.clear()
+                    print('\n'*5)
+                    print(QoL.center_justified('Leshy removes his mask to speak to you.'))
+                    print(QoL.center_justified('"Well, I can\'t let you beat my game that easily."'))
+                    print()
+                    input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+
+                    # fill angler's field and bushes with grizzly bears with mighty leap
+                    for zone in range(1, 5) :
+                        for field in [playfield.opponent_field, playfield.bushes] : playfield.summon_card(card=card_library.Grizzly(blank_cost=True, sigils=['mighty leap', '']), zone=zone, field=field)
+
+                # change deck to be angler's second phase deck
+                playfield.opponent_deck = duel.deck_gen(poss_angler_p2, len(playfield.opponent_deck))
+
+                # reset stats
+                playfield.score = {'player': 0, 'opponent': 0}
+                playfield.active = 'player'
+
+            elif win and second_phase:
+                post_boss_flavor(campaign, True)
+                QoL.write_data([(['progress markers', 'beat angler'], True)])
+                break
+
+        return (win, winner, overkill, deck_out)
 
     return gameplay(campaign) # add flavor text, context, etc.
 

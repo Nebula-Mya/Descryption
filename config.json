@@ -14,7 +14,7 @@
     "progress markers": {
         "ouro level": 1,
         "beat prospector": true,
-        "beat angler": false,
+        "beat angler": true,
         "beat trapper": false,
         "beat leshy": false,
         "wins": 0,

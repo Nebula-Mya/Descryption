@@ -8,6 +8,7 @@ import random
 import sigils
 import os
 import bosses
+import copy
 
 class rogue_campaign :
     '''
@@ -31,6 +32,8 @@ class rogue_campaign :
         change_sigil: changes the sigil of a card in the player's deck
         shuffle_deck: shuffles the player's deck
         print_deck: prints the player's deck
+        has_lost: checks if the player has lost
+        var_dict: returns a dictionary of the campaign's variables
     '''
     def __init__(self, start_decklist, start_teeth=0, lives=2) :
         '''
@@ -109,6 +112,19 @@ class rogue_campaign :
     def has_lost(self) :
         return self.lives <= 0
 
+    def var_dict(self) :
+        vars_dict = vars(self)
+        vars_dict['player deck'] = [card_ for card_ in vars_dict['player_deck'].cards]
+        vars_dict['squirrel deck'] = [card_ for card_ in vars_dict['squirrel_deck'].cards]
+        for card_ in vars_dict['player deck'] :
+            vars_dict[card_.species + ' at ' + hex(id(card_))] = vars(card_)
+        vars_dict = copy.deepcopy(vars_dict)
+        del vars_dict['player_deck']
+        del vars_dict['squirrel_deck']
+        del vars(self)['player deck']
+        del vars(self)['squirrel deck']
+        return vars_dict
+
 def card_equation(card1, card2, result) :
     '''
     generate the display text for combining cards
@@ -159,13 +175,14 @@ def card_battle(campaign, Poss_Leshy=None) :
         ]
         [play_median, play_var, opp_strat, opp_threshold] = QoL.read_data(data_to_read)
 
-        deck_size = len(campaign.player_deck.cards)
+        deck_size = len(campaign.player_deck)
 
         if Poss_Leshy :
             leshy_deck = duel.deck_gen(Poss_Leshy, int(deck_size * 1.5))
         else :
             player_max_cost = max([card.saccs for card in campaign.player_deck.cards])
-            fair_poss_leshy = {cost: [card for card in card_library.Poss_Leshy[cost]] for cost in range(0, player_max_cost)} # may be changed later for balancing
+            leshy_max_cost = max(cost for cost in card_library.Poss_Leshy.keys())
+            fair_poss_leshy = {cost: [card for card in card_library.Poss_Leshy[cost]] for cost in range(0, min(leshy_max_cost, player_max_cost+1))} # may be changed later for balancing
             leshy_deck = duel.deck_gen(fair_poss_leshy, int(deck_size * 1.5))
 
         (_, winner, overkill, _) = duel.main(deck_size, 4, play_median, play_var, opp_strat, opp_threshold, player_deck_obj=campaign.player_deck, opponent_deck_obj=leshy_deck, squirrels_deck_obj=campaign.squirrel_deck, print_results=False)
@@ -1645,15 +1662,15 @@ def split_road(campaign) : # format visuals
         # set up variables
         weights = [
             bool_to_bin(1 not in previous_events), # card choice
-            bool_to_bin(2 not in previous_events and len(campaign.player_deck.cards) > 4), # sigil sacrifice
-            bool_to_bin(any(type(card_1) == type(card_2) and card_1 != card_2 for card_1 in campaign.player_deck.cards for card_2 in campaign.player_deck.cards) and 3 not in previous_events and len(campaign.player_deck.cards) > 4), # merge cards
+            bool_to_bin(2 not in previous_events and len(campaign.player_deck) > 4), # sigil sacrifice
+            bool_to_bin(any(type(card_1) == type(card_2) and card_1 != card_2 for card_1 in campaign.player_deck.cards for card_2 in campaign.player_deck.cards) and 3 not in previous_events and len(campaign.player_deck) > 4), # merge cards
             bool_to_bin(4 not in previous_events), # pelt shop
             bool_to_bin(any(type(card_) in [card_library.WolfPelt, card_library.RabbitPelt, card_library.GoldenPelt] for card_ in campaign.player_deck.cards) and 5 not in previous_events), # card shop
             bool_to_bin(6 not in previous_events), # break rocks
             bool_to_bin(7 not in previous_events), # campfire
         ]
         # 50% chance for card battle
-        weights.append(bool_to_bin(8 not in previous_events and len(campaign.player_deck.cards) > 3, int_=sum(weights)))
+        weights.append(bool_to_bin(8 not in previous_events and len(campaign.player_deck) > 3, int_=sum(weights)))
 
         match random.choices(range(1, 9), weights=weights)[0] :
             case 1 : return ['A choice of cards', 'card_choice(campaign)', 1]
@@ -1724,6 +1741,8 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
 
     # loop is:
     while True :
+            QoL.ping(locals=(locals() | campaign.var_dict()))
+
     ###     check if area boss is next event (campaign.progress >= 10)
             if campaign.progress >= 15 :
     ###         if it is, and its Leshy (campaign.level == 3), check if player has won

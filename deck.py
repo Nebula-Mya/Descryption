@@ -15,7 +15,10 @@ class Deck() :
         change_sigil(index, sigil): changes card's sigil
         shuffle(): generates a shuffled list of cards
         refresh_ASCII(): refreshes ASCII art for all cards in deck
+    
+    Functions:
         print(): prints decklist
+        len(): returns length of deck
     '''
     def __init__(self, cards) :
         self.cards = cards
@@ -36,7 +39,7 @@ class Deck() :
         Arguments:
             index: index to check (int)
         '''
-        deck_length = len(self.cards)
+        deck_length = len(self)
         if index >= deck_length or index < 0:
             raise IndexError(f"index {index} is out of range for deck of length {deck_length}")
 
@@ -116,11 +119,14 @@ class Deck() :
         '''
         refreshes ASCII art for all cards in deck
         '''
-        for card in self.cards :
-            card.update_ASCII()
+        for card_ in self.cards :
+            card_.update_ASCII()
 
     def __str__(self) : 
         return QoL.print_deck(self.cards, sort=True, fruitful=True, numbered=True)
+
+    def __len__(self) :
+        return len(self.cards)
 
 if __name__ == '__main__' :
     import card_library

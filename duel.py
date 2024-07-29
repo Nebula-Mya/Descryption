@@ -15,6 +15,9 @@ def choose_and_play(field) :
 
     Arguments:
         field: the field object to play the card on (field object)
+
+    Returns:
+        the card played or None if no card is played (card object)
     '''
     # get terminal size
     term_cols = os.get_terminal_size().columns
@@ -45,7 +48,8 @@ def choose_and_play(field) :
             QoL.clear()
             field.print_field()
             print(' '*card_gaps + 'Card to play:')
-            field.hand[play_index].explain()
+            card_to_play = field.hand[play_index] # for tracking played cards
+            card_to_play.explain()
             if invalid_zone :
                 print('Invalid zone.')
                 invalid_zone = False
@@ -61,7 +65,7 @@ def choose_and_play(field) :
             elif not field.play_card(play_index, zone_to_play) :
                 continue
             else :
-                return
+                return card_to_play
 
 def choose_draw(field) :
     '''
@@ -107,12 +111,13 @@ def choose_draw(field) :
             case _ :
                 invalid_choice = True
 
-def winner_check(field) :
+def winner_check(field, silent=False) :
     '''
     checks if the game is over and prints the appropriate message
 
     Arguments:
         field: the field object to check (field object)
+        silent: whether to print the message or not, defaults to False (bool)
 
     Returns:
         (win, winner, overkill, deck_out) (tuple)
@@ -130,9 +135,9 @@ def winner_check(field) :
     # game is over
     QoL.clear()
     match winner :
-        case 'player' :
+        case 'player' if not silent :
             ASCII_text.print_win(overkill)
-        case 'opponent' :
+        case 'opponent' if not silent :
             ASCII_text.print_lose(deck_out)
     return (win, winner, overkill, deck_out)
 
@@ -254,9 +259,13 @@ def view_play_attack(field) :
 
     Arguments:
         field: the field object to view (field object)
+
+    Returns:
+        played: the cards played (list of card objects)
     '''
     # set up variables
     invalid_choice = False
+    played = []
 
     while True :
         field.print_field()
@@ -271,7 +280,8 @@ def view_play_attack(field) :
         choice = input('Choose an option: ')
         match choice :
             case '1' :
-                choose_and_play(field)
+                played_card = choose_and_play(field)
+                if played_card : played.append(played_card) # track played cards
             case '2' :
                 view_cards(field)
             case '3' :
@@ -282,6 +292,8 @@ def view_play_attack(field) :
                 break # might add a confirmation later if it's too easy to accidentally end turn
             case _ :
                 invalid_choice = True
+        
+    return played
 
 def deck_gen(possible_cards, size) :
     '''
@@ -303,13 +315,15 @@ def deck_gen(possible_cards, size) :
     def random_card(possible_cards, alpha=2.2, beta=3.3) :
         # get cost
         max_cost = max(possible_cards.keys())
-        cost = math.floor((max_cost + 1) * random.betavariate(alpha, beta))
+        min_cost = min(possible_cards.keys())
+        cost_range = max_cost - min_cost
+        cost = lambda : min_cost + math.floor((cost_range + 1) * random.betavariate(alpha, beta))
 
         # get card type
-        template_card = random.choice(possible_cards[cost])
+        template_card = random.choice(possible_cards[cost()])
         card_class = type(template_card)
         if any(type(card) for card in card_library.Rare_Cards) == card_class: # lower chances of rare cards
-            template_card = random.choice(possible_cards[cost])
+            template_card = random.choice(possible_cards[cost()])
             card_class = type(template_card)
 
         return card_class(getattr(template_card, 'blank_cost', False))

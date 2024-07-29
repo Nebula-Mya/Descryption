@@ -163,6 +163,9 @@ class Playmat :
         self.bushes = gen_blank_row()
         self.player_field = gen_blank_row()
         self.opponent_field = gen_blank_row()
+        for zone in range(1, 5) :
+            for field in [self.player_field, self.bushes, self.opponent_field] :
+                field[zone].play(zone=zone)
     
     def draw(self, deck) :
         '''
@@ -276,8 +279,7 @@ class Playmat :
                 self.player_field[ind] = card.BlankCard()
         else : 
             # play card to zone
-            self.player_field[zone] = self.hand[index]
-            self.player_field[zone].play(zone=zone)
+            self.summon_card(card=self.hand[index], field=self.player_field, zone=zone)
             self.hand.pop(index)
             
             # handle sigils
@@ -315,10 +317,6 @@ class Playmat :
         # moving sigils
         shifted_card = None
         for zone in attacking_field :
-            # if did_shift :
-            #     did_shift = False
-            # else :
-            #     [did_shift] = QoL.exec_sigil_code(attacking_field[zone], sigils.movers, None, locals(), ['did_shift'])
             zone_card = attacking_field[zone]
             if shifted_card == zone_card :
                 did_shift = False
@@ -339,11 +337,18 @@ class Playmat :
             # if a sigil applies
             [corpses] = QoL.exec_sigil_code(current_field[zone], sigils.on_deaths, None, locals(), ['corpses'])
 
+            # if bait bucket from Angler fight
+            if current_field[zone].species == 'Bait Bucket' and current_field[zone].status == 'dead' :
+                current_field[zone].die()
+                self.graveyard.insert(0, current_field[zone])
+                self.summon_card(card=card_library.BullShark(True), field=current_field, zone=zone)
+                corpses.append((zone, current_field))
+
             # if a normal card dies
             if current_field[zone].status == 'dead' and not current_field[zone].sigil_in_category(sigils.on_deaths) :
                 current_field[zone].die()
-                current_field[zone] = card.BlankCard()
-                current_field[zone].play(zone)
+                self.graveyard.insert(0, current_field[zone])
+                self.summon_card(card=card.BlankCard(), field=current_field, zone=zone)
                 corpses.append((zone, current_field))
         
         # check for corpse eaters
@@ -353,15 +358,14 @@ class Playmat :
         # play corpse eaters
         while open_corpses and corpse_eaters :
             zone_choice = random.choice(open_corpses)
-            self.player_field[zone_choice] = self.hand[corpse_eaters[0]]
-            self.player_field[zone_choice].play(zone_choice)
+            self.summon_card(card=self.hand[corpse_eaters[0]], field=self.player_field, zone=zone_choice)
             self.hand.pop(corpse_eaters[0])
             open_corpses.remove(zone_choice)
             corpse_eaters = get_corpse_eaters(self.hand) # update corpse eaters
 
     def advance(self) : 
         '''
-        advances cards from bushes to field, utilizing rudimentary decision making for Leshy
+        advances cards from bushes to field, utilizing opponent AI to play cards
         '''
         # set up variables
         played = 0
@@ -372,9 +376,8 @@ class Playmat :
 
         # advance from bushes to field
         for zone in [zone for zone in self.opponent_field if self.opponent_field[zone].species == '' and zone % 5 != 0] :
-            self.opponent_field[zone] = self.bushes[zone]
-            self.opponent_field[zone].play(zone=zone)
-            self.bushes[zone] = card.BlankCard()
+            self.summon_card(card=self.bushes[zone], field=self.opponent_field, zone=zone)
+            self.summon_card(card=card.BlankCard(), field=self.bushes, zone=zone)
         
         while played < play_count and [zone for zone in range(1, 5) if self.bushes[zone].species == ''] :
             # intelligent choosing of zones to prioritize
@@ -500,6 +503,18 @@ class Playmat :
         '''
         self.print_field()
         self.print_hand()
+
+    def summon_card(self, card, field, zone) :
+        '''
+        summons a card to the field
+
+        Arguments:
+            card: the card to summon (card)
+            field: the field to summon to (dict)
+            zone: the zone to summon to (int)
+        '''
+        field[zone] = card
+        field[zone].play(zone=zone)
 
 if __name__ == '__main__' :
     import sys

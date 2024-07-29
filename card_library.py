@@ -263,6 +263,10 @@ class GoldNugget(card.BlankCard) : # only used by prospector
     def __init__(self, blank_cost=False, sigils=['','']) :
         super().__init__(species='Gold Nugget', cost=0, attack=0, life=2, sigils=sigils, blank_cost=blank_cost)
 
+class BaitBucket(card.BlankCard) : # only used by angler
+    def __init__(self, blank_cost=False, sigils=['','']) :
+        super().__init__(species='Bait Bucket', cost=0, attack=0, life=1, sigils=sigils, blank_cost=blank_cost)
+
 # Allowed cards:
 Poss_Playr = {
     0 : [Rabbit(), Shrew(), BlackGoat()],

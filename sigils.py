@@ -97,7 +97,7 @@ if applicables == sigils.on_deaths and current_field[zone].status == 'dead' :
     
     # remove the original card
     current_field[zone].die()
-    self.graveyard.insert(0, current_field[zone])
+    if type(self) != card.BlankCard : self.graveyard.insert(0, current_field[zone])
     current_field[zone] = card.BlankCard()
     current_field[zone].play(zone)
     corpses.append((zone, current_field))
@@ -410,7 +410,7 @@ elif current_field[zone].status == 'dead' :
                 
     # remove the original card
     current_field[zone].die()
-    self.graveyard.insert(0, current_field[zone])
+    if type(self) != card.BlankCard : self.graveyard.insert(0, current_field[zone])
     current_field[zone] = card.BlankCard()
     current_field[zone].play(zone)
     corpses.append((zone, current_field))
