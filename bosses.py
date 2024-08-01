@@ -5,6 +5,10 @@ import QoL
 import ASCII_text
 import sys
 import duel
+import random
+import deck
+import time
+import sigils
 
 def card_battle(campaign, Poss_Leshy=None) : 
     '''
@@ -321,8 +325,10 @@ def boss_fight_prospector(campaign) : # boss fight 1
                 QoL.clear()
                 print('\n'*5)
                 print(QoL.center_justified('Clearly weakened, the prospector takes his pickaxe and strikes your cards.'))
+                time.sleep(2)
                 print(QoL.center_justified('The cards shatter into gold nuggets.'))
-                print()
+                time.sleep(3)
+                print('\n'*2)
                 input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
 
                 # kill player's cards
@@ -388,7 +394,8 @@ def boss_fight_angler(campaign) : # boss fight 2
                         QoL.clear()
                         print('\n'*5)
                         print(QoL.center_justified('The angler casts his line and hooks one of your cards.'))
-                        print()
+                        time.sleep(3)
+                        print('\n'*2)
                         input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
                     
                     to_hook = None
@@ -403,7 +410,8 @@ def boss_fight_angler(campaign) : # boss fight 2
                         QoL.clear()
                         print('\n'*5)
                         print(QoL.center_justified('The angler reels in his line and pulls your card to his side.'))
-                        print()
+                        time.sleep(3)
+                        print('\n'*2)
                         input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
                     
                     # check if a card is hooked and pull it to the opponent's field
@@ -439,8 +447,10 @@ def boss_fight_angler(campaign) : # boss fight 2
                     QoL.clear()
                     print('\n'*5)
                     print(QoL.center_justified('The angler clears his field and drops bait buckets into the water.'))
+                    time.sleep(2)
                     print(QoL.center_justified('You can see the fins of sharks circling.'))
-                    print()
+                    time.sleep(3)
+                    print('\n'*2)
                     input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
 
                     # clear angler's field
@@ -456,8 +466,10 @@ def boss_fight_angler(campaign) : # boss fight 2
                     QoL.clear()
                     print('\n'*5)
                     print(QoL.center_justified('Leshy removes his mask to speak to you.'))
+                    time.sleep(3)
                     print(QoL.center_justified('"Well, I can\'t let you beat my game that easily."'))
-                    print()
+                    time.sleep(3)
+                    print('\n'*2)
                     input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
 
                     # fill angler's field and bushes with grizzly bears with mighty leap
@@ -481,8 +493,316 @@ def boss_fight_angler(campaign) : # boss fight 2
     return gameplay(campaign) # add flavor text, context, etc.
 
 def boss_fight_trapper_trader(campaign) : # boss fight 3
+    def random_extra_sigil(possibles) :
+        '''
+        selects a card from possibles and adds a random sigil to it
+
+        Arguments:
+            possibles: the possible cards to choose from (list)
+    
+        Returns:
+            card: the chosen card with a random sigil added (card object)
+        '''
+        # set up functions
+        def sigil_name(sigil) :
+            match sigil :
+                case '' : return 'No Sigil'
+                case _ if 'hefty' in sigil : return 'Hefty'
+                case _ if 'lane shift' in sigil : return 'Sprinter'
+                case _ : return QoL.title_case(sigil)
+
+        same_sigil = lambda sigil_1, sigil_2 : sigil_1 != '' and sigil_name(sigil_1) == sigil_name(sigil_2) # check if two sigils are the same or variations of the same sigil
+        good_sigil = lambda reciever, sigil : sigil not in ['', '???'] and not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be added
+        
+        # choose card
+        chosen_card = QoL.random_card(possibles)
+
+        # get sigil slot
+        if chosen_card.has_sigil('') :
+            sigil_slot = chosen_card.sigils.index('')
+        else :
+            sigil_slot = random.choice([0, 1])
+
+        # while not good_sigil(hidden_reward, selected_sigil) : selected_sigil = random.choice(list(sigils.Dict.keys()))
+        while not good_sigil(chosen_card, sigil := random.choice(list(sigils.Dict.keys()))) : pass
+        else : chosen_card.sigils[sigil_slot] = sigil
+
+        chosen_card.update_ASCII()
+
+        return chosen_card
+
+    def trading(playfield) :
+        '''
+        allows the player to trade wolf pelts from their hand for the trader's cards on the board
+
+        Arguments:
+            playfield: the current playfield object (field object)
+        '''
+        def player_vers(traded_card) :
+            '''
+            switches the player's card to its opposite version if necessary
+
+            Arguments:
+                traded_card: the card being traded (card object)
+            '''
+            if any([traded_card.has_sigil(mover) for mover in sigils.movers]) :
+                for (sigil, index) in [(sigil, traded_card.sigils.index(sigil)) for sigil in traded_card.sigils if sigil in sigils.movers] : 
+                    match (sigil, index) :
+                        case ('lane shift left', index) : traded_card.sigils[index] = 'lane shift right'
+                        case ('lane shift right', index) : traded_card.sigils[index] = 'lane shift left'
+                        case ('hefty (left)', index) : traded_card.sigils[index] = 'hefty (right)'
+                        case ('hefty (right)', index) : traded_card.sigils[index] = 'hefty (left)'
+                traded_card.update_ASCII()
+            
+            if type(traded_card) == card_library.OppositeRabbit :
+                sigils_ = getattr(traded_card, 'sigils')
+                return card_library.Rabbit(sigils=sigils_)
+            elif type(traded_card) == card_library.OppositeShrew :
+                sigils_ = getattr(traded_card, 'sigils')
+                return card_library.Shrew(sigils=sigils_)
+            
+            return traded_card
+        
+        def view_hand(playfield) :
+            invalid_index = False
+            while True :
+                QoL.clear()
+                print('\n'*5)
+                QoL.print_deck(playfield.hand, numbered=True, centered=True, blocked=True)
+                if invalid_index :
+                    print('Invalid index.')
+                    invalid_index = False
+                card_choice = input('Choose a card to view: (press enter to go back) ')
+                if card_choice == '' :
+                    break
+
+                (is_int, card_choice) = QoL.reps_int(card_choice, -1)
+                if is_int and card_choice in range(len(playfield.hand)) :
+                    QoL.clear()
+                    print('\n'*5)
+                    QoL.print_deck(playfield.hand, numbered=True, centered=True, blocked=True)
+                    playfield.hand[card_choice].explain()
+                    input('Press enter to continue.')
+                else :
+                    invalid_index = True
+
+        def get_card_from_row(row) :
+            '''
+            allows player to choose a card from a row to trade
+            
+            Arguments:
+                row: the row to choose from (list of card objects)
+
+            Returns:
+                card: the chosen card (card object)
+            '''
+            # set up variables
+            invalid_index = False
+
+            while True :
+                playfield.print_field(score_scale=False)
+                if invalid_index :
+                    print('Invalid index.')
+                    invalid_index = False
+                col_choice = input('Choose a card to trade for: (press enter to go back) ')
+                if col_choice == '' :
+                    break
+
+                (is_int, col_choice) = QoL.reps_int(col_choice)
+                if is_int and col_choice in range(1, 5) and row[col_choice].species != '' :
+                    return row[col_choice]
+                else :
+                    invalid_index = True
+        
+        def trade_card(playfield) :
+            '''
+            allows the player to trade a wolf pelt for a card
+            
+            Arguments:
+                playfield: the current playfield object (field object)
+            '''
+            # set up variables
+            invalid_choice = False
+
+            while True :
+                playfield.print_field(score_scale=False)
+                print("1. Leshy's field")
+                print('2. Bushes')
+                if invalid_choice :
+                    print('Invalid choice.')
+                    invalid_choice = False
+                row_choice = input('Choose a row to trade from: (press enter to go back) ')
+                match row_choice :
+                    case '' : 
+                        return
+                    case '1' :
+                        trade_field = playfield.opponent_field
+                        chosen_trade = get_card_from_row(playfield.opponent_field)
+                        if chosen_trade == None :
+                            continue
+                        break
+                    case '2' :
+                        trade_field = playfield.bushes
+                        chosen_trade = get_card_from_row(playfield.bushes)
+                        if chosen_trade == None :
+                            continue
+                        break
+                    case _ : 
+                        invalid_choice = True
+                        continue
+            
+            # trade card
+            zone = [zone for zone, card_ in trade_field.items() if card_ == chosen_trade][0]
+            new_card = player_vers(chosen_trade)
+            playfield.hand.append(new_card)
+            wolf_pelts = [card_ for card_ in playfield.hand if type(card_) == card_library.WolfPelt]
+            playfield.hand.remove(wolf_pelts[0])
+            playfield.summon_card(card=card.BlankCard(), zone=zone, field=trade_field)
+
+        choices = '''1. Trade a wolf pelt for a card
+2. View a card on the field
+3. View a card in your hand
+4. View your deck
+5. Finish trading'''
+
+        invalid_choice = False
+        while True :
+            playfield.print_field(score_scale=False)
+            playfield.print_hand()
+            print(choices)
+            if invalid_choice :
+                print('Invalid choice.')
+                invalid_choice = False
+            match input('Choose an option: ') :
+                case '1' : trade_card(playfield)
+                case '2' : duel.view_cards(playfield)
+                case '3' : view_hand(playfield)
+                case '4' : duel.view_remaining(playfield)
+                case '5' : break
+                case _ : invalid_choice = True
+
     def gameplay(campaign) :
-        return card_battle(campaign) # for testing prior to implementation
+        pre_boss_flavor(campaign)
+
+        poss_trapper = {
+            1 : [card_library.StrangeFrog(True), card_library.DumpyTF(True), card_library.Bullfrog(True)]
+        }
+
+        # set up trader's board
+        playfield = init_boss_playfield(campaign, Poss_Leshy=poss_trapper, advance=False)
+        trader_board_cards = [card.BlankCard(), card_library.StrangeFrog(True), card_library.StrangeFrog(True), card_library.LeapingTrap(True)]
+        random.shuffle(trader_board_cards)
+        for zone in range(1, 5) :
+            playfield.summon_card(card=trader_board_cards.pop(), zone=zone, field=playfield.opponent_field)
+
+        # game loop
+        second_phase = False
+        played = []
+        while True :
+            # gameplay
+            (win, winner, overkill, deck_out, played_new) = turn_structure(playfield)
+            played += played_new
+            if win : # playtest feature to quick quit
+                result = winner == 'player'
+                post_boss_flavor(campaign, result)
+                if result :
+                    QoL.write_data([(['progress markers', 'beat trapper'], True)])
+                else :
+                    campaign.lives = 0
+                break
+
+            # switch turns
+            playfield.switch()
+            (win, winner, overkill, deck_out) = duel.winner_check(playfield, silent=True)
+
+            if win and winner == 'opponent' :
+                post_boss_flavor(campaign, False)
+                campaign.lives = 0
+                break
+
+            elif win and not second_phase :
+                # update variables
+                win = False
+                second_phase = True
+
+                has_lost_prior = QoL.read_data([['progress markers', 'losses']])[0] > 1
+
+                if has_lost_prior : # normal behavior
+                    # flavor text expaining whats happening (why field is being filled and trading is happening, etc.)
+                    QoL.clear()
+                    print('\n'*5)
+                    print(QoL.center_justified('Leshy turns his mask upside down, becoming the trader.'))
+                    time.sleep(3)
+                    print(QoL.center_justified('"I hope you brought pelts..."'))
+                    time.sleep(2)
+                    print(QoL.center_justified('The trader fills her field with cards.'))
+                    time.sleep(2)
+                    print(QoL.center_justified('"Because these creatures are prepared to rip your throat out."'))
+                    time.sleep(3)
+                    print(QoL.center_justified('"Trade for what you can, but know this: the rest will stay and fight for me."'))
+                    time.sleep(3)
+                    print('\n'*2)
+                    input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+
+                    # fill trader's field with random cards with additional sigils
+                    allowed_cards = [card_ for cost in card_library.Poss_Leshy.keys() for card_ in card_library.Poss_Leshy[cost] if card_.has_sigil('')]
+                    for zone in range(1, 5) :
+                        playfield.summon_card(card=random_extra_sigil(allowed_cards), zone=zone, field=playfield.opponent_field)
+                        playfield.opponent_field[zone].blank_cost = False
+                        playfield.opponent_field[zone].update_ASCII()
+                        playfield.summon_card(card=random_extra_sigil(allowed_cards), zone=zone, field=playfield.bushes)
+                        playfield.bushes[zone].blank_cost = False
+                        playfield.bushes[zone].update_ASCII()
+
+                    # add all wolf pelts from graveyard and players field to their hand + 1 more
+                    playfield.hand.append(card_library.WolfPelt(True))
+                    for card_ in playfield.graveyard[:] :
+                        if card_.species == 'Wolf Pelt' :
+                            playfield.hand.append(card_)
+                            playfield.graveyard.remove(card_)
+                    for zone in range(1, 5) :
+                        if playfield.player_field[zone].species == 'Wolf Pelt' :
+                            playfield.hand.append(playfield.player_field[zone])
+                            playfield.summon_card(card=card.BlankCard(), zone=zone, field=playfield.player_field)
+
+                    # trade wolf pelts for trader's cards (traded cards go to player's hand)
+                    trading(playfield)
+
+                    # hide costs from opponent's cards
+                    for zone in range(1, 5) :
+                        playfield.opponent_field[zone].blank_cost = True
+                        playfield.opponent_field[zone].update_ASCII()
+                        playfield.bushes[zone].blank_cost = True
+                        playfield.bushes[zone].update_ASCII()
+
+                else :
+                    # flavor text expaining whats happening (why cards are being replaced with grizzly bears, etc.)
+                    QoL.clear()
+                    print('\n'*5)
+                    print(QoL.center_justified('Leshy removes his mask to speak to you.'))
+                    time.sleep(3)
+                    print(QoL.center_justified('"Well, I can\'t let you beat my game that easily."'))
+                    time.sleep(3)
+                    print('\n'*2)
+                    input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+
+                    # fill trader's field and bushes with grizzly bears with mighty leap
+                    for zone in range(1, 5) :
+                        for field in [playfield.opponent_field, playfield.bushes] : playfield.summon_card(card=card_library.Grizzly(blank_cost=True, sigils=['mighty leap', '']), zone=zone, field=field)
+
+                # empty trader's deck
+                playfield.opponent_deck = deck.Deck([])
+
+                # reset stats
+                playfield.score = {'player': 0, 'opponent': 0}
+                playfield.active = 'player'
+
+            elif win and second_phase:
+                post_boss_flavor(campaign, True)
+                QoL.write_data([(['progress markers', 'beat trapper'], True)])
+                break
+
+        return (win, winner, overkill, deck_out)
 
     return gameplay(campaign) # add flavor text, context, etc.
 

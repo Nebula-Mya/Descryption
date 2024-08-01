@@ -489,9 +489,12 @@ class Playmat :
         print(card_gaps_space + 'Hand:', end='')
         print(hand_string)
 
-    def print_field(self) :
+    def print_field(self, score_scale=True) :
         '''
         prints the field and score scales (clears screen first)
+
+        Arguments:
+            score_scale: whether to print the score scales, defaults to True (bool)
         '''
         # set up variables
         field_string = ''
@@ -515,7 +518,7 @@ class Playmat :
         # print field
         QoL.clear()
         print(field_string, end='')
-        ASCII_text.print_scales(self.score, score_gap)
+        if score_scale : ASCII_text.print_scales(self.score, score_gap)
 
     def print_full_field(self) :
         '''

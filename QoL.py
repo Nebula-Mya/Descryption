@@ -433,12 +433,12 @@ def bind_int(value, lower_bound=None, upper_bound=None) :
         case _ : # misc errors
             raise ValueError('invalid bounds')
 
-def ping(locals={'ping':'pong'}) : # for testing
+def ping(dict={'ping':'pong'}) : # for testing
     '''
-    writes local variables to ping.txt
+    writes variables to ping.txt
 
     Arguments:
-        locals: the local variables to write (dict)
+        dict: the variables to write (dict)
     '''
     def depth(object) :
         '''
@@ -553,7 +553,7 @@ def ping(locals={'ping':'pong'}) : # for testing
         return
     
     # format values for writing
-    locals = format_values(locals)
+    locals = format_values(dict)
 
     # get string of local variables
     data_to_write = '\n\n'.join(f"{key}: {value}" for key, value in locals.items()).rstrip()
@@ -561,18 +561,42 @@ def ping(locals={'ping':'pong'}) : # for testing
     with open('ping.txt', 'w') as file :
         file.write(data_to_write)
 
-def random_card(possible_cards) :
+def random_card(possible_cards, weighted=True, alpha=2.2, beta=3.3) :
     '''
-    gets a random card from a list of possible cards
+    gets a random card from a set of possible cards
+
+    Arguments:
+        possible_cards: the cards to choose from (list or dict)
+        weighted: whether to weight the chances of cards based on rarity and cost, defaults to True (bool)
+        alpha: the alpha value for the beta distribution, defaults to 2.2 (float)
+        beta: the beta value for the beta distribution, defaults to 3.3 (float)
     '''
     # imports
     import card_library
+    import math
+
+    # set up variables
+    match (weighted, type(possible_cards)) :
+        case (_, list) :
+            card_dict = {0: [card_ for card_ in possible_cards]}
+        case (False, dict) :
+            card_dict = {0: [card_ for card_ in possible_cards.values()]}
+        case (True, dict) :
+            card_dict = possible_cards
+
+    # get cost
+    if weighted:
+        max_cost = max(card_dict.keys())
+        min_cost = min(card_dict.keys())
+        cost_range = max_cost - min_cost
+        cost = lambda : min_cost + math.floor((cost_range + 1) * random.betavariate(alpha, beta))
+    else : cost = lambda : random.choice(list(card_dict.keys()))
 
     # get card type
-    template_card = random.choice(possible_cards)
+    template_card = random.choice(card_dict[cost()])
     card_class = type(template_card)
-    if any(type(card) for card in card_library.Rare_Cards) == card_class: # lower chances of rare cards
-        template_card = random.choice(possible_cards)
+    if weighted and any(type(card) for card in card_library.Rare_Cards) == card_class: # lower chances of rare cards
+        template_card = random.choice(card_dict[cost()])
         card_class = type(template_card)
 
     return card_class(getattr(template_card, 'blank_cost', False))

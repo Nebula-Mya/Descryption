@@ -64,20 +64,6 @@ class BlankCard() :
         self.zone = zone
         self.blank_cost = blank_cost
         self.blank_stats = blank_stats
-
-        # create name for displaying card
-        if species == '' or blank_cost : # takes advantage of extra space from having no cost
-            self.name = species.ljust(12)[:12]
-        else :
-            self.name = species.ljust(9)[:9]
-            
-        # abbreviate name if it is too long
-        if len(self.name) >= len(species) : # guard clause
-            pass
-        elif self.name[-2] == ' ' :
-            self.name = self.name[:-2] + '. '
-        else :
-            self.name = self.name[:-1] + '.'
         
         # create ASCII art for card
         self.update_ASCII()
@@ -312,7 +298,7 @@ class BlankCard() :
         if self.hooked : hook_indicator = ['ʆ\ ', 'ʖ \\']
         else : hook_indicator = [' '*3, ' '*3]
 
-        # update cost and stats for displaying card
+        # update cost, stats, and name for displaying card
         if self.blank_cost or self.species == '':
             self.cost = ''
         else :
@@ -322,6 +308,19 @@ class BlankCard() :
             self.stats = ' '*3
         else :
             self.stats = hex(self.current_attack % 16)[2] + "/" + hex(self.current_life % 16)[2]
+
+        if self.species == '' or self.blank_cost : # takes advantage of extra space from having no cost
+            self.name = self.species.ljust(12)[:12]
+        else :
+            self.name = self.species.ljust(9)[:9]
+
+        # abbreviate name if it is too long
+        if len(self.name) >= len(self.species) : # guard clause
+            pass
+        elif self.name[-2] == ' ' :
+            self.name = self.name[:-2] + '. '
+        else :
+            self.name = self.name[:-1] + '.'
         
         # update ASCII art for card
         if self.has_sigil('') : # one sigil

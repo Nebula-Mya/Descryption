@@ -335,6 +335,7 @@ pass
         '''
 if current_field[zone].status == 'dead' :
     import card_library
+    import card
 
     # remove the original card
     current_field[zone].die()
@@ -575,6 +576,7 @@ import sigils
 if applicables == sigils.on_deaths and current_field[zone].status == 'dead' :
     import card
     import copy
+    import card_library
 
     split_card = copy.deepcopy(current_field[zone])
 
@@ -611,6 +613,7 @@ if applicables == sigils.on_deaths and current_field[zone].status == 'dead' :
 import sigils
 if applicables == sigils.on_deaths :
     import card
+    import card_library
 
     # remove the original card to hand
     if current_field[zone].status == 'dead' and current_field == self.player_field :

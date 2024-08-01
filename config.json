@@ -15,10 +15,10 @@
         "ouro level": 1,
         "beat prospector": true,
         "beat angler": true,
-        "beat trapper": false,
+        "beat trapper": true,
         "beat leshy": false,
         "wins": 0,
-        "losses": 0
+        "losses": 2
     },
     "death cards": {
         "first": {
