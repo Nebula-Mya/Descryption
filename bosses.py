@@ -3,7 +3,6 @@ import card
 import field
 import QoL
 import ASCII_text
-import random
 import sys
 import duel
 
@@ -81,19 +80,6 @@ def card_battle(campaign, Poss_Leshy=None) :
 ##### if the player loses to a boss, set campaign.has_lost = True, as lives arent updated during the previous thing
 
 ##### if the player wins, relight candles and update config file
-
-def random_card(possible_cards) :
-    '''
-    gets a random card from a list of possible cards
-    '''
-    # get card type
-    template_card = random.choice(possible_cards)
-    card_class = type(template_card)
-    if any(type(card) for card in card_library.Rare_Cards) == card_class: # lower chances of rare cards
-        template_card = random.choice(possible_cards)
-        card_class = type(template_card)
-
-    return card_class(getattr(template_card, 'blank_cost', False))
 
 def get_higher_difficulty() :
     '''
@@ -305,7 +291,6 @@ def boss_fight_prospector(campaign) : # boss fight 1
 
         # game loop
         second_phase = False
-        pack_mule_killed = False
         while True :
             # gameplay
             (win, winner, overkill, deck_out, _) = turn_structure(playfield)
@@ -317,17 +302,6 @@ def boss_fight_prospector(campaign) : # boss fight 1
                 else :
                     campaign.lives = 0
                 break
-
-            # check if pack mule was killed
-            if not pack_mule_killed and all([type(card_) != card_library.PackMule for card_ in playfield.opponent_field.values()] + [type(card_) != card_library.PackMule for card_ in playfield.bushes.values()]) :
-                pack_mule_killed = True
-                playfield.hand.append(card_library.Squirrel())
-                one_cost = random_card(card_library.Poss_Playr[1])
-                two_cost = random_card(card_library.Poss_Playr[2])
-                bone_card = random_card(card_library.Poss_Playr[1]) # until bones are implemented
-                playfield.hand.append(one_cost)
-                playfield.hand.append(two_cost)
-                playfield.hand.append(bone_card)
 
             # switch turns
             playfield.switch()

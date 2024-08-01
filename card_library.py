@@ -267,6 +267,14 @@ class BaitBucket(card.BlankCard) : # only used by angler
     def __init__(self, blank_cost=False, sigils=['','']) :
         super().__init__(species='Bait Bucket', cost=0, attack=0, life=1, sigils=sigils, blank_cost=blank_cost)
 
+class StrangeFrog(card.BlankCard) : # only used by trapper
+    def __init__(self, blank_cost=False, sigils=['mighty leap','']) :
+        super().__init__(species='Strange Frog', cost=1, attack=1, life=2, sigils=sigils, blank_cost=blank_cost)
+
+class LeapingTrap(card.BlankCard) : # only used by trapper
+    def __init__(self, blank_cost=False, sigils=['mighty leap','steel trap']) :
+        super().__init__(species='Leaping Trap', cost=0, attack=0, life=1, sigils=sigils, blank_cost=blank_cost)
+
 # Allowed cards:
 Poss_Playr = {
     0 : [Rabbit(), Shrew(), BlackGoat()],
@@ -285,7 +293,7 @@ Poss_Death = [Louis(), FlawPeacock(), PlyrDeathCard1(), PlyrDeathCard2(), PlyrDe
 Rare_Cards = [Ouroboros(), Urayuli(), MooseBuck(), BullShark(), BoppitW()]
 
 # Tribes
-Reptiles = [Bullfrog(), DumpyTF(), Turtle(), Adder(), Asp(), Ouroboros()] # also includes amphibians for accuracy to Inscryption
+Reptiles = [Bullfrog(), DumpyTF(), Turtle(), Adder(), Asp(), Ouroboros(), StrangeFrog()] # also includes amphibians for accuracy to Inscryption
 Insects = [BoppitW(), Beehive(), Bee(), Cockroach(), CorpseMaggots()]
 Avians = [Kingfisher(), Falcon(), Raven()]
 Canines = [Wolf(), Bloodhound(), Coyote()]
@@ -326,7 +334,7 @@ AI_categories = [
     {
         'category' : 'wont_hurt',
         'self sigils' : ['airborne','bifurcate'],
-        'opp sigils' : ['bees within','split','unkillable'],
+        'opp sigils' : ['bees within','split','unkillable', 'steel trap'],
         'stats' : (lambda self_attack, self_life, opp_attack, opp_life : self_attack == 0)
         },
     # good against those with venom (tanks and waterbornes)

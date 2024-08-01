@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import random
 
 def clear() :
     '''
@@ -559,6 +560,22 @@ def ping(locals={'ping':'pong'}) : # for testing
     
     with open('ping.txt', 'w') as file :
         file.write(data_to_write)
+
+def random_card(possible_cards) :
+    '''
+    gets a random card from a list of possible cards
+    '''
+    # imports
+    import card_library
+
+    # get card type
+    template_card = random.choice(possible_cards)
+    card_class = type(template_card)
+    if any(type(card) for card in card_library.Rare_Cards) == card_class: # lower chances of rare cards
+        template_card = random.choice(possible_cards)
+        card_class = type(template_card)
+
+    return card_class(getattr(template_card, 'blank_cost', False))
 
 if __name__ == '__main__' :
     clear()

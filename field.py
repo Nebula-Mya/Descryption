@@ -337,17 +337,37 @@ class Playmat :
             # if a sigil applies
             [corpses] = QoL.exec_sigil_code(current_field[zone], sigils.on_deaths, None, locals(), ['corpses'])
 
-            # if bait bucket from Angler fight
-            if current_field[zone].species == 'Bait Bucket' and current_field[zone].status == 'dead' :
+            ## specific cards will never have sigils that apply on death
+            # if pack mule from Prospector fight
+            if current_field[zone].species == 'Pack Mule' and current_field[zone].status == 'dead' and current_field in [self.opponent_field, self.bushes] :
+                self.hand.append(card_library.Squirrel())
+                one_cost = QoL.random_card(card_library.Poss_Playr[1])
+                two_cost = QoL.random_card(card_library.Poss_Playr[2])
+                bone_card = QoL.random_card(card_library.Poss_Playr[1]) # until bones are implemented
+                self.hand.append(one_cost)
+                self.hand.append(two_cost)
+                self.hand.append(bone_card)
                 current_field[zone].die()
-                self.graveyard.insert(0, current_field[zone])
-                self.summon_card(card=card_library.BullShark(True), field=current_field, zone=zone)
+                if current_field == self.player_field : self.graveyard.insert(0, current_field[zone])
+                self.summon_card(card=card.BlankCard(), field=current_field, zone=zone)
                 corpses.append((zone, current_field))
 
-            # if a normal card dies
-            if current_field[zone].status == 'dead' and not current_field[zone].sigil_in_category(sigils.on_deaths) :
+            # if bait bucket from Angler fight
+            elif current_field[zone].species == 'Bait Bucket' and current_field[zone].status == 'dead' :
                 current_field[zone].die()
-                self.graveyard.insert(0, current_field[zone])
+                if current_field == self.player_field : self.graveyard.insert(0, current_field[zone])
+                self.summon_card(card=card_library.BullShark(True), field=current_field, zone=zone)
+
+            # if strange frog from Trapper fight
+            elif current_field[zone].species == 'Strange Frog' and current_field[zone].status == 'dead' and current_field == self.opponent_field :
+                current_field[zone].die()
+                if current_field == self.player_field : self.graveyard.insert(0, current_field[zone])
+                self.summon_card(card=card_library.LeapingTrap(True), field=current_field, zone=zone)
+
+            # if a normal card dies
+            elif current_field[zone].status == 'dead' and not current_field[zone].sigil_in_category(sigils.on_deaths) :
+                current_field[zone].die()
+                if type(self) != card.BlankCard and current_field == self.player_field : self.graveyard.insert(0, current_field[zone])
                 self.summon_card(card=card.BlankCard(), field=current_field, zone=zone)
                 corpses.append((zone, current_field))
         
