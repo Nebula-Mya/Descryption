@@ -275,22 +275,44 @@ class LeapingTrap(card.BlankCard) : # only used by trapper
     def __init__(self, blank_cost=False, sigils=['mighty leap','steel trap']) :
         super().__init__(species='Leaping Trap', cost=0, attack=0, life=1, sigils=sigils, blank_cost=blank_cost)
 
+class MoleMan(card.BlankCard) : # lane shift will be replaced with burrower sigil once implemented
+    def __init__(self, blank_cost=False, sigils=['lane shift left','mighty leap']) :
+        super().__init__(species='Mole Man', cost=1, attack=0, life=6, sigils=sigils, blank_cost=blank_cost)
+
+class Stump(card.BlankCard) : # terrain card
+    def __init__(self, blank_cost=False, sigils=['','']) :
+        super().__init__(species='Stump', cost=0, attack=0, life=3, sigils=sigils, blank_cost=blank_cost)
+
+class Tree(card.BlankCard) : # terrain card
+    def __init__(self, blank_cost=False, sigils=['might leap',''], level=0) :
+        match level :
+            case _ if level in [0,3] : area_type = 'Grand Fir'
+            case 2 : area_type = 'Snowy Fir'
+            case _ : area_type = 'Tree'
+        super().__init__(species=area_type, cost=0, attack=0, life=3, sigils=sigils, blank_cost=blank_cost)
+        self.level = level
+
+## add the moon
+class Moon(card.BlankCard) :
+    pass
+
 # Allowed cards:
 Poss_Playr = {
     0 : [Rabbit(), Shrew(), BlackGoat()],
-    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog(), Beehive(), Cat(), Warren(), Otter(), Kingfisher()],
+    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog(), Beehive(), Cat(), Warren(), Otter(), Kingfisher(), MoleMan()],
     2 : [Ouroboros(), Asp(), Falcon(), Cockroach(), Wolf(), Raven(), Beaver(), Adder(), CorpseMaggots(), Pronghorn(), Salmon(), Bloodhound()],
     3 : [Lobster(), Grizzly(), BullShark()],
     4 : [BoppitW(), Urayuli(), MooseBuck()]
 }
 Poss_Leshy = {
     0 : [OppositeRabbit(True), OppositeShrew(True)],
-    1 : [DumpyTF(True), Turtle(True), Stoat(True), Bullfrog(True), CorpseMaggots(True), Otter(True), Kingfisher(True)],
+    1 : [DumpyTF(True), Turtle(True), Stoat(True), Bullfrog(True), CorpseMaggots(True), Otter(True), Kingfisher(True), MoleMan(True)],
     2 : [Asp(True), Falcon(True), Cockroach(True), Wolf(True), Raven(True), Adder(True), Pronghorn(True), Salmon(True), Bloodhound(True)],
     3 : [Lobster(True), Grizzly(True), BullShark(True), BoppitW(True)]
 }
 Poss_Death = [Louis(), FlawPeacock(), PlyrDeathCard1(), PlyrDeathCard2(), PlyrDeathCard3()]
-Rare_Cards = [Ouroboros(), Urayuli(), MooseBuck(), BullShark(), BoppitW()]
+Rare_Cards = [Ouroboros(), Urayuli(), MooseBuck(), BullShark(), BoppitW(), MoleMan()]
+Terrain_Cards = [Stump, Tree]
 
 # Tribes
 Reptiles = [Bullfrog(), DumpyTF(), Turtle(), Adder(), Asp(), Ouroboros(), StrangeFrog()] # also includes amphibians for accuracy to Inscryption

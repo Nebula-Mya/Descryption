@@ -251,6 +251,9 @@ class Playmat :
                 if sacc_index not in range(1, 5) or sacc_index in sacc_list or self.player_field[sacc_index].species == '' : # invalid zone
                     print(str(sacc_index), 'is an invalid zone.')
                     break # do not reset, just don't add the sacc, may change if alternate behavior is desired
+                elif type(self.player_field[sacc_index]) in card_library.Terrain_Cards : # cannot sacrifice terrain cards
+                    print('Cannot sacrifice terrain cards.')
+                    break # do not reset, just don't add the sacc, may change if alternate behavior is desired
                 else :
                     sacc_list.append(sacc_index)
 
@@ -496,6 +499,28 @@ class Playmat :
         Arguments:
             score_scale: whether to print the score scales, defaults to True (bool)
         '''
+        def get_connector(gaps, row, line, moon_lines) :
+            '''
+            gets the connectors for the given row and line
+
+            Arguments:
+                gaps: the number of spaces to print between each card
+                row: the row of cards
+                line: the line number
+                moon_lines: the lines to print for the moon's ASCII
+            
+            Returns:
+                connector: the list of strings to print as the connector
+            '''
+            match line :
+                case 0 if row == 2 : connector = [' '*gaps*3] + ['-'*gaps*3]*3
+                case _ if row == 2 and line in range(1, 11) : connector = ASCII_text.split_moon_lines(moon_lines)['connectors'][line - 1]
+                case _ if row == 1 and line in range(10) : connector = ASCII_text.split_moon_lines(moon_lines)['connectors'][line + 10]
+                case 10 if row == 1 : connector = [' '*gaps*3] + ['-'*gaps*3]*3
+                case _ : connector = [' '*gaps*3]*4
+
+            return connector
+    
         # set up variables
         field_string = ''
         term_cols = os.get_terminal_size().columns
@@ -507,13 +532,18 @@ class Playmat :
         vis_bushes = [self.bushes[n] for n in range(1, 5)]
         vis_opponent_field = [self.opponent_field[n] for n in range(1, 5)]
         vis_player_field = [self.player_field[n] for n in range(1, 5)]
+        cards = [vis_player_field, vis_opponent_field, vis_bushes]
+        moon_on_field = any([type(card_) == card_library.Moon for card_ in vis_bushes + vis_opponent_field])
 
         # generate field string
-        for row in [vis_bushes, vis_opponent_field, vis_player_field] :
-            for _ in range(11) :
-                field_string += ' '*card_gaps*3 + ''.join(card.text_by_line() + ' ' * (card_gaps * 3) for card in row) + '\n'
+        for row in [2, 1, 0] :
+            for line in range(11) :
+                if moon_on_field and row in [1, 2] : connector = get_connector(card_gaps, row, line, ASCII_text.moon_inside)
+                else : connector = [' '*card_gaps*3]*4
+                for i in range(4) : field_string += connector[i] + cards[row][i].text_by_line()
+                field_string += '\n'
 
-            field_string += ' '*card_gaps + '-'*(card_gaps*13 + 60) + '\n' if row == vis_opponent_field else '' # add a divider between opponent and player fields
+            field_string += ' '*card_gaps + '-'*(card_gaps*13 + 60) + '\n' if row == 1 else '' # add a divider between opponent and player fields
 
         # print field
         QoL.clear()

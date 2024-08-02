@@ -214,6 +214,61 @@ def print_candelabra(wick_states) :
 
     print(QoL.center_justified(candelabra.format(*wicks), blocked=True))
 
+def split_moon_lines(string) :
+    '''
+    splits the moon card's inside into 20 lines of various characters
+
+    Arguments:
+        string: the string to split (str)
+    
+    Returns:
+        split_lines: the dictionary of split lines
+        {
+            'cards': [
+                [card_1, card_2, card_3, card_4],
+                ...
+            ],
+            'connectors': [
+                [connector_1, connector_2, connector_3, connector_4],
+                ...
+            ]
+        }
+    '''
+    # get the terminal width
+    term_cols = os.get_terminal_size().columns
+    gaps = (term_cols*55 // 100) // 5 - 15
+
+    split_string = lambda string, length : (string[:length], string[length:])
+
+    # set up variables
+    split_lines = {
+        'cards' : [],
+        'connectors' : []
+    }
+    lines = string.split('\n')
+
+    for line in lines :
+        (card_1, line) = split_string(line, 13)
+        card_1 = card_1.ljust(13)
+        (connections_1, line) = split_string(line, gaps*3)
+        connections_1 = connections_1.ljust(gaps*3)
+        (card_2, line) = split_string(line, 15)
+        card_2 = card_2.ljust(15)
+        (connections_2, line) = split_string(line, gaps*3)
+        connections_2 = connections_2.ljust(gaps*3)
+        (card_3, line) = split_string(line, 15)
+        card_3 = card_3.ljust(15)
+        (connections_3, line) = split_string(line, gaps*3)
+        connections_3 = connections_3.ljust(gaps*3)
+        (card_4, line) = split_string(line, 13)
+        card_4 = card_4.ljust(13)
+        split_lines['cards'].append([card_1, card_2, card_3, card_4])
+        split_lines['connectors'].append([' '*gaps*3, connections_1, connections_2, connections_3])
+    
+    return split_lines
+
+moon_name_lines = '\n'*20
+
 if __name__ == '__main__' :
     QoL.clear()
     term_cols = os.get_terminal_size().columns
