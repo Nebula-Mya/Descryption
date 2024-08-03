@@ -921,6 +921,8 @@ def boss_fight_leshy(campaign) : # boss fight 4
 
             # switch turns
             pass ## tidal lock sigil if moon on the board
+            duel_state.use(campaign, playfield, played)
+            duel_state.change()
             playfield.switch()
             (win, winner, overkill, deck_out) = duel.winner_check(playfield, silent=True)
 
@@ -929,7 +931,7 @@ def boss_fight_leshy(campaign) : # boss fight 4
                 campaign.lives = 0
                 break
 
-            elif battle_state().win(campaign) :
+            elif duel_state().win(campaign) :
                 post_boss_flavor(campaign, True)
                 QoL.write_data([(['progress markers', 'beat leshy'], True)])
                 break

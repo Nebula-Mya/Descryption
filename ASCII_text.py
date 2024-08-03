@@ -238,7 +238,7 @@ def split_moon_lines(string) :
     term_cols = os.get_terminal_size().columns
     gaps = (term_cols*55 // 100) // 5 - 15
 
-    split_string = lambda string, length : (string[:length], string[length:])
+    split_string = lambda string, length : (string[:max(length, 0)], string[max(length, 0):])
 
     # set up variables
     split_lines = {
@@ -267,7 +267,53 @@ def split_moon_lines(string) :
     
     return split_lines
 
-moon_name_lines = '\n'*20
+def moon_inner_str() :
+    gap_num = (os.get_terminal_size().columns*55 // 100) // 5 - 15
+    gap = ' '*gap_num
+    gap_half = ' '*(gap_num // 2)
+    gap_center = gap*4 + gap_half
+    connect = gap*3
+    moon_str = r'''?'''
+    moon_str = '\n'*20 # until the inside of the moon card is done
+
+    return moon_str.format(gap=gap, gap_half=gap_half, gap_center=gap_center, connect=connect)
+    
+def moon_life_lines(life) :
+    '''
+    generates a 7x2 ASCII representation of the moon's life (2 digits)
+
+    Arguments:
+        life: the moon's life (int)
+    
+    Returns:
+        life_lines: the ASCII representation of the moon's life (list)
+    '''
+    number_ASCII_lines = {
+        0: [' '*3]*2,
+        1: [' '*3]*2,
+        2: [' '*3]*2,
+        3: [' '*3]*2,
+        4: [' '*3]*2,
+        5: [' '*3]*2,
+        6: [' '*3]*2,
+        7: [' '*3]*2,
+        8: [' '*3]*2,
+        9: [' '*3]*2
+    }
+    tens = life // 10
+    ones = life % 10
+
+    if tens == 0 :
+        left_ASCII_lines = number_ASCII_lines[ones]
+        right_ASCII_lines = [' '*3]*2
+    else :
+        left_ASCII_lines = number_ASCII_lines[tens]
+        right_ASCII_lines = number_ASCII_lines[ones]
+
+    life_lines = [line_l + ' ' + line_r for line_l, line_r in zip(left_ASCII_lines, right_ASCII_lines)]
+
+    return life_lines
+
 
 if __name__ == '__main__' :
     QoL.clear()

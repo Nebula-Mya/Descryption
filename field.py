@@ -538,7 +538,7 @@ class Playmat :
         # generate field string
         for row in [2, 1, 0] :
             for line in range(11) :
-                if moon_on_field and row in [1, 2] : connector = get_connector(card_gaps, row, line, ASCII_text.moon_inside)
+                if moon_on_field and row in [1, 2] : connector = get_connector(card_gaps, row, line, ASCII_text.moon_inner_str())
                 else : connector = [' '*card_gaps*3]*4
                 for i in range(4) : field_string += connector[i] + cards[row][i].text_by_line()
                 field_string += '\n'
