@@ -280,7 +280,9 @@ def moon_inner_str() :
     
 def moon_life_lines(life) :
     '''
-    generates a 7x2 ASCII representation of the moon's life (2 digits)
+    generates a 7x3 ASCII representation of the moon's life (2 digits)
+
+    bounds the value between 0 and 99 (inclusive)
 
     Arguments:
         life: the moon's life (int)
@@ -289,17 +291,20 @@ def moon_life_lines(life) :
         life_lines: the ASCII representation of the moon's life (list)
     '''
     number_ASCII_lines = {
-        0: [' '*3]*2,
-        1: [' '*3]*2,
-        2: [' '*3]*2,
-        3: [' '*3]*2,
-        4: [' '*3]*2,
-        5: [' '*3]*2,
-        6: [' '*3]*2,
-        7: [' '*3]*2,
-        8: [' '*3]*2,
-        9: [' '*3]*2
+        0: ['ˌ_ˌ', '| |', '|_|'],
+        1: [' ˌ ', '/| ', '_|_'],
+        2: ['ˌ_ ', ' _|', '|_ˌ'],
+        3: ['ˌ_ ', ' _|', 'ˌ_|'],
+        4: ['ˌ ˌ', '|_|', '  |'],
+        5: ['ˌ_ˌ', '|_ ', 'ˌ_|'],
+        6: [' _ˌ', '|_ ', '|_|'],
+        7: ['__ˌ', '  /', ' / '],
+        8: [' _ ', '|_|', '|_|'],
+        9: [' _ ', '|_|', 'ˌ_|']
     }
+    
+    life = max(0, min(life, 99))
+
     tens = life // 10
     ones = life % 10
 
@@ -313,7 +318,6 @@ def moon_life_lines(life) :
     life_lines = [line_l + ' ' + line_r for line_l, line_r in zip(left_ASCII_lines, right_ASCII_lines)]
 
     return life_lines
-
 
 if __name__ == '__main__' :
     QoL.clear()

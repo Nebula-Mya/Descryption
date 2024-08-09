@@ -298,8 +298,8 @@ class Moon(card.BlankCard) :
 
 # Allowed cards:
 Poss_Playr = {
-    0 : [Rabbit(), Shrew(), BlackGoat()],
-    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog(), Beehive(), Cat(), Warren(), Otter(), Kingfisher(), MoleMan()],
+    0 : [Rabbit(), Shrew()],
+    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog(), Beehive(), Cat(), Warren(), Otter(), Kingfisher(), MoleMan(), BlackGoat()],
     2 : [Ouroboros(), Asp(), Falcon(), Cockroach(), Wolf(), Raven(), Beaver(), Adder(), CorpseMaggots(), Pronghorn(), Salmon(), Bloodhound()],
     3 : [Lobster(), Grizzly(), BullShark()],
     4 : [BoppitW(), Urayuli(), MooseBuck()]

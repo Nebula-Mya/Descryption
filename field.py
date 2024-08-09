@@ -302,10 +302,12 @@ class Playmat :
                 attacking_field = self.player_field
                 defending_field = self.opponent_field
                 is_players = True
+                omni_strike = False
             case 'opponent' :
                 attacking_field = self.opponent_field
                 defending_field = self.player_field
                 is_players = False
+                omni_strike = any([type(card_) == card_library.Moon for card_ in self.player_field.values()]) and all([card_.species == '' for card_ in self.opponent_field.values()])
             case _ :
                 raise ValueError('Invalid active player.')
 
@@ -316,6 +318,9 @@ class Playmat :
 
                 # score update
                 self.score[self.active] += attacker_points
+        
+        # for omni strike sigil (only on the moon)
+        if omni_strike : self.score['opponent'] += 1
 
         # moving sigils
         shifted_card = None
