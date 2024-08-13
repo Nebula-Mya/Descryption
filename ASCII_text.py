@@ -1,5 +1,6 @@
 import QoL
 import os
+import math
 
 def print_title() :
     title = '''
@@ -272,11 +273,30 @@ def moon_inner_str() :
     gap = ' '*gap_num
     gap_half = ' '*(gap_num // 2)
     gap_center = gap*4 + gap_half
+    gap_half_up = ' '*math.ceil(gap_num / 2)
     connect = gap*3
-    moon_str = r'''?'''
-    moon_str = '\n'*20 # until the inside of the moon card is done
+    moon_str = r'''——————              ,—,  ,—,
+‾‾][‾‾ || || |[⁼⁼   ||\\//|| ,¡˭˭¡, ,¡˭˭¡, |[\ ||
+  ||   |[=]| |[==   || \/ || ||  || ||  || ||\\||
+  ||   || || |[₌₌   ||    || '!‗‗!' '!‗‗!' || \]|
+{connect}{connect}                                                 _
+ {connect}      ˌ___/\___ˌ           {connect}                    //,
+ {connect} ʅ——₋ˎ|        |           {connect}                .-⁻⁻//.
+ {connect}  ʅ_  ‾‾ˋ·ˎ    |           {connect}               ʃ   // ʅ
+ {connect}   ʅ_(‾∂  :    /           {connect}               ʅ  //  ʃ
+ {connect}      `⁻ˎˊ   ˏʼ            {connect}                ·//--·
+ {connect}         ˋ··ˊ              {connect}               //’
+                {gap_center}         .-⁻⁻-.         {gap}{gap_half_up}   ‾
+                {gap_center}        ʃ      ʅ        {gap_center}
+                {gap_center}      _ ʅ      ʃ _      {gap_center}
+                {gap_center}     /ʃ  ·-₋₋-·  ʅ\     {gap_center}
+                {gap_center}     ||  /|  |\  ||     {gap_center}
+                {gap_center}     ||  ||  ||  ||     {gap_center}
+                {gap_center}    \‾‾/\‾‾/\‾‾/\‾‾/    {gap_center}
+                {gap_center}     \/  \/  \/  \/     {gap_center}
+'''
 
-    return moon_str.format(gap=gap, gap_half=gap_half, gap_center=gap_center, connect=connect)
+    return moon_str.format(gap=gap, gap_half=gap_half, gap_half_up=gap_half_up, gap_center=gap_center, connect=connect)
     
 def moon_life_lines(life) :
     '''

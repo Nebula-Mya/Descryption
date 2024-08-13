@@ -144,7 +144,7 @@ points += front_card.take_damage(self.current_attack, hand, from_air=True, in_op
     ],
 
     'mighty leap' : [
-        ["_____","ʅ   ʃ"," ʅɩð "],
+        ["_____","ʅ   ʃ","ɩð_ʃ "],
         'Can block airborne creatures.',
         '''
 if self.species == '' or self.status == 'dead' :
