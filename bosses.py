@@ -231,6 +231,10 @@ def turn_structure(playfield) :
 
     # leshy turn
     else :
+        if any([card_.species == 'The Moon' for card_ in playfield.opponent_field.values()]) : # tidal lock sigil if moon on the board
+            for card_ in [card_ for card_ in playfield.player_field.values() if card_.species in ['Squirrel', 'Vole']] :
+                playfield.graveyard.insert(0, card_)
+                playfield.summon_card(card=card.BlankCard(), zone=[zone for zone, zone_card in playfield.player_field.items() if zone_card == card_][0], field=playfield.player_field)
         playfield.advance()
         playfield.print_field()
         input('Press enter to continue.')
@@ -920,7 +924,6 @@ def boss_fight_leshy(campaign) : # boss fight 4
                 break
 
             # switch turns
-            pass ## tidal lock sigil if moon on the board
             duel_state.use(campaign, playfield, played)
             duel_state.change()
             playfield.switch()
