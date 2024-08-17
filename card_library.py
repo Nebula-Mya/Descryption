@@ -1,6 +1,9 @@
 import card
 import QoL
 import random
+import ASCII_text
+import os
+import sigils
 
 class Squirrel(card.BlankCard) :
     '''
@@ -292,9 +295,136 @@ class Tree(card.BlankCard) : # terrain card
         super().__init__(species=area_type, cost=0, attack=0, life=3, sigils=sigils, blank_cost=blank_cost)
         self.level = level
 
-## add the moon
 class Moon(card.BlankCard) :
-    pass
+    # class attributes
+    sigils = ['mighty leap','']
+    is_poisened = False
+    hooked = False
+    species = 'The Moon'
+    saccs = 0
+    base_attack = 1
+    current_attack = 1
+    base_life = 40
+    current_life = 40
+    status = 'alive'
+
+    def __init__(self, row, column) : # coords is a tuple of the form (row,column)
+        self.zone = column
+        self.coords = (row, column)
+        self.ASCII = ASCII_text.moon_parts[self.coords[0]][self.coords[1]]
+        self.update_ASCII()
+    
+    def text_by_line(self) :
+        text = self.ASCII.split('\n')[self.line_cursor].format(moon_lines=self.moon_lines, life_lines=ASCII_text.moon_life_lines(Moon.current_life))
+        self.line_cursor = (self.line_cursor + 1) % 11
+        return text.ljust(15)[:15]
+
+    def update_ASCII(self) :
+        # reset line cursor
+        self.line_cursor = 0
+
+        # update ASCII art for card
+        inner_str = ASCII_text.moon_inner_str()
+        split_ASCII = ASCII_text.split_moon_lines(inner_str)['cards']
+        self.moon_lines = [split_ASCII[n][self.coords[1] - 1] for n in range(20)][0+(self.coords[0] == 1)*10:10+(self.coords[0] == 1)*10]
+
+    def explain(self) :
+        ### sigils, in order, are : mighty leap, tidal lock, and omni strike
+
+        # set up variables
+        tidal_lock_desc = 'Will pull small creatures into its orbit at the start of its turn.'
+        omni_strike_desc = 'Will attack every opposing creature. It will attack directly if there are no opposing creatures.'
+
+        # get terminal size
+        term_cols = os.get_terminal_size().columns
+        card_gaps = (term_cols*55 // 100) // 5 - 15
+
+        # get parameters for sigil descriptions
+        s1_max_desc_first = term_cols - 32 - max(card_gaps + 2, 2) - len('mighty leap:')
+        s2_max_desc_first = term_cols - 32 - max(card_gaps + 2, 2) - len('tidal lock:')
+        s3_max_desc_first = term_cols - 32 - max(card_gaps + 2, 2) - len('omni strike:')
+        max_desc_rest = term_cols - 31 - max(card_gaps + 6, 6)
+
+        # split sigil descriptions
+        [s1_desc_1, s1_desc_2, s1_desc_3] = QoL.split_nicely(sigils.Dict['mighty leap'][1], s1_max_desc_first, max_desc_rest, max_lines=3, add_blank_lines=True)
+        [s2_desc_1, s2_desc_2, s2_desc_3] = QoL.split_nicely(tidal_lock_desc, s2_max_desc_first, max_desc_rest, max_lines=3, add_blank_lines=True)
+        [s3_desc_1, s3_desc_2, s3_desc_3] = QoL.split_nicely(omni_strike_desc, s3_max_desc_first, max_desc_rest, max_lines=3, add_blank_lines=True)
+
+        # create display text
+        explanation = r"""{card_gap},-----------------------------,
+{card_gap}|The Moon                     |{card_gap}  Mighty Leap: {s1_desc_1}
+{card_gap}|                             |{card_gap}      {s1_desc_2}
+{card_gap}|    _____           ˏ--/ˎ    |{card_gap}      {s1_desc_3}
+{card_gap}|    ʅ   ʃ           | / |    |{card_gap}  Tidal Lock: {s2_desc_1}
+{card_gap}|    ɩð_ʃ    ,---,   ῾/--᾽    |{card_gap}      {s2_desc_2}
+{card_gap}|            |   |            |{card_gap}      {s2_desc_3}
+{card_gap}|           /'---'\           |{card_gap}  Omni Strike: {s3_desc_1}
+{card_gap}|          /  / \  \    {p} /   |{card_gap}      {s3_desc_2}
+{card_gap}|         \/ \/ \/ \/    / {l} |{card_gap}      {s3_desc_3}
+{card_gap}'-----------------------------'""".format(card_gap=' '*(card_gaps), s1_desc_1=s1_desc_1, s1_desc_2=s1_desc_2, s1_desc_3=s1_desc_3, s2_desc_1=s2_desc_1, s2_desc_2=s2_desc_2, s2_desc_3=s2_desc_3, s3_desc_1=s3_desc_1, s3_desc_2=s3_desc_2, s3_desc_3=s3_desc_3, p=1, l=str(Moon.current_life).ljust(2))
+        
+        # print display text
+        print(explanation)
+
+    def attack(self, front_left_card, front_card, front_right_card, hand, is_players=False, bushes={}) :
+        # set up variables
+        points = 0
+
+        # attack cards
+        if front_card.species != '' :
+            points = front_card.take_damage(Moon.current_attack, hand, in_opp_field=is_players, bushes=bushes)
+        
+        # if poisoned, deal 1 damage to self
+        if Moon.is_poisoned :
+            self.take_damage(1, hand)
+
+        return points
+
+    def reset_stats(self) :
+        self.zone = 0
+        Moon.status = 'alive'
+        Moon.is_poisoned = False
+        Moon.hooked = False
+        Moon.current_attack = Moon.base_attack
+        Moon.current_life = Moon.base_life
+        self.update_ASCII()
+
+    def take_damage(self, damage, hand, from_air=False, in_opp_field=False, in_bushes=False, bushes={}, deathtouch=False) :
+        # set up variables
+        teeth = 0
+
+        # take damage (mighty leap is hardcoded due to the moon's unique nature)
+        if Moon.species == '' or Moon.status == 'dead' :
+            teeth = damage
+        else :
+            prev_life = Moon.current_life
+            Moon.current_life -= damage
+            self.update_ASCII()
+            if Moon.current_life <= 0 or deathtouch :
+                Moon.status = 'dead'
+        
+        return teeth   
+
+    def play(self, zone) :
+        if zone not in range (1, 5) : # error handling
+            raise ValueError('Zone must be between 1 and 4')
+        self.reset_stats()
+        self.zone = zone
+        self.update_ASCII()
+
+    def sigil_in_category(self, category, sigil_slot=None) :
+        sigils_ = ['mighty leap', 'tidal lock', 'omni strike']
+
+        return any([sigil in sigils_ for sigil in category])
+
+    def has_sigil(self, sigil_name) :
+        sigils_ = ['mighty leap', 'tidal lock', 'omni strike']
+
+        return any([sigil == sigil_name for sigil in sigils_])
+
+    def hook(self) :
+        Moon.hooked = not Moon.hooked
+        self.update_ASCII()
 
 # Allowed cards:
 Poss_Playr = {

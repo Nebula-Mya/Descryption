@@ -339,6 +339,101 @@ def moon_life_lines(life) :
 
     return life_lines
 
+moon_parts = { # organized by row (2=bushes, 1=field) then column (1=left - 4=right)
+    2 : {
+        1 : r''',--------------
+| {moon_lines[0]}
+| {moon_lines[1]}
+| {moon_lines[2]}
+| {moon_lines[3]}
+| {moon_lines[4]}
+| {moon_lines[5]}
+| {moon_lines[6]}
+| {moon_lines[7]}
+| {moon_lines[8]}
+| {moon_lines[9]}''',
+        2 : r'''---------------
+{moon_lines[0]}
+{moon_lines[1]}
+{moon_lines[2]}
+{moon_lines[3]}
+{moon_lines[4]}
+{moon_lines[5]}
+{moon_lines[6]}
+{moon_lines[7]}
+{moon_lines[8]}
+{moon_lines[9]}''',
+        3 : r'''---------------
+{moon_lines[0]}
+{moon_lines[1]}
+{moon_lines[2]}
+{moon_lines[3]}
+{moon_lines[4]}
+{moon_lines[5]}
+{moon_lines[6]}
+{moon_lines[7]}
+{moon_lines[8]}
+{moon_lines[9]}''',
+        4 : r'''--------------,
+{moon_lines[0]} |
+{moon_lines[1]} |
+{moon_lines[2]} |
+{moon_lines[3]} |
+{moon_lines[4]} |
+{moon_lines[5]} |
+{moon_lines[6]} |
+{moon_lines[7]} |
+{moon_lines[8]} |
+{moon_lines[9]} |'''
+    },
+    1 : {
+        1 : r'''| {moon_lines[0]}
+| {moon_lines[1]}
+| {moon_lines[2]}
+| {moon_lines[3]}
+| {moon_lines[4]}
+| {moon_lines[5]}
+| {moon_lines[6]}
+| {moon_lines[7]}
+| {moon_lines[8]}
+| {moon_lines[9]}
+'--------------''',
+        2 : r'''{moon_lines[0]}
+{moon_lines[1]}
+{moon_lines[2]}
+{moon_lines[3]}
+{moon_lines[4]}
+{moon_lines[5]}
+{moon_lines[6]}
+{moon_lines[7]}
+{moon_lines[8]}
+{moon_lines[9]}
+---------------''',
+        3 : r'''{moon_lines[0]}
+{moon_lines[1]}
+{moon_lines[2]}
+{moon_lines[3]}
+{moon_lines[4]}
+{moon_lines[5]}
+{moon_lines[6]}
+{moon_lines[7]}
+{moon_lines[8]}
+{moon_lines[9]}
+---------------''',
+        4 : r"""{moon_lines[0]} |
+{moon_lines[1]} |
+{moon_lines[2]} |
+{moon_lines[3]} |
+{moon_lines[4]} |
+ ˌ    //      |
+/|   //       |
+_|_ //{life_lines[0]} |
+   // {life_lines[1]} |
+  //  {life_lines[2]} |
+--------------'""",
+    }
+}
+
 if __name__ == '__main__' :
     QoL.clear()
     term_cols = os.get_terminal_size().columns

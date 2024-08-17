@@ -210,8 +210,8 @@ class BlankCard() :
                     sigil_text = QoL.title_case(self.sigils[sigil_ind]) + ':'
 
             # get parameters for sigil description
-            max_desc_first = term_cols - 18 - card_gaps*2 - len(sigil_text)
-            max_desc_rest = term_cols - 14 - card_gaps*2
+            max_desc_first = term_cols - 16 - max(card_gaps + 2, 2) - len(sigil_text)
+            max_desc_rest = term_cols - 15 - max(card_gaps + 6, 6)
 
             # split description into lines
             [desc_first_line, desc_second_line, desc_third_line] = QoL.split_nicely(sigils.Dict[self.sigils[sigil_ind]][1], max_desc_first, max_desc_rest, max_lines=3, add_blank_lines=True)
@@ -223,15 +223,15 @@ class BlankCard() :
                 explanation += ' '*card_gaps + self.text_lines[line] # add the card line
                 match line : # add the explanation to the end of the line
                     case 2 : # cost and species
-                        explanation += ' '*(card_gaps + 2) + self.species + ' requires ' + str(self.saccs) + ' sacrifices to summon.'
+                        explanation += ' '*(card_gaps) + ' '*2 + self.species + ' requires ' + str(self.saccs) + ' sacrifices to summon.'
                     case 6 : # sigil and description line 1
-                        explanation += ' '*(card_gaps + 2) + sigil_text + ' ' + desc_first_line
+                        explanation += ' '*(card_gaps) + ' '*2 + sigil_text + ' ' + desc_first_line
                     case 7 : # description line 2
-                        explanation += ' '*(card_gaps + 6) + desc_second_line
+                        explanation += ' '*(card_gaps) + ' '*6 + desc_second_line
                     case 8 : # description line 3
-                        explanation += ' '*(card_gaps + 6) + desc_third_line
+                        explanation += ' '*(card_gaps) + ' '*6 + desc_third_line
                     case 10 : # stats
-                        explanation += ' '*(card_gaps + 2) + self.species + ' has an attack power of ' + str(self.current_attack) + ' and life points of ' + str(self.current_life) + ' of ' + str(self.base_life) + '.'
+                        explanation += ' '*(card_gaps) + ' '*2 + self.species + ' has an attack power of ' + str(self.current_attack) + ' and life points of ' + str(self.current_life) + ' of ' + str(self.base_life) + '.'
 
         else : # two sigils
             match self.sigils[0] :
@@ -250,9 +250,9 @@ class BlankCard() :
                     sigil2_text = QoL.title_case(self.sigils[1]) + ':'
 
             # get parameters for sigil description
-            s1_max_desc_first = term_cols - 18 - card_gaps*2 - len(sigil1_text)
-            s2_max_desc_first = term_cols - 18 - card_gaps*2 - len(sigil2_text)
-            max_desc_rest = term_cols - 14 - card_gaps*2
+            s1_max_desc_first = term_cols - 16 - max(card_gaps + 2, 2) - len(sigil1_text)
+            s2_max_desc_first = term_cols - 16 - max(card_gaps + 2, 2) - len(sigil2_text)
+            max_desc_rest = term_cols - 15 - max(card_gaps + 6, 6)
 
 
             # split description into lines
@@ -266,21 +266,21 @@ class BlankCard() :
                 explanation += ' '*card_gaps + self.text_lines[line] # add the card line
                 match line : # add the explanation to the end of the line
                     case 2 : # cost and species
-                        explanation += ' '*(card_gaps + 2) + self.species + ' requires ' + str(self.saccs) + ' sacrifices to summon.'
+                        explanation += ' '*(card_gaps) + ' '*2 + self.species + ' requires ' + str(self.saccs) + ' sacrifices to summon.'
                     case 4 : # sigil 1 and description line 1
-                        explanation += ' '*(card_gaps + 2) + sigil1_text + ' ' + s1_desc_first_line
+                        explanation += ' '*(card_gaps) + ' '*2 + sigil1_text + ' ' + s1_desc_first_line
                     case 5 :
-                        explanation += ' '*(card_gaps + 6) + s1_desc_second_line
+                        explanation += ' '*(card_gaps) + ' '*6 + s1_desc_second_line
                     case 6 :
-                        explanation += ' '*(card_gaps + 6) + s1_desc_third_line
+                        explanation += ' '*(card_gaps) + ' '*6 + s1_desc_third_line
                     case 7 : # sigil 2 and description line 1
-                        explanation += ' '*(card_gaps + 2) + sigil2_text + ' ' + s2_desc_first_line
+                        explanation += ' '*(card_gaps) + ' '*2 + sigil2_text + ' ' + s2_desc_first_line
                     case 8 :
-                        explanation += ' '*(card_gaps + 6) + s2_desc_second_line
+                        explanation += ' '*(card_gaps) + ' '*6 + s2_desc_second_line
                     case 9 :
-                        explanation += ' '*(card_gaps + 6) + s2_desc_third_line
+                        explanation += ' '*(card_gaps) + ' '*6 + s2_desc_third_line
                     case 10 : # stats
-                        explanation += ' '*(card_gaps + 2) + self.species + ' has an attack power of ' + str(self.current_attack) + ' and life points of ' + str(self.current_life) + ' of ' + str(self.base_life) + '.'
+                        explanation += ' '*(card_gaps) + ' '*2 + self.species + ' has an attack power of ' + str(self.current_attack) + ' and life points of ' + str(self.current_life) + ' of ' + str(self.base_life) + '.'
 
         print(explanation)
 
@@ -392,7 +392,7 @@ class BlankCard() :
         '''
         hooks or unhooks the card
         '''
-        self.hooked = (self.hooked == False)
+        self.hooked = not self.hooked
         self.update_ASCII()
 
 if __name__ == "__main__" :
