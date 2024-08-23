@@ -811,14 +811,24 @@ def boss_fight_trapper_trader(campaign) : # boss fight 3
     return gameplay(campaign) # add flavor text, context, etc.
 
 def boss_fight_leshy(campaign) : # boss fight 4
-    ## Leshy's reaction to the moon being destroyed will be part of field.check_states()
+    ## Leshy's reaction to the moon being destroyed is part of field.check_states()
     def deck_trials(campaign) :
         pass
 
-    def mining(campaign, playfield) :
+    def mining(campaign, playfield, battle_state) :
+        # dialogue / explanation
+        if not battle_state.has_mined :
+            pass # add dialogues, etc.
+            battle_state.has_mined = True
+        
         pass
 
-    def hooking(campaign, playfield, played) :
+    def hooking(campaign, playfield, battle_state, played) :
+        # dialogue / explanation
+        if not battle_state.has_hooked :
+            pass # add dialogues, etc.
+            battle_state.has_hooked = True
+
         # hook and use hook
         if playfield.active == 'player' : return # guard clause
             
@@ -838,7 +848,12 @@ def boss_fight_leshy(campaign) : # boss fight 4
                     playfield.summon_card(card=card.BlankCard(), zone=zone, field=playfield.player_field)
                     break
 
-    def trading(campaign, playfield) :
+    def trading(campaign, playfield, battle_state) :
+        # dialogue / explanation
+        if not battle_state.has_traded :
+            pass # add dialogues, etc.
+            battle_state.has_traded = True
+
         pass
 
     class battle_state : ## maybe add explanations for the masks the first time they are used
@@ -849,6 +864,9 @@ def boss_fight_leshy(campaign) : # boss fight 4
             masks: the possible masks to choose from (list)
             index: the index of the mask
             phase: the phase of the fight (1, 2, 3)
+            has_mined: whether the prospector mask has been used
+            has_hooked: whether the angler mask has been used
+            has_traded: whether the trader mask has been used
             
         Methods:
             change: changes the mask to the next one
@@ -858,6 +876,9 @@ def boss_fight_leshy(campaign) : # boss fight 4
             self.masks = ['Prospector', 'Angler', 'Trader']
             self.index = 0
             self.phase = 1
+            self.has_mined = False
+            self.has_hooked = False
+            self.has_traded = False
 
         def change(self) :
             '''
@@ -918,7 +939,7 @@ def boss_fight_leshy(campaign) : # boss fight 4
                 result = winner == 'player'
                 post_boss_flavor(campaign, result)
                 if result :
-                    QoL.write_data([(['progress markers', 'beat prospector'], True)])
+                    QoL.write_data([(['progress markers', 'beat leshy'], True)])
                 else :
                     campaign.lives = 0
                 break
@@ -934,7 +955,7 @@ def boss_fight_leshy(campaign) : # boss fight 4
                 campaign.lives = 0
                 break
 
-            elif duel_state().win(campaign) :
+            elif win and duel_state().win(campaign) :
                 post_boss_flavor(campaign, True)
                 QoL.write_data([(['progress markers', 'beat leshy'], True)])
                 break

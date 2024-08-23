@@ -372,6 +372,15 @@ class Playmat :
                 if current_field == self.player_field : self.graveyard.insert(0, current_field[zone])
                 self.summon_card(card=card_library.LeapingTrap(True), field=current_field, zone=zone)
 
+            # if moon from Leshy fight
+            elif current_field[zone].species == 'Moon' and current_field[zone].status == 'dead' :
+                for zone in range(1, 5) :
+                    self.bushes[zone].die()
+                    self.opponent_field[zone].die()
+                    self.summon_card(card=card.BlankCard(), field=self.bushes, zone=zone)
+                    self.summon_card(card=card.BlankCard(), field=self.opponent_field, zone=zone)
+                self.opponent_deck = []
+
             # if a normal card dies
             elif current_field[zone].status == 'dead' and not current_field[zone].sigil_in_category(sigils.on_deaths) :
                 current_field[zone].die()
