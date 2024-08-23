@@ -308,7 +308,7 @@ class Moon(card.BlankCard) :
     current_life = 40
     status = 'alive'
 
-    def __init__(self, row, column) : # coords is a tuple of the form (row,column)
+    def __init__(self, row, column) :
         self.zone = column
         self.coords = (row, column)
         self.ASCII = ASCII_text.moon_parts[self.coords[0]][self.coords[1]]

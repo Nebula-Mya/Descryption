@@ -49,7 +49,7 @@ def card_battle(campaign, Poss_Leshy=None) :
         print(QoL.center_justified('As you approach the figure, Leshy blows out all but one of your candles.').rstrip())
         print(QoL.center_justified('"Beat this boss and I\'ll relight your candles."').rstrip())
         print()
-        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+        input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
         (_, winner, overkill, _) = duel.main(deck_size, 4, play_median, play_var, opp_strat, opp_threshold, player_deck_obj=campaign.player_deck, opponent_deck_obj=leshy_deck, squirrels_deck_obj=campaign.squirrel_deck, print_results=False)
 
@@ -59,7 +59,7 @@ def card_battle(campaign, Poss_Leshy=None) :
             print('\n'*3)
             ASCII_text.print_candelabra([3, 0, 0])
             print()
-            input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+            input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
             return False
         
         campaign.add_teeth(overkill)
@@ -168,7 +168,7 @@ def pre_boss_flavor(campaign) :
     print(QoL.center_justified('As you approach the figure, Leshy blows out all but one of your candles.').rstrip())
     print(QoL.center_justified('"Beat this boss and I\'ll relight your candles."').rstrip())
     print()
-    input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+    input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
 def post_boss_flavor(campaign, result) :
     '''
@@ -189,7 +189,7 @@ def post_boss_flavor(campaign, result) :
         print('\n'*3)
         ASCII_text.print_candelabra([3, 0, 0])
         print()
-        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+        input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
     else : # player won
         QoL.clear()
         print('\n'*3)
@@ -516,12 +516,12 @@ def boss_fight_prospector(campaign) : # boss fight 1
                 # flavor text expaining whats happening (why cards are replaced with gold nuggets, etc.)
                 QoL.clear()
                 print('\n'*5)
-                print(QoL.center_justified('Clearly weakened, the prospector takes his pickaxe and strikes your cards.'))
+                print(QoL.center_justified('Weakened, the prospector takes his pickaxe and strikes your cards.'))
                 time.sleep(2)
                 print(QoL.center_justified('The cards shatter into gold nuggets.'))
                 time.sleep(3)
                 print('\n'*2)
-                input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+                input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
                 # kill player's cards
                 nugget_zones = [zone for zone in range(1,5) if playfield.player_field[zone].species != '']
@@ -588,7 +588,7 @@ def boss_fight_angler(campaign) : # boss fight 2
                         print(QoL.center_justified('The angler casts his line and hooks one of your cards.'))
                         time.sleep(3)
                         print('\n'*2)
-                        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+                        input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
                     
                     to_hook = None
                     while to_hook not in playfield.player_field.values() : # ensure a card is hooked
@@ -604,7 +604,7 @@ def boss_fight_angler(campaign) : # boss fight 2
                         print(QoL.center_justified('The angler reels in his line and pulls your card to his side.'))
                         time.sleep(3)
                         print('\n'*2)
-                        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+                        input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
                     
                     # check if a card is hooked and pull it to the opponent's field
                     if any([card_.hooked for card_ in playfield.player_field.values()]) :
@@ -643,7 +643,7 @@ def boss_fight_angler(campaign) : # boss fight 2
                     print(QoL.center_justified('You can see the fins of sharks circling.'))
                     time.sleep(3)
                     print('\n'*2)
-                    input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+                    input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
                     # clear angler's field
                     for zone in range(1, 5) :
@@ -662,7 +662,7 @@ def boss_fight_angler(campaign) : # boss fight 2
                     print(QoL.center_justified('"Well, I can\'t let you beat my game that easily."'))
                     time.sleep(3)
                     print('\n'*2)
-                    input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+                    input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
                     # fill angler's field and bushes with grizzly bears with mighty leap
                     for zone in range(1, 5) :
@@ -746,7 +746,7 @@ def boss_fight_trapper_trader(campaign) : # boss fight 3
                     print(QoL.center_justified('"Trade for what you can, but know this: the rest will stay and fight for me."'))
                     time.sleep(3)
                     print('\n'*2)
-                    input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+                    input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
                     # fill trader's field with random cards with additional sigils
                     allowed_cards = [card_ for cost in card_library.Poss_Leshy.keys() for card_ in card_library.Poss_Leshy[cost] if card_.has_sigil('')]
@@ -788,7 +788,7 @@ def boss_fight_trapper_trader(campaign) : # boss fight 3
                     print(QoL.center_justified('"Well, I can\'t let you beat my game that easily."'))
                     time.sleep(3)
                     print('\n'*2)
-                    input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+                    input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
                     # fill trader's field and bushes with grizzly bears with mighty leap
                     for zone in range(1, 5) :
@@ -813,25 +813,31 @@ def boss_fight_trapper_trader(campaign) : # boss fight 3
 def boss_fight_leshy(campaign) : # boss fight 4
     ## Leshy's reaction to the moon being destroyed is part of field.check_states()
     def deck_trials(campaign) :
-        pass
+        pass # implement once deck trials and boons are added (needs consumables and bones)
 
     def mining(campaign, playfield, battle_state) :
         # dialogue / explanation
         if not battle_state.has_mined :
             pass # add dialogues, etc.
             battle_state.has_mined = True
+        else :
+            battle_state.used_all_masks = True
         
         pass
 
     def hooking(campaign, playfield, battle_state, played) :
         # dialogue / explanation
-        if not battle_state.has_hooked :
-            pass # add dialogues, etc.
-            battle_state.has_hooked = True
+        if not battle_state.used_all_masks :
+            QoL.clear()
+            print('\n'*5)
+            print(QoL.center_justified('Leshy casts his line and hooks one of your cards.'))
+            time.sleep(3)
+            print(QoL.center_justified('The line goes taut and he reels in his catch.'))
+            time.sleep(3)
+            print('\n'*2)
+            input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
         # hook and use hook
-        if playfield.active == 'player' : return # guard clause
-            
         to_hook = None
         while to_hook not in playfield.player_field.values() : # ensure a card is hooked
             to_hook = played[-1]
@@ -850,9 +856,8 @@ def boss_fight_leshy(campaign) : # boss fight 4
 
     def trading(campaign, playfield, battle_state) :
         # dialogue / explanation
-        if not battle_state.has_traded :
+        if not battle_state.used_all_masks :
             pass # add dialogues, etc.
-            battle_state.has_traded = True
 
         pass
 
@@ -862,45 +867,83 @@ def boss_fight_leshy(campaign) : # boss fight 4
             
         Attributes:
             masks: the possible masks to choose from (list)
-            index: the index of the mask
+            mask_index: the index of the mask
+            mask_worn: whether Leshy is wearing a mask
             phase: the phase of the fight (1, 2, 3)
-            has_mined: whether the prospector mask has been used
-            has_hooked: whether the angler mask has been used
-            has_traded: whether the trader mask has been used
+            used_all_masks: whether all masks have been used and prospector mask has been put on again
+            has_mined: whether Leshy has mined
             
         Methods:
             change: changes the mask to the next one
             use: uses the mask
+            mask: uses or changes the mask
+            win: executes the code for beating a phase, depending on the current phase, increments the phase, and returns whether the player has won the entire fight
         '''
         def __init__(self) :
             self.masks = ['Prospector', 'Angler', 'Trader']
-            self.index = 0
+            self.mask_index = 0
+            self.mask_worn = False
             self.phase = 1
+            self.used_all_masks = False
             self.has_mined = False
-            self.has_hooked = False
-            self.has_traded = False
 
         def change(self) :
             '''
             changes the mask to the next one
-
-            Returns:
-                str: the new mask
             '''
-            pass # add dialogues, etc.
-            self.index = (self.index + 1) % len(self.masks)
-            return self.masks[self.index]
+            self.mask_index = (self.mask_index + 1) % len(self.masks)
+
+            if not self.used_all_masks :
+                new_mask = self.masks[self.mask_index].lower()
+                QoL.clear()
+                print('\n'*5)
+                print(QoL.center_justified(f'Leshy dons the mask of the {new_mask}.'))
+                time.sleep(3)
+                print('\n'*2)
+                input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
+
+            self.mask_worn = True
         
         def use(self, campaign, playfield, played) :
             '''
-            uses the mask
+            uses and removes the current mask
 
             Arguments:
                 campaign: the current campaign object (rogue_campaign object)
                 playfield: the current playfield object (field object)
                 played: the cards played (list)
             '''
-            pass
+            match self.masks[self.mask_index] :
+                case 'Prospector' : mining(campaign, playfield, self)
+                case 'Angler' : hooking(campaign, playfield, self, played)
+                case 'Trader' : trading(campaign, playfield, self)
+
+            if not self.used_all_masks :
+                curr_mask = self.masks[self.mask_index].lower()
+                QoL.clear()
+                print('\n'*5)
+                print(QoL.center_justified(f'Leshy removes the mask of the {curr_mask}.'))
+                time.sleep(3)
+                print('\n'*2)
+                input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
+
+            self.mask_worn = False
+
+        def mask(self, campaign, playfield, played) :
+            '''
+            uses or changes the mask
+            
+            Arguments:
+                campaign: the current campaign object (rogue_campaign object)
+                playfield: the current playfield object (field object)
+                played: the cards played (list)
+            '''
+            if self.phase not in [1, 2] : return # guard clause
+
+            if self.mask_worn :
+                self.use(campaign, playfield, played)
+            else : 
+                self.change()
 
         def win(self, campaign, playfield) :
             '''
@@ -913,7 +956,93 @@ def boss_fight_leshy(campaign) : # boss fight 4
             Returns:
                 bool: whether the player has won the entire fight
             '''
-            pass
+            self.phase += 1
+            match self.phase :
+                case 2 : # beat phase 1
+                    # play stumps and trees to block player's cards
+                    for zone in range(1, 5) :
+                        playfield.summon_card(card=card.BlankCard(), zone=zone, field=playfield.bushes)
+                        opposite_card = playfield.player_field[zone]
+                        if opposite_card.has_sigil('bifurcate') : pass
+                        elif opposite_card.has_sigil('airborne') : playfield.summon_card(card=card_library.Tree(True), zone=zone, field=playfield.opponent_field)
+                        else : playfield.summon_card(card=card_library.Stump(True), zone=zone, field=playfield.opponent_field)
+                    
+                    # change deck to be Leshy's second phase deck (death cards)
+                    playfield.opponent_deck = duel.deck_gen(card_library.Poss_Death, len(playfield.opponent_deck))
+
+                    playfield.print_field()
+                    input('Press enter to continue.')
+
+                    QoL.clear()
+                    print('\n'*5)
+                    print(QoL.center_justified('"In their eyes glimmered a recognition of kinship... but colored by guilt."'))
+                    time.sleep(3)
+                    print(QoL.center_justified('"They were betraying you."'))
+                    time.sleep(3)
+                    print('\n'*2)
+                    input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
+
+                    # play first death cards
+                    playfield.advance()
+                    playfield.print_field()
+                    input('Press enter to continue.')
+
+                    QoL.clear()
+                    print('\n'*5)
+                    print(QoL.center_justified('"I remember that one fondly."'))
+                    time.sleep(3)
+                    print('\n'*2)
+                    input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
+
+                case 3 : # beat phase 2
+                    QoL.clear()
+                    print('\n'*5)
+                    print(QoL.center_justified('Leshy turns to face the full moon shining behind him.'))
+                    time.sleep(3)
+                    print(QoL.center_justified('"This damned moon..."'))
+                    time.sleep(3)
+                    print(QoL.center_justified('"It\'s dramatic, yes."'))
+                    time.sleep(2)
+                    print(QoL.center_justified('"But it provides no VALUE to my board."'))
+                    time.sleep(3)
+                    print(QoL.center_justified('"I wonder..."'))
+                    time.sleep(2)
+                    print(QoL.center_justified('Leshy raises his camera and takes a picture of the moon.'))
+                    time.sleep(1)
+                    print(QoL.center_justified('The moon is gone.'))
+                    time.sleep(3)
+                    print(QoL.center_justified('In its place, a card appears on Leshy\'s board.'))
+                    time.sleep(2)
+                    print(QoL.center_justified("Now THAT is value."))
+                    time.sleep(3)
+                    print('\n'*2)
+                    input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
+
+                    # play moon to the field
+                    field_rows = [playfield.player_field, playfield.opponent_field, playfield.bushes]
+                    for zone in range(1, 5) :
+                        for row in range(1, 3) :
+                            playfield.summon_card(card=card_library.Moon(row, zone), zone=zone, field=field_rows[row])
+                    
+                    # change deck to be Leshy's third phase deck (empty)
+                    playfield.opponent_deck = []
+
+                    playfield.print_field()
+                    input('Press enter to continue.')
+
+                case 4 : # beat Leshy
+                    QoL.clear()
+                    print('\n'*5)
+                    print(QoL.center_justified('Leshy presents a pile of rotten meat, a single candle sticking out of it.'))
+                    time.sleep(3)
+                    print(QoL.center_justified('He blows out the candle, your vision fading to black.'))
+                    time.sleep(3)
+                    print('\n'*2)
+                    input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
+
+                    return True
+            
+            return False
 
     def gameplay(campaign) :
         # pre boss events
@@ -945,9 +1074,8 @@ def boss_fight_leshy(campaign) : # boss fight 4
                 break
 
             # switch turns
-            duel_state.use(campaign, playfield, played)
-            duel_state.change()
             playfield.switch()
+            if playfield.active == 'opponent' : duel_state.mask(campaign, playfield, played)
             (win, winner, overkill, deck_out) = duel.winner_check(playfield, silent=True)
 
             if win and winner == 'opponent' :

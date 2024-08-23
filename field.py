@@ -7,6 +7,7 @@ import random
 import os
 import duel
 import sigils
+import time
 
 def ai_category_checking(categories, player_field, card_to_play, bushes, score, strat_change_threshold) :
     '''
@@ -379,7 +380,18 @@ class Playmat :
                     self.opponent_field[zone].die()
                     self.summon_card(card=card.BlankCard(), field=self.bushes, zone=zone)
                     self.summon_card(card=card.BlankCard(), field=self.opponent_field, zone=zone)
-                self.opponent_deck = []
+                QoL.clear()
+                print('\n'*5)
+                print(QoL.center_justified('"You really destroyed the moon..."'))
+                time.sleep(3)
+                print(QoL.center_justified('"I suppose all that\'s left is to finish me off."'))
+                time.sleep(2)
+                print(QoL.center_justified('"..."'))
+                time.sleep(2)
+                print(QoL.center_justified('"Go on."'))
+                time.sleep(3)
+                print('\n'*2)
+                input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
             # if a normal card dies
             elif current_field[zone].status == 'dead' and not current_field[zone].sigil_in_category(sigils.on_deaths) :

@@ -195,7 +195,7 @@ def card_battle(campaign, Poss_Leshy=None) :
             wick_states += [0] * (3 - len(wick_states))
             ASCII_text.print_candelabra(wick_states)
             print()
-            input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+            input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
             return False
         
         campaign.add_teeth(overkill)
@@ -205,7 +205,7 @@ def card_battle(campaign, Poss_Leshy=None) :
         wick_states += [0] * (3 - len(wick_states))
         ASCII_text.print_candelabra(wick_states)
         print()
-        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+        input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
         return True
     
     return gameplay(campaign, Poss_Leshy) # add flavor text, context, etc.
@@ -318,7 +318,7 @@ def card_choice(campaign) :
         print('You chose:')
         card_options[card_index].explain()
         print()
-        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+        input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
         campaign.add_card(card_options[card_index])
 
     def cost_cards(campaign) : # generate a list of 3 taken from card_library.Poss_Cost, only seeing the costs of the cards
@@ -330,7 +330,7 @@ def card_choice(campaign) :
         print('You chose:')
         card_options[card_index].explain()
         print()
-        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+        input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
         campaign.add_card(card_options[card_index])
 
     def death_cards(campaign) : # generate a list of 3 death cards taken from card_library.Poss_Death, only available after 5 deaths
@@ -341,7 +341,7 @@ def card_choice(campaign) :
         print('You chose:')
         card_options[card_index].explain()
         print()
-        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+        input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
         campaign.add_card(card_options[card_index])
 
     def rare_cards(campaign) : # generate a list of 3 rare cards taken from card_library.Rare_Cards, occurs after boss fights
@@ -352,7 +352,7 @@ def card_choice(campaign) :
         print('You chose:')
         card_options[card_index].explain()
         print()
-        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+        input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
         campaign.add_card(card_options[card_index])
 
     def gameplay(campaign) :
@@ -1266,7 +1266,7 @@ def break_rocks(campaign) : # format visuals
                     campaign.add_card(hidden_rewards[int(index) - 1])
                     
                     # wait for input before ending event
-                    input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+                    input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
                     return
                 
@@ -1377,7 +1377,7 @@ def campfire(campaign) : # format visuals
 
         # end if prior to 5 runs
         if total_runs < 5 :
-            input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+            input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
             return
 
         # second to fourth buffs
@@ -1400,7 +1400,7 @@ def campfire(campaign) : # format visuals
                 buff_card(card_choice, stat)
             else :
                 eaten_card(card_choice, campaign)
-                input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+                input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
                 return
 
     gameplay(campaign) # add flavor text, context, etc.
@@ -1597,7 +1597,7 @@ def add_death_card(campaign) : # format visuals
         QoL.print_deck([new_card], centered=True)
 
         # wait for input before ending event
-        input(QoL.center_justified('Press Enter to continue...').rstrip() + ' ')
+        input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
     gameplay(campaign) # add flavor text, context, etc.
 
@@ -1757,7 +1757,7 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
                     campaign.progress = 0
                     print(f'You have reached the {campaign.level}th area')
                     print()
-                    input('Press Enter to continue...')
+                    input('Press enter to continue...')
     ###     else, run split_road
             else : 
                 # playtest feature to quick quit
@@ -1829,7 +1829,7 @@ if __name__ == '__main__' :
         # print deck or death cards
         print_info(sys.argv[1])
 
-        input(QoL.center_justified('Press Enter to continue...').rstrip())
+        input(QoL.center_justified('Press enter to continue...').rstrip())
 
         match sys.argv[1] :
             case 'duel' : card_battle(campaign)
