@@ -525,9 +525,7 @@ def boss_fight_prospector(campaign) : # boss fight 1
 
                 # kill player's cards
                 nugget_zones = [zone for zone in range(1,5) if playfield.player_field[zone].species != '']
-                for card_ in playfield.player_field.values() :
-                    if card_.species != '' :
-                        card_.status = 'dead'
+                for card_ in [card_ for card_ in playfield.player_field.values() if card_.species != ''] : card_.status = 'dead'
                 playfield.check_states()
 
                 # replace player's cards with gold nuggets
@@ -815,17 +813,30 @@ def boss_fight_leshy(campaign) : # boss fight 4
     def deck_trials(campaign) :
         pass # implement once deck trials and boons are added (needs consumables and bones)
 
-    def mining(campaign, playfield, battle_state) :
+    def mining(playfield, battle_state) :
         # dialogue / explanation
         if not battle_state.has_mined :
-            pass # add dialogues, etc.
+            QoL.clear()
+            print('\n'*5)
+            print(QoL.center_justified('Leshy takes his pickaxe and strikes your cards.'))
+            time.sleep(2)
+            print(QoL.center_justified('The cards shatter into gold nuggets.'))
+            time.sleep(3)
+            print('\n'*2)
+            input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
             battle_state.has_mined = True
         else :
             battle_state.used_all_masks = True
         
-        pass
+        # kill player's cards
+        nugget_zones = [zone for zone in range(1,5) if playfield.player_field[zone].species != '']
+        for card_ in [card_ for card_ in playfield.player_field.values() if card_.species != ''] : card_.status = 'dead'
+        playfield.check_states()
 
-    def hooking(campaign, playfield, battle_state, played) :
+        # replace player's cards with gold nuggets
+        for zone in nugget_zones : playfield.summon_card(card=card_library.GoldNugget(True), zone=zone, field=playfield.player_field)
+
+    def hooking(playfield, battle_state, played) :
         # dialogue / explanation
         if not battle_state.used_all_masks :
             QoL.clear()
@@ -904,7 +915,7 @@ def boss_fight_leshy(campaign) : # boss fight 4
 
             self.mask_worn = True
         
-        def use(self, campaign, playfield, played) :
+        def use(self, playfield, played) :
             '''
             uses and removes the current mask
 
@@ -914,9 +925,9 @@ def boss_fight_leshy(campaign) : # boss fight 4
                 played: the cards played (list)
             '''
             match self.masks[self.mask_index] :
-                case 'Prospector' : mining(campaign, playfield, self)
-                case 'Angler' : hooking(campaign, playfield, self, played)
-                case 'Trader' : trading(campaign, playfield, self)
+                case 'Prospector' : mining(playfield, self)
+                case 'Angler' : hooking(playfield, self, played)
+                case 'Trader' : trading(playfield, self)
 
             if not self.used_all_masks :
                 curr_mask = self.masks[self.mask_index].lower()
@@ -929,7 +940,7 @@ def boss_fight_leshy(campaign) : # boss fight 4
 
             self.mask_worn = False
 
-        def mask(self, campaign, playfield, played) :
+        def mask(self, playfield, played) :
             '''
             uses or changes the mask
             
@@ -941,11 +952,11 @@ def boss_fight_leshy(campaign) : # boss fight 4
             if self.phase not in [1, 2] : return # guard clause
 
             if self.mask_worn :
-                self.use(campaign, playfield, played)
+                self.use(playfield, played)
             else : 
                 self.change()
 
-        def win(self, campaign, playfield) :
+        def win(self, playfield) :
             '''
             executes the code for beating a phase, depending on the current phase, increments the phase, and returns whether the player has won the entire fight
 
@@ -1075,7 +1086,7 @@ def boss_fight_leshy(campaign) : # boss fight 4
 
             # switch turns
             playfield.switch()
-            if playfield.active == 'opponent' : duel_state.mask(campaign, playfield, played)
+            if playfield.active == 'opponent' : duel_state.mask(playfield, played)
             (win, winner, overkill, deck_out) = duel.winner_check(playfield, silent=True)
 
             if win and winner == 'opponent' :
@@ -1083,7 +1094,7 @@ def boss_fight_leshy(campaign) : # boss fight 4
                 campaign.lives = 0
                 break
 
-            elif win and duel_state().win(campaign) :
+            elif win and duel_state().win() :
                 post_boss_flavor(campaign, True)
                 QoL.write_data([(['progress markers', 'beat leshy'], True)])
                 break
