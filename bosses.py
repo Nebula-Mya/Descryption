@@ -757,7 +757,7 @@ def boss_fight_trapper_trader(campaign) : # boss fight 3
                         playfield.bushes[zone].update_ASCII()
 
                     # add all wolf pelts from graveyard and players field to their hand + 1 more
-                    playfield.hand.append(card_library.WolfPelt(True))
+                    playfield.hand.append(card_library.WolfPelt())
                     for card_ in playfield.graveyard[:] :
                         if card_.species == 'Wolf Pelt' :
                             playfield.hand.append(card_)
@@ -808,7 +808,7 @@ def boss_fight_trapper_trader(campaign) : # boss fight 3
 
     return gameplay(campaign) # add flavor text, context, etc.
 
-def boss_fight_leshy(campaign) : # boss fight 4
+def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck trials)
     ## Leshy's reaction to the moon being destroyed is part of field.check_states()
     def deck_trials(campaign) :
         pass # implement once deck trials and boons are added (needs consumables and bones)
@@ -865,12 +865,44 @@ def boss_fight_leshy(campaign) : # boss fight 4
                     playfield.summon_card(card=card.BlankCard(), zone=zone, field=playfield.player_field)
                     break
 
-    def trading(campaign, playfield, battle_state) :
+    def trading(playfield, battle_state) :
         # dialogue / explanation
         if not battle_state.used_all_masks :
-            pass # add dialogues, etc.
+            QoL.clear()
+            print('\n'*5)
+            print(QoL.center_justified('Leshy plays two cards to his field and gives you a pelt.'))
+            time.sleep(2)
+            print(QoL.center_justified('"Trade with me."'))
+            time.sleep(3)
+            print('\n'*2)
+            input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
-        pass
+        # fill trader's field with random cards with additional sigils
+        allowed_cards = [card_ for cost in card_library.Poss_Leshy.keys() for card_ in card_library.Poss_Leshy[cost] if card_.has_sigil('')]
+        for zone in random.choices(range(1, 5), k=2) : playfield.summon_card(card=random_extra_sigil(allowed_cards), zone=zone, field=playfield.bushes)
+        
+        # unhide costs from opponent's cards
+        for zone in range(1, 5) :
+            playfield.opponent_field[zone].blank_cost = False
+            playfield.opponent_field[zone].update_ASCII()
+            playfield.bushes[zone].blank_cost = False
+            playfield.bushes[zone].update_ASCII()
+
+        # add a wolf pelt to player's hand
+        playfield.hand.append(card_library.WolfPelt())
+
+        # trade wolf pelts for trader's cards (traded cards go to player's hand)
+        trading(playfield)
+
+        # hide costs from opponent's cards
+        for zone in range(1, 5) :
+            playfield.opponent_field[zone].blank_cost = True
+            playfield.opponent_field[zone].update_ASCII()
+            playfield.bushes[zone].blank_cost = True
+            playfield.bushes[zone].update_ASCII()
+
+        # print field
+        playfield.print_field()
 
     class battle_state : ## maybe add explanations for the masks the first time they are used
         '''
