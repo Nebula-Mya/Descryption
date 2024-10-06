@@ -7,6 +7,7 @@ import random
 import math
 import os
 import sys
+import copy
 
 def choose_and_play(field) :
     '''
@@ -326,9 +327,9 @@ def deck_gen(possible_cards, size) :
             template_card = random.choice(possible_cards[cost()])
             card_class = type(template_card)
 
-        return card_class(getattr(template_card, 'blank_cost', False))
+        return copy.deepcopy(card_class(getattr(template_card, 'blank_cost', False)))
     
-    deck_list = [random_card(possible_cards) for _ in range(size)]
+    deck_list = [random_card(possible_cards) for _ in range(size)] # DONT CHANGE TO QOL.RANDOM_CARD, IT WILL BREAK THE CODE
 
     return deck.Deck(deck_list)
 
@@ -412,19 +413,19 @@ def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_varianc
     # game loop
     while True :
         # playtest feature to quick quit
-        if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) :
-            if playfield.active == 'player' :
-                playfield.print_full_field()
-            quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
-            if quit_game == 'y' :
-                QoL.clear()
-                if playfield.score['player'] > playfield.score['opponent'] :
-                    if print_results : ASCII_text.print_win()
-                    (win, winner, overkill, deck_out) = (True, 'player', 0, False)
-                else :
-                    if print_results : ASCII_text.print_lose()
-                    (win, winner, overkill, deck_out) = (True, 'opponent', 0, False)
-                break
+        # if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) :
+        #     if playfield.active == 'player' :
+        #         playfield.print_full_field()
+        #     quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
+        #     if quit_game == 'y' :
+        #         QoL.clear()
+        #         if playfield.score['player'] > playfield.score['opponent'] :
+        #             if print_results : ASCII_text.print_win()
+        #             (win, winner, overkill, deck_out) = (True, 'player', 0, False)
+        #         else :
+        #             if print_results : ASCII_text.print_lose()
+        #             (win, winner, overkill, deck_out) = (True, 'opponent', 0, False)
+        #         break
             
         # player turn
         if playfield.active == 'player' :

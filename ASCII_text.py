@@ -48,7 +48,7 @@ def print_win(overkill=0) :
     if overkill <= 0 :
         overkill_display = ''
     else :
-        overkill_display = 'Overkill: {}'.format(overkill)
+        overkill_display = 'Overkill: {}\nTeeth: +{}'.format(overkill, overkill)
     win = '''
 __/\\\\\\________/\\\\\\_______/\\\\\\\\\\_______/\\\\\\________/\\\\\\___________
  _\\///\\\\\\____/\\\\\\/______/\\\\\\///\\\\\\____\\/\\\\\\_______\\/\\\\\\___________

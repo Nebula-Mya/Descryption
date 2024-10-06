@@ -394,7 +394,8 @@ class Playmat :
                 input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
             # if a normal card dies
-            elif current_field[zone].status == 'dead' and not current_field[zone].sigil_in_category(sigils.on_deaths) :
+            # elif current_field[zone].status == 'dead' and not current_field[zone].sigil_in_category(sigils.on_deaths) :
+            elif current_field[zone].status == 'dead' :
                 current_field[zone].die()
                 if type(self) != card.BlankCard and current_field == self.player_field : self.graveyard.insert(0, current_field[zone])
                 self.summon_card(card=card.BlankCard(), field=current_field, zone=zone)

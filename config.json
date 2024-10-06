@@ -3,11 +3,11 @@
         "deck size": 20,
         "hand size": 5,
         "difficulty": {
-            "current difficulty name": "Normal",
-            "current difficulty index": 2,
-            "leshy median plays": 2,
-            "leshy plays variance": 1,
-            "leshy strat chance": 75,
+            "current difficulty name": "Hard",
+            "current difficulty index": 3,
+            "leshy median plays": 3,
+            "leshy plays variance": 2,
+            "leshy strat chance": 90,
             "leshy offense threshold": 3
         }
     },
@@ -18,7 +18,7 @@
         "beat trapper": true,
         "beat leshy": false,
         "wins": 0,
-        "losses": 2
+        "losses": 3
     },
     "death cards": {
         "first": {

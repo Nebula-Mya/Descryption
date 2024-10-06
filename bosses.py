@@ -212,17 +212,17 @@ def turn_structure(playfield) :
     played = []
 
     # playtest feature to quick quit
-    if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) :
-        if playfield.active == 'player' :
-            playfield.print_full_field()
-        quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
-        if quit_game == 'y' :
-            QoL.clear()
-            if playfield.score['player'] > playfield.score['opponent'] :
-                (win, winner, overkill, deck_out) = (True, 'player', 0, False)
-            else :
-                (win, winner, overkill, deck_out) = (True, 'opponent', 0, False)
-            return (win, winner, overkill, deck_out, [])
+    # if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) :
+    #     if playfield.active == 'player' :
+    #         playfield.print_full_field()
+    #     quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
+    #     if quit_game == 'y' :
+    #         QoL.clear()
+    #         if playfield.score['player'] > playfield.score['opponent'] :
+    #             (win, winner, overkill, deck_out) = (True, 'player', 0, False)
+    #         else :
+    #             (win, winner, overkill, deck_out) = (True, 'opponent', 0, False)
+    #         return (win, winner, overkill, deck_out, [])
         
     # player turn
     if playfield.active == 'player' :
@@ -253,7 +253,7 @@ def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=Tru
 
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
-        Poss_Leshy: the possible cards for Leshy's deck, defaults to all allowed Leshy cards with costs <= to player's max cost (list)
+        Poss_Leshy: the possible cards for Leshy's deck, defaults to all allowed Leshy cards with costs <= to player's max cost (dict)
         first_cards: the first cards to be drawn by Leshy, from first to last (list)
         advance: whether to advance from bushes (bool)
     '''
@@ -667,7 +667,7 @@ def boss_fight_angler(campaign) : # boss fight 2
                         for field in [playfield.opponent_field, playfield.bushes] : playfield.summon_card(card=card_library.Grizzly(blank_cost=True, sigils=['mighty leap', '']), zone=zone, field=field)
 
                 # change deck to be angler's second phase deck
-                playfield.opponent_deck = duel.deck_gen(poss_angler_p2, len(playfield.opponent_deck))
+                playfield.opponent_deck = duel.deck_gen(poss_angler_p2, len(playfield.opponent_deck)).cards
 
                 # reset stats
                 playfield.score = {'player': 0, 'opponent': 0}
@@ -793,7 +793,7 @@ def boss_fight_trapper_trader(campaign) : # boss fight 3
                         for field in [playfield.opponent_field, playfield.bushes] : playfield.summon_card(card=card_library.Grizzly(blank_cost=True, sigils=['mighty leap', '']), zone=zone, field=field)
 
                 # empty trader's deck
-                playfield.opponent_deck = deck.Deck([])
+                playfield.opponent_deck = []
 
                 # reset stats
                 playfield.score = {'player': 0, 'opponent': 0}
@@ -1011,7 +1011,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
                         else : playfield.summon_card(card=card_library.Stump(True), zone=zone, field=playfield.opponent_field)
                     
                     # change deck to be Leshy's second phase deck (death cards)
-                    playfield.opponent_deck = duel.deck_gen(card_library.Poss_Death, len(playfield.opponent_deck))
+                    playfield.opponent_deck = duel.deck_gen(card_library.Poss_Death, len(playfield.opponent_deck)).cards
 
                     playfield.print_field()
                     input('Press enter to continue.')
@@ -1095,7 +1095,13 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
         pre_boss_flavor(campaign)
 
         # set up trader's board
-        playfield = init_boss_playfield(campaign, Poss_Leshy=card_library.Rare_Cards, advance=False)
+        poss_leshy = { #TODO: make automatic for when new rare cards are added
+            1 : [card_library.MoleMan(True)],
+            2 : [card_library.Ouroboros(True)],
+            3 : [card_library.BullShark(True)],
+            4 : [card_library.MooseBuck(True), card_library.Urayuli(True), card_library.BoppitW(True)]
+        }
+        playfield = init_boss_playfield(campaign, Poss_Leshy=poss_leshy, advance=False)
         duel_state = battle_state()
         start_board_cards = [card.BlankCard(), card.BlankCard(), card.BlankCard(), card_library.MoleMan(True)]
         random.shuffle(start_board_cards)
@@ -1126,7 +1132,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
                 campaign.lives = 0
                 break
 
-            elif win and duel_state().win() :
+            elif win and duel_state.win() :
                 post_boss_flavor(campaign, True)
                 QoL.write_data([(['progress markers', 'beat leshy'], True)])
                 break

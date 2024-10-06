@@ -91,7 +91,7 @@ if applicables == sigils.on_deaths and current_field[zone].status == 'dead' :
             poss_zones = [zone-1, zone+1]
         for shifted_zone in poss_zones :
             if current_field[shifted_zone].species == '' :
-                new_card = card.BlankCard(species=split_card.species, cost=split_card.saccs, attack=split_card.base_attack//2, life=split_card.base_life//2, sigils=split_card.sigils, blank_cost=True)
+                new_card = card.BlankCard(species=split_card.species, cost=split_card.saccs//2, attack=split_card.base_attack//2, life=split_card.base_life//2, sigils=split_card.sigils, blank_cost=True)
                 self.summon_card(new_card, current_field, shifted_zone)
     
     # remove the original card
@@ -107,8 +107,8 @@ if applicables == sigils.on_deaths and current_field[zone].status == 'dead' :
         'Returns to hand on death.',
         '''
 import sigils
+import card
 if applicables == sigils.on_deaths :
-    import card
 
     if current_field[zone].status == 'dead' and current_field == self.player_field :
         current_field[zone].die()
@@ -189,7 +189,7 @@ else :
     prev_life = self.current_life
     self.current_life -= damage
     self.update_ASCII()
-    if not (in_opp_field or in_bushes) : # only if opponent is attacking, as leshy's bees within wont do anything; he doesnt have a hand to add to
+    if (not (in_opp_field or in_bushes)) and damage > 0 : # only if opponent is attacking, as leshy's bees within wont do anything; he doesnt have a hand to add to
         hand.append(card_library.Bee(sigils=other_sigil))
     if self.current_life <= 0 or deathtouch :
         self.status = 'dead'
@@ -401,7 +401,7 @@ if current_field[zone].status == 'dead' and current_field == self.player_field :
             poss_zones = [zone-1, zone+1]
         for shifted_zone in poss_zones :
             if current_field[shifted_zone].species == '' :
-                current_field[shifted_zone] = card.BlankCard(species=split_card.species, cost=split_card.saccs, attack=split_card.base_attack//2, life=split_card.base_life//2, sigils=split_card.sigils, zone=shifted_zone, blank_cost=True)
+                current_field[shifted_zone] = card.BlankCard(species=split_card.species, cost=split_card.saccs//2, attack=split_card.base_attack//2, life=split_card.base_life//2, sigils=split_card.sigils, zone=shifted_zone, blank_cost=True)
 
     # remove the original card to hand
     current_field[zone].die()
@@ -423,7 +423,7 @@ elif current_field[zone].status == 'dead' :
             poss_zones = [zone-1, zone+1]
         for shifted_zone in poss_zones :
             if current_field[shifted_zone].species == '' :
-                current_field[shifted_zone] = card.BlankCard(species=split_card.species, cost=split_card.saccs, attack=split_card.base_attack//2, life=split_card.base_life//2, sigils=split_card.sigils, zone=shifted_zone, blank_cost=True)
+                current_field[shifted_zone] = card.BlankCard(species=split_card.species, cost=split_card.saccs//2, attack=split_card.base_attack//2, life=split_card.base_life//2, sigils=split_card.sigils, zone=shifted_zone, blank_cost=True)
                 
     # remove the original card
     current_field[zone].die()
@@ -478,7 +478,7 @@ else :
     prev_life = self.current_life
     self.current_life -= damage
     self.update_ASCII()
-    if not (in_opp_field or in_bushes) : # only if opponent is attacking, as leshy's bees within wont do anything; he doesnt have a hand to add to
+    if (not (in_opp_field or in_bushes)) and damage > 0 : # only if opponent is attacking, as leshy's bees within wont do anything; he doesnt have a hand to add to
         hand.append(card_library.Bee(sigils=['airborne', 'mighty leap']))
     if self.current_life <= 0 or deathtouch :
         self.status = 'dead'
@@ -506,10 +506,10 @@ pass
 import QoL
 import card
 
-if self.sigils[0] == 'hefty (right)' :
-    changed_direction = ['hefty (left)', self.sigils[1]]
+if attacking_field[zone].sigils[0] == 'hefty (right)' :
+    changed_direction = ['hefty (left)', attacking_field[zone].sigils[1]]
 else :
-    changed_direction = [self.sigils[0], 'hefty (left)']
+    changed_direction = [attacking_field[zone].sigils[0], 'hefty (left)']
 
 if zone == 4 :
     attacking_field[zone].sigils = changed_direction
@@ -540,10 +540,10 @@ pass
 import QoL
 import card
 
-if self.sigils[0] == 'hefty (left)' :
-    changed_direction = ['hefty (right)', self.sigils[1]]
+if attacking_field[zone].sigils[0] == 'hefty (left)' :
+    changed_direction = ['hefty (right)', attacking_field[zone].sigils[1]]
 else :
-    changed_direction = [self.sigils[0], 'hefty (right)']
+    changed_direction = [attacking_field[zone].sigils[0], 'hefty (right)']
 
 if zone == 1 :
     attacking_field[zone].sigils = changed_direction
@@ -590,7 +590,7 @@ if applicables == sigils.on_deaths and current_field[zone].status == 'dead' :
             poss_zones = [zone-1, zone+1]
         for shifted_zone in poss_zones :
             if current_field[shifted_zone].species == '' :
-                new_card = card.BlankCard(species=split_card.species, cost=split_card.saccs, attack=split_card.base_attack//2, life=split_card.base_life//2, sigils=split_card.sigils, blank_cost=True)
+                new_card = card.BlankCard(species=split_card.species, cost=split_card.saccs//2, attack=split_card.base_attack//2, life=split_card.base_life//2, sigils=split_card.sigils, blank_cost=True)
                 self.summon_card(new_card, current_field, shifted_zone)
     
     # remove the original card

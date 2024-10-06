@@ -185,7 +185,7 @@ def card_battle(campaign, Poss_Leshy=None) :
             fair_poss_leshy = {cost: [card for card in card_library.Poss_Leshy[cost]] for cost in range(0, min(leshy_max_cost, player_max_cost+1))} # may be changed later for balancing
             leshy_deck = duel.deck_gen(fair_poss_leshy, int(deck_size * 1.5))
 
-        (_, winner, overkill, _) = duel.main(deck_size, 4, play_median, play_var, opp_strat, opp_threshold, player_deck_obj=campaign.player_deck, opponent_deck_obj=leshy_deck, squirrels_deck_obj=campaign.squirrel_deck, print_results=False)
+        (_, winner, overkill, _) = duel.main(deck_size, 4, play_median, play_var, opp_strat, opp_threshold, player_deck_obj=campaign.player_deck, opponent_deck_obj=leshy_deck, squirrels_deck_obj=campaign.squirrel_deck, print_results=True)
 
         if winner == 'opponent' :
             campaign.remove_life()
@@ -941,16 +941,15 @@ def card_shop(campaign) : # format visuals
             template_card = random.choice(possible_cards)
             card_class = type(template_card)
         else :
-            # get cost
-            max_cost = max(possible_cards.keys())
-            cost = math.floor((max_cost + 1) * random.betavariate(alpha, beta))
-
             while True :
+                # get cost
+                max_cost = max(possible_cards.keys())
+                cost = math.floor((max_cost + 1) * random.betavariate(alpha, beta))
                 template_card = random.choice(possible_cards[cost])
                 card_class = type(template_card)
                 if not any(type(card) == card_class for card in card_library.Rare_Cards) and not (open_sigil and not template_card.has_sigil('')): break
 
-        return card_class(getattr(template_card, 'blank_cost', False))
+        return copy.deepcopy(card_class(getattr(template_card, 'blank_cost', False)))
 
     def gameplay(campaign) :
         # set up variables
@@ -1183,6 +1182,7 @@ def break_rocks(campaign) : # format visuals
         half_rock_width = max(longest_line(broken_rock_sprites[selected][0].format(*number_sprites[number]).split('\n')), longest_line(broken_rock_sprites[selected][1].format(*number_sprites[number]).split('\n')))
 
         # combine the rock halves and the reward into one string
+        reward.update_ASCII() # make sure the reward is updated (wtf)
         final_str = ''
         for ind in range(11) :
             left_rock_line = broken_rock_sprites[selected][0].format(*number_sprites[number]).split('\n')[ind - index_offset + 1]
@@ -1204,13 +1204,14 @@ def break_rocks(campaign) : # format visuals
         print(QoL.center_justified(final_str))
 
     def random_insect() :
-        chosen_card = random.choice(card_library.Insects)
-        card_class = type(chosen_card)
-        if any(type(card_) == card_class for card_ in card_library.Rare_Cards) :
-            chosen_card = random.choice(card_library.Insects)
-            card_class = type(chosen_card)
+        # chosen_card = random.choice(card_library.Insects)
+        # card_class = type(chosen_card)
+        # if any(type(card_) == card_class for card_ in card_library.Rare_Cards) :
+        #     chosen_card = random.choice(card_library.Insects)
+        #     card_class = type(chosen_card)
         
-        return card_class(getattr(chosen_card, 'blank_cost', False))
+        # return card_class(getattr(chosen_card, 'blank_cost', False))
+        return QoL.random_card(card_library.Insects, weighted=False)
 
     def gameplay(campaign) :
         # randomly select 3 insect cards
@@ -1764,10 +1765,10 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
                 import sys
                 QoL.clear()
                 print('\n'*5)
-                if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) :
-                    quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
-                    if quit_game == 'y' :
-                        return
+                # if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) :
+                #     quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
+                #     if quit_game == 'y' :
+                #         return
                 split_road(campaign)
     ###     check campagin.has_lost
             if campaign.has_lost() :
@@ -1800,6 +1801,9 @@ if __name__ == '__main__' :
 
         # set up variables
         campaign = rogue_campaign(duel.deck_gen(card_library.Poss_Playr, 20).cards, 0, 2)
+        campaign.add_card(card_library.RabbitPelt())
+        campaign.add_card(card_library.WolfPelt())
+        campaign.add_card(card_library.GoldenPelt())
 
         # get death cards if necessary
         if sys.argv[1] in ['death_card', 'lost', 'win'] :

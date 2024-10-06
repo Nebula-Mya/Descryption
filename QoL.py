@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import random
+import copy
 
 def clear() :
     '''
@@ -561,15 +562,16 @@ def ping(dict={'ping':'pong'}) : # for testing
     with open('ping.txt', 'w') as file :
         file.write(data_to_write)
 
-def random_card(possible_cards, weighted=True, alpha=2.2, beta=3.3) :
+def random_card(possible_cards, weighted=True, alpha=2.2, beta=3.3, few_rare=True) :
     '''
     gets a random card from a set of possible cards
 
     Arguments:
         possible_cards: the cards to choose from (list or dict)
-        weighted: whether to weight the chances of cards based on rarity and cost, defaults to True (bool)
+        weighted: whether to weight the chances of cards based on cost, defaults to True (bool)
         alpha: the alpha value for the beta distribution, defaults to 2.2 (float)
         beta: the beta value for the beta distribution, defaults to 3.3 (float)
+        few_rare: whether to lower the chances of rare cards, defaults to True (bool)
     '''
     # imports
     import card_library
@@ -595,10 +597,11 @@ def random_card(possible_cards, weighted=True, alpha=2.2, beta=3.3) :
     # get card type
     template_card = random.choice(card_dict[cost()])
     card_class = type(template_card)
-    if weighted and any(type(card) for card in card_library.Rare_Cards) == card_class: # lower chances of rare cards
+    if few_rare and any(type(card) for card in card_library.Rare_Cards) == card_class: # lower chances of rare cards
         template_card = random.choice(card_dict[cost()])
         card_class = type(template_card)
 
+    # return copy.deepcopy(card_class(getattr(template_card, 'blank_cost', False)))
     return card_class(getattr(template_card, 'blank_cost', False))
 
 if __name__ == '__main__' :
