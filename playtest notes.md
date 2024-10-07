@@ -2,8 +2,6 @@
 
 ## Bugs:
 
-- [ ] fix grammar with trapper (1 teeth) (and with lose screen)
-
 - [ ] check that cards aren't being added as same instance from library (need to make library stuff be lists of classes instead of instances - will be big change)
  > #### Files to revise:
  > - [ ] card_library.py
@@ -17,11 +15,13 @@
  > - [ ] rogue.py
  > - [ ] sigils.py
 
+- [ ] prevent it from adding mystery sigil
+
+- [ ] fix grammar with trapper (1 teeth) (and with lose screen)
+
 - [ ] dont let 0 costs be summoned on top of other cards...
 
 - [ ] get teeth from boss battles
-
-- [ ] prevent it from adding mystery sigil
 
 - [ ] dam builder should inheret sigils
 
@@ -30,6 +30,19 @@
 
 
 ## Improvements:
+
+- [ ] Make sigils into classes instead of executing strings
+ > #### Files to revise: 
+ > - [ ] sigils.py
+ > - [ ] QoL.py
+ > - [ ] card_library.py
+ > - [ ] bosses.py
+ > - [ ] card.py
+ > - [ ] deck.py
+ > - [ ] duel.py
+ > - [ ] field.py
+ > - [ ] menu.py
+ > - [ ] rogue.py
 
 - [ ] For mystery cards, dont show 0/0 stats for explanation (in card choice event)
 
