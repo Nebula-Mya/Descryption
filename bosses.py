@@ -168,7 +168,7 @@ def pre_boss_flavor(campaign) :
     print()
     input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
-def post_boss_flavor(campaign, result) :
+def post_boss_flavor(campaign, result, overkill=0, deck_out=False) :
     '''
     prints post boss fight flavor text and displays
     removes smoke cards from the player's deck
@@ -176,11 +176,24 @@ def post_boss_flavor(campaign, result) :
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
         result: whether the player won (bool)
+        overkill: the amount of overkill the player had, defaults to 0 (int)
+        deck_out: whether the player's deck ran out, defaults to False (bool)
     '''
     # remove smoke cards
     all_smoke = [card_ for card_ in campaign.player_deck.cards if type(card_) == card_library.Smoke]
     for smoke in all_smoke :
         campaign.remove_card(smoke)
+
+    # add teeth
+    campaign.add_teeth(overkill)
+
+    # win/loss splash screen
+    QoL.clear()
+    if result :
+        ASCII_text.print_win(overkill)
+    else :
+        ASCII_text.print_lose(deck_out)
+    input('Press enter to continue.')
 
     if not result : # player lost
         QoL.clear()
@@ -503,7 +516,7 @@ def boss_fight_prospector(campaign) : # boss fight 1
             (win, winner, overkill, deck_out) = duel.winner_check(playfield, silent=True)
 
             if win and winner == 'opponent' :
-                post_boss_flavor(campaign, False)
+                post_boss_flavor(campaign, False, deck_out=deck_out)
                 campaign.lives = 0
                 break
 
@@ -538,13 +551,13 @@ def boss_fight_prospector(campaign) : # boss fight 1
                 playfield.active = 'player'
 
             elif win and second_phase:
-                post_boss_flavor(campaign, True)
+                post_boss_flavor(campaign, True, overkill=overkill)
                 QoL.write_data([(['progress markers', 'beat prospector'], True)])
                 break
 
         return (win, winner, overkill, deck_out)
 
-    return gameplay(campaign) # add flavor text, context, etc.
+    return gameplay(campaign)[1] == 'player' # add flavor text, context, etc.
 
 def boss_fight_angler(campaign) : # boss fight 2
     def gameplay(campaign) :
@@ -620,7 +633,7 @@ def boss_fight_angler(campaign) : # boss fight 2
             (win, winner, overkill, deck_out) = duel.winner_check(playfield, silent=True)
 
             if win and winner == 'opponent' :
-                post_boss_flavor(campaign, False)
+                post_boss_flavor(campaign, False, deck_out=deck_out)
                 campaign.lives = 0
                 break
 
@@ -673,13 +686,13 @@ def boss_fight_angler(campaign) : # boss fight 2
                 playfield.active = 'player'
 
             elif win and second_phase:
-                post_boss_flavor(campaign, True)
+                post_boss_flavor(campaign, True, overkill=overkill)
                 QoL.write_data([(['progress markers', 'beat angler'], True)])
                 break
 
         return (win, winner, overkill, deck_out)
 
-    return gameplay(campaign) # add flavor text, context, etc.
+    return gameplay(campaign)[1] == 'player' # add flavor text, context, etc.
 
 def boss_fight_trapper_trader(campaign) : # boss fight 3
     def gameplay(campaign) :
@@ -717,7 +730,7 @@ def boss_fight_trapper_trader(campaign) : # boss fight 3
             (win, winner, overkill, deck_out) = duel.winner_check(playfield, silent=True)
 
             if win and winner == 'opponent' :
-                post_boss_flavor(campaign, False)
+                post_boss_flavor(campaign, False, deck_out=deck_out)
                 campaign.lives = 0
                 break
 
@@ -799,13 +812,13 @@ def boss_fight_trapper_trader(campaign) : # boss fight 3
                 playfield.active = 'player'
 
             elif win and second_phase:
-                post_boss_flavor(campaign, True)
+                post_boss_flavor(campaign, True, overkill=overkill)
                 QoL.write_data([(['progress markers', 'beat trapper'], True)])
                 break
 
         return (win, winner, overkill, deck_out)
 
-    return gameplay(campaign) # add flavor text, context, etc.
+    return gameplay(campaign)[1] == 'player' # add flavor text, context, etc.
 
 def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck trials)
     ## Leshy's reaction to the moon being destroyed is part of field.check_states()
@@ -1124,15 +1137,15 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
             (win, winner, overkill, deck_out) = duel.winner_check(playfield, silent=True)
 
             if win and winner == 'opponent' :
-                post_boss_flavor(campaign, False)
+                post_boss_flavor(campaign, False, deck_out=deck_out)
                 campaign.lives = 0
                 break
 
             elif win and duel_state.win() :
-                post_boss_flavor(campaign, True)
+                post_boss_flavor(campaign, True, overkill=overkill)
                 QoL.write_data([(['progress markers', 'beat leshy'], True)])
                 break
 
         return (win, winner, overkill, deck_out)
 
-    return gameplay(campaign) # add flavor text, context, etc.
+    return gameplay(campaign)[1] == 'player' # add flavor text, context, etc.

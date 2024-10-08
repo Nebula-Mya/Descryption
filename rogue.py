@@ -806,9 +806,13 @@ def pelt_shop(campaign) : # format visuals
         cart = QoL.print_deck(new_pelts, fruitful=True)
 
         # print the shop
+        if campaign.teeth == 1 : 
+            teeth = ' tooth '
+        else :
+            teeth = ' teeth '
         QoL.clear()
         print('\n')
-        print(QoL.center_justified('You have ' + str(campaign.teeth) + ' teeth to spend') + '\n')
+        print(QoL.center_justified('You have ' + str(campaign.teeth) + teeth + 'to spend') + '\n')
         print(shop_display)
         print(f'{card_gap_spaces}Cart:', end='')
         print(cart, end='')
@@ -1752,13 +1756,14 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
     ###             if they have, update the level, reset the progress, and print flavor text for the new area
                     campaign.level += 1
                     campaign.progress = 0
-                    print(f'You have reached the {campaign.level}th area')
+                    level_number = ['first', 'second', 'third', 'fourth'][campaign.level]
+                    print(f'You have reached the {level_number} area')
                     print()
                     input('Press enter to continue...')
     ###     else, run split_road
             else : 
                 # playtest feature to quick quit
-                import sys
+                # import sys
                 QoL.clear()
                 print('\n'*5)
                 # if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) :
@@ -1800,6 +1805,7 @@ if __name__ == '__main__' :
         campaign.add_card(card_library.RabbitPelt())
         campaign.add_card(card_library.WolfPelt())
         campaign.add_card(card_library.GoldenPelt())
+        campaign.add_teeth(10)
 
         # get death cards if necessary
         if sys.argv[1] in ['death_card', 'lost', 'win'] :

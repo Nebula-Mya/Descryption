@@ -17,11 +17,11 @@
 
 - [x] prevent it from adding mystery sigil (known to happen with trader)
 
-- [ ] fix grammar with trapper (1 teeth) (and with post boss screen)
+- [x] fix grammar with trapper (1 teeth) (and with post boss screen)
 
 - [x] dont let 0 costs be summoned on top of other cards...
 
-- [ ] get teeth from boss battles
+- [x] get teeth from boss battles
 
 - [x] dam builder should inheret sigils
 
