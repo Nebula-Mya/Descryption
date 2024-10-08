@@ -231,7 +231,10 @@ class BlankCard() :
                     case 8 : # description line 3
                         explanation += ' '*(card_gaps) + ' '*6 + desc_third_line
                     case 10 : # stats
-                        explanation += ' '*(card_gaps) + ' '*2 + self.species + ' has an attack power of ' + str(self.current_attack) + ' and life points of ' + str(self.current_life) + ' of ' + str(self.base_life) + '.'
+                        if '???' in self.sigils:
+                            explanation += ' '*(card_gaps) + ' '*2 + self.species + ' has an attack power of ??? and life points of ??? of ???.'
+                        else :
+                            explanation += ' '*(card_gaps) + ' '*2 + self.species + ' has an attack power of ' + str(self.current_attack) + ' and life points of ' + str(self.current_life) + ' of ' + str(self.base_life) + '.'
 
         else : # two sigils
             match self.sigils[0] :
@@ -280,7 +283,10 @@ class BlankCard() :
                     case 9 :
                         explanation += ' '*(card_gaps) + ' '*6 + s2_desc_third_line
                     case 10 : # stats
-                        explanation += ' '*(card_gaps) + ' '*2 + self.species + ' has an attack power of ' + str(self.current_attack) + ' and life points of ' + str(self.current_life) + ' of ' + str(self.base_life) + '.'
+                        if '???' in self.sigils:
+                            explanation += ' '*(card_gaps) + ' '*2 + self.species + ' has an attack power of ??? and life points of ??? of ???.'
+                        else :
+                            explanation += ' '*(card_gaps) + ' '*2 + self.species + ' has an attack power of ' + str(self.current_attack) + ' and life points of ' + str(self.current_life) + ' of ' + str(self.base_life) + '.'
 
         print(explanation)
 
@@ -396,7 +402,7 @@ class BlankCard() :
         self.update_ASCII()
 
 if __name__ == "__main__" :
-    testblank = BlankCard()
+    testblank = BlankCard(sigils=['???',''])
     print()
     print('Blank Card')
     print(testblank.text_lines)

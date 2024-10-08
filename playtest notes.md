@@ -2,49 +2,36 @@
 
 ## Bugs:
 
-- [ ] check that cards aren't being added as same instance from library (need to make library stuff be lists of classes instead of instances - will be big change)
+- [x] check that cards aren't being added as same instance from library (need to make library stuff be lists of classes instead of instances - will be big change) (also change the creation of blankcards for copies to be of the right type, cause species checks are changing to type checks)
  > #### Files to revise:
- > - [ ] card_library.py
- > - [ ] QoL.py
- > - [ ] bosses.py
- > - [ ] card.py
- > - [ ] deck.py
- > - [ ] duel.py
- > - [ ] field.py
- > - [ ] menu.py
- > - [ ] rogue.py
- > - [ ] sigils.py
+ > - [x] card_library.py
+ > - [x] QoL.py
+ > - [x] bosses.py
+ > - [x] card.py
+ > - [x] deck.py
+ > - [x] duel.py
+ > - [x] field.py
+ > - [x] menu.py
+ > - [x] rogue.py
+ > - [x] sigils.py
 
-- [ ] prevent it from adding mystery sigil
+- [x] prevent it from adding mystery sigil (known to happen with trader)
 
-- [ ] fix grammar with trapper (1 teeth) (and with lose screen)
+- [ ] fix grammar with trapper (1 teeth) (and with post boss screen)
 
-- [ ] dont let 0 costs be summoned on top of other cards...
+- [x] dont let 0 costs be summoned on top of other cards...
 
 - [ ] get teeth from boss battles
 
-- [ ] dam builder should inheret sigils
+- [x] dam builder should inheret sigils
 
-- [ ] increase ouro's stats on sacc
+- [x] increase ouro's stats on sacc
 
 
 
 ## Improvements:
 
-- [ ] Make sigils into classes instead of executing strings
- > #### Files to revise: 
- > - [ ] sigils.py
- > - [ ] QoL.py
- > - [ ] card_library.py
- > - [ ] bosses.py
- > - [ ] card.py
- > - [ ] deck.py
- > - [ ] duel.py
- > - [ ] field.py
- > - [ ] menu.py
- > - [ ] rogue.py
-
-- [ ] For mystery cards, dont show 0/0 stats for explanation (in card choice event)
+- [x] For mystery cards, dont show 0/0 stats for explanation (in card choice event)
 
 - [ ] in sacrifice for sigils event, allow to go back at any point, not just end confirmation
 
@@ -56,7 +43,7 @@
 
 - [ ] clarify steel trap text (check if leshy is given a pelt??)
 
-- [ ] show card when drawing from resource too
+- [x] show card when drawing from resource too
 
 - [ ] maybe let survivors lower cost
 
@@ -70,6 +57,6 @@
 
 - [ ] make it so stones can replace sigils
 
-- [ ] probs make unkillable not work on sacc (wait for further testing after bug fixes)
+- [ ] maybe make unkillable not work on sacc (wait for further testing after bug fixes)
 
 - [ ] maybe get rid of starting squirrel (give another main deck card, will need update to fair draw implementation)

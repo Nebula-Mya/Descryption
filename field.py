@@ -38,7 +38,7 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
                 return True
         
         # if no categories apply
-        if opp_card.species != '' and (self_life > opp_attack or self_attack >= opp_life or opp_attack >= 4) :
+        if type(opp_card) != card.BlankCard and (self_life > opp_attack or self_attack >= opp_life or opp_attack >= 4) :
             return True
         
         return False
@@ -68,7 +68,7 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
 
         # if Leshy is winning enough to go on the offensive, regardless of card category
         if (score['opponent'] - score['player'] >= strat_change_threshold) and (card_to_play.base_attack > 0) :
-            if bush_empty and opp_card.species == '' :
+            if bush_empty and type(opp_card) == card.BlankCard :
                 return True
             else :
                 False
@@ -90,7 +90,7 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
                 return False
     
     in_strategy = [zone for zone in range(1, 5) if add_to_in_strat(card_to_play, player_field, bushes, zone)]
-    out_of_strategy = [zone for zone in range(1, 5) if zone not in in_strategy and bushes[zone].species == '']
+    out_of_strategy = [zone for zone in range(1, 5) if zone not in in_strategy and type(bushes[zone]) == card.BlankCard]
 
     return in_strategy, out_of_strategy
 
@@ -182,16 +182,16 @@ class Playmat :
                 self.hand.append(self.player_deck[0])
                 self.player_deck.pop(0)
 
-                # show card explanation
-                self.print_field()
-                self.hand[-1].explain()
-                input('Press enter to continue.')
-
             case 'resource' :
                 if self.player_squirrels == [] :
                     raise ValueError('Deck is empty.')
                 self.hand.append(self.player_squirrels[0])
                 self.player_squirrels.pop(0)
+        
+        # show card explanation
+        self.print_field()
+        self.hand[-1].explain()
+        input('Press enter to continue.')
 
     def play_card(self, index, zone) :
         '''
@@ -218,8 +218,12 @@ class Playmat :
         # update display
         self.print_field()
         self.hand[index].explain()
-        print('Sacrifices required:', cost)
-        print('Select sacrifices: (press enter to go back)', end=' ')
+
+        if cost == 0 and type(self.player_field[zone]) != card.BlankCard : # playing on top of a card
+            return False
+        else :
+            print('Sacrifices required:', cost)
+            print('Select sacrifices: (press enter to go back)', end=' ')
 
         def fail_saccs() :
                 sacc_list = []
@@ -249,7 +253,7 @@ class Playmat :
                 continue
 
             for sacc_index in sacc_indexes :
-                if sacc_index not in range(1, 5) or sacc_index in sacc_list or self.player_field[sacc_index].species == '' : # invalid zone
+                if sacc_index not in range(1, 5) or sacc_index in sacc_list or type(self.player_field[sacc_index]) == card.BlankCard : # invalid zone
                     print(str(sacc_index), 'is an invalid zone.')
                     break # do not reset, just don't add the sacc, may change if alternate behavior is desired
                 elif type(self.player_field[sacc_index]) in card_library.Terrain_Cards : # cannot sacrifice terrain cards
@@ -258,7 +262,7 @@ class Playmat :
                 else :
                     sacc_list.append(sacc_index)
 
-            if self.player_field[zone].species == '' or len(sacc_list) != cost : # guard clause for playing on top of a card
+            if type(self.player_field[zone]) == card.BlankCard or len(sacc_list) != cost : # guard clause for playing on top of a card
                 continue
             if zone not in sacc_list : # playing on top of a card that wasn't sacrificed
                 print('Cannot play on top of a non sacrificed card.')
@@ -271,16 +275,17 @@ class Playmat :
         for ind in sacc_list :
             QoL.exec_sigil_code(self.player_field[ind], sigils.on_sacrifices, None, locals())
 
-            if self.player_field[ind].species == 'Cat' and self.player_field[ind].has_sigil('many lives') : # make sure cat still has many lives
+            if type(self.player_field[ind]) == card_library.Cat and self.player_field[ind].has_sigil('many lives') : # make sure cat still has many lives
                 self.player_field[ind].spent_lives += 1
                 if self.player_field[ind].spent_lives >= 9 :
                     self.player_field[ind] = card_library.UndeadCat()
-            else :
-                self.player_field[ind].die()
 
             if not self.player_field[ind].sigil_in_category(sigils.on_sacrifices) :
+                self.player_field[ind].die()
                 self.graveyard.insert(0, self.player_field[ind])
                 self.player_field[ind] = card.BlankCard()
+            elif type(self.player_field[ind]) == card_library.Ouroboros :
+                self.player_field[ind].level_up()
         else : 
             # play card to zone
             self.summon_card(card=self.hand[index], field=self.player_field, zone=zone)
@@ -308,13 +313,13 @@ class Playmat :
                 attacking_field = self.opponent_field
                 defending_field = self.player_field
                 is_players = False
-                omni_strike = any([type(card_) == card_library.Moon for card_ in self.player_field.values()]) and all([card_.species == '' for card_ in self.opponent_field.values()])
+                omni_strike = any([type(card_) == card_library.Moon for card_ in self.opponent_field.values()]) and all([type(card_) == card.BlankCard for card_ in self.player_field.values()])
             case _ :
                 raise ValueError('Invalid active player.')
 
         # attacking
         for zone in attacking_field :
-            if attacking_field[zone].species != '' and attacking_field[zone].zone != 0 and attacking_field[zone].zone != 5 :
+            if type(attacking_field[zone]) != card.BlankCard and attacking_field[zone].zone != 0 and attacking_field[zone].zone != 5 :
                 attacker_points = attacking_field[zone].attack(defending_field[zone-1],defending_field[zone],defending_field[zone+1], self.hand, is_players=is_players, bushes=self.bushes)
 
                 # score update
@@ -348,7 +353,7 @@ class Playmat :
 
             ## specific cards will never have sigils that apply on death
             # if pack mule from Prospector fight
-            if current_field[zone].species == 'Pack Mule' and current_field[zone].status == 'dead' and current_field in [self.opponent_field, self.bushes] :
+            if current_field[zone].species == 'Pack Mule' and current_field[zone].status == 'dead' and current_field in [self.opponent_field, self.bushes] : # keeping this as species because its a funny easter egg
                 self.hand.append(card_library.Squirrel())
                 one_cost = QoL.random_card(card_library.Poss_Playr[1])
                 two_cost = QoL.random_card(card_library.Poss_Playr[2])
@@ -357,24 +362,23 @@ class Playmat :
                 self.hand.append(two_cost)
                 self.hand.append(bone_card)
                 current_field[zone].die()
-                if current_field == self.player_field : self.graveyard.insert(0, current_field[zone])
                 self.summon_card(card=card.BlankCard(), field=current_field, zone=zone)
                 corpses.append((zone, current_field))
 
             # if bait bucket from Angler fight
-            elif current_field[zone].species == 'Bait Bucket' and current_field[zone].status == 'dead' :
+            elif type(current_field[zone]) == card_library.BaitBucket and current_field[zone].status == 'dead' :
                 current_field[zone].die()
                 if current_field == self.player_field : self.graveyard.insert(0, current_field[zone])
                 self.summon_card(card=card_library.BullShark(True), field=current_field, zone=zone)
 
             # if strange frog from Trapper fight
-            elif current_field[zone].species == 'Strange Frog' and current_field[zone].status == 'dead' and current_field == self.opponent_field :
+            elif type(current_field[zone]) == card_library.StrangeFrog and current_field[zone].status == 'dead' and current_field == self.opponent_field :
                 current_field[zone].die()
                 if current_field == self.player_field : self.graveyard.insert(0, current_field[zone])
                 self.summon_card(card=card_library.LeapingTrap(True), field=current_field, zone=zone)
 
             # if moon from Leshy fight
-            elif current_field[zone].species == 'Moon' and current_field[zone].status == 'dead' :
+            elif type(current_field[zone]) == card_library.Moon and current_field[zone].status == 'dead' :
                 for zone in range(1, 5) :
                     self.bushes[zone].die()
                     self.opponent_field[zone].die()
@@ -402,7 +406,7 @@ class Playmat :
                 corpses.append((zone, current_field))
         
         # check for corpse eaters
-        open_corpses = [corpse for (corpse, field) in corpses if field == self.player_field and self.player_field[corpse].species == '']
+        open_corpses = [corpse for (corpse, field) in corpses if field == self.player_field and type(self.player_field[corpse]) == card.BlankCard]
         corpse_eaters = get_corpse_eaters(self.hand)
 
         # play corpse eaters
@@ -419,17 +423,17 @@ class Playmat :
         '''
         # set up variables
         played = 0
-        player_card_count = len([card_in_play for card_in_play in self.player_field.values() if card_in_play.species != ''])
+        player_card_count = len([card_in_play for card_in_play in self.player_field.values() if type(card_in_play) != card.BlankCard])
         play_count_median = self.Leshy_play_count_median + (player_card_count > 2) - (player_card_count < 2) # shift range slightly to match amount of cards on player's field
         play_count = random.randint(play_count_median - self.Leshy_play_count_variance, play_count_median + self.Leshy_play_count_variance)
         play_count = max(min(play_count, len(self.opponent_deck), 4), 1) if self.opponent_deck else 0 # clamp play count
 
         # advance from bushes to field
-        for zone in [zone for zone in self.opponent_field if self.opponent_field[zone].species == '' and zone % 5 != 0] :
+        for zone in [zone for zone in self.opponent_field if type(self.opponent_field[zone]) == card.BlankCard and zone % 5 != 0] :
             self.summon_card(card=self.bushes[zone], field=self.opponent_field, zone=zone)
             self.summon_card(card=card.BlankCard(), field=self.bushes, zone=zone)
         
-        while played < play_count and [zone for zone in range(1, 5) if self.bushes[zone].species == ''] :
+        while played < play_count and [zone for zone in range(1, 5) if type(self.bushes[zone]) == card.BlankCard] :
             # intelligent choosing of zones to prioritize
             in_strategy, out_of_strategy = ai_category_checking(card_library.AI_categories, self.player_field, self.opponent_deck[0], self.bushes, self.score, self.Leshy_strat_change_threshold)
 
@@ -612,7 +616,7 @@ if __name__ == '__main__' :
             card_list = []
             for cost in card_library.Poss_Playr :
                 for species in card_library.Poss_Playr[cost] :
-                    card_list.append(species)
+                    card_list.append(species())
                     card_list.append(card.BlankCard())
             for zone in range(1, 5) :
                 playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
@@ -636,7 +640,7 @@ if __name__ == '__main__' :
         card_list = []
         for cost in card_library.Poss_Playr :
             for species in card_library.Poss_Playr[cost] :
-                card_list.append(species)
+                card_list.append(species())
                 card_list.append(card.BlankCard())
         for zone in range(1, 5) :
             if zone == 3 :
@@ -686,7 +690,7 @@ if __name__ == '__main__' :
         card_list = []
         for cost in card_library.Poss_Playr :
             for species in card_library.Poss_Playr[cost] :
-                card_list.append(species)
+                card_list.append(species())
                 card_list.append(card.BlankCard())
         for zone in range(1, 5) :
             playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
@@ -707,7 +711,7 @@ if __name__ == '__main__' :
         # kill 2 cards and check states
         cards_to_kill = []
         for zone in range(1, 5) :
-            if playmat.player_field[zone].species != '' :
+            if type(playmat.player_field[zone]) != card.BlankCard :
                 cards_to_kill.append(zone)
         kill_count = 2
         if len(cards_to_kill) < 2 :
@@ -747,7 +751,7 @@ if __name__ == '__main__' :
         card_list = []
         for cost in card_library.Poss_Playr :
             for species in card_library.Poss_Playr[cost] :
-                card_list.append(species)
+                card_list.append(species())
                 card_list.append(card.BlankCard())
         for zone in range(1, 5) :
             playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
@@ -787,7 +791,7 @@ if __name__ == '__main__' :
         card_list = []
         for cost in card_library.Poss_Playr :
             for species in card_library.Poss_Playr[cost] :
-                card_list.append(species)
+                card_list.append(species())
                 card_list.append(card.BlankCard())
         for zone in range(1, 5) :
             playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
@@ -831,7 +835,7 @@ if __name__ == '__main__' :
         card_list = []
         for cost in card_library.Poss_Playr :
             for species in card_library.Poss_Playr[cost] :
-                card_list.append(species)
+                card_list.append(species())
                 card_list.append(card.BlankCard())
         for zone in range(1, 5) :
             playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))

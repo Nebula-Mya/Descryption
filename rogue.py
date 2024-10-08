@@ -77,7 +77,7 @@ class rogue_campaign :
         removes a card from the player's deck
         
         Arguments:
-            index: the index of the card to remove (int)
+            card: the card to remove from the player's deck (card object)
         '''
         sorted_deck = QoL.sort_deck(self.player_deck.cards)
         index = sorted_deck.index(card)
@@ -178,12 +178,12 @@ def card_battle(campaign, Poss_Leshy=None) :
         deck_size = len(campaign.player_deck)
 
         if Poss_Leshy :
-            leshy_deck = duel.deck_gen(Poss_Leshy, int(deck_size * 1.5))
+            leshy_deck = duel.deck_gen(Poss_Leshy, int(deck_size * 1.5), hidden_cost=True)
         else :
             player_max_cost = max([card.saccs for card in campaign.player_deck.cards])
             leshy_max_cost = max(cost for cost in card_library.Poss_Leshy.keys())
             fair_poss_leshy = {cost: [card for card in card_library.Poss_Leshy[cost]] for cost in range(0, min(leshy_max_cost, player_max_cost+1))} # may be changed later for balancing
-            leshy_deck = duel.deck_gen(fair_poss_leshy, int(deck_size * 1.5))
+            leshy_deck = duel.deck_gen(fair_poss_leshy, int(deck_size * 1.5), hidden_cost=True)
 
         (_, winner, overkill, _) = duel.main(deck_size, 4, play_median, play_var, opp_strat, opp_threshold, player_deck_obj=campaign.player_deck, opponent_deck_obj=leshy_deck, squirrels_deck_obj=campaign.squirrel_deck, print_results=True)
 
@@ -217,7 +217,7 @@ def card_choice(campaign) :
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
     '''
-    def card_choice(campaign, cards) : # choose a card from a list of 3 and add it to the player's deck
+    def card_choose(campaign, cards) : # choose a card from a list of 3 and add it to the player's deck
         # set up variables
         invalid_choice = False
 
@@ -312,7 +312,7 @@ def card_choice(campaign) :
 
     def normal_cards(campaign) : # generate a list of 3 taken from card_library.Poss_Playr
         card_options = duel.deck_gen(card_library.Poss_Playr, 3).cards
-        card_index = card_choice(campaign, card_options)
+        card_index = card_choose(campaign, card_options)
         QoL.clear()
         print('\n'*5)
         print('You chose:')
@@ -324,7 +324,7 @@ def card_choice(campaign) :
     def cost_cards(campaign) : # generate a list of 3 taken from card_library.Poss_Cost, only seeing the costs of the cards
         card_options = duel.deck_gen(card_library.Poss_Playr, 3).cards
         card_options_hidden = [card.BlankCard(species='???', cost=option.cost[-1], sigils=['???',''], blank_stats=True) for option in card_options]
-        card_index = card_choice(campaign, card_options_hidden)
+        card_index = card_choose(campaign, card_options_hidden)
         QoL.clear()
         print('\n'*5)
         print('You chose:')
@@ -335,7 +335,8 @@ def card_choice(campaign) :
 
     def death_cards(campaign) : # generate a list of 3 death cards taken from card_library.Poss_Death, only available after 5 deaths
         card_options = random.sample(card_library.Poss_Death, 3)
-        card_index = card_choice(campaign, card_options)
+        card_options = [card_() for card_ in card_options]
+        card_index = card_choose(campaign, card_options)
         QoL.clear()
         print('\n'*5)
         print('You chose:')
@@ -346,7 +347,8 @@ def card_choice(campaign) :
 
     def rare_cards(campaign) : # generate a list of 3 rare cards taken from card_library.Rare_Cards, occurs after boss fights
         card_options = random.sample(card_library.Rare_Cards, 3)
-        card_index = card_choice(campaign, card_options)
+        card_options = [card_() for card_ in card_options]
+        card_index = card_choose(campaign, card_options)
         QoL.clear()
         print('\n'*5)
         print('You chose:')
@@ -591,6 +593,7 @@ def merge_cards(campaign) : # format visuals
         '''
         # set up variables
         invalid_choice = False
+        not_another = False
         sorted_deck = QoL.sort_deck(deck_list)
         
         while True :
@@ -602,12 +605,19 @@ def merge_cards(campaign) : # format visuals
                 print(QoL.center_justified('Invalid choice'))
                 print()
                 invalid_choice = False
+            elif not_another :
+                print(QoL.center_justified('That card is the only one of its species'))
+                print()
+                not_another = False
 
             # get user input
             card_index = input(QoL.center_justified('Enter the number of the first card to merge:').rstrip() + ' ')
             (is_int, card_index) = QoL.reps_int(card_index, -1)
             if not is_int or card_index not in range(len(sorted_deck)) :
                 invalid_choice = True
+                continue
+            elif type(sorted_deck[card_index]) not in [type(card_) for card_ in sorted_deck if card_ != sorted_deck[card_index]] :
+                not_another = True
                 continue
 
             return sorted_deck[card_index]
@@ -625,7 +635,7 @@ def merge_cards(campaign) : # format visuals
         '''
         # set up variables
         invalid_choice = False
-        same_species = QoL.sort_deck([card_ for card_ in deck_list if card_.species == card_1.species and card_ != card_1])
+        same_species = QoL.sort_deck([card_ for card_ in deck_list if type(card_) == type(card_1) and card_ != card_1])
 
         while True :
             # print the player's deck
@@ -640,7 +650,7 @@ def merge_cards(campaign) : # format visuals
             # get user input
             card_index = input(QoL.center_justified('Enter the number of the second card to merge:').rstrip() + ' ')
             (is_int, card_index) = QoL.reps_int(card_index, -1)
-            if not is_int or card_index not in range(len(same_species)) or same_species[card_index].species != card_1.species :
+            if not is_int or card_index not in range(len(same_species)) or type(same_species[card_index]) != type(card_1) :
                 invalid_choice = True
                 continue
 
@@ -722,18 +732,17 @@ def merge_cards(campaign) : # format visuals
             bool: True if the player confirms their choice, False if they do not
             result: the resulting card (card object)
         '''
-        # set up variables
-        result = {
-            'species': card_1.species,
-            'cost': card_1.saccs + card_2.saccs,
-            'attack': card_1.base_attack + card_2.base_attack,
-            'life': card_1.base_life + card_2.base_life,
-            'sigils': result_sigils
-        }
-        card_result = card.BlankCard(**result)
+        # create the resulting card
+        card_result = type(card_1)(sigils=result_sigils)
+        card_result.species = card_1.species
+        card_result.saccs = card_1.saccs + card_2.saccs
+        card_result.base_attack = card_1.base_attack + card_2.base_attack
+        card_result.base_life = card_1.base_life + card_2.base_life
+        card_result.reset_stats()
+        card_result.update_ASCII()
 
         # generate the equation
-        equation = '\n'.join(card_equation(card_1, card_2, card.BlankCard(**result)))
+        equation = '\n'.join(card_equation(card_1, card_2, card_result))
 
         # print the equation
         QoL.clear()
@@ -792,7 +801,7 @@ def pelt_shop(campaign) : # format visuals
         # set up variables
         card_gap_spaces = ' '*((os.get_terminal_size().columns*55 // 100) // 5 - 15)
         price_tags = QoL.center_justified(card_gap_spaces.join([f'{pelt_name.title()}: {str(pelt_dict[pelt_name][0]).ljust(13 - len(pelt_name))}' for pelt_name in pelt_dict]))
-        pelt_displays = QoL.print_deck([pelt_dict[pelt_name][1] for pelt_name in pelt_dict], centered=True, blocked=True, fruitful=True)
+        pelt_displays = QoL.print_deck([pelt_dict[pelt_name][1]() for pelt_name in pelt_dict], centered=True, blocked=True, fruitful=True)
         shop_display = f'{price_tags}{pelt_displays}'
         cart = QoL.print_deck(new_pelts, fruitful=True)
 
@@ -807,7 +816,7 @@ def pelt_shop(campaign) : # format visuals
     def buy_pelt(campaign, pelt_name, pelt_dict, new_pelts) :
         if campaign.teeth >= pelt_dict[pelt_name][0] :
             campaign.add_teeth(-pelt_dict[pelt_name][0])
-            new_pelts.append(type(pelt_dict[pelt_name][1])())
+            new_pelts.append(pelt_dict[pelt_name][1]())
         else :
             display_shop(campaign, pelt_dict, new_pelts)
             print('\n')
@@ -816,9 +825,9 @@ def pelt_shop(campaign) : # format visuals
     def gameplay(campaign, cost_modifier) :
         # set up variables
         pelt_dict = {
-            'rabbit pelt': [QoL.bind_int((1 + cost_modifier), 1, 2), card_library.RabbitPelt()],
-            'wolf pelt': [QoL.bind_int((2 + cost_modifier), 2, 6), card_library.WolfPelt()],
-            'golden pelt': [QoL.bind_int((3 + cost_modifier), 3, 11), card_library.GoldenPelt()]
+            'rabbit pelt': [QoL.bind_int((1 + cost_modifier), 1, 2), card_library.RabbitPelt],
+            'wolf pelt': [QoL.bind_int((2 + cost_modifier), 2, 6), card_library.WolfPelt],
+            'golden pelt': [QoL.bind_int((3 + cost_modifier), 3, 11), card_library.GoldenPelt]
         }
         new_pelts = [card_library.RabbitPelt()] # give the player a free rabbit pelt
         invalid_choice = False
@@ -888,7 +897,7 @@ def card_shop(campaign) : # format visuals
     same_sigil = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) 
 
     def add_sigil_wolf(card_) :
-        allowed_sigils = [sigil for sigil in sigils.Dict if not any(same_sigil(sigil, sigil_) for sigil_ in card_.sigils)]
+        allowed_sigils = [sigil for sigil in sigils.Dict if not (any(same_sigil(sigil, sigil_) for sigil_ in card_.sigils) or sigil in ['', '???'])]
         sigil_slot = card_.sigils.index('')
         card_.sigils[sigil_slot] = random.choice(allowed_sigils)
         card_.update_ASCII()
@@ -934,22 +943,14 @@ def card_shop(campaign) : # format visuals
                 case _ : invalid_choice = True
 
     def random_card(possible_cards, alpha=2.2, beta=3.3, rare=False, open_sigil=False) :
-        import math
+        not_open = lambda card_ : open_sigil and not card_.has_sigil('')
+        not_rare = lambda card_ : rare and type(card_) not in card_library.Rare_Cards
 
-        # get card
-        if rare :
-            template_card = random.choice(possible_cards)
-            card_class = type(template_card)
-        else :
-            while True :
-                # get cost
-                max_cost = max(possible_cards.keys())
-                cost = math.floor((max_cost + 1) * random.betavariate(alpha, beta))
-                template_card = random.choice(possible_cards[cost])
-                card_class = type(template_card)
-                if not any(type(card) == card_class for card in card_library.Rare_Cards) and not (open_sigil and not template_card.has_sigil('')): break
+        rando_card = QoL.random_card(possible_cards=possible_cards, alpha=alpha, beta=beta, few_rare=(not rare))
+        while not_open(rando_card) or not_rare(rando_card) :
+            rando_card = QoL.random_card(possible_cards=possible_cards, alpha=alpha, beta=beta, few_rare=(not rare))
 
-        return copy.deepcopy(card_class(getattr(template_card, 'blank_cost', False)))
+        return rando_card
 
     def gameplay(campaign) :
         # set up variables
@@ -1203,23 +1204,13 @@ def break_rocks(campaign) : # format visuals
 
         print(QoL.center_justified(final_str))
 
-    def random_insect() :
-        # chosen_card = random.choice(card_library.Insects)
-        # card_class = type(chosen_card)
-        # if any(type(card_) == card_class for card_ in card_library.Rare_Cards) :
-        #     chosen_card = random.choice(card_library.Insects)
-        #     card_class = type(chosen_card)
-        
-        # return card_class(getattr(chosen_card, 'blank_cost', False))
-        return QoL.random_card(card_library.Insects, weighted=False)
-
     def gameplay(campaign) :
         # randomly select 3 insect cards
         available_rocks = random.sample(list(rock_sprites.keys()), 3)
         hidden_rewards = {
-            0: random_insect(),
-            1: random_insect(),
-            2: random_insect()
+            0: QoL.random_card(card_library.Insects, weighted=False),
+            1: QoL.random_card(card_library.Insects, weighted=False),
+            2: QoL.random_card(card_library.Insects, weighted=False)
         }
 
         # give sigils to the hidden rewards
@@ -1335,6 +1326,7 @@ def campfire(campaign) : # format visuals
             case 'life' : card.base_life += 2
 
         card.reset_stats()
+        card.update_ASCII()
 
     def eaten_card(card, campaign) :
         '''
@@ -1348,7 +1340,7 @@ def campfire(campaign) : # format visuals
         QoL.clear()
         print('\n'*5)
         print(QoL.center_justified(f'{card.species} has been eaten by the survivors'))
-        if card.species in ['Adder'] :
+        if type(card) in [card_library.Adder, card_library.CorpseMaggots] :
             campaign.dead_campfire = True
             print(QoL.center_justified('The survivors are now sick'))
         
@@ -1468,7 +1460,7 @@ def add_death_card(campaign) : # format visuals
         
         Arguments:
             dialogue: the dialogue to display (str)
-            used_cards: the cards that have already been used (list[card object])
+            used_cards: the cards that have already been used (list[class type])
             campaign: the current campaign object (rogue_campaign object)
             
         Returns:
@@ -1481,9 +1473,9 @@ def add_death_card(campaign) : # format visuals
 2. Pick a card
 
 '''
-        card_pool = [card_ for card_ in campaign.player_deck.cards if not any(type(card_) == type(card__) for card__ in card_library.Poss_Death + used_cards)]
+        card_pool = [card_ for card_ in campaign.player_deck.cards if type(card_) not in (used_cards + card_library.Poss_Death)]
         option_cards = random.sample(card_pool, k=min(3, len(card_pool)))
-        used_cards += option_cards
+        used_cards += [type(card_) for card_ in option_cards]
 
         # set up functions
         def print_top() :
@@ -1737,6 +1729,10 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
 
     # initialize campaign object
     campaign = rogue_campaign(starting_deck, lives=life_count)
+
+    # delete variables
+    del starting_deck
+    del life_count
 
     # dialogue, flavor text, etc.
 

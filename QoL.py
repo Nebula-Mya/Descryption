@@ -562,7 +562,7 @@ def ping(dict={'ping':'pong'}) : # for testing
     with open('ping.txt', 'w') as file :
         file.write(data_to_write)
 
-def random_card(possible_cards, weighted=True, alpha=2.2, beta=3.3, few_rare=True) :
+def random_card(possible_cards, weighted=True, alpha=2.2, beta=3.3, few_rare=True, hidden_cost=False) :
     '''
     gets a random card from a set of possible cards
 
@@ -572,19 +572,27 @@ def random_card(possible_cards, weighted=True, alpha=2.2, beta=3.3, few_rare=Tru
         alpha: the alpha value for the beta distribution, defaults to 2.2 (float)
         beta: the beta value for the beta distribution, defaults to 3.3 (float)
         few_rare: whether to lower the chances of rare cards, defaults to True (bool)
+        hidden_cost: whether to hide the cost of the card, defaults to False (bool)
+
+    Returns:
+        the randomly chosen card (Card object)
     '''
-    # imports
+    # imports (to prevent circular imports)
     import card_library
     import math
 
     # set up variables
-    match (weighted, type(possible_cards)) :
-        case (_, list) :
+    if type(possible_cards)==list :
             card_dict = {0: [card_ for card_ in possible_cards]}
-        case (False, dict) :
-            card_dict = {0: [card_ for card_ in possible_cards.values()]}
-        case (True, dict) :
+    elif type(possible_cards)==dict :
+        if weighted :
             card_dict = possible_cards
+        else :
+            all_cards = []
+            for key in possible_cards :
+                all_cards += [card for card in possible_cards[key]]
+            card_dict = {0: [card_ for card_ in all_cards]}
+    else : raise ValueError('Invalid possible_cards type')
 
     # get cost
     if weighted:
@@ -596,13 +604,11 @@ def random_card(possible_cards, weighted=True, alpha=2.2, beta=3.3, few_rare=Tru
 
     # get card type
     template_card = random.choice(card_dict[cost()])
-    card_class = type(template_card)
-    if few_rare and any(type(card) for card in card_library.Rare_Cards) == card_class: # lower chances of rare cards
+    if few_rare and template_card in card_library.Rare_Cards: # lower chances of rare cards
         template_card = random.choice(card_dict[cost()])
-        card_class = type(template_card)
 
-    # return copy.deepcopy(card_class(getattr(template_card, 'blank_cost', False)))
-    return card_class(getattr(template_card, 'blank_cost', False))
+    # return
+    return copy.deepcopy(template_card(blank_cost=hidden_cost))
 
 if __name__ == '__main__' :
     clear()

@@ -1,33 +1,10 @@
-life_count: 2
-
-starting_deck: [
-    <card_library.Wolf object at 0x7fd93cefa290>,
-    <card_library.Stoat object at 0x7fd93cd929b0>,
-    <card_library.Rabbit object at 0x7fd93cd928f0>,
-    <card_library.BoppitW object at 0x7fd93ccc1270>,
-    <card_library.Lobster object at 0x7fd93cd95210>,
-    <card_library.Ouroboros object at 0x7fd93cd959f0>,
-    <card_library.Urayuli object at 0x7fd93cd942b0>,
-    <card.BlankCard object at 0x7fd93cd95de0>,
-    <card_library.RabbitPelt object at 0x7fd93ccc03d0>,
-    <card_library.Bee object at 0x7fd93ccc3880>,
-    <card_library.Ouroboros object at 0x7fd93cd9a3e0>,
-    <card_library.Bee object at 0x7fd93cd9a9e0>,
-    <card_library.Rabbit object at 0x7fd93cd14a60>,
-    <card_library.Cockroach object at 0x7fd93cdad690>,
-    <card_library.Bee object at 0x7fd93cda9510>,
-    <card_library.RabbitPelt object at 0x7fd93cda8fd0>,
-    <card_library.GoldenPelt object at 0x7fd93cd9b700>,
-    <card_library.WolfPelt object at 0x7fd93cd9b790>
-]
-
-campaign: <rogue.rogue_campaign object at 0x7fd93cd92aa0>
+campaign: <rogue.rogue_campaign object at 0x7f1593077550>
 
 sys: <module 'sys' (built-in)>
 
-level: 3
+level: 0
 
-progress: 1
+progress: 14
 
 teeth: 0
 
@@ -35,102 +12,57 @@ lives: 1
 
 dead_campfire: False
 
-Wolf at 0x7fd93cefa290: {'is_poisoned': False, 'hooked': False, 'species': 'Wolf', 'saccs': 2, 'base_attack': 3, 'current_attack': 3, 'base_life': 2, 'current_life': 2, 'sigils': ['mighty leap', 'corpse eater'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:2', 'stats': '3/2', 'name': 'Wolf     ', 'text_lines': ['', ',-------------,', '|Wolf      C:2|', '|             |', '|       _____ |', '|       ʅ   ʃ |', '|       ɩð_ʃ  |', '| ᴦ==ͽ        |', '| L(Ō)        |', '|  \'"\'        |', '|          3/2|', "'-------------'", '        ']}
+Wolf at 0x7f1593097fa0: {'is_poisoned': False, 'hooked': False, 'species': 'Wolf', 'saccs': 2, 'base_attack': 3, 'current_attack': 3, 'base_life': 2, 'current_life': 2, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:2', 'stats': '3/2', 'name': 'Wolf     ', 'text_lines': ['', ',-------------,', '|Wolf      C:2|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          3/2|', "'-------------'", '        ']}
 
-Stoat at 0x7fd93cd929b0: {'is_poisoned': False, 'hooked': False, 'species': 'Stoat', 'saccs': 1, 'base_attack': 1, 'current_attack': 1, 'base_life': 3, 'current_life': 3, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:1', 'stats': '1/3', 'name': 'Stoat    ', 'text_lines': ['', ',-------------,', '|Stoat     C:1|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          1/3|', "'-------------'", '        ']}
+Stoat at 0x7f1593077f10: {'is_poisoned': False, 'hooked': False, 'species': 'Stoat', 'saccs': 1, 'base_attack': 1, 'current_attack': 1, 'base_life': 3, 'current_life': 3, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:1', 'stats': '1/3', 'name': 'Stoat    ', 'text_lines': ['', ',-------------,', '|Stoat     C:1|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          1/3|', "'-------------'", '        ']}
 
-Bullfrog at 0x7fd93cd929e0: {'is_poisoned': False, 'hooked': False, 'species': 'Bullfrog', 'saccs': 1, 'base_attack': 1, 'current_attack': 1, 'base_life': 2, 'current_life': 2, 'sigils': ['mighty leap', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:1', 'stats': '1/2', 'name': 'Bullfrog ', 'text_lines': ['', ',-------------,', '|Bullfrog  C:1|', '|             |', '|             |', '|    _____    |', '|    ʅ   ʃ    |', '|    ɩð_ʃ     |', '|             |', '|             |', '|          1/2|', "'-------------'", '        ']}
+Bullfrog at 0x7f1593077fa0: {'is_poisoned': False, 'hooked': False, 'species': 'Bullfrog', 'saccs': 1, 'base_attack': 1, 'current_attack': 1, 'base_life': 2, 'current_life': 2, 'sigils': ['mighty leap', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:1', 'stats': '1/2', 'name': 'Bullfrog ', 'text_lines': ['', ',-------------,', '|Bullfrog  C:1|', '|             |', '|             |', '|    _____    |', '|    ʅ   ʃ    |', '|    ɩð_ʃ     |', '|             |', '|             |', '|          1/2|', "'-------------'", '        ']}
 
-Rabbit at 0x7fd93cd928f0: {'is_poisoned': False, 'hooked': False, 'species': 'Rabbit', 'saccs': 0, 'base_attack': 5, 'current_attack': 5, 'base_life': 11, 'current_life': 11, 'sigils': ['lane shift right', 'bees within'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '5/b', 'name': 'Rabbit   ', 'text_lines': ['', ',-------------,', '|Rabbit    C:0|', '|             |', '|       ,-,   |', '|       | |-> |', "|       '-'   |", '|  /‾\\        |', '| |___|       |', '|   Ʈ->       |', '|          5/b|', "'-------------'", '        ']}
+Rabbit at 0x7f1593077f40: {'is_poisoned': False, 'hooked': False, 'species': 'Rabbit', 'saccs': 0, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['lane shift right', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '1/1', 'name': 'Rabbit   ', 'text_lines': ['', ',-------------,', '|Rabbit    C:0|', '|             |', '|             |', '|    ,-,      |', '|    | |->    |', "|    '-'      |", '|             |', '|             |', '|          1/1|', "'-------------'", '        ']}
 
-Rabbit Pelt at 0x7fd93cd92cb0: {'is_poisoned': False, 'hooked': False, 'species': 'Rabbit Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 1, 'current_life': 1, 'sigils': ['mighty leap', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:0', 'stats': '0/1', 'name': 'Rabbit P.', 'text_lines': ['', ',-------------,', '|Rabbit P. C:0|', '|             |', '|             |', '|    _____    |', '|    ʅ   ʃ    |', '|    ɩð_ʃ     |', '|             |', '|             |', '|          0/1|', "'-------------'", '        ']}
+Corpse Maggots at 0x7f15930769e0: {'is_poisoned': False, 'hooked': False, 'species': 'Corpse Maggots', 'saccs': 3, 'base_attack': 2, 'current_attack': 2, 'base_life': 2, 'current_life': 2, 'sigils': ['corpse eater', 'airborne'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:3', 'stats': '2/2', 'name': 'Corpse M.', 'text_lines': ['', ',-------------,', '|Corpse M. C:3|', '|             |', '|       ᴦ==ͽ  |', '|       L(Ō)  |', '|        \'"\'  |', '|   _         |', '| ɩΞΞɭ        |', '|  ɩΞΞð       |', '|          2/2|', "'-------------'", '        ']}
 
-Rabbit Pelt at 0x7fd93cd93640: {'is_poisoned': False, 'hooked': False, 'species': 'Rabbit Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 1, 'current_life': 1, 'sigils': ['mighty leap', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:0', 'stats': '0/1', 'name': 'Rabbit P.', 'text_lines': ['', ',-------------,', '|Rabbit P. C:0|', '|             |', '|             |', '|    _____    |', '|    ʅ   ʃ    |', '|    ɩð_ʃ     |', '|             |', '|             |', '|          0/1|', "'-------------'", '        ']}
+Bull Shark at 0x7f1593076fb0: {'is_poisoned': False, 'hooked': False, 'species': 'Bull Shark', 'saccs': 3, 'base_attack': 5, 'current_attack': 5, 'base_life': 2, 'current_life': 2, 'sigils': ['waterborne', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:3', 'stats': '5/2', 'name': 'Bull Sha.', 'text_lines': ['', ',-------------,', '|Bull Sha. C:3|', '|             |', '|             |', '|    <⁻v⁻>    |', '|    ˎ\\ /ˏ    |', '|    λ/λ\\λ    |', '|             |', '|             |', '|          5/2|', "'-------------'", '        ']}
 
-Wolf Pelt at 0x7fd93cd935b0: {'is_poisoned': False, 'hooked': False, 'species': 'Wolf Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 2, 'current_life': 2, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:0', 'stats': '0/2', 'name': 'Wolf Pelt', 'text_lines': ['', ',-------------,', '|Wolf Pelt C:0|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          0/2|', "'-------------'", '        ']}
+Rabbit Pelt at 0x7f1593257010: {'is_poisoned': False, 'hooked': False, 'species': 'Rabbit Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 1, 'current_life': 1, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:0', 'stats': '0/1', 'name': 'Rabbit P.', 'text_lines': ['', ',-------------,', '|Rabbit P. C:0|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          0/1|', "'-------------'", '        ']}
 
-Golden Pelt at 0x7fd93cd14520: {'is_poisoned': False, 'hooked': False, 'species': 'Golden Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 3, 'current_life': 3, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:0', 'stats': '0/3', 'name': 'Golden P.', 'text_lines': ['', ',-------------,', '|Golden P. C:0|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          0/3|', "'-------------'", '        ']}
+Black Goat at 0x7f159320ca00: {'is_poisoned': False, 'hooked': False, 'species': 'Black Goat', 'saccs': 1, 'base_attack': 0, 'current_attack': 0, 'base_life': 1, 'current_life': 1, 'sigils': ['worthy sacrifice', 'dam builder'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:1', 'stats': '0/1', 'name': 'Black Go.', 'text_lines': ['', ',-------------,', '|Black Go. C:1|', '|             |', '|       (C)   |', '|        (C)  |', '|         (C) |', '| ~~/\\        |', '| ~/\\_\\       |', '| /__\\        |', '|          0/1|', "'-------------'", '        ']}
 
-Beehive at 0x7fd93cd15660: {'is_poisoned': False, 'hooked': False, 'species': 'Beehive', 'saccs': 1, 'base_attack': 0, 'current_attack': 0, 'base_life': 2, 'current_life': 2, 'sigils': ['bees within', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:1', 'stats': '0/2', 'name': 'Beehive  ', 'text_lines': ['', ',-------------,', '|Beehive   C:1|', '|             |', '|             |', '|     /‾\\     |', '|    |___|    |', '|      Ʈ->    |', '|             |', '|             |', '|          0/2|', "'-------------'", '        ']}
+Cockroach at 0x7f15931e3940: {'is_poisoned': False, 'hooked': False, 'species': 'Cockroach', 'saccs': 2, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['unkillable', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:2', 'stats': '1/1', 'name': 'Cockroach', 'text_lines': ['', ',-------------,', '|Cockroach C:2|', '|             |', '|             |', '|    ,->-,    |', '|    | X |    |', "|    '-<-'    |", '|             |', '|             |', '|          1/1|', "'-------------'", '        ']}
 
-Golden Pelt at 0x7fd93cd16620: {'is_poisoned': False, 'hooked': False, 'species': 'Golden Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 3, 'current_life': 3, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:0', 'stats': '0/3', 'name': 'Golden P.', 'text_lines': ['', ',-------------,', '|Golden P. C:0|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          0/3|', "'-------------'", '        ']}
+Boppit Worm at 0x7f1593075d20: {'is_poisoned': False, 'hooked': False, 'species': 'Boppit Worm', 'saccs': 4, 'base_attack': 3, 'current_attack': 3, 'base_life': 5, 'current_life': 5, 'sigils': ['split', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:4', 'stats': '3/5', 'name': 'Boppit W.', 'text_lines': ['', ',-------------,', '|Boppit W. C:4|', '|             |', '|             |', '|      |      |', '|    ()|()    |', '|      |      |', '|             |', '|             |', '|          3/5|', "'-------------'", '        ']}
 
-Corpse Maggots at 0x7fd93cd17a00: {'is_poisoned': False, 'hooked': False, 'species': 'Corpse Maggots', 'saccs': 3, 'base_attack': 1, 'current_attack': 1, 'base_life': 2, 'current_life': 2, 'sigils': ['corpse eater', 'steel trap'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:3', 'stats': '1/2', 'name': 'Corpse M.', 'text_lines': ['', ',-------------,', '|Corpse M. C:3|', '|             |', '|       ᴦ==ͽ  |', '|       L(Ō)  |', '|        \'"\'  |', '|  ʌ^ʌ        |', '| (-Θ-)       |', '|  ^ʌ^        |', '|          1/2|', "'-------------'", '        ']}
+Golden Pelt at 0x7f1593256890: {'is_poisoned': False, 'hooked': False, 'species': 'Golden Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 3, 'current_life': 3, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:0', 'stats': '0/3', 'name': 'Golden P.', 'text_lines': ['', ',-------------,', '|Golden P. C:0|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          0/3|', "'-------------'", '        ']}
 
-Boppit Worm at 0x7fd93ccc1270: {'is_poisoned': False, 'hooked': False, 'species': 'Boppit Worm', 'saccs': 4, 'base_attack': 3, 'current_attack': 3, 'base_life': 5, 'current_life': 5, 'sigils': ['split', 'hefty (left)'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:4', 'stats': '3/5', 'name': 'Boppit W.', 'text_lines': ['', ',-------------,', '|Boppit W. C:4|', '|             |', '|         |   |', '|       ()|() |', '|         |   |', '| <<< .       |', '| []_(|       |', "| '———'       |", '|          3/5|', "'-------------'", '        ']}
+Golden Pelt at 0x7f1593076dd0: {'is_poisoned': False, 'hooked': False, 'species': 'Golden Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 3, 'current_life': 3, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '0/3', 'name': 'Golden P.', 'text_lines': ['', ',-------------,', '|Golden P. C:0|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          0/3|', "'-------------'", '        ']}
 
-Black Goat at 0x7fd93cd95420: {'is_poisoned': False, 'hooked': False, 'species': 'Black Goat', 'saccs': 1, 'base_attack': 0, 'current_attack': 0, 'base_life': 1, 'current_life': 1, 'sigils': ['worthy sacrifice', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:1', 'stats': '0/1', 'name': 'Black Go.', 'text_lines': ['', ',-------------,', '|Black Go. C:1|', '|             |', '|             |', '|    (C)      |', '|     (C)     |', '|      (C)    |', '|             |', '|             |', '|          0/1|', "'-------------'", '        ']}
+Beaver at 0x7f15930741f0: {'is_poisoned': False, 'hooked': False, 'species': 'Beaver', 'saccs': 2, 'base_attack': 1, 'current_attack': 1, 'base_life': 3, 'current_life': 3, 'sigils': ['dam builder', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:2', 'stats': '1/3', 'name': 'Beaver   ', 'text_lines': ['', ',-------------,', '|Beaver    C:2|', '|             |', '|             |', '|    ~~/\\     |', '|    ~/\\_\\    |', '|    /__\\     |', '|             |', '|             |', '|          1/3|', "'-------------'", '        ']}
 
-Lobster at 0x7fd93cd95210: {'is_poisoned': False, 'hooked': False, 'species': 'Lobster', 'saccs': 3, 'base_attack': 2, 'current_attack': 2, 'base_life': 3, 'current_life': 3, 'sigils': ['bifurcate', 'split'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:3', 'stats': '2/3', 'name': 'Lobster  ', 'text_lines': ['', ',-------------,', '|Lobster   C:3|', '|             |', '|       _   _ |', '|        \\ /  |', '|         |   |', '|   |         |', '| ()|()       |', '|   |         |', '|          2/3|', "'-------------'", '        ']}
-
-Ouroboros at 0x7fd93cd959f0: {'is_poisoned': False, 'hooked': False, 'species': 'Ouroboros', 'saccs': 2, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['unkillable', 'worthy sacrifice'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:2', 'stats': '1/1', 'name': 'Ouroboros', 'text_lines': ['', ',-------------,', '|Ouroboros C:2|', '|             |', '|       ,->-, |', '|       | X | |', "|       '-<-' |", '| (C)         |', '|  (C)        |', '|   (C)       |', '|          1/1|', "'-------------'", '        ']}
-
-Urayuli at 0x7fd93cd942b0: {'is_poisoned': False, 'hooked': False, 'species': 'Urayuli', 'saccs': 4, 'base_attack': 7, 'current_attack': 7, 'base_life': 7, 'current_life': 7, 'sigils': ['corpse eater', 'steel trap'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:4', 'stats': '7/7', 'name': 'Urayuli  ', 'text_lines': ['', ',-------------,', '|Urayuli   C:4|', '|             |', '|       ᴦ==ͽ  |', '|       L(Ō)  |', '|        \'"\'  |', '|  ʌ^ʌ        |', '| (-Θ-)       |', '|  ^ʌ^        |', '|          7/7|', "'-------------'", '        ']}
-
-Golden Pelt at 0x7fd93cd95660: {'is_poisoned': False, 'hooked': False, 'species': 'Golden Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 3, 'current_life': 3, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:0', 'stats': '0/3', 'name': 'Golden P.', 'text_lines': ['', ',-------------,', '|Golden P. C:0|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          0/3|', "'-------------'", '        ']}
-
-Golden Pelt at 0x7fd93cd95f60: {'is_poisoned': False, 'hooked': False, 'species': 'Golden Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 3, 'current_life': 3, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:0', 'stats': '0/3', 'name': 'Golden P.', 'text_lines': ['', ',-------------,', '|Golden P. C:0|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          0/3|', "'-------------'", '        ']}
-
-Golden Pelt at 0x7fd93cd965c0: {'is_poisoned': False, 'hooked': False, 'species': 'Golden Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 3, 'current_life': 3, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:0', 'stats': '0/3', 'name': 'Golden P.', 'text_lines': ['', ',-------------,', '|Golden P. C:0|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          0/3|', "'-------------'", '        ']}
-
-Golden Pelt at 0x7fd93cd95de0: {'is_poisoned': False, 'hooked': False, 'species': 'Golden Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 6, 'current_life': 6, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '0/6', 'name': 'Golden P.', 'text_lines': ['', ',-------------,', '|Golden P. C:0|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          0/6|', "'-------------'", '        ']}
-
-Rabbit Pelt at 0x7fd93ccc05b0: {'is_poisoned': False, 'hooked': False, 'species': 'Rabbit Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 1, 'current_life': 1, 'sigils': ['mighty leap', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:0', 'stats': '0/1', 'name': 'Rabbit P.', 'text_lines': ['', ',-------------,', '|Rabbit P. C:0|', '|             |', '|             |', '|    _____    |', '|    ʅ   ʃ    |', '|    ɩð_ʃ     |', '|             |', '|             |', '|          0/1|', "'-------------'", '        ']}
-
-Rabbit Pelt at 0x7fd93ccc03d0: {'is_poisoned': False, 'hooked': False, 'species': 'Rabbit Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 1, 'current_life': 1, 'sigils': ['mighty leap', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '0/1', 'name': 'Rabbit P.', 'text_lines': ['', ',-------------,', '|Rabbit P. C:0|', '|             |', '|             |', '|    _____    |', '|    ʅ   ʃ    |', '|    ɩð_ʃ     |', '|             |', '|             |', '|          0/1|', "'-------------'", '        ']}
-
-Bee at 0x7fd93ccc3880: {'is_poisoned': False, 'hooked': False, 'species': 'Bee', 'saccs': 0, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['airborne', 'lane shift left'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '1/1', 'name': 'Bee      ', 'text_lines': ['', ',-------------,', '|Bee       C:0|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '|   ,-,       |', '| <-| |       |', "|   '-'       |", '|          1/1|', "'-------------'", '        ']}
-
-Black Goat at 0x7fd93cd9b790: {'is_poisoned': False, 'hooked': False, 'species': 'Black Goat', 'saccs': 1, 'base_attack': 0, 'current_attack': 0, 'base_life': 1, 'current_life': 1, 'sigils': ['worthy sacrifice', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:1', 'stats': '0/1', 'name': 'Black Go.', 'text_lines': ['', ',-------------,', '|Black Go. C:1|', '|             |', '|             |', '|    (C)      |', '|     (C)     |', '|      (C)    |', '|             |', '|             |', '|          0/1|', "'-------------'", '        ']}
-
-Ouroboros at 0x7fd93cd9a3e0: {'is_poisoned': False, 'hooked': False, 'species': 'Ouroboros', 'saccs': 2, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['unkillable', 'worthy sacrifice'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:2', 'stats': '1/1', 'name': 'Ouroboros', 'text_lines': ['', ',-------------,', '|Ouroboros C:2|', '|             |', '|       ,->-, |', '|       | X | |', "|       '-<-' |", '| (C)         |', '|  (C)        |', '|   (C)       |', '|          1/1|', "'-------------'", '        ']}
-
-Bee at 0x7fd93cd9a9e0: {'is_poisoned': False, 'hooked': False, 'species': 'Bee', 'saccs': 0, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['airborne', 'lane shift left'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '1/1', 'name': 'Bee      ', 'text_lines': ['', ',-------------,', '|Bee       C:0|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '|   ,-,       |', '| <-| |       |', "|   '-'       |", '|          1/1|', "'-------------'", '        ']}
-
-Rabbit at 0x7fd93cd14a60: {'is_poisoned': False, 'hooked': False, 'species': 'Rabbit', 'saccs': 0, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['lane shift right', 'bees within'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '1/1', 'name': 'Rabbit   ', 'text_lines': ['', ',-------------,', '|Rabbit    C:0|', '|             |', '|       ,-,   |', '|       | |-> |', "|       '-'   |", '|  /‾\\        |', '| |___|       |', '|   Ʈ->       |', '|          1/1|', "'-------------'", '        ']}
-
-Corpse Maggots at 0x7fd93ccc2530: {'is_poisoned': False, 'hooked': False, 'species': 'Corpse Maggots', 'saccs': 3, 'base_attack': 1, 'current_attack': 1, 'base_life': 2, 'current_life': 2, 'sigils': ['corpse eater', 'steel trap'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:3', 'stats': '1/2', 'name': 'Corpse M.', 'text_lines': ['', ',-------------,', '|Corpse M. C:3|', '|             |', '|       ᴦ==ͽ  |', '|       L(Ō)  |', '|        \'"\'  |', '|  ʌ^ʌ        |', '| (-Θ-)       |', '|  ^ʌ^        |', '|          1/2|', "'-------------'", '        ']}
-
-Cockroach at 0x7fd93cdad690: {'is_poisoned': False, 'hooked': False, 'species': 'Cockroach', 'saccs': 2, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['unkillable', 'vole hole'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:2', 'stats': '1/1', 'name': 'Cockroach', 'text_lines': ['', ',-------------,', '|Cockroach C:2|', '|             |', '|       ,->-, |', '|       | X | |', "|       '-<-' |", '|  ___        |', '| /…¨…\\       |', '| ‾‾‾‾‾       |', '|          1/1|', "'-------------'", '        ']}
-
-Bee at 0x7fd93cda9510: {'is_poisoned': False, 'hooked': False, 'species': 'Bee', 'saccs': 0, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['airborne', 'lane shift left'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '1/1', 'name': 'Bee      ', 'text_lines': ['', ',-------------,', '|Bee       C:0|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '|   ,-,       |', '| <-| |       |', "|   '-'       |", '|          1/1|', "'-------------'", '        ']}
-
-Rabbit Pelt at 0x7fd93cda8fd0: {'is_poisoned': False, 'hooked': False, 'species': 'Rabbit Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 1, 'current_life': 1, 'sigils': ['mighty leap', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '0/1', 'name': 'Rabbit P.', 'text_lines': ['', ',-------------,', '|Rabbit P. C:0|', '|             |', '|             |', '|    _____    |', '|    ʅ   ʃ    |', '|    ɩð_ʃ     |', '|             |', '|             |', '|          0/1|', "'-------------'", '        ']}
-
-Golden Pelt at 0x7fd93cd9b700: {'is_poisoned': False, 'hooked': False, 'species': 'Golden Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 3, 'current_life': 3, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '0/3', 'name': 'Golden P.', 'text_lines': ['', ',-------------,', '|Golden P. C:0|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          0/3|', "'-------------'", '        ']}
-
-Wolf Pelt at 0x7fd93cd9b790: {'is_poisoned': False, 'hooked': False, 'species': 'Wolf Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 2, 'current_life': 2, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '0/2', 'name': 'Wolf Pelt', 'text_lines': ['', ',-------------,', '|Wolf Pelt C:0|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          0/2|', "'-------------'", '        ']}
+Boppit Worm at 0x7f15930acbb0: {'is_poisoned': False, 'hooked': False, 'species': 'Boppit Worm', 'saccs': 4, 'base_attack': 3, 'current_attack': 3, 'base_life': 5, 'current_life': 5, 'sigils': ['split', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:4', 'stats': '3/5', 'name': 'Boppit W.', 'text_lines': ['', ',-------------,', '|Boppit W. C:4|', '|             |', '|             |', '|      |      |', '|    ()|()    |', '|      |      |', '|             |', '|             |', '|          3/5|', "'-------------'", '        ']}
 
 player deck: [
-    <card_library.Wolf object at 0x7fd93cd29d50>,
-    <card_library.Stoat object at 0x7fd93cd29cf0>,
-    <card_library.Rabbit object at 0x7fd93cd29030>,
-    <card_library.BoppitW object at 0x7fd93cd28070>,
-    <card_library.Lobster object at 0x7fd93cd28d90>,
-    <card_library.Ouroboros object at 0x7fd93cd29060>,
-    <card_library.Urayuli object at 0x7fd93cd29120>,
-    <card.BlankCard object at 0x7fd93cd29540>,
-    <card_library.RabbitPelt object at 0x7fd93cd294e0>,
-    <card_library.Bee object at 0x7fd93cd29480>,
-    <card_library.Ouroboros object at 0x7fd93cd29360>,
-    <card_library.Bee object at 0x7fd93cd29300>,
-    <card_library.Rabbit object at 0x7fd93cd28a60>,
-    <card_library.Cockroach object at 0x7fd93cd28ac0>,
-    <card_library.Bee object at 0x7fd93cd28b20>,
-    <card_library.RabbitPelt object at 0x7fd93cd29000>,
-    <card_library.GoldenPelt object at 0x7fd93cd28fa0>,
-    <card_library.WolfPelt object at 0x7fd93cd28f40>
+    <card_library.Wolf object at 0x7f1593074fa0>,
+    <card_library.Stoat object at 0x7f1593074190>,
+    <card_library.Bullfrog object at 0x7f15930acdf0>,
+    <card_library.Rabbit object at 0x7f15930acd30>,
+    <card_library.CorpseMaggots object at 0x7f15930acf10>,
+    <card_library.BullShark object at 0x7f15930aca30>,
+    <card_library.BlackGoat object at 0x7f15930aceb0>,
+    <card_library.Cockroach object at 0x7f15930acaf0>,
+    <card_library.BoppitW object at 0x7f15930ac8b0>,
+    <card_library.GoldenPelt object at 0x7f15930ac850>,
+    <card_library.BoppitW object at 0x7f15930acfa0>
 ]
 
 squirrel deck: [
-    <card_library.Squirrel object at 0x7fd93cd28850>,
-    <card_library.Squirrel object at 0x7fd93cd28a30>,
-    <card_library.Squirrel object at 0x7fd93cd289d0>,
-    <card_library.Squirrel object at 0x7fd93cd28970>,
-    <card_library.Squirrel object at 0x7fd93cd28910>,
-    <card_library.Squirrel object at 0x7fd93cd288b0>,
-    <card_library.Squirrel object at 0x7fd93cd287f0>,
-    <card_library.Squirrel object at 0x7fd93cd28790>,
-    <card_library.Squirrel object at 0x7fd93cd28730>,
-    <card_library.Squirrel object at 0x7fd93cd2a1a0>
+    <card_library.Squirrel object at 0x7f15930ad060>,
+    <card_library.Squirrel object at 0x7f15930ad0c0>,
+    <card_library.Squirrel object at 0x7f15930ad120>,
+    <card_library.Squirrel object at 0x7f15930ad180>,
+    <card_library.Squirrel object at 0x7f15930ad1e0>,
+    <card_library.Squirrel object at 0x7f15930ad240>,
+    <card_library.Squirrel object at 0x7f15930ad2a0>,
+    <card_library.Squirrel object at 0x7f15930ad300>,
+    <card_library.Squirrel object at 0x7f15930ad360>,
+    <card_library.Squirrel object at 0x7f15930ad3c0>
 ]

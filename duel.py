@@ -3,11 +3,8 @@ import deck
 import field
 import QoL
 import ASCII_text
-import random
-import math
 import os
-import sys
-import copy
+import card
 
 def choose_and_play(field) :
     '''
@@ -27,6 +24,7 @@ def choose_and_play(field) :
     # set up variables
     invalid_index = False
     invalid_zone = False
+    on_occupied = False
 
     while True :
         field.print_full_field()
@@ -54,6 +52,9 @@ def choose_and_play(field) :
             if invalid_zone :
                 print('Invalid zone.')
                 invalid_zone = False
+            if on_occupied :
+                print('Cannot play on top of a card without sacrificing.')
+                on_occupied = False
             zone_to_play = input('Zone to play: (press enter to go back) ')
 
             if zone_to_play == '' : # go back
@@ -64,6 +65,8 @@ def choose_and_play(field) :
             if not is_int or zone_to_play not in range(1, 5) : # guard clause for invalid zone
                 invalid_zone = True
             elif not field.play_card(play_index, zone_to_play) :
+                if field.hand[play_index].saccs == 0 :
+                    on_occupied = True
                 continue
             else :
                 return card_to_play
@@ -223,7 +226,7 @@ def view_cards(field) :
                 break
 
             (is_int, col_choice) = QoL.reps_int(col_choice)
-            if is_int and col_choice in range(1, 5) and row[col_choice].species != '' :
+            if is_int and col_choice in range(1, 5) and type(row[col_choice]) != card.BlankCard :
                 field.print_field()
                 row[col_choice].explain()
                 input('Press enter to continue.')
@@ -296,13 +299,14 @@ def view_play_attack(field) :
         
     return played
 
-def deck_gen(possible_cards, size) :
+def deck_gen(possible_cards, size, hidden_cost=False) :
     '''
     generates a deck from a list of possible cards
     
     Arguments:
         possible_cards: list of cards to choose from (dict)
         size: size of deck (int)
+        hidden_cost: whether to hide the cost of the card, defaults to False (bool)
 
     Returns:
         deck: deck of cards (deck object)
@@ -313,23 +317,25 @@ def deck_gen(possible_cards, size) :
     if not possible_cards :
         raise ValueError('Possible cards dict must not be empty.')
 
-    def random_card(possible_cards, alpha=2.2, beta=3.3) :
-        # get cost
-        max_cost = max(possible_cards.keys())
-        min_cost = min(possible_cards.keys())
-        cost_range = max_cost - min_cost
-        cost = lambda : min_cost + math.floor((cost_range + 1) * random.betavariate(alpha, beta))
+    # def random_card(possible_cards, alpha=2.2, beta=3.3) :
+    #     # get cost
+    #     max_cost = max(possible_cards.keys())
+    #     min_cost = min(possible_cards.keys())
+    #     cost_range = max_cost - min_cost
+    #     cost = lambda : min_cost + math.floor((cost_range + 1) * random.betavariate(alpha, beta))
 
-        # get card type
-        template_card = random.choice(possible_cards[cost()])
-        card_class = type(template_card)
-        if any(type(card) for card in card_library.Rare_Cards) == card_class: # lower chances of rare cards
-            template_card = random.choice(possible_cards[cost()])
-            card_class = type(template_card)
+    #     # get card type
+    #     template_card = random.choice(possible_cards[cost()])
+    #     card_class = type(template_card)
+    #     if any(type(card) for card in card_library.Rare_Cards) == card_class: # lower chances of rare cards
+    #         template_card = random.choice(possible_cards[cost()])
+    #         card_class = type(template_card)
 
-        return copy.deepcopy(card_class(getattr(template_card, 'blank_cost', False)))
+    #     return copy.deepcopy(card_class(getattr(template_card, 'blank_cost', False)))
     
-    deck_list = [random_card(possible_cards) for _ in range(size)] # DONT CHANGE TO QOL.RANDOM_CARD, IT WILL BREAK THE CODE
+    # deck_list = [random_card(possible_cards) for _ in range(size)] # DONT CHANGE TO QOL.RANDOM_CARD, IT WILL BREAK THE CODE
+
+    deck_list = [QoL.random_card(possible_cards, hidden_cost) for _ in range(size)]
 
     return deck.Deck(deck_list)
 
@@ -393,7 +399,7 @@ def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_varianc
     if opponent_deck_obj :
         opponent_deck = opponent_deck_obj
     else :
-        opponent_deck = deck_gen(card_library.Poss_Leshy, deck_size*2)
+        opponent_deck = deck_gen(card_library.Poss_Leshy, deck_size*2, hidden_cost=True)
     if squirrels_deck_obj :
         squirrels_deck = squirrels_deck_obj
     else :

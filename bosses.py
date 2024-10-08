@@ -22,8 +22,6 @@ def card_battle(campaign, Poss_Leshy=None) :
         bool: True if the player wins, False if the player loses
     '''
     def gameplay(campaign, Poss_Leshy) :
-        import duel
-
         data_to_read = [
             ['settings', 'difficulty', 'leshy median plays'],
             ['settings', 'difficulty', 'leshy plays variance'],
@@ -180,7 +178,7 @@ def post_boss_flavor(campaign, result) :
         result: whether the player won (bool)
     '''
     # remove smoke cards
-    all_smoke = [card_ for card_ in campaign.player_deck.cards if card_.species == 'The Smoke']
+    all_smoke = [card_ for card_ in campaign.player_deck.cards if type(card_) == card_library.Smoke]
     for smoke in all_smoke :
         campaign.remove_card(smoke)
 
@@ -231,8 +229,8 @@ def turn_structure(playfield) :
 
     # leshy turn
     else :
-        if any([card_.species == 'The Moon' for card_ in playfield.opponent_field.values()]) : # tidal lock sigil if moon on the board
-            for card_ in [card_ for card_ in playfield.player_field.values() if card_.species in ['Squirrel', 'Vole']] :
+        if any([type(card_) == card_library.Moon for card_ in playfield.opponent_field.values()]) : # tidal lock sigil if moon on the board
+            for card_ in [card_ for card_ in playfield.player_field.values() if type(card_) in [card_library.Squirrel, card_library.Vole]] :
                 playfield.graveyard.insert(0, card_)
                 playfield.summon_card(card=card.BlankCard(), zone=[zone for zone, zone_card in playfield.player_field.items() if zone_card == card_][0], field=playfield.player_field)
         playfield.advance()
@@ -253,8 +251,8 @@ def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=Tru
 
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
-        Poss_Leshy: the possible cards for Leshy's deck, defaults to all allowed Leshy cards with costs <= to player's max cost (dict)
-        first_cards: the first cards to be drawn by Leshy, from first to last (list)
+        Poss_Leshy: the possible cards for Leshy's deck, defaults to all allowed Leshy cards with costs <= to player's max cost (dict[int: list[class]])
+        first_cards: the first cards to be drawn by Leshy, from first to last (list[card object])
         advance: whether to advance from bushes (bool)
     '''
     # set variables
@@ -263,12 +261,12 @@ def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=Tru
     deck_size = len(campaign.player_deck)
 
     if Poss_Leshy :
-        leshy_deck = duel.deck_gen(Poss_Leshy, int(deck_size * 1.5))
+        leshy_deck = duel.deck_gen(Poss_Leshy, int(deck_size * 1.5), hidden_cost=True)
     else :
         player_max_cost = max([card.saccs for card in campaign.player_deck.cards])
         leshy_max_cost = max(cost for cost in card_library.Poss_Leshy.keys())
         fair_poss_leshy = {cost: [card for card in card_library.Poss_Leshy[cost]] for cost in range(0, min(leshy_max_cost, player_max_cost+1))} # may be changed later for balancing
-        leshy_deck = duel.deck_gen(fair_poss_leshy, int(deck_size * 1.5))
+        leshy_deck = duel.deck_gen(fair_poss_leshy, int(deck_size * 1.5), hidden_cost=True)
 
     playfield = field.Playmat(campaign.player_deck.shuffle(fair_hand=True), campaign.squirrel_deck.shuffle(), leshy_deck.shuffle(), play_median, play_var, opp_strat, opp_threshold)
 
@@ -291,12 +289,13 @@ def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=Tru
 
     return playfield
 
-def random_extra_sigil(possibles) :
+def random_extra_sigil(possibles, hidden_cost=False) :
     '''
-    selects a card from possibles and adds a random sigil to it
+    creates a card with a random sigil from the list of possibles
 
     Arguments:
-        possibles: the possible cards to choose from (list)
+        possibles: the possible cards to choose from (list[class])
+        hidden_cost: whether the cost of the card is hidden, defaults to False (bool)
 
     Returns:
         card: the chosen card with a random sigil added (card object)
@@ -313,7 +312,7 @@ def random_extra_sigil(possibles) :
     good_sigil = lambda reciever, sigil : sigil not in ['', '???'] and not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be added
     
     # choose card
-    chosen_card = QoL.random_card(possibles)
+    chosen_card = QoL.random_card(possibles, hidden_cost=hidden_cost)
 
     # get sigil slot
     if chosen_card.has_sigil('') :
@@ -353,10 +352,10 @@ def trading(playfield) :
             traded_card.update_ASCII()
         
         if type(traded_card) == card_library.OppositeRabbit :
-            sigils_ = getattr(traded_card, 'sigils')
+            sigils_ = traded_card.sigils
             return card_library.Rabbit(sigils=sigils_)
         elif type(traded_card) == card_library.OppositeShrew :
-            sigils_ = getattr(traded_card, 'sigils')
+            sigils_ = traded_card.sigils
             return card_library.Shrew(sigils=sigils_)
         
         return traded_card
@@ -524,8 +523,8 @@ def boss_fight_prospector(campaign) : # boss fight 1
                 input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
                 # kill player's cards
-                nugget_zones = [zone for zone in range(1,5) if playfield.player_field[zone].species != '']
-                for card_ in [card_ for card_ in playfield.player_field.values() if card_.species != ''] : card_.status = 'dead'
+                nugget_zones = [zone for zone in range(1,5) if type(playfield.player_field[zone]) != card.BlankCard]
+                for card_ in [card_ for card_ in playfield.player_field.values() if type(card_) != card.BlankCard] : card_.status = 'dead'
                 playfield.check_states()
 
                 # replace player's cards with gold nuggets
@@ -552,10 +551,10 @@ def boss_fight_angler(campaign) : # boss fight 2
         pre_boss_flavor(campaign)
 
         poss_angler_p1 = {
-            1 : [card_library.Kingfisher(True), card_library.Otter(True)]
+            1 : [card_library.Kingfisher, card_library.Otter]
         }
         poss_angler_p2 = {
-            0 : [card_library.BaitBucket(True)]
+            0 : [card_library.BaitBucket]
         }
         playfield = init_boss_playfield(campaign, Poss_Leshy=poss_angler_p1, advance=False)
 
@@ -608,7 +607,7 @@ def boss_fight_angler(campaign) : # boss fight 2
                     if any([card_.hooked for card_ in playfield.player_field.values()]) :
                         for zone in range(1, 5) :
                             if playfield.player_field[zone].hooked :
-                                if playfield.opponent_field[zone].species != '' : # shift to bushes
+                                if type(playfield.opponent_field[zone].species) != card.BlankCard : # shift to bushes
                                     playfield.summon_card(card=playfield.opponent_field[zone], zone=zone, field=playfield.bushes)
                                 playfield.summon_card(card=playfield.player_field[zone], zone=zone, field=playfield.opponent_field)
                                 playfield.summon_card(card=card.BlankCard(), zone=zone, field=playfield.player_field)
@@ -667,7 +666,7 @@ def boss_fight_angler(campaign) : # boss fight 2
                         for field in [playfield.opponent_field, playfield.bushes] : playfield.summon_card(card=card_library.Grizzly(blank_cost=True, sigils=['mighty leap', '']), zone=zone, field=field)
 
                 # change deck to be angler's second phase deck
-                playfield.opponent_deck = duel.deck_gen(poss_angler_p2, len(playfield.opponent_deck)).cards
+                playfield.opponent_deck = duel.deck_gen(poss_angler_p2, len(playfield.opponent_deck), hidden_cost=True).cards
 
                 # reset stats
                 playfield.score = {'player': 0, 'opponent': 0}
@@ -687,7 +686,7 @@ def boss_fight_trapper_trader(campaign) : # boss fight 3
         pre_boss_flavor(campaign)
 
         poss_trapper = {
-            1 : [card_library.StrangeFrog(True), card_library.DumpyTF(True), card_library.Bullfrog(True)]
+            1 : [card_library.StrangeFrog, card_library.DumpyTF, card_library.Bullfrog]
         }
 
         # set up trader's board
@@ -747,7 +746,7 @@ def boss_fight_trapper_trader(campaign) : # boss fight 3
                     input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
                     # fill trader's field with random cards with additional sigils
-                    allowed_cards = [card_ for cost in card_library.Poss_Leshy.keys() for card_ in card_library.Poss_Leshy[cost] if card_.has_sigil('')]
+                    allowed_cards = [card_ for cost in card_library.Poss_Leshy.keys() for card_ in card_library.Poss_Leshy[cost] if card_().has_sigil('')]
                     for zone in range(1, 5) :
                         playfield.summon_card(card=random_extra_sigil(allowed_cards), zone=zone, field=playfield.opponent_field)
                         playfield.opponent_field[zone].blank_cost = False
@@ -759,11 +758,11 @@ def boss_fight_trapper_trader(campaign) : # boss fight 3
                     # add all wolf pelts from graveyard and players field to their hand + 1 more
                     playfield.hand.append(card_library.WolfPelt())
                     for card_ in playfield.graveyard[:] :
-                        if card_.species == 'Wolf Pelt' :
+                        if type(card_) == card_library.WolfPelt :
                             playfield.hand.append(card_)
                             playfield.graveyard.remove(card_)
                     for zone in range(1, 5) :
-                        if playfield.player_field[zone].species == 'Wolf Pelt' :
+                        if type(playfield.player_field[zone]) == card_library.WolfPelt :
                             playfield.hand.append(playfield.player_field[zone])
                             playfield.summon_card(card=card.BlankCard(), zone=zone, field=playfield.player_field)
 
@@ -829,8 +828,8 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
             battle_state.used_all_masks = True
         
         # kill player's cards
-        nugget_zones = [zone for zone in range(1,5) if playfield.player_field[zone].species != '']
-        for card_ in [card_ for card_ in playfield.player_field.values() if card_.species != ''] : card_.status = 'dead'
+        nugget_zones = [zone for zone in range(1,5) if type(playfield.player_field[zone]) != card.BlankCard]
+        for card_ in [card_ for card_ in playfield.player_field.values() if type(card_) != card.BlankCard] : card_.status = 'dead'
         playfield.check_states()
 
         # replace player's cards with gold nuggets
@@ -859,7 +858,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
         if any([card_.hooked for card_ in playfield.player_field.values()]) :
             for zone in range(1, 5) :
                 if playfield.player_field[zone].hooked :
-                    if playfield.opponent_field[zone].species != '' : # shift to bushes
+                    if type(playfield.opponent_field[zone]) != card.BlankCard : # shift to bushes
                         playfield.summon_card(card=playfield.opponent_field[zone], zone=zone, field=playfield.bushes)
                     playfield.summon_card(card=playfield.player_field[zone], zone=zone, field=playfield.opponent_field)
                     playfield.summon_card(card=card.BlankCard(), zone=zone, field=playfield.player_field)
@@ -878,7 +877,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
             input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
         # fill trader's field with random cards with additional sigils
-        allowed_cards = [card_ for cost in card_library.Poss_Leshy.keys() for card_ in card_library.Poss_Leshy[cost] if card_.has_sigil('')]
+        allowed_cards = [card_ for cost in card_library.Poss_Leshy.keys() for card_ in card_library.Poss_Leshy[cost] if card_().has_sigil('')]
         for zone in random.choices(range(1, 5), k=2) : playfield.summon_card(card=random_extra_sigil(allowed_cards), zone=zone, field=playfield.bushes)
         
         # unhide costs from opponent's cards
@@ -1011,7 +1010,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
                         else : playfield.summon_card(card=card_library.Stump(True), zone=zone, field=playfield.opponent_field)
                     
                     # change deck to be Leshy's second phase deck (death cards)
-                    playfield.opponent_deck = duel.deck_gen(card_library.Poss_Death, len(playfield.opponent_deck)).cards
+                    playfield.opponent_deck = duel.deck_gen(card_library.Poss_Death, len(playfield.opponent_deck), hidden_cost=True).cards
 
                     playfield.print_field()
                     input('Press enter to continue.')
@@ -1095,12 +1094,9 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
         pre_boss_flavor(campaign)
 
         # set up trader's board
-        poss_leshy = { #TODO: make automatic for when new rare cards are added
-            1 : [card_library.MoleMan(True)],
-            2 : [card_library.Ouroboros(True)],
-            3 : [card_library.BullShark(True)],
-            4 : [card_library.MooseBuck(True), card_library.Urayuli(True), card_library.BoppitW(True)]
-        }
+        poss_leshy = {cost: [card for card in card_library.Poss_Leshy[cost] if card in card_library.Rare_Cards] for cost in card_library.Poss_Leshy.keys()}
+        for cost in poss_leshy.keys() :
+            if len(poss_leshy[cost]) == 0 : del poss_leshy[cost]
         playfield = init_boss_playfield(campaign, Poss_Leshy=poss_leshy, advance=False)
         duel_state = battle_state()
         start_board_cards = [card.BlankCard(), card.BlankCard(), card.BlankCard(), card_library.MoleMan(True)]

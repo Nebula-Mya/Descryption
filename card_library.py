@@ -57,14 +57,19 @@ class Ouroboros(card.BlankCard) :
     def __init__(self, blank_cost=False, sigils=['unkillable','']) :
         super().__init__(species='Ouroboros', cost=2, attack=Ouroboros.oro_level, life=Ouroboros.oro_level, sigils=sigils, blank_cost=blank_cost)
 
-    def die(self) :
+    def level_up(self) :
         @classmethod
-        def level_up(cls) :
+        def increase_level(cls) :
             cls.oro_level += 1
         self.base_attack += 1
         self.base_life += 1
-        level_up()
+        increase_level()
+        self.reset_stats()
+        self.update_ASCII()
         QoL.write_data([(['progress markers', 'ouro level'], Ouroboros.oro_level)])
+
+    def die(self) :
+        self.level_up()
         super().die()
 
 class Cockroach(card.BlankCard) :
@@ -428,29 +433,29 @@ class Moon(card.BlankCard) :
 
 # Allowed cards:
 Poss_Playr = {
-    0 : [Rabbit(), Shrew()],
-    1 : [DumpyTF(), Turtle(), Stoat(), Bullfrog(), Beehive(), Cat(), Warren(), Otter(), Kingfisher(), MoleMan(), BlackGoat()],
-    2 : [Ouroboros(), Asp(), Falcon(), Cockroach(), Wolf(), Raven(), Beaver(), Adder(), CorpseMaggots(), Pronghorn(), Salmon(), Bloodhound()],
-    3 : [Lobster(), Grizzly(), BullShark()],
-    4 : [BoppitW(), Urayuli(), MooseBuck()]
+    0 : [Rabbit, Shrew],
+    1 : [DumpyTF, Turtle, Stoat, Bullfrog, Beehive, Cat, Warren, Otter, Kingfisher, MoleMan, BlackGoat],
+    2 : [Ouroboros, Asp, Falcon, Cockroach, Wolf, Raven, Beaver, Adder, CorpseMaggots, Pronghorn, Salmon, Bloodhound],
+    3 : [Lobster, Grizzly, BullShark],
+    4 : [BoppitW, Urayuli, MooseBuck]
 }
 Poss_Leshy = {
-    0 : [OppositeRabbit(True), OppositeShrew(True)],
-    1 : [DumpyTF(True), Turtle(True), Stoat(True), Bullfrog(True), CorpseMaggots(True), Otter(True), Kingfisher(True), MoleMan(True)],
-    2 : [Asp(True), Falcon(True), Cockroach(True), Wolf(True), Raven(True), Adder(True), Pronghorn(True), Salmon(True), Bloodhound(True)],
-    3 : [Lobster(True), Grizzly(True), BullShark(True), BoppitW(True)]
+    0 : [OppositeRabbit, OppositeShrew],
+    1 : [DumpyTF, Turtle, Stoat, Bullfrog, CorpseMaggots, Otter, Kingfisher, MoleMan],
+    2 : [Asp, Falcon, Cockroach, Wolf, Raven, Adder, Pronghorn, Salmon, Bloodhound],
+    3 : [Lobster, Grizzly, BullShark, BoppitW]
 }
-Poss_Death = [Louis(), FlawPeacock(), PlyrDeathCard1(), PlyrDeathCard2(), PlyrDeathCard3()]
-Rare_Cards = [Ouroboros(), Urayuli(), MooseBuck(), BullShark(), BoppitW(), MoleMan()]
+Poss_Death = [Louis, FlawPeacock, PlyrDeathCard1, PlyrDeathCard2, PlyrDeathCard3]
+Rare_Cards = [Ouroboros, Urayuli, MooseBuck, BullShark, BoppitW, MoleMan]
 Terrain_Cards = [Stump, Tree]
 
 # Tribes
-Reptiles = [Bullfrog(), DumpyTF(), Turtle(), Adder(), Asp(), Ouroboros(), StrangeFrog()] # also includes amphibians for accuracy to Inscryption
-Insects = [BoppitW(), Beehive(), Bee(), Cockroach(), CorpseMaggots()]
-Avians = [Kingfisher(), Falcon(), Raven()]
-Canines = [Wolf(), Bloodhound(), Coyote()]
-Hooved = [BlackGoat(), MooseBuck(), Pronghorn(), PackMule()]
-Squirrels = [Squirrel()]
+Reptiles = [Bullfrog, DumpyTF, Turtle, Adder, Asp, Ouroboros, StrangeFrog] # also includes amphibians for accuracy to Inscryption
+Insects = [BoppitW, Beehive, Bee, Cockroach, CorpseMaggots]
+Avians = [Kingfisher, Falcon, Raven]
+Canines = [Wolf, Bloodhound, Coyote]
+Hooved = [BlackGoat, MooseBuck, Pronghorn, PackMule]
+Squirrels = [Squirrel]
 
 # categories for Leshy's AI
 AI_categories = [
@@ -517,13 +522,13 @@ if __name__ == '__main__' :
     Leshy_cardlist = deck.Deck([])
     for cost in Poss_Leshy :
         for card_ in Poss_Leshy[cost] :
-            Leshy_cardlist.add_card(card_)
+            Leshy_cardlist.add_card(card_(True))
 
     Player_cardlist = deck.Deck([])
     for cost in Poss_Playr :
         for card_ in Poss_Playr[cost] :
             if card_ not in Player_cardlist.cards :
-                Player_cardlist.add_card(card_)
+                Player_cardlist.add_card(card_())
 
     QoL.clear()
     print(QoL.center_justified('Leshy Card List'))
