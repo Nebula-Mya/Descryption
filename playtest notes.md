@@ -47,7 +47,7 @@
 
 - [ ] maybe let survivors lower cost
 
-- [ ] display win results after boss
+- [x] display win results after boss
 
 - [ ] be able to see how many teeth you have
 
