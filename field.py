@@ -284,8 +284,6 @@ class Playmat :
                 self.player_field[ind].die()
                 self.graveyard.insert(0, self.player_field[ind])
                 self.player_field[ind] = card.BlankCard()
-            elif type(self.player_field[ind]) == card_library.Ouroboros :
-                self.player_field[ind].level_up()
         else : 
             # play card to zone
             self.summon_card(card=self.hand[index], field=self.player_field, zone=zone)

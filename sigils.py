@@ -132,6 +132,9 @@ if applicables == sigils.on_deaths :
         corpses.append((zone, current_field))
 
 elif applicables == sigils.on_sacrifices :
+    import card_library
+
+    if type(self.player_field[ind]) == card_library.Ouroboros : self.player_field[ind].level_up()
     self.hand.append(self.player_field[ind])
     self.summon_card(card.BlankCard(), self.player_field, ind)
 '''
@@ -462,6 +465,9 @@ for shifted_zone in poss_zones :
 ''',
     ('many lives', 'unkillable') : ''' # this is only called when applicable is on_sacrifices
 import card
+import card_library
+
+if type(self.player_field[ind]) == card_library.Ouroboros : self.player_field[ind].level_up()
 
 self.hand.append(self.player_field[ind])
 self.hand[-1].saccs = 0
@@ -620,9 +626,10 @@ if applicables == sigils.on_deaths and current_field[zone].status == 'dead' :
 ''',
     ('steel trap', 'unkillable') : '''
 import sigils
+import card_library
+
 if applicables == sigils.on_deaths :
     import card
-    import card_library
 
     # move the original card to hand
     if current_field[zone].status == 'dead' and current_field == self.player_field :
@@ -646,6 +653,7 @@ if applicables == sigils.on_deaths :
             self.hand.append(card_library.WolfPelt())
 
 elif applicables == sigils.on_sacrifices :
+    if type(self.player_field[ind]) == card_library.Ouroboros : self.player_field[ind].level_up()
     self.hand.append(self.player_field[ind])
     self.summon_card(card.BlankCard(), self.player_field, ind)
 ''',

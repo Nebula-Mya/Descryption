@@ -76,18 +76,20 @@ class BoppitW(card.BlankCard) :
 
 class Ouroboros(card.BlankCard) :
     oro_level = QoL.read_data([['progress markers', 'ouro level']])[0]
+    
+    @classmethod
+    def increase_level(cls) :
+        cls.oro_level += 1
+
     def __init__(self, blank_cost=False, sigils=None) :
         if sigils is None :
             sigils = ['unkillable','']
         super().__init__(species='Ouroboros', cost=2, attack=Ouroboros.oro_level, life=Ouroboros.oro_level, sigils=sigils, blank_cost=blank_cost)
 
     def level_up(self) :
-        @classmethod
-        def increase_level(cls) :
-            cls.oro_level += 1
         self.base_attack += 1
         self.base_life += 1
-        increase_level()
+        Ouroboros.increase_level()
         self.reset_stats()
         self.update_ASCII()
         QoL.write_data([(['progress markers', 'ouro level'], Ouroboros.oro_level)])

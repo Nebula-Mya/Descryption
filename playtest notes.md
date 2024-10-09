@@ -23,7 +23,7 @@
 
 - [x] get teeth from boss battles
 
-- [x] dam builder should inheret sigils
+- [x] dam builder should inherit sigils
 
 - [x] increase ouro's stats on sacc
 

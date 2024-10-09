@@ -1,8 +1,8 @@
-campaign: <rogue.rogue_campaign object at 0x7fe67fb23340>
+campaign: <rogue.rogue_campaign object at 0x7fba65386980>
 
 level: 0
 
-progress: 14
+progress: 5
 
 teeth: 0
 
@@ -10,59 +10,42 @@ lives: 2
 
 dead_campfire: False
 
-Wolf at 0x7fe67f963fa0: {'is_poisoned': False, 'hooked': False, 'species': 'Wolf', 'saccs': 2, 'base_attack': 3, 'current_attack': 3, 'base_life': 2, 'current_life': 2, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:2', 'stats': '3/2', 'name': 'Wolf     ', 'text_lines': ['', ',-------------,', '|Wolf      C:2|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          3/2|', "'-------------'", '        ']}
+Wolf at 0x7fba65384340: {'is_poisoned': False, 'hooked': False, 'species': 'Wolf', 'saccs': 2, 'base_attack': 3, 'current_attack': 3, 'base_life': 2, 'current_life': 2, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:2', 'stats': '3/2', 'name': 'Wolf     ', 'text_lines': ['', ',-------------,', '|Wolf      C:2|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          3/2|', "'-------------'", '        ']}
 
-Stoat at 0x7fe67f963ca0: {'is_poisoned': False, 'hooked': False, 'species': 'Stoat', 'saccs': 1, 'base_attack': 1, 'current_attack': 1, 'base_life': 3, 'current_life': 3, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:1', 'stats': '1/3', 'name': 'Stoat    ', 'text_lines': ['', ',-------------,', '|Stoat     C:1|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          1/3|', "'-------------'", '        ']}
+Stoat at 0x7fba65385f60: {'is_poisoned': False, 'hooked': False, 'species': 'Stoat', 'saccs': 1, 'base_attack': 1, 'current_attack': 1, 'base_life': 3, 'current_life': 3, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:1', 'stats': '1/3', 'name': 'Stoat    ', 'text_lines': ['', ',-------------,', '|Stoat     C:1|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          1/3|', "'-------------'", '        ']}
 
-Bullfrog at 0x7fe67fbafc10: {'is_poisoned': False, 'hooked': False, 'species': 'Bullfrog', 'saccs': 1, 'base_attack': 1, 'current_attack': 1, 'base_life': 2, 'current_life': 2, 'sigils': ['mighty leap', 'touch of death'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:1', 'stats': '1/2', 'name': 'Bullfrog ', 'text_lines': ['', ',-------------,', '|Bullfrog  C:1|', '|             |', '|       _____ |', '|       ʅ   ʃ |', '|       ɩð_ʃ  |', '| \\´‾`/       |', '| |°Δ°|       |', '| /\'"\'\\       |', '|          1/2|', "'-------------'", '        ']}
+Bullfrog at 0x7fba65385ed0: {'is_poisoned': False, 'hooked': False, 'species': 'Bullfrog', 'saccs': 1, 'base_attack': 1, 'current_attack': 1, 'base_life': 2, 'current_life': 2, 'sigils': ['mighty leap', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:1', 'stats': '1/2', 'name': 'Bullfrog ', 'text_lines': ['', ',-------------,', '|Bullfrog  C:1|', '|             |', '|             |', '|    _____    |', '|    ʅ   ʃ    |', '|    ɩð_ʃ     |', '|             |', '|             |', '|          1/2|', "'-------------'", '        ']}
 
-Rabbit at 0x7fe67fb23310: {'is_poisoned': False, 'hooked': False, 'species': 'Rabbit', 'saccs': 0, 'base_attack': 1, 'current_attack': 1, 'base_life': 3, 'current_life': 3, 'sigils': ['lane shift right', 'unkillable'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '1/3', 'name': 'Rabbit   ', 'text_lines': ['', ',-------------,', '|Rabbit    C:0|', '|             |', '|       ,-,   |', '|       | |-> |', "|       '-'   |", '| ,->-,       |', '| | X |       |', "| '-<-'       |", '|          1/3|', "'-------------'", '        ']}
+Rabbit at 0x7fba65385f30: {'is_poisoned': False, 'hooked': False, 'species': 'Rabbit', 'saccs': 0, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['lane shift right', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '1/1', 'name': 'Rabbit   ', 'text_lines': ['', ',-------------,', '|Rabbit    C:0|', '|             |', '|             |', '|    ,-,      |', '|    | |->    |', "|    '-'      |", '|             |', '|             |', '|          1/1|', "'-------------'", '        ']}
 
-Rabbit Pelt at 0x7fe67fb22b90: {'is_poisoned': False, 'hooked': False, 'species': 'Rabbit Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 1, 'current_life': 1, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:0', 'stats': '0/1', 'name': 'Rabbit P.', 'text_lines': ['', ',-------------,', '|Rabbit P. C:0|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          0/1|', "'-------------'", '        ']}
+Boppit Worm at 0x7fba65386f20: {'is_poisoned': False, 'hooked': False, 'species': 'Boppit Worm', 'saccs': 4, 'base_attack': 3, 'current_attack': 3, 'base_life': 5, 'current_life': 5, 'sigils': ['split', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:4', 'stats': '3/5', 'name': 'Boppit W.', 'text_lines': ['', ',-------------,', '|Boppit W. C:4|', '|             |', '|             |', '|      |      |', '|    ()|()    |', '|      |      |', '|             |', '|             |', '|          3/5|', "'-------------'", '        ']}
 
-Rabbit Pelt at 0x7fe67fb228c0: {'is_poisoned': False, 'hooked': False, 'species': 'Rabbit Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 1, 'current_life': 1, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:0', 'stats': '0/1', 'name': 'Rabbit P.', 'text_lines': ['', ',-------------,', '|Rabbit P. C:0|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          0/1|', "'-------------'", '        ']}
+Golden Pelt at 0x7fba65386f50: {'is_poisoned': False, 'hooked': False, 'species': 'Golden Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 3, 'current_life': 3, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '0/3', 'name': 'Golden P.', 'text_lines': ['', ',-------------,', '|Golden P. C:0|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          0/3|', "'-------------'", '        ']}
 
-Cat at 0x7fe67fad94e0: {'is_poisoned': False, 'hooked': False, 'species': 'Cat', 'saccs': 1, 'base_attack': 0, 'current_attack': 0, 'base_life': 1, 'current_life': 1, 'sigils': ['many lives', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:1', 'stats': '0/1', 'name': 'Cat      ', 'text_lines': ['', ',-------------,', '|Cat       C:1|', '|             |', '|             |', '|      Ω      |', '|     CXƆ     |', '|      V      |', '|             |', '|             |', '|          0/1|', "'-------------'", '        '], 'spent_lives': 0}
-
-Adder at 0x7fe67fada440: {'is_poisoned': False, 'hooked': False, 'species': 'Adder', 'saccs': 2, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['touch of death', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:2', 'stats': '1/1', 'name': 'Adder    ', 'text_lines': ['', ',-------------,', '|Adder     C:2|', '|             |', '|             |', '|    \\´‾`/    |', '|    |°Δ°|    |', '|    /\'"\'\\    |', '|             |', '|             |', '|          1/1|', "'-------------'", '        ']}
-
-Cockroach at 0x7fe67faaf0d0: {'is_poisoned': False, 'hooked': False, 'species': 'Cockroach', 'saccs': 2, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['unkillable', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:2', 'stats': '1/1', 'name': 'Cockroach', 'text_lines': ['', ',-------------,', '|Cockroach C:2|', '|             |', '|             |', '|    ,->-,    |', '|    | X |    |', "|    '-<-'    |", '|             |', '|             |', '|          1/1|', "'-------------'", '        ']}
-
-Rabbit at 0x7fe67f8a48b0: {'is_poisoned': False, 'hooked': False, 'species': 'Rabbit', 'saccs': 0, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['lane shift right', 'unkillable'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '1/1', 'name': 'Rabbit   ', 'text_lines': ['', ',-------------,', '|Rabbit    C:0|', '|             |', '|       ,-,   |', '|       | |-> |', "|       '-'   |", '| ,->-,       |', '| | X |       |', "| '-<-'       |", '|          1/1|', "'-------------'", '        ']}
-
-Rabbit Pelt at 0x7fe67f8a63b0: {'is_poisoned': False, 'hooked': False, 'species': 'Rabbit Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 1, 'current_life': 1, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:0', 'stats': '0/1', 'name': 'Rabbit P.', 'text_lines': ['', ',-------------,', '|Rabbit P. C:0|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          0/1|', "'-------------'", '        ']}
-
-Rabbit Pelt at 0x7fe67f8a5cc0: {'is_poisoned': False, 'hooked': False, 'species': 'Rabbit Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 1, 'current_life': 1, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:0', 'stats': '0/1', 'name': 'Rabbit P.', 'text_lines': ['', ',-------------,', '|Rabbit P. C:0|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          0/1|', "'-------------'", '        ']}
-
-Golden Pelt at 0x7fe67f8a6d10: {'is_poisoned': False, 'hooked': False, 'species': 'Golden Pelt', 'saccs': 0, 'base_attack': 0, 'current_attack': 0, 'base_life': 3, 'current_life': 3, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:0', 'stats': '0/3', 'name': 'Golden P.', 'text_lines': ['', ',-------------,', '|Golden P. C:0|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          0/3|', "'-------------'", '        ']}
-
-Shrew at 0x7fe67f8a74f0: {'is_poisoned': False, 'hooked': False, 'species': 'Shrew', 'saccs': 0, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['lane shift left', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '1/1', 'name': 'Shrew    ', 'text_lines': ['', ',-------------,', '|Shrew     C:0|', '|             |', '|             |', '|      ,-,    |', '|    <-| |    |', "|      '-'    |", '|             |', '|             |', '|          1/1|', "'-------------'", '        ']}
-
-Lobster at 0x7fe67f8a7700: {'is_poisoned': False, 'hooked': False, 'species': 'Lobster', 'saccs': 3, 'base_attack': 2, 'current_attack': 2, 'base_life': 3, 'current_life': 3, 'sigils': ['bifurcate', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:3', 'stats': '2/3', 'name': 'Lobster  ', 'text_lines': ['', ',-------------,', '|Lobster   C:3|', '|             |', '|             |', '|    _   _    |', '|     \\ /     |', '|      |      |', '|             |', '|             |', '|          2/3|', "'-------------'", '        ']}
-
-Ouroboros at 0x7fe67f8a6140: {'is_poisoned': False, 'hooked': False, 'species': 'Ouroboros', 'saccs': 2, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['unkillable', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:2', 'stats': '1/1', 'name': 'Ouroboros', 'text_lines': ['', ',-------------,', '|Ouroboros C:2|', '|             |', '|             |', '|    ,->-,    |', '|    | X |    |', "|    '-<-'    |", '|             |', '|             |', '|          1/1|', "'-------------'", '        ']}
+Ouroboros at 0x7fba65387400: {'is_poisoned': False, 'hooked': False, 'species': 'Ouroboros', 'saccs': 2, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['unkillable', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:2', 'stats': '1/1', 'name': 'Ouroboros', 'text_lines': ['', ',-------------,', '|Ouroboros C:2|', '|             |', '|             |', '|    ,->-,    |', '|    | X |    |', "|    '-<-'    |", '|             |', '|             |', '|          1/1|', "'-------------'", '        ']}
 
 player deck: [
-    <card_library.Wolf object at 0x7fe67fada440>,
-    <card_library.Stoat object at 0x7fe67f8a71c0>,
-    <card_library.Bullfrog object at 0x7fe67f8a77f0>,
-    <card_library.Rabbit object at 0x7fe67f8a72e0>,
-    <card_library.Cat object at 0x7fe67f8a6fe0>,
-    <card_library.Rabbit object at 0x7fe67f8a7c70>,
-    <card_library.Shrew object at 0x7fe67f8a5000>,
-    <card_library.Lobster object at 0x7fe67f8a7d00>,
-    <card_library.Ouroboros object at 0x7fe67f8a4490>
+    <card_library.Wolf object at 0x7fba65328820>,
+    <card_library.Stoat object at 0x7fba653285e0>,
+    <card_library.Bullfrog object at 0x7fba65328c10>,
+    <card_library.Rabbit object at 0x7fba65328760>,
+    <card_library.BoppitW object at 0x7fba6532a740>,
+    <card_library.GoldenPelt object at 0x7fba65328c70>,
+    <card_library.Ouroboros object at 0x7fba6532a710>,
+    <card_library.Ouroboros object at 0x7fba65329d80>
 ]
 
 squirrel deck: [
-    <card_library.Squirrel object at 0x7fe67f8a7ee0>,
-    <card_library.Squirrel object at 0x7fe67f8a7910>,
-    <card_library.Squirrel object at 0x7fe67f8a44c0>,
-    <card_library.Squirrel object at 0x7fe67f8a7400>,
-    <card_library.Squirrel object at 0x7fe67f8a6530>,
-    <card_library.Squirrel object at 0x7fe67f8a77c0>,
-    <card_library.Squirrel object at 0x7fe67f8a50c0>,
-    <card_library.Squirrel object at 0x7fe67f8a4f10>,
-    <card_library.Squirrel object at 0x7fe67f8a4ac0>,
-    <card_library.Squirrel object at 0x7fe67f8a41c0>
+    <card_library.Squirrel object at 0x7fba6532be80>,
+    <card_library.Squirrel object at 0x7fba6532ac50>,
+    <card_library.Squirrel object at 0x7fba6532a7a0>,
+    <card_library.Squirrel object at 0x7fba6532ba00>,
+    <card_library.Squirrel object at 0x7fba6532bb20>,
+    <card_library.Squirrel object at 0x7fba6532a620>,
+    <card_library.Squirrel object at 0x7fba65329210>,
+    <card_library.Squirrel object at 0x7fba6532a2c0>,
+    <card_library.Squirrel object at 0x7fba6532ada0>,
+    <card_library.Squirrel object at 0x7fba6532af20>
 ]
+
+Ouroboros at 0x7fba65328460: {'is_poisoned': False, 'hooked': False, 'species': 'Ouroboros', 'saccs': 2, 'base_attack': 2, 'current_attack': 2, 'base_life': 2, 'current_life': 2, 'sigils': ['unkillable', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:2', 'stats': '2/2', 'name': 'Ouroboros', 'text_lines': ['', ',-------------,', '|Ouroboros C:2|', '|             |', '|             |', '|    ,->-,    |', '|    | X |    |', "|    '-<-'    |", '|             |', '|             |', '|          2/2|', "'-------------'", '        ']}
