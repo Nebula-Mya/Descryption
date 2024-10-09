@@ -1742,7 +1742,7 @@ def main() : # coordinates the game loop, calls split_road, manages losses, init
 
     # loop is:
     while True :
-            QoL.ping(locals() | campaign.var_dict())
+            QoL.ping(locals() | campaign.var_dict() | {'Ouroboros level': card_library.Ouroboros.oro_level})
 
     ###     check if area boss is next event (campaign.progress >= 10)
             if campaign.progress >= 15 :

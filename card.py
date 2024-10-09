@@ -78,7 +78,6 @@ class BlankCard() :
         self.hooked = False
         self.current_attack = self.base_attack
         self.current_life = self.base_life
-        self.update_ASCII()
 
     def attack(self, front_left_card, front_card, front_right_card, hand, is_players=False, bushes={}) :
         '''

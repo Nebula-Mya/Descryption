@@ -12,16 +12,27 @@
         }
     },
     "progress markers": {
-        "ouro level": 2,
+        "ouro level": 3,
         "beat prospector": true,
         "beat angler": true,
         "beat trapper": true,
         "beat leshy": false,
         "wins": 0,
-        "losses": 3
+        "losses": 4
     },
     "death cards": {
         "first": {
+            "name": "BEEFY",
+            "attack": 4,
+            "life": 2,
+            "cost": 1,
+            "sigils": [
+                "",
+                ""
+            ],
+            "easter": false
+        },
+        "second": {
             "name": "Nebby",
             "attack": 2,
             "life": 1,
@@ -32,7 +43,7 @@
             ],
             "easter": true
         },
-        "second": {
+        "third": {
             "name": "Glaucus",
             "attack": 4,
             "life": 1,
@@ -40,17 +51,6 @@
             "sigils": [
                 "airborne",
                 "unkillable"
-            ],
-            "easter": true
-        },
-        "third": {
-            "name": "A Possum",
-            "attack": 2,
-            "life": 3,
-            "cost": 3,
-            "sigils": [
-                "corpse eater",
-                "bees within"
             ],
             "easter": true
         }
