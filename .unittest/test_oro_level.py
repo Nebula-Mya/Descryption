@@ -21,31 +21,35 @@ class TestOuroborosLevelUp(unittest.TestCase):
         ouroboros2 = card_library.Ouroboros()
 
         # Test initial values for base_attack and base_life
-        self.assertEqual(ouroboros1.base_attack, ouroboros1.oro_level)
-        self.assertEqual(ouroboros1.base_life, ouroboros1.oro_level)
-        self.assertEqual(ouroboros2.base_attack, ouroboros2.oro_level)
-        self.assertEqual(ouroboros2.base_life, ouroboros2.oro_level)
-        self.assertEqual(card_library.Ouroboros.oro_level, 1)
+        with self.subTest(msg="initial values"):
+            self.assertEqual(ouroboros1.base_attack, ouroboros1.oro_level)
+            self.assertEqual(ouroboros1.base_life, ouroboros1.oro_level)
+            self.assertEqual(ouroboros2.base_attack, ouroboros2.oro_level)
+            self.assertEqual(ouroboros2.base_life, ouroboros2.oro_level)
+            self.assertEqual(card_library.Ouroboros.oro_level, 1)
 
         # Level up the first instance
         ouroboros1.level_up()
 
         # Test values after level up
-        self.assertEqual(ouroboros1.base_attack, ouroboros1.oro_level)
-        self.assertEqual(ouroboros1.base_life, ouroboros1.oro_level)
-        self.assertEqual(card_library.Ouroboros.oro_level, 2)
+        with self.subTest(msg="values after 1's level up"):
+            self.assertEqual(ouroboros1.base_attack, ouroboros1.oro_level)
+            self.assertEqual(ouroboros1.base_life, ouroboros1.oro_level)
+            self.assertEqual(card_library.Ouroboros.oro_level, 2)
 
         # Ensure the second instance remains unchanged
-        self.assertEqual(ouroboros2.base_attack, ouroboros2.oro_level - 1)
-        self.assertEqual(ouroboros2.base_life, ouroboros2.oro_level - 1)
+        with self.subTest(msg="2's values unchanged"):
+            self.assertEqual(ouroboros2.base_attack, ouroboros2.oro_level - 1)
+            self.assertEqual(ouroboros2.base_life, ouroboros2.oro_level - 1)
 
         # Level up the second instance
         ouroboros2.level_up()
 
         # Test values after level up
-        self.assertEqual(ouroboros2.base_attack, ouroboros2.oro_level - 1)
-        self.assertEqual(ouroboros2.base_life, ouroboros2.oro_level - 1)
-        self.assertEqual(card_library.Ouroboros.oro_level, 3)
+        with self.subTest(msg="values after 2's level up"):
+            self.assertEqual(ouroboros2.base_attack, ouroboros2.oro_level - 1)
+            self.assertEqual(ouroboros2.base_life, ouroboros2.oro_level - 1)
+            self.assertEqual(card_library.Ouroboros.oro_level, 3)
 
 # Run the test
 if __name__ == '__main__':
