@@ -27,6 +27,24 @@
 
 - [x] increase ouro's stats on sacc
 
+- [ ] stop stones from appearing when no card has open slots (its a softlock)
+
+- [ ] make cost use hex and roll over, mycologists exists
+
+- [ ] crashes before final boss. still. fucking god dammit i swear to fucking god.
+Traceback (most recent call last):
+  File "/mnt/c/Users/MaWmM/Documents/GitHub/Descryption/menu.py", line 404, in <module>
+    main_menu()
+  File "/mnt/c/Users/MaWmM/Documents/GitHub/Descryption/menu.py", line 383, in main_menu
+    rogue.main()
+  File "/mnt/c/Users/MaWmM/Documents/GitHub/Descryption/rogue.py", line 1750, in main
+    if campaign.level == 3 and bosses.boss_fight_leshy(campaign) :
+  File "/mnt/c/Users/MaWmM/Documents/GitHub/Descryption/bosses.py", line 1151, in boss_fight_leshy
+    return gameplay(campaign)[1] == 'player' # add flavor text, context, etc.
+  File "/mnt/c/Users/MaWmM/Documents/GitHub/Descryption/bosses.py", line 1111, in gameplay
+    for cost in poss_leshy.keys() :
+RuntimeError: dictionary changed size during iteration
+
 
 
 ## Improvements:
@@ -60,3 +78,7 @@
 - [ ] maybe make unkillable not work on sacc (wait for further testing after bug fixes)
 
 - [ ] maybe get rid of starting squirrel (give another main deck card, will need update to fair draw implementation)
+
+- [ ] add another use for teeth (upgrade or remove cards? campfire cost?? REMOVE SIGILS!!)
+
+- [ ] add insentive for bigger, messier decks (safety without softlock???????????)
