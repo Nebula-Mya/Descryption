@@ -28,7 +28,7 @@
 
 - [x] increase ouro's stats on sacc
 
-- [ ] stop stones from appearing when no card has open slots (its a softlock)
+- [x] stop stones from appearing when no card has open slots (its a softlock)
 
 - [ ] make cost use hex and roll over, mycologists exists
 

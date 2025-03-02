@@ -1633,6 +1633,37 @@ def beat_leshy(campaign) : # format visuals
 
     gameplay() # add flavor text, context, etc.
 
+def __event_weights(campaign, previous_events) : # outside of split_road for testing purposes
+    '''
+    generate weights for event paths
+    
+    could change weights depending on campaign level, etc.
+
+    Arguments:
+        campaign: the current campaign object (rogue_campaign object)
+        previous_events: the events that have already been generated (list[int])
+    
+    Returns:
+        list[int]: the weights
+    '''
+    # set up functions
+    bool_to_bin = lambda bool_, int_=1 : int_ if bool_ else 0
+
+    # set up variables
+    weights = [
+        bool_to_bin(1 not in previous_events), # card choice
+        bool_to_bin(2 not in previous_events and len(campaign.player_deck) > 4 and any(card_.has_sigil('') for card_ in campaign.player_deck.cards)), # sigil sacrifice
+        bool_to_bin(any(type(card_1) == type(card_2) and card_1 != card_2 for card_1 in campaign.player_deck.cards for card_2 in campaign.player_deck.cards) and 3 not in previous_events and len(campaign.player_deck) > 4), # merge cards
+        bool_to_bin(4 not in previous_events), # pelt shop
+        bool_to_bin(any(type(card_) in [card_library.WolfPelt, card_library.RabbitPelt, card_library.GoldenPelt] for card_ in campaign.player_deck.cards) and 5 not in previous_events), # card shop
+        bool_to_bin(6 not in previous_events), # break rocks
+        bool_to_bin(7 not in previous_events), # campfire
+    ]
+    # 50% chance for card battle
+    weights.append(bool_to_bin(8 not in previous_events and len(campaign.player_deck) > 3, int_=sum(weights)))
+
+    return weights
+
 def split_road(campaign) : # format visuals
     '''
     presents the player with a choice from 1-3 paths, each with a different event, which will be known to the player before they choose
@@ -1653,21 +1684,8 @@ def split_road(campaign) : # format visuals
         Returns:
             list[str, str, int]: the event to run, the function to run it, and the number of the event
         '''
-        # set up functions
-        bool_to_bin = lambda bool_, int_=1 : int_ if bool_ else 0
-
         # set up variables
-        weights = [
-            bool_to_bin(1 not in previous_events), # card choice
-            bool_to_bin(2 not in previous_events and len(campaign.player_deck) > 4), # sigil sacrifice
-            bool_to_bin(any(type(card_1) == type(card_2) and card_1 != card_2 for card_1 in campaign.player_deck.cards for card_2 in campaign.player_deck.cards) and 3 not in previous_events and len(campaign.player_deck) > 4), # merge cards
-            bool_to_bin(4 not in previous_events), # pelt shop
-            bool_to_bin(any(type(card_) in [card_library.WolfPelt, card_library.RabbitPelt, card_library.GoldenPelt] for card_ in campaign.player_deck.cards) and 5 not in previous_events), # card shop
-            bool_to_bin(6 not in previous_events), # break rocks
-            bool_to_bin(7 not in previous_events), # campfire
-        ]
-        # 50% chance for card battle
-        weights.append(bool_to_bin(8 not in previous_events and len(campaign.player_deck) > 3, int_=sum(weights)))
+        weights = __event_weights(campaign, previous_events)
 
         match random.choices(range(1, 9), weights=weights)[0] :
             case 1 : return ['A choice of cards', 'card_choice(campaign)', 1]
@@ -1799,13 +1817,38 @@ if __name__ == '__main__' :
                 print()
                 print(QoL.center_justified('Current deck: '))
                 campaign.print_deck()
+        
+        def __test_split_odds(campaign) :
+            weights = __event_weights(campaign, [])
+            weight_labels = [
+                "card_choice",
+                "sigil_sacrifice",
+                "merge_cards",
+                "pelt_shop",
+                "card_shop",
+                "break_rocks",
+                "campfire",
+                "card_battle"
+            ]
+
+            total = str(sum(weights))
+            print()
+            for i in range(0,8) :
+                print(weight_labels[i] + " : " + str(weights[i]) + "/" + total)
+
+            QoL.ping(locals() | campaign.var_dict() | {'Ouroboros level': card_library.Ouroboros.oro_level})
 
         # set up variables
-        campaign = rogue_campaign(duel.deck_gen(card_library.Poss_Playr, 20).cards, 0, 2)
-        campaign.add_card(card_library.RabbitPelt())
-        campaign.add_card(card_library.WolfPelt())
-        campaign.add_card(card_library.GoldenPelt())
-        campaign.add_teeth(10)
+        if sys.argv[1] == 'split_odds' :
+            deck_size = random.randint(2,10)
+        else :
+            deck_size = 20
+        campaign = rogue_campaign(duel.deck_gen(card_library.Poss_Playr, deck_size).cards, 0, 2)
+        if sys.argv[1] in ['shop', 'pelt'] :
+            campaign.add_card(card_library.RabbitPelt())
+            campaign.add_card(card_library.WolfPelt())
+            campaign.add_card(card_library.GoldenPelt())
+            campaign.add_teeth(10)
 
         # get death cards if necessary
         if sys.argv[1] in ['death_card', 'lost', 'win'] :
@@ -1832,31 +1875,46 @@ if __name__ == '__main__' :
             death_card_data = QoL.read_data(data_to_read)
             death_card_write = [(data_to_read[ind], death_card_data[ind]) for ind in range(len(data_to_read))]
 
-        # print deck or death cards
-        print_info(sys.argv[1])
+        if sys.argv[1] == 'split_odds' :
+            if random.randint(0,4) == 0 :
+                campaign.add_card(card_library.GoldenPelt())
+            if random.randint(0,4) > 0 :
+                card_: card.BlankCard
+                for card_ in campaign.player_deck.cards :
+                    card_.sigils[1] = card_.sigils[0]
+                    card_.sigils[0]='airborne'
+                    card_.update_ASCII()
+            campaign.add_teeth(random.randint(0,3))
+            
+            print_info(sys.argv[1])
+            print("teeth : " + str(campaign.teeth))
+            __test_split_odds(campaign)
+        else :
+            # print deck or death cards
+            print_info(sys.argv[1])
 
-        input(QoL.center_justified('Press enter to continue...').rstrip())
+            input(QoL.center_justified('Press enter to continue...').rstrip())
 
-        match sys.argv[1] :
-            case 'duel' : card_battle(campaign)
-            case 'choice' : card_choice(campaign)
-            case 'stones' : sigil_sacrifice(campaign)
-            case 'merge' : merge_cards(campaign)
-            case 'pelt' : pelt_shop(campaign)
-            case 'shop' : card_shop(campaign)
-            case 'rocks' : break_rocks(campaign)
-            case 'campfire' : campfire(campaign)
-            case 'death_card' : add_death_card(campaign)
-            case 'lost' : lost_run(campaign)
-            case 'win' : beat_leshy(campaign)
-            case 'split' : split_road(campaign)
-            case 'boss_1' : bosses.boss_fight_prospector(campaign)
-            case 'boss_2' : bosses.boss_fight_angler(campaign)
-            case 'boss_3' : bosses.boss_fight_trapper_trader(campaign)
-            case 'boss_4' : bosses.boss_fight_leshy(campaign)
-            case _ : pass
+            match sys.argv[1] :
+                case 'duel' : card_battle(campaign)
+                case 'choice' : card_choice(campaign)
+                case 'stones' : sigil_sacrifice(campaign)
+                case 'merge' : merge_cards(campaign)
+                case 'pelt' : pelt_shop(campaign)
+                case 'shop' : card_shop(campaign)
+                case 'rocks' : break_rocks(campaign)
+                case 'campfire' : campfire(campaign)
+                case 'death_card' : add_death_card(campaign)
+                case 'lost' : lost_run(campaign)
+                case 'win' : beat_leshy(campaign)
+                case 'split' : split_road(campaign)
+                case 'boss_1' : bosses.boss_fight_prospector(campaign)
+                case 'boss_2' : bosses.boss_fight_angler(campaign)
+                case 'boss_3' : bosses.boss_fight_trapper_trader(campaign)
+                case 'boss_4' : bosses.boss_fight_leshy(campaign)
+                case _ : pass
 
-        print_info(sys.argv[1])
+            print_info(sys.argv[1])
 
         # restore death cards
         if sys.argv[1] in ['death_card', 'lost', 'win'] :
