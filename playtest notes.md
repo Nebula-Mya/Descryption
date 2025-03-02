@@ -30,7 +30,7 @@
 
 - [x] stop stones from appearing when no card has open slots (its a softlock)
 
-- [ ] make cost use hex and roll over, mycologists exists
+- [x] make cost use hex and roll over, mycologists exists
 
 - [ ] crashes before final boss. still. fucking god dammit i swear to fucking god.
 Traceback (most recent call last):
