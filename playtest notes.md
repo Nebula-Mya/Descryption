@@ -1,3 +1,4 @@
+<!-- LTeX: enabled=false -->
 # Playtest Notes
 
 ## Bugs:
