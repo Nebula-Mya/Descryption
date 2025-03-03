@@ -1167,7 +1167,7 @@ def break_rocks(campaign) : # format visuals
 
         print(rocks_str)
     
-    def display_reward(selected, number, reward) :
+    def display_reward(selected, number, reward: card.BlankCard) :
         '''
         display the selected rock (broken in half) and the reward received
 
@@ -1207,6 +1207,9 @@ def break_rocks(campaign) : # format visuals
                 final_str += '\n'
 
         print(QoL.center_justified(final_str))
+        print('\n')
+        reward.explain()
+        print('\n')
 
     def gameplay(campaign) :
         # randomly select 3 insect cards

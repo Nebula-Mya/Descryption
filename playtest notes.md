@@ -52,11 +52,9 @@ RuntimeError: dictionary changed size during iteration
 
 - [x] For mystery cards, dont show 0/0 stats for explanation (in card choice event)
 
-- [ ] in sacrifice for sigils event, allow to go back at any point, not just end confirmation
-
 - [x] be able to view deck when choosing path
 
-- [ ] show explanation after prospector event
+- [x] show explanation after prospector event
 
 - [ ] clarify steel trap text (check if leshy is given a pelt??)
 
@@ -81,3 +79,5 @@ RuntimeError: dictionary changed size during iteration
 <!-- - [ ] add another use for teeth (upgrade or remove cards? campfire cost?? REMOVE SIGILS!!) -->
 
 <!-- - [ ] add insentive for bigger, messier decks (safety without softlock???????????) -->
+
+<!-- - [ ] in sacrifice for sigils event, allow to go back at any point, not just end confirmation -->
