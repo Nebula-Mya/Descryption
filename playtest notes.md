@@ -32,7 +32,7 @@
 
 - [x] make cost use hex and roll over, mycologists exists
 
-- [ ] crashes before final boss. still. fucking god dammit i swear to fucking god.
+- [x] crashes before final boss. still. fucking god dammit i swear to fucking god.
 Traceback (most recent call last):
   File "/mnt/c/Users/MaWmM/Documents/GitHub/Descryption/menu.py", line 404, in <module>
     main_menu()

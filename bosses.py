@@ -256,7 +256,7 @@ def turn_structure(playfield) :
 
     return (False, '', 0, False, played)
 
-def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=True) :
+def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=True, field_cards: list[card.BlankCard]=None) :
     '''
     creates the playfield for a boss fight
 
@@ -288,6 +288,10 @@ def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=Tru
             playfield.opponent_deck.pop()
         for card_ in first_cards :
             playfield.opponent_deck.insert(0, card_)
+
+    # add starting field cards
+    if field_cards!=None : 
+        for zone in range(1, 5) : playfield.summon_card(card=field_cards.pop(), zone=zone, field=playfield.opponent_field)
 
     # advance from bushes
     if advance : playfield.advance()
@@ -1104,15 +1108,15 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
         # pre boss flavor text
         pre_boss_flavor(campaign)
 
-        # set up trader's board
+        # set up leshy's board
         poss_leshy = {cost: [card for card in card_library.Poss_Leshy[cost] if card in card_library.Rare_Cards] for cost in card_library.Poss_Leshy.keys()}
-        for cost in poss_leshy.keys() :
+        for cost in list(poss_leshy) :
             if len(poss_leshy[cost]) == 0 : del poss_leshy[cost]
-        playfield = init_boss_playfield(campaign, Poss_Leshy=poss_leshy, advance=False)
-        duel_state = battle_state()
+        print(poss_leshy)
         start_board_cards = [card.BlankCard(), card.BlankCard(), card.BlankCard(), card_library.MoleMan(True)]
         random.shuffle(start_board_cards)
-        for zone in range(1, 5) : playfield.summon_card(card=start_board_cards.pop(), zone=zone, field=playfield.opponent_field)
+        playfield = init_boss_playfield(campaign, Poss_Leshy=poss_leshy, advance=False, field_cards=start_board_cards)
+        duel_state = battle_state()
 
         # game loop
         played = []

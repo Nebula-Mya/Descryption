@@ -264,7 +264,7 @@ def view_cards(field) :
             case _ :
                 invalid_choice = True
 
-def view_play_attack(field) :
+def view_play_attack(field: field.Playmat) :
     '''
     menu for player to choose to view deck (will happen), view graveyard (will happen), play a card (will happen), or attack and end turn (won't happen, will be in main loop)
 
@@ -323,24 +323,6 @@ def deck_gen(possible_cards, size, hidden_cost=False) :
         raise ValueError('Deck size must be at least 1.')
     if not possible_cards :
         raise ValueError('Possible cards dict must not be empty.')
-
-    # def random_card(possible_cards, alpha=2.2, beta=3.3) :
-    #     # get cost
-    #     max_cost = max(possible_cards.keys())
-    #     min_cost = min(possible_cards.keys())
-    #     cost_range = max_cost - min_cost
-    #     cost = lambda : min_cost + math.floor((cost_range + 1) * random.betavariate(alpha, beta))
-
-    #     # get card type
-    #     template_card = random.choice(possible_cards[cost()])
-    #     card_class = type(template_card)
-    #     if any(type(card) for card in card_library.Rare_Cards) == card_class: # lower chances of rare cards
-    #         template_card = random.choice(possible_cards[cost()])
-    #         card_class = type(template_card)
-
-    #     return copy.deepcopy(card_class(getattr(template_card, 'blank_cost', False)))
-    
-    # deck_list = [random_card(possible_cards) for _ in range(size)] # DONT CHANGE TO QOL.RANDOM_CARD, IT WILL BREAK THE CODE
 
     deck_list = [QoL.random_card(possible_cards, hidden_cost) for _ in range(size)]
 
