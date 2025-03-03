@@ -62,7 +62,7 @@ RuntimeError: dictionary changed size during iteration
 
 - [x] display win results after boss
 
-- [ ] be able to see how many teeth you have
+- [x] be able to see how many teeth you have
 
 - [ ] be able to check deck before choosing draw
 
