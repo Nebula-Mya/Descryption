@@ -56,7 +56,7 @@ RuntimeError: dictionary changed size during iteration
 
 - [x] show explanation after prospector event
 
-- [ ] clarify steel trap text (check if leshy is given a pelt??)
+- [x] clarify steel trap text (check if leshy is given a pelt??)
 
 - [x] show card when drawing from resource too
 

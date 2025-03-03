@@ -346,7 +346,7 @@ pass
 
     'steel trap' : [ # will never be available to players
         [" ʌ^ʌ ","(-Θ-)"," ^ʌ^ "],
-        'When this card perishes, the creature opposing it perishes as well. A Pelt is created in the opponent\'s hand.',
+        'When this card perishes, the creature opposing it perishes as well. A Pelt is created in the your hand.',
         '''
 if current_field[zone].status == 'dead' :
     import card_library
