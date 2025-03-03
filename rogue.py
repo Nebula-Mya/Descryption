@@ -1726,6 +1726,8 @@ def split_road(campaign) : # format visuals
             QoL.clear()
             print('\n'*5)
             for ind in range(len(path_list)) : print(f'{card_gap}Path {str(ind + 1)}: {path_list[ind][0]}')
+            print()
+            print(f'{card_gap}' + ' '*5 + str(len(path_list)+1) + ": View Deck")
 
             if invalid_choice :
                 print(QoL.center_justified('Invalid choice') + '\n')
@@ -1736,7 +1738,17 @@ def split_road(campaign) : # format visuals
             # get the player's choice
             match QoL.reps_int(input(QoL.center_justified('Which path will you take?').rstrip() + ' '), -1) :
                 case [False, _] : invalid_choice = True
-                case [True, choice] : return exec(path_list[choice][1], globals(), locals())
+                case [True, choice] : 
+                    if choice != len(path_list) : return exec(path_list[choice][1], globals(), locals())
+                    
+                    # print the player's deck
+                    QoL.clear()
+                    print('\n'*5)
+                    print(QoL.center_justified('Your deck:'))
+                    campaign.print_deck()
+                    print()
+                    input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
+                    
         
     gameplay(campaign) # add flavor text, context, etc.
 

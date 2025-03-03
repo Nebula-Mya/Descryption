@@ -54,7 +54,7 @@ RuntimeError: dictionary changed size during iteration
 
 - [ ] in sacrifice for sigils event, allow to go back at any point, not just end confirmation
 
-- [ ] be able to view deck when choosing path
+- [x] be able to view deck when choosing path
 
 - [ ] show explanation after prospector event
 
