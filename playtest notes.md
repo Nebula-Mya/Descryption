@@ -54,8 +54,6 @@ RuntimeError: dictionary changed size during iteration
 
 - [ ] in sacrifice for sigils event, allow to go back at any point, not just end confirmation
 
-- [ ] implement saving current campaign in case of crashes
-
 - [ ] be able to view deck when choosing path
 
 - [ ] show explanation after prospector event
@@ -63,8 +61,6 @@ RuntimeError: dictionary changed size during iteration
 - [ ] clarify steel trap text (check if leshy is given a pelt??)
 
 - [x] show card when drawing from resource too
-
-- [ ] maybe let survivors lower cost
 
 - [x] display win results after boss
 
@@ -74,12 +70,14 @@ RuntimeError: dictionary changed size during iteration
 
 - [ ] on very hard (or maybe also hard), start with cards on front row, also increase amount needed to win????
 
-- [ ] make it so stones can replace sigils
+<!-- - [ ] maybe let survivors lower cost -->
 
-- [ ] maybe make unkillable not work on sacc (wait for further testing after bug fixes)
+<!-- - [ ] make it so stones can replace sigils -->
 
-- [ ] maybe get rid of starting squirrel (give another main deck card, will need update to fair draw implementation)
+<!-- - [ ] maybe make unkillable not work on sacc (wait for further testing after bug fixes) -->
 
-- [ ] add another use for teeth (upgrade or remove cards? campfire cost?? REMOVE SIGILS!!)
+<!-- - [ ] maybe get rid of starting squirrel (give another main deck card, will need update to fair draw implementation) -->
 
-- [ ] add insentive for bigger, messier decks (safety without softlock???????????)
+<!-- - [ ] add another use for teeth (upgrade or remove cards? campfire cost?? REMOVE SIGILS!!) -->
+
+<!-- - [ ] add insentive for bigger, messier decks (safety without softlock???????????) -->
