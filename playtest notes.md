@@ -64,7 +64,7 @@ RuntimeError: dictionary changed size during iteration
 
 - [x] be able to see how many teeth you have
 
-- [ ] be able to check deck before choosing draw
+- [x] be able to check deck before choosing draw
 
 - [ ] on very hard (or maybe also hard), start with cards on front row, also increase amount needed to win????
 

@@ -7,9 +7,8 @@ import duel
 import random
 import time
 import sigils
-import rogue
 
-def card_battle(campaign: rogue.rogue_campaign, Poss_Leshy=None) : 
+def card_battle(campaign, Poss_Leshy=None) : 
     '''
     starts a card battle between the player and Leshy, with the player's deck being campaign.player_deck
     
@@ -20,7 +19,7 @@ def card_battle(campaign: rogue.rogue_campaign, Poss_Leshy=None) :
     Returns:
         bool: True if the player wins, False if the player loses
     '''
-    def gameplay(campaign: rogue.rogue_campaign, Poss_Leshy) :
+    def gameplay(campaign, Poss_Leshy) :
         data_to_read = [
             ['settings', 'difficulty', 'leshy median plays'],
             ['settings', 'difficulty', 'leshy plays variance'],
@@ -146,7 +145,7 @@ def error_checks(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count
     if Leshy_strat_change_threshold < -5 or Leshy_strat_change_threshold > 5 :
         raise ValueError('Leshy strategy change threshold must be between -5 and 5.')
 
-def pre_boss_flavor(campaign: rogue.rogue_campaign) :
+def pre_boss_flavor(campaign) :
     '''
     prints pre boss fight flavor text and displays
     adds smoke cards to the player's deck
@@ -167,7 +166,7 @@ def pre_boss_flavor(campaign: rogue.rogue_campaign) :
     print()
     input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
-def post_boss_flavor(campaign: rogue.rogue_campaign, result, overkill=0, deck_out=False) :
+def post_boss_flavor(campaign, result, overkill=0, deck_out=False) :
     '''
     prints post boss fight flavor text and displays
     removes smoke cards from the player's deck
@@ -257,7 +256,7 @@ def turn_structure(playfield) :
 
     return (False, '', 0, False, played)
 
-def init_boss_playfield(campaign: rogue.rogue_campaign, Poss_Leshy=None, first_cards=None, advance=True) :
+def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=True) :
     '''
     creates the playfield for a boss fight
 
@@ -490,8 +489,8 @@ def trading(playfield) :
             case '5' : break
             case _ : invalid_choice = True
 
-def boss_fight_prospector(campaign: rogue.rogue_campaign) : # boss fight 1
-    def gameplay(campaign: rogue.rogue_campaign) :
+def boss_fight_prospector(campaign) : # boss fight 1
+    def gameplay(campaign) :
         pre_boss_flavor(campaign)
 
         playfield = init_boss_playfield(campaign, first_cards=[card_library.PackMule(True), card_library.Coyote(True)])
@@ -558,8 +557,8 @@ def boss_fight_prospector(campaign: rogue.rogue_campaign) : # boss fight 1
 
     return gameplay(campaign)[1] == 'player' # add flavor text, context, etc.
 
-def boss_fight_angler(campaign: rogue.rogue_campaign) : # boss fight 2
-    def gameplay(campaign: rogue.rogue_campaign) :
+def boss_fight_angler(campaign) : # boss fight 2
+    def gameplay(campaign) :
         pre_boss_flavor(campaign)
 
         poss_angler_p1 = {
@@ -693,8 +692,8 @@ def boss_fight_angler(campaign: rogue.rogue_campaign) : # boss fight 2
 
     return gameplay(campaign)[1] == 'player' # add flavor text, context, etc.
 
-def boss_fight_trapper_trader(campaign: rogue.rogue_campaign) : # boss fight 3
-    def gameplay(campaign: rogue.rogue_campaign) :
+def boss_fight_trapper_trader(campaign) : # boss fight 3
+    def gameplay(campaign) :
         pre_boss_flavor(campaign)
 
         poss_trapper = {
@@ -819,9 +818,9 @@ def boss_fight_trapper_trader(campaign: rogue.rogue_campaign) : # boss fight 3
 
     return gameplay(campaign)[1] == 'player' # add flavor text, context, etc.
 
-def boss_fight_leshy(campaign: rogue.rogue_campaign) : # boss fight 4 (still need to implement deck trials)
+def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck trials)
     ## Leshy's reaction to the moon being destroyed is part of field.check_states()
-    def deck_trials(campaign: rogue.rogue_campaign) :
+    def deck_trials(campaign) :
         pass # implement once deck trials and boons are added (needs consumables and bones)
 
     def mining(playfield, battle_state) :
@@ -1098,7 +1097,7 @@ def boss_fight_leshy(campaign: rogue.rogue_campaign) : # boss fight 4 (still nee
             
             return False
 
-    def gameplay(campaign: rogue.rogue_campaign) :
+    def gameplay(campaign) :
         # pre boss events
         deck_trials(campaign)
 

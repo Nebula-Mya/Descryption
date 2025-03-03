@@ -71,7 +71,7 @@ def choose_and_play(field) :
             else :
                 return card_to_play
 
-def choose_draw(field) :
+def choose_draw(field: field.Playmat) :
     '''
     the whole process of choosing a card to draw and drawing it
 
@@ -95,7 +95,7 @@ def choose_draw(field) :
             print('Invalid choice.')
             invalid_choice = False
 
-        deck_number = input('Draw from resource deck (1) or main deck (2): ')
+        deck_number = input('Draw from resource deck (1) or main deck (2) or view current deck (3): ')
 
         (_, deck_number) = QoL.reps_int(deck_number)
         
@@ -112,6 +112,13 @@ def choose_draw(field) :
                     break
                 except ValueError :
                     main_empty_alert = True
+            case 3 :
+                QoL.clear()
+                print('\n'*5)
+                print(QoL.center_justified('Your deck:'))
+                field.print_remaining()
+                print()
+                input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
             case _ :
                 invalid_choice = True
 
