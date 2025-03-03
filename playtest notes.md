@@ -68,16 +68,16 @@ RuntimeError: dictionary changed size during iteration
 
 - [ ] on very hard (or maybe also hard), start with cards on front row, also increase amount needed to win????
 
-<!-- - [ ] maybe let survivors lower cost -->
+- [ ] maybe let survivors lower cost
 
-<!-- - [ ] make it so stones can replace sigils -->
+- [ ] make it so stones can replace sigils
 
-<!-- - [ ] maybe make unkillable not work on sacc (wait for further testing after bug fixes) -->
+- [ ] maybe make unkillable not work on sacc (wait for further testing after bug fixes)
 
-<!-- - [ ] maybe get rid of starting squirrel (give another main deck card, will need update to fair draw implementation) -->
+- [ ] maybe get rid of starting squirrel (give another main deck card, will need update to fair draw implementation)
 
-<!-- - [ ] add another use for teeth (upgrade or remove cards? campfire cost?? REMOVE SIGILS!!) -->
+- [ ] add another use for teeth (upgrade or remove cards? campfire cost?? REMOVE SIGILS!!)
 
-<!-- - [ ] add insentive for bigger, messier decks (safety without softlock???????????) -->
+- [ ] add insentive for bigger, messier decks (safety without softlock???????????)
 
-<!-- - [ ] in sacrifice for sigils event, allow to go back at any point, not just end confirmation -->
+- [ ] in sacrifice for sigils event, allow to go back at any point, not just end confirmation
