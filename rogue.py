@@ -155,7 +155,7 @@ def card_equation(card1, card2, result) :
 
     return new_lines
 
-def card_battle(campaign, Poss_Leshy=None) : 
+def card_battle(campaign: rogue_campaign, Poss_Leshy=None) : 
     '''
     starts a card battle between the player and Leshy, with the player's deck being campaign.player_deck
     
@@ -166,7 +166,7 @@ def card_battle(campaign, Poss_Leshy=None) :
     Returns:
         bool: True if the player wins, False if the player loses
     '''
-    def gameplay(campaign, Poss_Leshy) :
+    def gameplay(campaign: rogue_campaign, Poss_Leshy) :
         data_to_read = [
             ['settings', 'difficulty', 'leshy median plays'],
             ['settings', 'difficulty', 'leshy plays variance'],
@@ -210,14 +210,14 @@ def card_battle(campaign, Poss_Leshy=None) :
     
     return gameplay(campaign, Poss_Leshy) # add flavor text, context, etc.
 
-def card_choice(campaign) : 
+def card_choice(campaign: rogue_campaign) : 
     '''
     allows the player to choose a card to add to their deck from a list of 3, with the list being generated from different card categories
 
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
     '''
-    def card_choose(campaign, cards) : # choose a card from a list of 3 and add it to the player's deck
+    def card_choose(campaign: rogue_campaign, cards) : # choose a card from a list of 3 and add it to the player's deck
         # set up variables
         invalid_choice = False
 
@@ -310,7 +310,7 @@ def card_choice(campaign) :
                 case _ :
                     invalid_choice = True
 
-    def normal_cards(campaign) : # generate a list of 3 taken from card_library.Poss_Playr
+    def normal_cards(campaign: rogue_campaign) : # generate a list of 3 taken from card_library.Poss_Playr
         card_options = duel.deck_gen(card_library.Poss_Playr, 3).cards
         card_index = card_choose(campaign, card_options)
         QoL.clear()
@@ -321,7 +321,7 @@ def card_choice(campaign) :
         input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
         campaign.add_card(card_options[card_index])
 
-    def cost_cards(campaign) : # generate a list of 3 taken from card_library.Poss_Cost, only seeing the costs of the cards
+    def cost_cards(campaign: rogue_campaign) : # generate a list of 3 taken from card_library.Poss_Cost, only seeing the costs of the cards
         card_options = duel.deck_gen(card_library.Poss_Playr, 3).cards
         card_options_hidden = [card.BlankCard(species='???', cost=option.cost[-1], sigils=['???',''], blank_stats=True) for option in card_options]
         card_index = card_choose(campaign, card_options_hidden)
@@ -333,7 +333,7 @@ def card_choice(campaign) :
         input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
         campaign.add_card(card_options[card_index])
 
-    def death_cards(campaign) : # generate a list of 3 death cards taken from card_library.Poss_Death, only available after 5 deaths
+    def death_cards(campaign: rogue_campaign) : # generate a list of 3 death cards taken from card_library.Poss_Death, only available after 5 deaths
         card_options = random.sample(card_library.Poss_Death, 3)
         card_options = [card_() for card_ in card_options]
         card_index = card_choose(campaign, card_options)
@@ -345,7 +345,7 @@ def card_choice(campaign) :
         input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
         campaign.add_card(card_options[card_index])
 
-    def rare_cards(campaign) : # generate a list of 3 rare cards taken from card_library.Rare_Cards, occurs after boss fights
+    def rare_cards(campaign: rogue_campaign) : # generate a list of 3 rare cards taken from card_library.Rare_Cards, occurs after boss fights
         card_options = random.sample(card_library.Rare_Cards, 3)
         card_options = [card_() for card_ in card_options]
         card_index = card_choose(campaign, card_options)
@@ -357,7 +357,7 @@ def card_choice(campaign) :
         input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
         campaign.add_card(card_options[card_index])
 
-    def gameplay(campaign) :
+    def gameplay(campaign: rogue_campaign) :
         choice_categories = ['normal', 'cost', 'rare']
         [wins, losses] = QoL.read_data([['progress markers', 'wins'], ['progress markers', 'losses']])
         if wins + losses >= 5 :
@@ -371,7 +371,7 @@ def card_choice(campaign) :
 
     gameplay(campaign) # add flavor text, context, etc.
 
-def sigil_sacrifice(campaign) : # format visuals
+def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
     '''
     allows the player to sacrifice a card to give its sigil to another card
     
@@ -545,7 +545,7 @@ def sigil_sacrifice(campaign) : # format visuals
         
         return True
 
-    def gameplay(campaign) :
+    def gameplay(campaign: rogue_campaign) :
         # set up variables
         deck_list = campaign.player_deck.cards
 
@@ -574,7 +574,7 @@ def sigil_sacrifice(campaign) : # format visuals
 
     gameplay(campaign) # add flavor text, context, etc.
 
-def merge_cards(campaign) : # format visuals
+def merge_cards(campaign: rogue_campaign) : # format visuals
     '''
     allows the player to merge two cards of the same species into one, with the new card having combined stats and sigils
     
@@ -756,7 +756,7 @@ def merge_cards(campaign) : # format visuals
         
         return True, card_result
 
-    def gameplay(campaign) :
+    def gameplay(campaign: rogue_campaign) :
         # set up variables
         deck_list = campaign.player_deck.cards
 
@@ -786,7 +786,7 @@ def merge_cards(campaign) : # format visuals
 
     gameplay(campaign) # add flavor text, context, etc.
 
-def pelt_shop(campaign) : # format visuals
+def pelt_shop(campaign: rogue_campaign) : # format visuals
     '''
     allow the player to buy pelts from the trapper with teeth
 
@@ -797,7 +797,7 @@ def pelt_shop(campaign) : # format visuals
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
     '''
-    def display_shop(campaign, pelt_dict, new_pelts) :
+    def display_shop(campaign: rogue_campaign, pelt_dict, new_pelts) :
         # set up variables
         card_gap_spaces = ' '*((os.get_terminal_size().columns*55 // 100) // 5 - 15)
         price_tags = QoL.center_justified(card_gap_spaces.join([f'{pelt_name.title()}: {str(pelt_dict[pelt_name][0]).ljust(13 - len(pelt_name))}' for pelt_name in pelt_dict]))
@@ -817,7 +817,7 @@ def pelt_shop(campaign) : # format visuals
         print(f'{card_gap_spaces}Cart:', end='')
         print(cart, end='')
 
-    def buy_pelt(campaign, pelt_name, pelt_dict, new_pelts) :
+    def buy_pelt(campaign: rogue_campaign, pelt_name, pelt_dict, new_pelts) :
         if campaign.teeth >= pelt_dict[pelt_name][0] :
             campaign.add_teeth(-pelt_dict[pelt_name][0])
             new_pelts.append(pelt_dict[pelt_name][1]())
@@ -826,7 +826,7 @@ def pelt_shop(campaign) : # format visuals
             print('\n')
             input(QoL.center_justified(f'You do not have enough teeth to buy a {pelt_name.lower()} (press enter to go back)').rstrip() + ' ')
 
-    def gameplay(campaign, cost_modifier) :
+    def gameplay(campaign: rogue_campaign, cost_modifier) :
         # set up variables
         pelt_dict = {
             'rabbit pelt': [QoL.bind_int((1 + cost_modifier), 1, 2), card_library.RabbitPelt],
@@ -890,7 +890,7 @@ def pelt_shop(campaign) : # format visuals
 
     gameplay(campaign, cost_modifier) # add flavor text, context, etc.
 
-def card_shop(campaign) : # format visuals
+def card_shop(campaign: rogue_campaign) : # format visuals
     '''
     allow the player to buy cards from the trader with pelts from their deck
 
@@ -907,7 +907,7 @@ def card_shop(campaign) : # format visuals
         card_.update_ASCII()
         return card_
     
-    def pelt_trade(campaign, pelt, available_cards) : 
+    def pelt_trade(campaign: rogue_campaign, pelt, available_cards) : 
         '''
         allows the player to trade a pelt for a card
 
@@ -956,7 +956,7 @@ def card_shop(campaign) : # format visuals
 
         return rando_card
 
-    def gameplay(campaign) :
+    def gameplay(campaign: rogue_campaign) :
         # set up variables
         invalid_choice = False
         pelt_order = lambda pelt : ['rabbit pelt', 'wolf pelt', 'golden pelt'].index(pelt.species.lower())
@@ -999,7 +999,7 @@ def card_shop(campaign) : # format visuals
     else :
         gameplay(campaign) # add flavor text, context, etc.
 
-def break_rocks(campaign) : # format visuals
+def break_rocks(campaign: rogue_campaign) : # format visuals
     '''
     allows the player to break one of three rocks to receive a bug card or (rarely) a golden pelt (prospector event)
     
@@ -1167,7 +1167,7 @@ def break_rocks(campaign) : # format visuals
 
         print(rocks_str)
     
-    def display_reward(selected, number, reward) :
+    def display_reward(selected, number, reward: card.BlankCard) :
         '''
         display the selected rock (broken in half) and the reward received
 
@@ -1207,8 +1207,11 @@ def break_rocks(campaign) : # format visuals
                 final_str += '\n'
 
         print(QoL.center_justified(final_str))
+        print('\n')
+        reward.explain()
+        print('\n')
 
-    def gameplay(campaign) :
+    def gameplay(campaign: rogue_campaign) :
         # randomly select 3 insect cards
         available_rocks = random.sample(list(rock_sprites.keys()), 3)
         hidden_rewards = {
@@ -1270,7 +1273,7 @@ def break_rocks(campaign) : # format visuals
 
     gameplay(campaign) # add flavor text, context, etc.
 
-def campfire(campaign) : # format visuals
+def campfire(campaign: rogue_campaign) : # format visuals
     '''
     each time a card rests by the Campfire, it gains a buff to its Power(+1) or Health(+2) (the stat is set before the player 'arrives')
 
@@ -1332,7 +1335,7 @@ def campfire(campaign) : # format visuals
         card.reset_stats()
         card.update_ASCII()
 
-    def eaten_card(card, campaign) :
+    def eaten_card(card, campaign: rogue_campaign) :
         '''
         destroy a card
 
@@ -1348,7 +1351,7 @@ def campfire(campaign) : # format visuals
             campaign.dead_campfire = True
             print(QoL.center_justified('The survivors are now sick'))
         
-    def gameplay(campaign) :
+    def gameplay(campaign: rogue_campaign) :
         # set up variables
         stat = random.choice(['attack', 'life'])
         [wins, losses] = QoL.read_data([['progress markers', 'wins'], ['progress markers', 'losses']])
@@ -1402,7 +1405,7 @@ def campfire(campaign) : # format visuals
 
     gameplay(campaign) # add flavor text, context, etc.
 
-def add_death_card(campaign) : # format visuals
+def add_death_card(campaign: rogue_campaign) : # format visuals
     '''
     allow the player to add a death card to the card pool
     
@@ -1458,7 +1461,7 @@ def add_death_card(campaign) : # format visuals
         ]
         QoL.write_data(data_to_write)
 
-    def choose_card(dialogue, used_cards, campaign) :
+    def choose_card(dialogue, used_cards, campaign: rogue_campaign) :
         '''
         allow the player to choose a card from a list of three
         
@@ -1540,7 +1543,7 @@ def add_death_card(campaign) : # format visuals
                 case _ :
                     invalid_choice = True
 
-    def gameplay(campaign) :
+    def gameplay(campaign: rogue_campaign) :
         # set up variables
         used_cards = []
         cost_dialogue = 'Choose a card to take the cost from:'
@@ -1598,8 +1601,8 @@ def add_death_card(campaign) : # format visuals
 
     gameplay(campaign) # add flavor text, context, etc.
 
-def lost_run(campaign) : # format visuals
-    def gameplay(campaign) :
+def lost_run(campaign: rogue_campaign) : # format visuals
+    def gameplay(campaign: rogue_campaign) :
         # manage save data
         [losses] = QoL.read_data([['progress markers', 'losses']])
         QoL.write_data([(['progress markers', 'losses'], losses + 1)])
@@ -1616,7 +1619,7 @@ def lost_run(campaign) : # format visuals
 
     gameplay(campaign) # add flavor text, context, etc.
 
-def beat_leshy(campaign) : # format visuals
+def beat_leshy(campaign: rogue_campaign) : # format visuals
     def gameplay() :
         # manage save data
         [wins] = QoL.read_data([['progress markers', 'wins']])
@@ -1633,14 +1636,45 @@ def beat_leshy(campaign) : # format visuals
 
     gameplay() # add flavor text, context, etc.
 
-def split_road(campaign) : # format visuals
+def __event_weights(campaign: rogue_campaign, previous_events) : # outside of split_road for testing purposes
+    '''
+    generate weights for event paths
+    
+    could change weights depending on campaign level, etc.
+
+    Arguments:
+        campaign: the current campaign object (rogue_campaign object)
+        previous_events: the events that have already been generated (list[int])
+    
+    Returns:
+        list[int]: the weights
+    '''
+    # set up functions
+    bool_to_bin = lambda bool_, int_=1 : int_ if bool_ else 0
+
+    # set up variables
+    weights = [
+        bool_to_bin(1 not in previous_events), # card choice
+        bool_to_bin(2 not in previous_events and len(campaign.player_deck) > 4 and any(card_.has_sigil('') for card_ in campaign.player_deck.cards)), # sigil sacrifice
+        bool_to_bin(any(type(card_1) == type(card_2) and card_1 != card_2 for card_1 in campaign.player_deck.cards for card_2 in campaign.player_deck.cards) and 3 not in previous_events and len(campaign.player_deck) > 4), # merge cards
+        bool_to_bin(4 not in previous_events), # pelt shop
+        bool_to_bin(any(type(card_) in [card_library.WolfPelt, card_library.RabbitPelt, card_library.GoldenPelt] for card_ in campaign.player_deck.cards) and 5 not in previous_events), # card shop
+        bool_to_bin(6 not in previous_events), # break rocks
+        bool_to_bin(7 not in previous_events), # campfire
+    ]
+    # 50% chance for card battle
+    weights.append(bool_to_bin(8 not in previous_events and len(campaign.player_deck) > 3, int_=sum(weights)))
+
+    return weights
+
+def split_road(campaign: rogue_campaign) : # format visuals
     '''
     presents the player with a choice from 1-3 paths, each with a different event, which will be known to the player before they choose
     
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
     '''
-    def get_event(campaign, previous_events=[]) :
+    def get_event(campaign: rogue_campaign, previous_events=[]) :
         '''
         generate an event for a path according to weights
         
@@ -1653,21 +1687,8 @@ def split_road(campaign) : # format visuals
         Returns:
             list[str, str, int]: the event to run, the function to run it, and the number of the event
         '''
-        # set up functions
-        bool_to_bin = lambda bool_, int_=1 : int_ if bool_ else 0
-
         # set up variables
-        weights = [
-            bool_to_bin(1 not in previous_events), # card choice
-            bool_to_bin(2 not in previous_events and len(campaign.player_deck) > 4), # sigil sacrifice
-            bool_to_bin(any(type(card_1) == type(card_2) and card_1 != card_2 for card_1 in campaign.player_deck.cards for card_2 in campaign.player_deck.cards) and 3 not in previous_events and len(campaign.player_deck) > 4), # merge cards
-            bool_to_bin(4 not in previous_events), # pelt shop
-            bool_to_bin(any(type(card_) in [card_library.WolfPelt, card_library.RabbitPelt, card_library.GoldenPelt] for card_ in campaign.player_deck.cards) and 5 not in previous_events), # card shop
-            bool_to_bin(6 not in previous_events), # break rocks
-            bool_to_bin(7 not in previous_events), # campfire
-        ]
-        # 50% chance for card battle
-        weights.append(bool_to_bin(8 not in previous_events and len(campaign.player_deck) > 3, int_=sum(weights)))
+        weights = __event_weights(campaign, previous_events)
 
         match random.choices(range(1, 9), weights=weights)[0] :
             case 1 : return ['A choice of cards', 'card_choice(campaign)', 1]
@@ -1679,7 +1700,7 @@ def split_road(campaign) : # format visuals
             case 7 : return ['Survivors huddled around a campfire', 'campfire(campaign)', 7]
             case 8 : return ['A card battle', 'card_battle(campaign)', 8]
 
-    def gameplay(campaign) :
+    def gameplay(campaign: rogue_campaign) :
         # set up variables
         term_cols = os.get_terminal_size().columns
         card_gap = ((term_cols*55 // 100) // 5 - 15) * ' '
@@ -1707,7 +1728,10 @@ def split_road(campaign) : # format visuals
             # display the paths
             QoL.clear()
             print('\n'*5)
+            print(f'{card_gap}' + 'teeth: ' + str(campaign.teeth))
+            print()
             for ind in range(len(path_list)) : print(f'{card_gap}Path {str(ind + 1)}: {path_list[ind][0]}')
+            print(f'{card_gap}' + str(len(path_list)+1) + ": View Deck")
 
             if invalid_choice :
                 print(QoL.center_justified('Invalid choice') + '\n')
@@ -1718,7 +1742,17 @@ def split_road(campaign) : # format visuals
             # get the player's choice
             match QoL.reps_int(input(QoL.center_justified('Which path will you take?').rstrip() + ' '), -1) :
                 case [False, _] : invalid_choice = True
-                case [True, choice] : return exec(path_list[choice][1], globals(), locals())
+                case [True, choice] : 
+                    if choice != len(path_list) : return exec(path_list[choice][1], globals(), locals())
+                    
+                    # print the player's deck
+                    QoL.clear()
+                    print('\n'*5)
+                    print(QoL.center_justified('Your deck:'))
+                    campaign.print_deck()
+                    print()
+                    input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
+                    
         
     gameplay(campaign) # add flavor text, context, etc.
 
@@ -1799,13 +1833,38 @@ if __name__ == '__main__' :
                 print()
                 print(QoL.center_justified('Current deck: '))
                 campaign.print_deck()
+        
+        def __test_split_odds(campaign: rogue_campaign) :
+            weights = __event_weights(campaign, [])
+            weight_labels = [
+                "card_choice",
+                "sigil_sacrifice",
+                "merge_cards",
+                "pelt_shop",
+                "card_shop",
+                "break_rocks",
+                "campfire",
+                "card_battle"
+            ]
+
+            total = str(sum(weights))
+            print()
+            for i in range(0,8) :
+                print(weight_labels[i] + " : " + str(weights[i]) + "/" + total)
+
+            QoL.ping(locals() | campaign.var_dict() | {'Ouroboros level': card_library.Ouroboros.oro_level})
 
         # set up variables
-        campaign = rogue_campaign(duel.deck_gen(card_library.Poss_Playr, 20).cards, 0, 2)
-        campaign.add_card(card_library.RabbitPelt())
-        campaign.add_card(card_library.WolfPelt())
-        campaign.add_card(card_library.GoldenPelt())
-        campaign.add_teeth(10)
+        if sys.argv[1] == 'split_odds' :
+            deck_size = random.randint(2,10)
+        else :
+            deck_size = 20
+        campaign = rogue_campaign(duel.deck_gen(card_library.Poss_Playr, deck_size).cards, 0, 2)
+        if sys.argv[1] in ['shop', 'pelt', 'split'] :
+            campaign.add_card(card_library.RabbitPelt())
+            campaign.add_card(card_library.WolfPelt())
+            campaign.add_card(card_library.GoldenPelt())
+            campaign.add_teeth(10)
 
         # get death cards if necessary
         if sys.argv[1] in ['death_card', 'lost', 'win'] :
@@ -1832,31 +1891,46 @@ if __name__ == '__main__' :
             death_card_data = QoL.read_data(data_to_read)
             death_card_write = [(data_to_read[ind], death_card_data[ind]) for ind in range(len(data_to_read))]
 
-        # print deck or death cards
-        print_info(sys.argv[1])
+        if sys.argv[1] == 'split_odds' :
+            if random.randint(0,4) == 0 :
+                campaign.add_card(card_library.GoldenPelt())
+            if random.randint(0,4) > 0 :
+                card_: card.BlankCard
+                for card_ in campaign.player_deck.cards :
+                    card_.sigils[1] = card_.sigils[0]
+                    card_.sigils[0]='airborne'
+                    card_.update_ASCII()
+            campaign.add_teeth(random.randint(0,3))
+            
+            print_info(sys.argv[1])
+            print("teeth : " + str(campaign.teeth))
+            __test_split_odds(campaign)
+        else :
+            # print deck or death cards
+            print_info(sys.argv[1])
 
-        input(QoL.center_justified('Press enter to continue...').rstrip())
+            input(QoL.center_justified('Press enter to continue...').rstrip())
 
-        match sys.argv[1] :
-            case 'duel' : card_battle(campaign)
-            case 'choice' : card_choice(campaign)
-            case 'stones' : sigil_sacrifice(campaign)
-            case 'merge' : merge_cards(campaign)
-            case 'pelt' : pelt_shop(campaign)
-            case 'shop' : card_shop(campaign)
-            case 'rocks' : break_rocks(campaign)
-            case 'campfire' : campfire(campaign)
-            case 'death_card' : add_death_card(campaign)
-            case 'lost' : lost_run(campaign)
-            case 'win' : beat_leshy(campaign)
-            case 'split' : split_road(campaign)
-            case 'boss_1' : bosses.boss_fight_prospector(campaign)
-            case 'boss_2' : bosses.boss_fight_angler(campaign)
-            case 'boss_3' : bosses.boss_fight_trapper_trader(campaign)
-            case 'boss_4' : bosses.boss_fight_leshy(campaign)
-            case _ : pass
+            match sys.argv[1] :
+                case 'duel' : card_battle(campaign)
+                case 'choice' : card_choice(campaign)
+                case 'stones' : sigil_sacrifice(campaign)
+                case 'merge' : merge_cards(campaign)
+                case 'pelt' : pelt_shop(campaign)
+                case 'shop' : card_shop(campaign)
+                case 'rocks' : break_rocks(campaign)
+                case 'campfire' : campfire(campaign)
+                case 'death_card' : add_death_card(campaign)
+                case 'lost' : lost_run(campaign)
+                case 'win' : beat_leshy(campaign)
+                case 'split' : split_road(campaign)
+                case 'boss_1' : bosses.boss_fight_prospector(campaign)
+                case 'boss_2' : bosses.boss_fight_angler(campaign)
+                case 'boss_3' : bosses.boss_fight_trapper_trader(campaign)
+                case 'boss_4' : bosses.boss_fight_leshy(campaign)
+                case _ : pass
 
-        print_info(sys.argv[1])
+            print_info(sys.argv[1])
 
         # restore death cards
         if sys.argv[1] in ['death_card', 'lost', 'win'] :

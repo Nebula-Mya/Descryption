@@ -596,10 +596,9 @@ def random_card(possible_cards, weighted=True, alpha=2.2, beta=3.3, few_rare=Tru
 
     # get cost
     if weighted:
-        max_cost = max(card_dict.keys())
-        min_cost = min(card_dict.keys())
-        cost_range = max_cost - min_cost
-        cost = lambda : min_cost + math.floor((cost_range + 1) * random.betavariate(alpha, beta))
+        cost_values = list(card_dict)
+        cost_values.sort()
+        cost = lambda : cost_values[math.floor((cost_values.__len__()) * random.betavariate(alpha, beta))]
     else : cost = lambda : random.choice(list(card_dict.keys()))
 
     # get card type

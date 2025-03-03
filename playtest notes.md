@@ -28,11 +28,11 @@
 
 - [x] increase ouro's stats on sacc
 
-- [ ] stop stones from appearing when no card has open slots (its a softlock)
+- [x] stop stones from appearing when no card has open slots (its a softlock)
 
-- [ ] make cost use hex and roll over, mycologists exists
+- [x] make cost use hex and roll over, mycologists exists
 
-- [ ] crashes before final boss. still. fucking god dammit i swear to fucking god.
+- [x] crashes before final boss. still. fucking god dammit i swear to fucking god.
 Traceback (most recent call last):
   File "/mnt/c/Users/MaWmM/Documents/GitHub/Descryption/menu.py", line 404, in <module>
     main_menu()
@@ -52,27 +52,23 @@ RuntimeError: dictionary changed size during iteration
 
 - [x] For mystery cards, dont show 0/0 stats for explanation (in card choice event)
 
-- [ ] in sacrifice for sigils event, allow to go back at any point, not just end confirmation
+- [x] be able to view deck when choosing path
 
-- [ ] implement saving current campaign in case of crashes
+- [x] show explanation after prospector event
 
-- [ ] be able to view deck when choosing path
-
-- [ ] show explanation after prospector event
-
-- [ ] clarify steel trap text (check if leshy is given a pelt??)
+- [x] clarify steel trap text (check if leshy is given a pelt??)
 
 - [x] show card when drawing from resource too
 
-- [ ] maybe let survivors lower cost
-
 - [x] display win results after boss
 
-- [ ] be able to see how many teeth you have
+- [x] be able to see how many teeth you have
 
-- [ ] be able to check deck before choosing draw
+- [x] be able to check deck before choosing draw
 
 - [ ] on very hard (or maybe also hard), start with cards on front row, also increase amount needed to win????
+
+- [ ] maybe let survivors lower cost
 
 - [ ] make it so stones can replace sigils
 
@@ -83,3 +79,5 @@ RuntimeError: dictionary changed size during iteration
 - [ ] add another use for teeth (upgrade or remove cards? campfire cost?? REMOVE SIGILS!!)
 
 - [ ] add insentive for bigger, messier decks (safety without softlock???????????)
+
+- [ ] in sacrifice for sigils event, allow to go back at any point, not just end confirmation

@@ -307,7 +307,7 @@ class BlankCard() :
         if self.blank_cost or self.species == '':
             self.cost = ''
         else :
-            self.cost = str("C:" + str(self.saccs))
+            self.cost = "C:" + hex(self.saccs % 16)[2]
         
         if self.blank_stats or self.species == '':
             self.stats = ' '*3
@@ -401,7 +401,7 @@ class BlankCard() :
         self.update_ASCII()
 
 if __name__ == "__main__" :
-    testblank = BlankCard(sigils=['???',''])
+    testblank = BlankCard(sigils=['???',''], cost=17, species="foo")
     print()
     print('Blank Card')
     print(testblank.text_lines)
