@@ -7,6 +7,7 @@ import random
 import os
 import duel
 import sigils
+import time
 
 def ai_category_checking(categories, player_field, card_to_play, bushes, score, strat_change_threshold) :
     '''
@@ -37,7 +38,7 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
                 return True
         
         # if no categories apply
-        if opp_card.species != '' and (self_life > opp_attack or self_attack >= opp_life or opp_attack >= 4) :
+        if type(opp_card) != card.BlankCard and (self_life > opp_attack or self_attack >= opp_life or opp_attack >= 4) :
             return True
         
         return False
@@ -57,13 +58,17 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
         return False
     
     def add_to_in_strat(card_to_play, player_field, bushes, zone) :
+        # error handling
+        if zone not in range(1, 5) :
+            raise ValueError('Invalid zone.')
+        
         # set up variables
         opp_card = player_field[zone]
         bush_empty = bushes[zone].species == ''
 
         # if Leshy is winning enough to go on the offensive, regardless of card category
         if (score['opponent'] - score['player'] >= strat_change_threshold) and (card_to_play.base_attack > 0) :
-            if bush_empty and opp_card.species == '' :
+            if bush_empty and type(opp_card) == card.BlankCard :
                 return True
             else :
                 False
@@ -84,8 +89,8 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
             case _ :
                 return False
     
-    in_strategy = [zone for zone in range(1, 6) if add_to_in_strat(card_to_play, player_field, bushes, zone)]
-    out_of_strategy = [zone for zone in range(1, 6) if zone not in in_strategy]
+    in_strategy = [zone for zone in range(1, 5) if add_to_in_strat(card_to_play, player_field, bushes, zone)]
+    out_of_strategy = [zone for zone in range(1, 5) if zone not in in_strategy and type(bushes[zone]) == card.BlankCard]
 
     return in_strategy, out_of_strategy
 
@@ -155,10 +160,13 @@ class Playmat :
         self.Leshy_strat_change_threshold = Leshy_strat_change_threshold
 
         # create the rows of the field
-        gen_blank_row = lambda: {column: card.BlankCard() for column in range(7)}
+        gen_blank_row = lambda: {column: card.BlankCard() for column in range(6)}
         self.bushes = gen_blank_row()
         self.player_field = gen_blank_row()
         self.opponent_field = gen_blank_row()
+        for zone in range(1, 5) :
+            for field in [self.player_field, self.bushes, self.opponent_field] :
+                field[zone].play(zone=zone)
     
     def draw(self, deck) :
         '''
@@ -174,16 +182,16 @@ class Playmat :
                 self.hand.append(self.player_deck[0])
                 self.player_deck.pop(0)
 
-                # show card explanation
-                self.print_field()
-                self.hand[-1].explain()
-                input('Press enter to continue.')
-
             case 'resource' :
                 if self.player_squirrels == [] :
                     raise ValueError('Deck is empty.')
                 self.hand.append(self.player_squirrels[0])
                 self.player_squirrels.pop(0)
+        
+        # show card explanation
+        self.print_field()
+        self.hand[-1].explain()
+        input('Press enter to continue.')
 
     def play_card(self, index, zone) :
         '''
@@ -199,7 +207,7 @@ class Playmat :
         # error handling
         if index not in range(len(self.hand)) :
             raise ValueError('Invalid index.')
-        if zone not in range(1, 6) :
+        if zone not in range(1, 5) :
             raise ValueError('Invalid zone.')
 
         # set up variables
@@ -210,67 +218,75 @@ class Playmat :
         # update display
         self.print_field()
         self.hand[index].explain()
-        print('Sacrifices required:', cost)
-        print('Select sacrifices: (press enter to go back)', end=' ')
+
+        if cost == 0 and type(self.player_field[zone]) != card.BlankCard : # playing on top of a card
+            return False
+        else :
+            print('Sacrifices required:', cost)
+            print('Select sacrifices: (press enter to go back)', end=' ')
 
         def fail_saccs() :
                 sacc_list = []
                 cost = og_cost # to prevent goat cheesing
-                return [sacc_list, cost]
+                worthy_sacc = False
+                return [sacc_list, cost, worthy_sacc]
 
         # get sacrifices
-        while not (len(sacc_list) == cost) :
+        worthy_sacc = False
+        while not (len(sacc_list) >= cost) :
             sacc_index_list = input('')
 
             if sacc_index_list == '' : # go back if user presses enter
                 return False
             
-            sacc_indexes = [int(sacc) for sacc in sacc_index_list if sacc in [str(n) for n in range(1, 6)]] # get valid saccs
+            sacc_indexes = [int(sacc) for sacc in sacc_index_list if sacc in [str(n) for n in range(1, 5)]] # get valid saccs
 
             for _ in [sacc for sacc in sacc_indexes if self.player_field[sacc].has_sigil('worthy sacrifice')] : # decrease cost for cards with worthy sacrifice
+                worthy_sacc = True
                 cost -= 2 
                 if cost < 0 :
                     cost = 0
 
-            if len(sacc_indexes) > cost - len(sacc_list) : # too many saccs, serves as guard clause
+            if len(sacc_indexes) > cost - len(sacc_list) and not worthy_sacc : # too many saccs, serves as guard clause
                 print('Too many sacrifices.')
-                [sacc_list, cost] = fail_saccs() # reset saccs and cost to prevent player confusion, may change if alternate behavior is desired
+                [sacc_list, cost, worthy_sacc] = fail_saccs() # reset saccs and cost to prevent player confusion, may change if alternate behavior is desired
                 continue
 
             for sacc_index in sacc_indexes :
-                if sacc_index not in range(1, 6) or sacc_index in sacc_list or self.player_field[sacc_index].species == '' : # invalid zone
+                if sacc_index not in range(1, 5) or sacc_index in sacc_list or type(self.player_field[sacc_index]) == card.BlankCard : # invalid zone
                     print(str(sacc_index), 'is an invalid zone.')
+                    break # do not reset, just don't add the sacc, may change if alternate behavior is desired
+                elif type(self.player_field[sacc_index]) in card_library.Terrain_Cards : # cannot sacrifice terrain cards
+                    print('Cannot sacrifice terrain cards.')
                     break # do not reset, just don't add the sacc, may change if alternate behavior is desired
                 else :
                     sacc_list.append(sacc_index)
 
-            if self.player_field[zone].species == '' or len(sacc_list) != cost : # guard clause for playing on top of a card
+            if type(self.player_field[zone]) == card.BlankCard or len(sacc_list) != cost : # guard clause for playing on top of a card
                 continue
             if zone not in sacc_list : # playing on top of a card that wasn't sacrificed
                 print('Cannot play on top of a non sacrificed card.')
-                [sacc_list, cost] = fail_saccs()
+                [sacc_list, cost, worthy_sacc] = fail_saccs()
             elif self.player_field[zone].has_sigil('many lives') : # playing on top of a card with many lives
                 print('Cannot play on top of a card with many lives.')
-                [sacc_list, cost] = fail_saccs()
+                [sacc_list, cost, worthy_sacc] = fail_saccs()
         
         # remove saccs
         for ind in sacc_list :
             QoL.exec_sigil_code(self.player_field[ind], sigils.on_sacrifices, None, locals())
 
-            if self.player_field[ind].species == 'Cat' and self.player_field[ind].has_sigil('many lives') : # make sure cat still has many lives
+            if type(self.player_field[ind]) == card_library.Cat and self.player_field[ind].has_sigil('many lives') : # make sure cat still has many lives
                 self.player_field[ind].spent_lives += 1
                 if self.player_field[ind].spent_lives >= 9 :
                     self.player_field[ind] = card_library.UndeadCat()
-            else :
-                self.player_field[ind].die()
 
             if not self.player_field[ind].sigil_in_category(sigils.on_sacrifices) :
+                self.player_field[ind].die()
                 self.graveyard.insert(0, self.player_field[ind])
                 self.player_field[ind] = card.BlankCard()
         else : 
             # play card to zone
-            self.player_field[zone] = self.hand[index]
-            self.player_field[zone].play(zone=zone)
+            self.summon_card(card=self.hand[index], field=self.player_field, zone=zone)
             self.hand.pop(index)
             
             # handle sigils
@@ -290,27 +306,36 @@ class Playmat :
                 attacking_field = self.player_field
                 defending_field = self.opponent_field
                 is_players = True
+                omni_strike = False
             case 'opponent' :
                 attacking_field = self.opponent_field
                 defending_field = self.player_field
                 is_players = False
+                omni_strike = any([type(card_) == card_library.Moon for card_ in self.opponent_field.values()]) and all([type(card_) == card.BlankCard for card_ in self.player_field.values()])
             case _ :
                 raise ValueError('Invalid active player.')
 
         # attacking
         for zone in attacking_field :
-            if attacking_field[zone].species != '' and attacking_field[zone].zone != 0 and attacking_field[zone].zone != 6 :
+            if type(attacking_field[zone]) != card.BlankCard and attacking_field[zone].zone != 0 and attacking_field[zone].zone != 5 :
                 attacker_points = attacking_field[zone].attack(defending_field[zone-1],defending_field[zone],defending_field[zone+1], self.hand, is_players=is_players, bushes=self.bushes)
 
                 # score update
                 self.score[self.active] += attacker_points
+        
+        # for omni strike sigil (only on the moon)
+        if omni_strike : self.score['opponent'] += 1
 
         # moving sigils
+        shifted_card = None
         for zone in attacking_field :
-            if did_shift :
+            zone_card = attacking_field[zone]
+            if shifted_card == zone_card :
                 did_shift = False
             else :
                 [did_shift] = QoL.exec_sigil_code(attacking_field[zone], sigils.movers, None, locals(), ['did_shift'])
+            if did_shift :
+                shifted_card = zone_card
 
     def check_states(self) :
         '''
@@ -320,48 +345,93 @@ class Playmat :
         corpses = []
 
         # check for dead cards
-        for current_field, zone in [(current_field, zone) for current_field in [self.player_field, self.opponent_field, self.bushes] for zone in current_field] :
+        for current_field, zone in [(current_field, zone) for current_field in [self.player_field, self.opponent_field, self.bushes] for zone in range(1, 5)] :
             # if a sigil applies
             [corpses] = QoL.exec_sigil_code(current_field[zone], sigils.on_deaths, None, locals(), ['corpses'])
 
-            # if a normal card dies
-            if current_field[zone].status == 'dead' and not current_field[zone].sigil_in_category(sigils.on_deaths) :
+            ## specific cards will never have sigils that apply on death
+            # if pack mule from Prospector fight
+            if current_field[zone].species == 'Pack Mule' and current_field[zone].status == 'dead' and current_field in [self.opponent_field, self.bushes] : # keeping this as species because its a funny easter egg
+                self.hand.append(card_library.Squirrel())
+                one_cost = QoL.random_card(card_library.Poss_Playr[1])
+                two_cost = QoL.random_card(card_library.Poss_Playr[2])
+                bone_card = QoL.random_card(card_library.Poss_Playr[1]) # until bones are implemented
+                self.hand.append(one_cost)
+                self.hand.append(two_cost)
+                self.hand.append(bone_card)
                 current_field[zone].die()
-                current_field[zone] = card.BlankCard()
-                current_field[zone].play(zone)
+                self.summon_card(card=card.BlankCard(), field=current_field, zone=zone)
+                corpses.append((zone, current_field))
+
+            # if bait bucket from Angler fight
+            elif type(current_field[zone]) == card_library.BaitBucket and current_field[zone].status == 'dead' :
+                current_field[zone].die()
+                if current_field == self.player_field : self.graveyard.insert(0, current_field[zone])
+                self.summon_card(card=card_library.BullShark(True), field=current_field, zone=zone)
+
+            # if strange frog from Trapper fight
+            elif type(current_field[zone]) == card_library.StrangeFrog and current_field[zone].status == 'dead' and current_field == self.opponent_field :
+                current_field[zone].die()
+                if current_field == self.player_field : self.graveyard.insert(0, current_field[zone])
+                self.summon_card(card=card_library.LeapingTrap(True), field=current_field, zone=zone)
+
+            # if moon from Leshy fight
+            elif type(current_field[zone]) == card_library.Moon and current_field[zone].status == 'dead' :
+                for zone in range(1, 5) :
+                    self.bushes[zone].die()
+                    self.opponent_field[zone].die()
+                    self.summon_card(card=card.BlankCard(), field=self.bushes, zone=zone)
+                    self.summon_card(card=card.BlankCard(), field=self.opponent_field, zone=zone)
+                QoL.clear()
+                print('\n'*5)
+                print(QoL.center_justified('"You really destroyed the moon..."'))
+                time.sleep(3)
+                print(QoL.center_justified('"I suppose all that\'s left is to finish me off."'))
+                time.sleep(2)
+                print(QoL.center_justified('"..."'))
+                time.sleep(2)
+                print(QoL.center_justified('"Go on."'))
+                time.sleep(3)
+                print('\n'*2)
+                input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
+
+            # if a normal card dies
+            # elif current_field[zone].status == 'dead' and not current_field[zone].sigil_in_category(sigils.on_deaths) :
+            elif current_field[zone].status == 'dead' :
+                current_field[zone].die()
+                if type(self) != card.BlankCard and current_field == self.player_field : self.graveyard.insert(0, current_field[zone])
+                self.summon_card(card=card.BlankCard(), field=current_field, zone=zone)
                 corpses.append((zone, current_field))
         
         # check for corpse eaters
-        open_corpses = [corpse for (corpse, field) in corpses if field == self.player_field and self.player_field[corpse].species == '']
+        open_corpses = [corpse for (corpse, field) in corpses if field == self.player_field and type(self.player_field[corpse]) == card.BlankCard]
         corpse_eaters = get_corpse_eaters(self.hand)
 
         # play corpse eaters
         while open_corpses and corpse_eaters :
             zone_choice = random.choice(open_corpses)
-            self.player_field[zone_choice] = self.hand[corpse_eaters[0]]
-            self.player_field[zone_choice].play(zone_choice)
+            self.summon_card(card=self.hand[corpse_eaters[0]], field=self.player_field, zone=zone_choice)
             self.hand.pop(corpse_eaters[0])
             open_corpses.remove(zone_choice)
             corpse_eaters = get_corpse_eaters(self.hand) # update corpse eaters
 
     def advance(self) : 
         '''
-        advances cards from bushes to field, utilizing rudimentary decision making for Leshy
+        advances cards from bushes to field, utilizing opponent AI to play cards
         '''
         # set up variables
         played = 0
-        player_card_count = len([card_in_play for card_in_play in self.player_field.values() if card_in_play.species != ''])
-        play_count_median = self.Leshy_play_count_median + (player_card_count > 3) - (player_card_count < 2) # shift range slightly to match amount of cards on player's field
+        player_card_count = len([card_in_play for card_in_play in self.player_field.values() if type(card_in_play) != card.BlankCard])
+        play_count_median = self.Leshy_play_count_median + (player_card_count > 2) - (player_card_count < 2) # shift range slightly to match amount of cards on player's field
         play_count = random.randint(play_count_median - self.Leshy_play_count_variance, play_count_median + self.Leshy_play_count_variance)
-        play_count = max(min(play_count, len(self.opponent_deck), 5), 1) if self.opponent_deck else 0 # clamp play count
+        play_count = max(min(play_count, len(self.opponent_deck), 4), 1) if self.opponent_deck else 0 # clamp play count
 
         # advance from bushes to field
-        for zone in [zone for zone in self.opponent_field if self.opponent_field[zone].species == '' and zone % 6 != 0] :
-            self.opponent_field[zone] = self.bushes[zone]
-            self.opponent_field[zone].play(zone=zone)
-            self.bushes[zone] = card.BlankCard()
+        for zone in [zone for zone in self.opponent_field if type(self.opponent_field[zone]) == card.BlankCard and zone % 5 != 0] :
+            self.summon_card(card=self.bushes[zone], field=self.opponent_field, zone=zone)
+            self.summon_card(card=card.BlankCard(), field=self.bushes, zone=zone)
         
-        while played < play_count and [zone for zone in range(1, 6) if self.bushes[zone].species == ''] :
+        while played < play_count and [zone for zone in range(1, 5) if type(self.bushes[zone]) == card.BlankCard] :
             # intelligent choosing of zones to prioritize
             in_strategy, out_of_strategy = ai_category_checking(card_library.AI_categories, self.player_field, self.opponent_deck[0], self.bushes, self.score, self.Leshy_strat_change_threshold)
 
@@ -398,13 +468,13 @@ class Playmat :
             overkill: how much the player overkilled by (int)
             deck_out: if the player lost by running out of cards (bool)
         '''
-        if abs(self.score['player'] - self.score['opponent']) < 8 and (self.player_deck != [] or self.player_squirrels != [] or self.active != 'player') : # no win condition
+        if abs(self.score['player'] - self.score['opponent']) < 5 and (self.player_deck != [] or self.player_squirrels != [] or self.active != 'player') : # no win condition
             return False, '', 0, False
         
-        if self.score['player'] - self.score['opponent'] >= 8 : # player wins
-            return True, 'player', self.score['player'] - self.score['opponent'] - 8, False
+        if self.score['player'] - self.score['opponent'] >= 5 : # player wins
+            return True, 'player', self.score['player'] - self.score['opponent'] - 5, False
         
-        elif self.score['opponent'] - self.score['player'] >= 8 : # opponent wins via score
+        elif self.score['opponent'] - self.score['player'] >= 5 : # opponent wins via score
             return True, 'opponent', 0, False
         
         return True, 'opponent', 0, True # opponent wins via deck out
@@ -451,29 +521,63 @@ class Playmat :
         print(card_gaps_space + 'Hand:', end='')
         print(hand_string)
 
-    def print_field(self) :
+    def print_field(self, score_scale=True) :
         '''
         prints the field and score scales (clears screen first)
+
+        Arguments:
+            score_scale: whether to print the score scales, defaults to True (bool)
         '''
+        def get_connector(gaps, row, line, moon_lines) :
+            '''
+            gets the connectors for the given row and line
+
+            Arguments:
+                gaps: the number of spaces to print between each card
+                row: the row of cards
+                line: the line number
+                moon_lines: the lines to print for the moon's ASCII
+            
+            Returns:
+                connector: the list of strings to print as the connector
+            '''
+            match line :
+                case 0 if row == 2 : connector = [' '*gaps*3] + ['-'*gaps*3]*3
+                case _ if row == 2 and line in range(1, 11) : connector = ASCII_text.split_moon_lines(moon_lines)['connectors'][line - 1]
+                case _ if row == 1 and line in range(10) : connector = ASCII_text.split_moon_lines(moon_lines)['connectors'][line + 10]
+                case 10 if row == 1 : connector = [' '*gaps*3] + ['-'*gaps*3]*3
+                case _ : connector = [' '*gaps*3]*4
+
+            return connector
+    
         # set up variables
         field_string = ''
         term_cols = os.get_terminal_size().columns
         card_gaps = (term_cols*55 // 100) // 5 - 15
-        vis_bushes = [self.bushes[n] for n in range(1, 6)]
-        vis_opponent_field = [self.opponent_field[n] for n in range(1, 6)]
-        vis_player_field = [self.player_field[n] for n in range(1, 6)]
+        if card_gaps <= 0 :
+            score_gap = 31
+        else :
+            score_gap = card_gaps*6 + 31
+        vis_bushes = [self.bushes[n] for n in range(1, 5)]
+        vis_opponent_field = [self.opponent_field[n] for n in range(1, 5)]
+        vis_player_field = [self.player_field[n] for n in range(1, 5)]
+        cards = [vis_player_field, vis_opponent_field, vis_bushes]
+        moon_on_field = any([type(card_) == card_library.Moon for card_ in vis_bushes + vis_opponent_field])
 
         # generate field string
-        for row in [vis_bushes, vis_opponent_field, vis_player_field] :
-            for _ in range(11) :
-                field_string += ' '*card_gaps*3 + ''.join(card.text_by_line() + ' ' * (card_gaps * 3) for card in row) + '\n'
+        for row in [2, 1, 0] :
+            for line in range(11) :
+                if moon_on_field and row in [1, 2] : connector = get_connector(card_gaps, row, line, ASCII_text.moon_inner_str())
+                else : connector = [' '*card_gaps*3]*4
+                for i in range(4) : field_string += connector[i] + cards[row][i].text_by_line()
+                field_string += '\n'
 
-            field_string += ' '*card_gaps + '-'*(card_gaps*16 + 75) + '\n' if row == vis_opponent_field else '' # add a divider between opponent and player fields
+            field_string += ' '*card_gaps + '-'*(card_gaps*13 + 60) + '\n' if row == 1 else '' # add a divider between opponent and player fields
 
         # print field
         QoL.clear()
         print(field_string, end='')
-        ASCII_text.print_scales(self.score)
+        if score_scale : ASCII_text.print_scales(self.score, score_gap)
 
     def print_full_field(self) :
         '''
@@ -481,6 +585,18 @@ class Playmat :
         '''
         self.print_field()
         self.print_hand()
+
+    def summon_card(self, card, field, zone) :
+        '''
+        summons a card to the field
+
+        Arguments:
+            card: the card to summon (card)
+            field: the field to summon to (dict)
+            zone: the zone to summon to (int)
+        '''
+        field[zone] = card
+        field[zone].play(zone=zone)
 
 if __name__ == '__main__' :
     import sys
@@ -498,9 +614,9 @@ if __name__ == '__main__' :
             card_list = []
             for cost in card_library.Poss_Playr :
                 for species in card_library.Poss_Playr[cost] :
-                    card_list.append(species)
+                    card_list.append(species())
                     card_list.append(card.BlankCard())
-            for zone in range(1, 6) :
+            for zone in range(1, 5) :
                 playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
 
             # Call the advance method
@@ -522,9 +638,9 @@ if __name__ == '__main__' :
         card_list = []
         for cost in card_library.Poss_Playr :
             for species in card_library.Poss_Playr[cost] :
-                card_list.append(species)
+                card_list.append(species())
                 card_list.append(card.BlankCard())
-        for zone in range(1, 6) :
+        for zone in range(1, 5) :
             if zone == 3 :
                 playmat.player_field[zone] = card.BlankCard()
                 continue
@@ -572,13 +688,13 @@ if __name__ == '__main__' :
         card_list = []
         for cost in card_library.Poss_Playr :
             for species in card_library.Poss_Playr[cost] :
-                card_list.append(species)
+                card_list.append(species())
                 card_list.append(card.BlankCard())
-        for zone in range(1, 6) :
+        for zone in range(1, 5) :
             playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
         
         # populate hand
-        for n in range(6) :
+        for _ in range(5) :
             if random.randint(1, 2) == 1 :
                 playmat.hand.append(card_library.CorpseMaggots(blank_cost=True))
             else :
@@ -592,8 +708,8 @@ if __name__ == '__main__' :
 
         # kill 2 cards and check states
         cards_to_kill = []
-        for zone in range(1, 6) :
-            if playmat.player_field[zone].species != '' :
+        for zone in range(1, 5) :
+            if type(playmat.player_field[zone]) != card.BlankCard :
                 cards_to_kill.append(zone)
         kill_count = 2
         if len(cards_to_kill) < 2 :
@@ -633,9 +749,9 @@ if __name__ == '__main__' :
         card_list = []
         for cost in card_library.Poss_Playr :
             for species in card_library.Poss_Playr[cost] :
-                card_list.append(species)
+                card_list.append(species())
                 card_list.append(card.BlankCard())
-        for zone in range(1, 6) :
+        for zone in range(1, 5) :
             playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
             playmat.player_field[zone].zone = zone
 
@@ -673,9 +789,9 @@ if __name__ == '__main__' :
         card_list = []
         for cost in card_library.Poss_Playr :
             for species in card_library.Poss_Playr[cost] :
-                card_list.append(species)
+                card_list.append(species())
                 card_list.append(card.BlankCard())
-        for zone in range(1, 6) :
+        for zone in range(1, 5) :
             playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
             playmat.player_field[zone].zone = zone
         
@@ -717,9 +833,9 @@ if __name__ == '__main__' :
         card_list = []
         for cost in card_library.Poss_Playr :
             for species in card_library.Poss_Playr[cost] :
-                card_list.append(species)
+                card_list.append(species())
                 card_list.append(card.BlankCard())
-        for zone in range(1, 6) :
+        for zone in range(1, 5) :
             playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
             playmat.player_field[zone].zone = zone
         playmat.print_full_field()

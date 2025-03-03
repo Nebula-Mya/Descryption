@@ -1,6 +1,8 @@
 import os
 import sys
 import json
+import random
+import copy
 
 def clear() :
     '''
@@ -99,18 +101,38 @@ def write_data(data_to_write) :
     with open(data_file, 'w') as file :
         json.dump(data, file, indent=4)
 
-def center_justified(text) :
+def center_justified(text, blocked=False, shift=0) :
     '''
     centers text in the console
 
     Arguments:
         text: the text to center (str)
+        blocked: whether to center the text in a blocked manner, defaults to False (bool)
+        shift: the amount to shift the text to the right, defaults to 0 (int)
     
     Returns:
         the centered text (str)
     '''
-    width = os.get_terminal_size().columns
-    return text.center(width)
+    # set up variables
+    text_lines = text.split('\n')
+    # text_lines = [line.lstrip() for line in text.split('\n')]
+    term_width = os.get_terminal_size().columns
+    center_space = lambda line_width : (term_width - line_width) // 2
+    centered_text = ''
+
+    if blocked :
+        text_width = max([len(line) for line in text_lines])
+
+        for line in text_lines :
+            centered_text += ' ' * (center_space(text_width) + shift) + line + '\n'
+    
+    else :
+        for line in text_lines :
+            text_width = len(line)
+
+            centered_text += ' ' * (center_space(text_width) + shift) + line + '\n'
+    
+    return centered_text
 
 def split_nicely(text, first_line_length, gen_line_length, max_lines=10, add_blank_lines=False) :
     '''
@@ -263,7 +285,7 @@ def hefty_check(field, zone, direction) :
     # set up variables
     match direction :
         case 'right' :
-            edge_check = zone < 5
+            edge_check = zone < 4
             dir_shift = 1
         case 'left' :
             edge_check = zone > 1
@@ -299,7 +321,7 @@ def sort_deck(deck) :
     deck = sorted(deck, key=lambda x: x.name) # sort by name (will be sub-sorting under cost)
     return sorted(deck, key=lambda x: x.saccs)
 
-def print_deck(deck, sort=False, fruitful=False, numbered=False) :
+def print_deck(deck, sort=False, fruitful=False, numbered=False, centered=False, blocked=False) :
     '''
     prints a list of cards in a deck, with optional sorting
 
@@ -308,6 +330,8 @@ def print_deck(deck, sort=False, fruitful=False, numbered=False) :
         sort: whether to sort the deck before printing (bool)
         fruitful: whether to return the deck string instead of printing it (bool)
         numbered: whether to number the cards (bool)
+        centered: whether to center the deck (bool)
+        blocked: whether to block the deck when centered (bool)
     '''
     def card_gap_numbered(card_gaps, number) :
         number_str = str(number)
@@ -323,7 +347,9 @@ def print_deck(deck, sort=False, fruitful=False, numbered=False) :
                 card_number[0] += 1
         else :
             text = card_gaps_space + card_gaps_space.join(card.text_by_line() for card in row)
-        
+
+        if centered or numbered :
+            return text[1:]
         return text
     
     # set up variables
@@ -350,8 +376,12 @@ def print_deck(deck, sort=False, fruitful=False, numbered=False) :
     for row in chunked :
         line_strings = [line_str(line, card_gaps, row, numbered) for line in range(11)]
         deck_string += '\n' + '\n'.join(line_strings)
+
+    if centered :
+        deck_string = center_justified(deck_string, blocked, -2)
     if fruitful :
         return deck_string
+    
     print(deck_string)
 
 def reps_int(string, increment=0) :
@@ -370,21 +400,214 @@ def reps_int(string, increment=0) :
     except ValueError : # if not, default to 0 and return False
         return False, 0
 
-def ping(locals={'ping':'pong'}) : # for testing
+def bind_int(value, lower_bound=None, upper_bound=None) :
     '''
-    writes local variables to ping.txt
+    binds an integer to a range (inclusive)
+
+    when one unspecified bound is given, it is taken as the floor
+    when two unspecified bounds are given, the first is taken as the floor and the second as the ceiling
 
     Arguments:
-        locals: the local variables to write (dict)
+        value: the integer to bind (int)
+        lower_bound: the lower bound to bind to, defaults to None (int)
+        upper_bound: the upper bound to bind to, defaults to None (int)
     '''
+    # error handling
+    if type(value) != int :
+        raise ValueError('value must be an integer')
+    if lower_bound == None and upper_bound == None :
+        raise ValueError('at least one bound must be specified')
+    if lower_bound != None and upper_bound != None and lower_bound > upper_bound :
+        raise ValueError('lower bound must be less than or equal to upper bound')
+    if lower_bound != None and type(lower_bound) != int :
+        raise ValueError('lower bound must be an integer')
+    if upper_bound != None and type(upper_bound) != int :
+        raise ValueError('upper bound must be an integer')
+    
+    match (lower_bound != None, upper_bound != None) :
+        case (True, False) : # only lower bound
+            return max(value, lower_bound)
+        case (False, True) : # only upper bound
+            return min(value, upper_bound)
+        case (True, True) : # both bounds
+            return min(max(value, lower_bound), upper_bound)
+        case _ : # misc errors
+            raise ValueError('invalid bounds')
+
+def ping(dict={'ping':'pong'}) : # for testing
+    '''
+    writes variables to ping.txt
+
+    Arguments:
+        dict: the variables to write (dict)
+    '''
+    def depth(object) :
+        '''
+        gets the depth of a list or dictionary
+
+        1 is a flat list or dictionary
+
+        Arguments:
+            object: the object to check
+
+        Returns:
+            the depth of the object (int)
+        '''
+        if type(object) not in [dict, list] :
+            return 0
+
+        return 1 + max([depth(value) for value in object.values()])
+
+    def format_list(list) :
+        '''
+        formats a list as a string with lines and indentation
+
+        Arguments:
+            list: the list to format (list)
+
+        Returns:
+            the formatted list (str)
+        '''
+        lines = ['[']
+        for item in list :
+            if item == list[-1] : comma = ''
+            else : comma = ','
+
+            if type(item) == dict : 
+                item = format_dict(item)
+            elif type(item) == list : 
+                item = format_list(item)
+            elif type(item) == str :
+                item = [f"\'{item}\'"]
+            else :
+                item = [item]
+            
+            for line in item :
+                if line == item[0] and len(item) != 1 :
+                    lines.append(f"    {line}")
+                elif line == item[-1] :
+                    lines.append(f"    {line}{comma}")
+                else :
+                    lines.append(f"    {line}")
+
+        lines.append(']')
+
+        return lines
+
+    def format_dict(dictionary) :
+        '''
+        formats a dictionary as a string with lines and indentation
+
+        Arguments:
+            dictionary: the dictionary to format (dict)
+
+        Returns:
+            the formatted dictionary (str)
+        '''
+        lines = ['{']
+        for key in dictionary :
+            if key == list(dictionary.keys())[-1] : comma = ''
+            else : comma = ','
+
+            if type(dictionary[key]) == dict :
+                value = format_dict(dictionary[key])
+            elif type(dictionary[key]) == list :
+                value = format_list(dictionary[key])
+            elif type(dictionary[key]) == str :
+                value = [f"\'{dictionary[key]}\'"]
+            else :
+                value = [dictionary[key]]
+            
+            for line in value :
+                if line == value[0] and len(value) == 1 :
+                    lines.append(f"    {key}: {line}{comma}")
+                elif line == value[0] :
+                    lines.append(f"    {key}: {line}")
+                elif line == value[-1] :
+                    lines.append(f"    {line}{comma}")
+                else : 
+                    lines.append(f"    {line}")
+
+        lines.append('}')
+
+        return lines
+
+    def format_values(dictionary) :
+        '''
+        formats the values of a dictionary as strings with lines and indentation
+
+        Arguments:
+            dictionary: the dictionary to format (dict)
+        '''
+        for key in dictionary :
+            if type(dictionary[key]) not in [dict, list] : # guard clause for non-dict/list values
+                continue
+            if type(dictionary[key]) == dict :
+                dictionary[key] = '\n'.join(format_dict(dictionary[key]))
+            elif type(dictionary[key]) == list :
+                dictionary[key] = '\n'.join(format_list(dictionary[key]))
+        
+        return dictionary
+
+    ### to do: clean the output (split dicts and lists across lines, indent, etc.)
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS') : # guard clause to prevent pinging after compilation
         return
     
+    # format values for writing
+    locals = format_values(dict)
+
     # get string of local variables
     data_to_write = '\n\n'.join(f"{key}: {value}" for key, value in locals.items()).rstrip()
     
     with open('ping.txt', 'w') as file :
         file.write(data_to_write)
+
+def random_card(possible_cards, weighted=True, alpha=2.2, beta=3.3, few_rare=True, hidden_cost=False) :
+    '''
+    gets a random card from a set of possible cards
+
+    Arguments:
+        possible_cards: the cards to choose from (list or dict)
+        weighted: whether to weight the chances of cards based on cost, defaults to True (bool)
+        alpha: the alpha value for the beta distribution, defaults to 2.2 (float)
+        beta: the beta value for the beta distribution, defaults to 3.3 (float)
+        few_rare: whether to lower the chances of rare cards, defaults to True (bool)
+        hidden_cost: whether to hide the cost of the card, defaults to False (bool)
+
+    Returns:
+        the randomly chosen card (Card object)
+    '''
+    # imports (to prevent circular imports)
+    import card_library
+    import math
+
+    # set up variables
+    if type(possible_cards)==list :
+            card_dict = {0: [card_ for card_ in possible_cards]}
+    elif type(possible_cards)==dict :
+        if weighted :
+            card_dict = possible_cards
+        else :
+            all_cards = []
+            for key in possible_cards :
+                all_cards += [card for card in possible_cards[key]]
+            card_dict = {0: [card_ for card_ in all_cards]}
+    else : raise ValueError('Invalid possible_cards type')
+
+    # get cost
+    if weighted:
+        cost_values = list(card_dict)
+        cost_values.sort()
+        cost = lambda : cost_values[math.floor((cost_values.__len__()) * random.betavariate(alpha, beta))]
+    else : cost = lambda : random.choice(list(card_dict.keys()))
+
+    # get card type
+    template_card = random.choice(card_dict[cost()])
+    if few_rare and template_card in card_library.Rare_Cards: # lower chances of rare cards
+        template_card = random.choice(card_dict[cost()])
+
+    # return
+    return copy.deepcopy(template_card(blank_cost=hidden_cost))
 
 if __name__ == '__main__' :
     clear()

@@ -1,88 +1,82 @@
-__name__: __main__
+campaign: <__main__.rogue_campaign object at 0x7efd961f7ee0>
 
-__doc__: None
+weights: [
+    1,
+    0,
+    1,
+    1,
+    0,
+    1,
+    1,
+    5
+]
 
-__package__: None
+weight_labels: [
+    'card_choice',
+    'sigil_sacrifice',
+    'merge_cards',
+    'pelt_shop',
+    'card_shop',
+    'break_rocks',
+    'campfire',
+    'card_battle'
+]
 
-__loader__: <_frozen_importlib_external.SourceFileLoader object at 0x7f102e254c10>
+total: 10
 
-__spec__: None
+i: 7
 
-__annotations__: {}
+level: 0
 
-__builtins__: <module 'builtins' (built-in)>
+progress: 0
 
-__file__: /mnt/c/Users/MaWmM/Documents/GitHub/Descryption/deck.py
+teeth: 3
 
-__cached__: None
+lives: 2
 
-QoL: <module 'QoL' from '/mnt/c/Users/MaWmM/Documents/GitHub/Descryption/QoL.py'>
+dead_campfire: False
 
-random: <module 'random' from '/usr/lib/python3.10/random.py'>
+player deck: [
+    <card_library.Warren object at 0x7efd961b6d10>,
+    <card_library.Raven object at 0x7efd961b6b90>,
+    <card_library.Raven object at 0x7efd961b6b00>,
+    <card_library.Cat object at 0x7efd961b6aa0>,
+    <card_library.Warren object at 0x7efd961b6a40>,
+    <card_library.Pronghorn object at 0x7efd961b69e0>,
+    <card_library.Salmon object at 0x7efd961b6980>,
+    <card_library.Raven object at 0x7efd961b53f0>,
+    <card_library.Shrew object at 0x7efd961b5390>
+]
 
-copy: <module 'copy' from '/usr/lib/python3.10/copy.py'>
+squirrel deck: [
+    <card_library.Squirrel object at 0x7efd961b52d0>,
+    <card_library.Squirrel object at 0x7efd961b5270>,
+    <card_library.Squirrel object at 0x7efd961b5210>,
+    <card_library.Squirrel object at 0x7efd961b51b0>,
+    <card_library.Squirrel object at 0x7efd961b5150>,
+    <card_library.Squirrel object at 0x7efd961b50f0>,
+    <card_library.Squirrel object at 0x7efd961b5090>,
+    <card_library.Squirrel object at 0x7efd961b5030>,
+    <card_library.Squirrel object at 0x7efd961b4fd0>,
+    <card_library.Squirrel object at 0x7efd961b4f70>
+]
 
-Deck: <class '__main__.Deck'>
+Warren at 0x7efd961b7130: {'is_poisoned': False, 'hooked': False, 'species': 'Warren', 'saccs': 1, 'base_attack': 0, 'current_attack': 0, 'base_life': 2, 'current_life': 2, 'sigils': ['airborne', 'vole hole'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:1', 'stats': '0/2', 'name': 'Warren   ', 'text_lines': ['', ',-------------,', '|Warren    C:1|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '|  ___        |', '| /…¨…\\       |', '| ‾‾‾‾‾       |', '|          0/2|', "'-------------'", '        ']}
 
-card_library: <module 'card_library' from '/mnt/c/Users/MaWmM/Documents/GitHub/Descryption/card_library.py'>
+Raven at 0x7efd961b70d0: {'is_poisoned': False, 'hooked': False, 'species': 'Raven', 'saccs': 2, 'base_attack': 2, 'current_attack': 2, 'base_life': 3, 'current_life': 3, 'sigils': ['airborne', 'airborne'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:2', 'stats': '2/3', 'name': 'Raven    ', 'text_lines': ['', ',-------------,', '|Raven     C:2|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '|   _         |', '| ɩΞΞɭ        |', '|  ɩΞΞð       |', '|          2/3|', "'-------------'", '        ']}
 
-slot1: Squirrel 
+Raven at 0x7efd961b7070: {'is_poisoned': False, 'hooked': False, 'species': 'Raven', 'saccs': 2, 'base_attack': 2, 'current_attack': 2, 'base_life': 3, 'current_life': 3, 'sigils': ['airborne', 'airborne'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:2', 'stats': '2/3', 'name': 'Raven    ', 'text_lines': ['', ',-------------,', '|Raven     C:2|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '|   _         |', '| ɩΞΞɭ        |', '|  ɩΞΞð       |', '|          2/3|', "'-------------'", '        ']}
 
-slot2: Rabbit   
+Cat at 0x7efd961b7010: {'is_poisoned': False, 'hooked': False, 'species': 'Cat', 'saccs': 1, 'base_attack': 0, 'current_attack': 0, 'base_life': 1, 'current_life': 1, 'sigils': ['airborne', 'many lives'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:1', 'stats': '0/1', 'name': 'Cat      ', 'text_lines': ['', ',-------------,', '|Cat       C:1|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '|   Ω         |', '|  CXƆ        |', '|   V         |', '|          0/1|', "'-------------'", '        '], 'spent_lives': 0}
 
-slot3: Squirrel 
+Warren at 0x7efd961b6fb0: {'is_poisoned': False, 'hooked': False, 'species': 'Warren', 'saccs': 1, 'base_attack': 0, 'current_attack': 0, 'base_life': 2, 'current_life': 2, 'sigils': ['airborne', 'vole hole'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:1', 'stats': '0/2', 'name': 'Warren   ', 'text_lines': ['', ',-------------,', '|Warren    C:1|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '|  ___        |', '| /…¨…\\       |', '| ‾‾‾‾‾       |', '|          0/2|', "'-------------'", '        ']}
 
-slot4: Lobster  
+Pronghorn at 0x7efd961b6f50: {'is_poisoned': False, 'hooked': False, 'species': 'Pronghorn', 'saccs': 2, 'base_attack': 1, 'current_attack': 1, 'base_life': 3, 'current_life': 3, 'sigils': ['airborne', 'lane shift right'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:2', 'stats': '1/3', 'name': 'Pronghorn', 'text_lines': ['', ',-------------,', '|Pronghorn C:2|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '| ,-,         |', '| | |->       |', "| '-'         |", '|          1/3|', "'-------------'", '        ']}
 
-slot5: Boppit W.
+Salmon at 0x7efd961b6ef0: {'is_poisoned': False, 'hooked': False, 'species': 'Salmon', 'saccs': 2, 'base_attack': 2, 'current_attack': 2, 'base_life': 2, 'current_life': 2, 'sigils': ['airborne', 'waterborne'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:2', 'stats': '2/2', 'name': 'Salmon   ', 'text_lines': ['', ',-------------,', '|Salmon    C:2|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '| <⁻v⁻>       |', '| ˎ\\ /ˏ       |', '| λ/λ\\λ       |', '|          2/2|', "'-------------'", '        ']}
 
-slot6: Ouroboros
+Raven at 0x7efd961b6e90: {'is_poisoned': False, 'hooked': False, 'species': 'Raven', 'saccs': 2, 'base_attack': 2, 'current_attack': 2, 'base_life': 3, 'current_life': 3, 'sigils': ['airborne', 'airborne'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:2', 'stats': '2/3', 'name': 'Raven    ', 'text_lines': ['', ',-------------,', '|Raven     C:2|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '|   _         |', '| ɩΞΞɭ        |', '|  ɩΞΞð       |', '|          2/3|', "'-------------'", '        ']}
 
-slot7: Asp      
+Shrew at 0x7efd961b6e30: {'is_poisoned': False, 'hooked': False, 'species': 'Shrew', 'saccs': 0, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['airborne', 'lane shift left'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:0', 'stats': '1/1', 'name': 'Shrew    ', 'text_lines': ['', ',-------------,', '|Shrew     C:0|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '|   ,-,       |', '| <-| |       |', "|   '-'       |", '|          1/1|', "'-------------'", '        ']}
 
-slot8: Turtle   
-
-slot9: Falcon   
-
-slot10: Dumpy Tr.
-
-decklist: [<card_library.Squirrel object at 0x7f102e12bdc0>, <card_library.Rabbit object at 0x7f102e12bd90>, <card_library.Squirrel object at 0x7f102e12bd60>, <card_library.Lobster object at 0x7f102e307070>, <card_library.BoppitW object at 0x7f102e3069b0>, <card_library.Ouroboros object at 0x7f102e131db0>, <card_library.Asp object at 0x7f102e133e50>, <card_library.Turtle object at 0x7f102e133f10>, <card_library.Falcon object at 0x7f102e133eb0>, <card_library.DumpyTF object at 0x7f102e133ee0>, <card_library.Squirrel object at 0x7f102e133f40>, <card_library.Squirrel object at 0x7f102e133fa0>]
-
-_: 1
-
-testdeck:      ,-------------,     ,-------------,     ,-------------,     ,-------------,     ,-------------,     ,-------------,     ,-------------,     ,-------------,
-     |Rabbit    C:0|     |Squirrel  C:0|     |Squirrel  C:0|     |Squirrel  C:0|     |Squirrel  C:0|     |Dumpy Tr. C:1|     |Turtle    C:1|     |Asp       C:2|
-     |             |     |             |     |             |     |             |     |             |     |             |     |             |     |             |
-     |             |     |             |     |             |     |             |     |             |     |             |     |             |     |             |
-     |    ,-,      |     |    <<< .    |     |    <<< .    |     |    <<< .    |     |    <<< .    |     |    <<< .    |     |    <<< .    |     |     ___     |
-     |    | |->    |     |    []_(|    |     |    []_(|    |     |    []_(|    |     |    []_(|    |     |    []_(|    |     |    []_(|    |     |     \ /     |
-     |    '-'      |     |    '———'    |     |    '———'    |     |    '———'    |     |    '———'    |     |    '———'    |     |    '———'    |     |     ·V·     |
-     |             |     |             |     |             |     |             |     |             |     |             |     |             |     |             |
-     |             |     |             |     |             |     |             |     |             |     |             |     |             |     |             |
-     |          1/1|     |          0/1|     |          0/1|     |          0/1|     |          0/1|     |          2/2|     |          0/4|     |          2/2|
-     '-------------'     '-------------'     '-------------'     '-------------'     '-------------'     '-------------'     '-------------'     '-------------'
-     ,-------------,     ,-------------,     ,-------------,     ,-------------,
-     |Falcon    C:2|     |Ouroboros C:2|     |Lobster   C:3|     |Boppit W. C:4|
-     |             |     |             |     |             |     |             |
-     |             |     |             |     |             |     |             |
-     |      _      |     |    ,->-,    |     |    _   _    |     |      |      |
-     |    ɩΞΞɭ     |     |    | X |    |     |     \ /     |     |    ()|()    |
-     |     ɩΞΞð    |     |    '-<-'    |     |      |      |     |      |      |
-     |             |     |             |     |             |     |             |
-     |             |     |             |     |             |     |             |
-     |          3/1|     |          1/1|     |          2/3|     |          3/4|
-     '-------------'     '-------------'     '-------------'     '-------------'
-
-sorted_deck: [<card_library.Rabbit object at 0x7f102e12bd90>, <card_library.Squirrel object at 0x7f102e12bdc0>, <card_library.Squirrel object at 0x7f102e12bd60>, <card_library.Squirrel object at 0x7f102e133f40>, <card_library.Squirrel object at 0x7f102e133fa0>, <card_library.DumpyTF object at 0x7f102e133ee0>, <card_library.Turtle object at 0x7f102e133f10>, <card_library.Asp object at 0x7f102e133e50>, <card_library.Falcon object at 0x7f102e133eb0>, <card_library.Ouroboros object at 0x7f102e131db0>, <card_library.Lobster object at 0x7f102e307070>, <card_library.BoppitW object at 0x7f102e3069b0>]
-
-subject_card_4: Squirrel 
-
-subject_card_4_sigils: ['hefty (left)']
-
-subject_card_1: Squirrel 
-
-subject_card_1_sigils: ['hefty (left)']
-
-subject_card_8: Falcon   
-
-subject_card_8_sigils: ['airborne']
+Ouroboros level: 3

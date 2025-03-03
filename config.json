@@ -1,18 +1,58 @@
 {
     "settings": {
-        "deck size": 26,
+        "deck size": 20,
         "hand size": 5,
         "difficulty": {
-            "current difficulty name": "Normal",
-            "current difficulty index": 2,
-            "leshy median plays": 2,
-            "leshy plays variance": 1,
-            "leshy strat chance": 75,
+            "current difficulty name": "Hard",
+            "current difficulty index": 3,
+            "leshy median plays": 3,
+            "leshy plays variance": 2,
+            "leshy strat chance": 90,
             "leshy offense threshold": 3
         }
     },
-    "ouroboros": {
-        "attack": 1,
-        "life": 1
+    "progress markers": {
+        "ouro level": 3,
+        "beat prospector": true,
+        "beat angler": true,
+        "beat trapper": true,
+        "beat leshy": false,
+        "wins": 0,
+        "losses": 4
+    },
+    "death cards": {
+        "first": {
+            "name": "Nebby",
+            "attack": 2,
+            "life": 1,
+            "cost": 2,
+            "sigils": [
+                "waterborne",
+                ""
+            ],
+            "easter": true
+        },
+        "second": {
+            "name": "Glaucus",
+            "attack": 4,
+            "life": 1,
+            "cost": 3,
+            "sigils": [
+                "airborne",
+                "unkillable"
+            ],
+            "easter": true
+        },
+        "third": {
+            "name": "A Possum",
+            "attack": 2,
+            "life": 3,
+            "cost": 3,
+            "sigils": [
+                "corpse eater",
+                "bees within"
+            ],
+            "easter": true
+        }
     }
 }
