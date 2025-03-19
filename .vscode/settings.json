@@ -7,5 +7,7 @@
         "test_*.py",
         "*_test.py"
     ],
-    "python.testing.unittestEnabled": true
+    "python.testing.unittestEnabled": true,
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.autoImportCompletions": true
 }
