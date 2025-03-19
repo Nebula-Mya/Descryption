@@ -1014,7 +1014,7 @@ def break_rocks(campaign: rogue_campaign) : # format visuals
     number_sprites = {
         1 : [' , ','/| ',' | ','‾‾‾'],
         2 : ['/‾\\','  /',' / ',' ‾‾'],
-        3 : ['/‾\\',' _/',' ‾\\','\_/']
+        3 : ['/‾\\',' _/',' ‾\\','\\_/']
     }
     rock_sprites = {
         'chunky' : r'''
@@ -1698,7 +1698,7 @@ def split_road(campaign: rogue_campaign) : # format visuals
             case 5 : return ['The Trader', 'card_shop(campaign)', 5]
             case 6 : return ['The Prospector', 'break_rocks(campaign)', 6]
             case 7 : return ['Survivors huddled around a campfire', 'campfire(campaign)', 7]
-            case 8 : return ['A card battle', 'card_battle(campaign)', 8]
+            case _ : return ['A card battle', 'card_battle(campaign)', 8]
 
     def gameplay(campaign: rogue_campaign) :
         # set up variables

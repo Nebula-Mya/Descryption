@@ -15,7 +15,7 @@ pass
     ],
 
     'bifurcate' : [
-        ["_   _"," \ / ","  |  "],
+        ["_   _"," \\ / ","  |  "],
         'Attacks diagonally, dealing damage to two targets.',
         '''
 for target_card in [front_left_card, front_right_card] :

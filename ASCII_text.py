@@ -146,7 +146,7 @@ def print_candelabra(wick_states) :
         [ # lit (newly)
             '  /(   ',
             ' ( ;)ˎ ',
-            ' \(_)/ ',
+            ' \\(_)/ ',
             'ˏ₋-|-₋ˎ',
             '|ˋ⁻⁻⁻ˊ|',
             '|     |'
@@ -154,7 +154,7 @@ def print_candelabra(wick_states) :
         [ # lit (continuing)
             '  /(   ',
             ' ( ;)ˎ ',
-            ' \(_)/ ',
+            ' \\(_)/ ',
             'ˏ₋-|-₋ˎ',
             '|ˋʅȷᵕȣ|',
             '| ₍₎ ᵕ|'

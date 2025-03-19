@@ -1,8 +1,10 @@
+import math
 import os
 import sys
 import json
 import random
 import copy
+from typing import Any
 
 def clear() :
     '''
@@ -213,7 +215,7 @@ def title_case(string) :
     title_cased_words = [words[0].capitalize()] + [word.capitalize() if word not in lower_words else word for word in words[1:]]
     return ' '.join(title_cased_words)
 
-def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None, vars_to_return=[]) :
+def exec_sigil_code(current_card, applicables, global_vars=None, local_vars: dict[str, Any] = {}, vars_to_return=[]) :
     '''
     executes sigil code
     
@@ -245,7 +247,7 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None
         combo = tuple(sorted(sigil))
 
         # get code block
-        return sigils.Combos.get(combo, None)
+        return sigils.Combos.get(combo, "")
     
     # imports
     import sigils
@@ -400,7 +402,7 @@ def reps_int(string, increment=0) :
     except ValueError : # if not, default to 0 and return False
         return False, 0
 
-def bind_int(value, lower_bound=None, upper_bound=None) :
+def bind_int(value: int, lower_bound=-math.inf, upper_bound=math.inf) :
     '''
     binds an integer to a range (inclusive)
 
@@ -409,22 +411,20 @@ def bind_int(value, lower_bound=None, upper_bound=None) :
 
     Arguments:
         value: the integer to bind (int)
-        lower_bound: the lower bound to bind to, defaults to None (int)
-        upper_bound: the upper bound to bind to, defaults to None (int)
+        lower_bound: the lower bound to bind to, defaults to -math.inf (int)
+        upper_bound: the upper bound to bind to, defaults to math.inf (int)
     '''
     # error handling
     if type(value) != int :
-        raise ValueError('value must be an integer')
-    if lower_bound == None and upper_bound == None :
-        raise ValueError('at least one bound must be specified')
-    if lower_bound != None and upper_bound != None and lower_bound > upper_bound :
+        raise TypeError('value must be an integer')
+    if lower_bound > upper_bound :
         raise ValueError('lower bound must be less than or equal to upper bound')
-    if lower_bound != None and type(lower_bound) != int :
-        raise ValueError('lower bound must be an integer')
-    if upper_bound != None and type(upper_bound) != int :
-        raise ValueError('upper bound must be an integer')
+    if lower_bound != -math.inf and type(lower_bound) != int :
+        raise TypeError('lower bound must be an integer')
+    if upper_bound != math.inf and type(upper_bound) != int :
+        raise TypeError('upper bound must be an integer')
     
-    match (lower_bound != None, upper_bound != None) :
+    match (lower_bound != -math.inf, upper_bound != math.inf) :
         case (True, False) : # only lower bound
             return max(value, lower_bound)
         case (False, True) : # only upper bound

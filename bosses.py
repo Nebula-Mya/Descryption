@@ -256,7 +256,7 @@ def turn_structure(playfield) :
 
     return (False, '', 0, False, played)
 
-def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=True, field_cards: list[card.BlankCard]=None) :
+def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=True, field_cards: list[card.BlankCard]=[]) :
     '''
     creates the playfield for a boss fight
 
@@ -290,8 +290,10 @@ def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=Tru
             playfield.opponent_deck.insert(0, card_)
 
     # add starting field cards
-    if field_cards!=None : 
-        for zone in range(1, 5) : playfield.summon_card(card=field_cards.pop(), zone=zone, field=playfield.opponent_field)
+    for zone in range(1, 5) : 
+        if field_cards.__len__ == 0: 
+            break
+        playfield.summon_card(card=field_cards.pop(), zone=zone, field=playfield.opponent_field)
 
     # advance from bushes
     if advance : playfield.advance()
@@ -576,7 +578,7 @@ def boss_fight_angler(campaign) : # boss fight 2
         # game loop
         second_phase = False
         turn_count = 0
-        played = []
+        played: list[card.BlankCard] = []
         while True :
             # gameplay
             (win, winner, overkill, deck_out, played_new) = turn_structure(playfield)
@@ -602,7 +604,7 @@ def boss_fight_angler(campaign) : # boss fight 2
                         print('\n'*2)
                         input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
                     
-                    to_hook = None
+                    to_hook = card.BlankCard()
                     while to_hook not in playfield.player_field.values() : # ensure a card is hooked
                         to_hook = played[-1]
                         played.pop()
@@ -863,9 +865,9 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
             input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
         # hook and use hook
-        to_hook = None
+        to_hook = card.BlankCard()
         while to_hook not in playfield.player_field.values() : # ensure a card is hooked
-            to_hook = played[-1]
+            to_hook: card.BlankCard = played[-1]
             played.pop()
         to_hook.hook()
 
@@ -879,7 +881,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
                     playfield.summon_card(card=card.BlankCard(), zone=zone, field=playfield.player_field)
                     break
 
-    def trading(playfield, battle_state) :
+    def trading_leshy(playfield, battle_state) :
         # dialogue / explanation
         if not battle_state.used_all_masks :
             QoL.clear()
@@ -973,7 +975,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
             match self.masks[self.mask_index] :
                 case 'Prospector' : mining(playfield, self)
                 case 'Angler' : hooking(playfield, self, played)
-                case 'Trader' : trading(playfield, self)
+                case 'Trader' : trading_leshy(playfield, self)
 
             if not self.used_all_masks :
                 curr_mask = self.masks[self.mask_index].lower()
@@ -1119,7 +1121,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
         duel_state = battle_state()
 
         # game loop
-        played = []
+        played: list[card.BlankCard] = []
         while True :
             # gameplay
             (win, winner, overkill, deck_out, played_new) = turn_structure(playfield)
@@ -1143,7 +1145,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
                 campaign.lives = 0
                 break
 
-            elif win and duel_state.win() :
+            elif win and duel_state.win(playfield) :
                 post_boss_flavor(campaign, True, overkill=overkill)
                 QoL.write_data([(['progress markers', 'beat leshy'], True)])
                 break

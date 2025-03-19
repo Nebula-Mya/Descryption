@@ -300,7 +300,7 @@ class BlankCard() :
         self.line_cursor = 1
 
         # get hook indicator if hooked
-        if self.hooked : hook_indicator = ['ʆ\ ', 'ʖ \\']
+        if self.hooked : hook_indicator = ['ʆ\\ ', 'ʖ \\']
         else : hook_indicator = [' '*3, ' '*3]
 
         # update cost, stats, and name for displaying card

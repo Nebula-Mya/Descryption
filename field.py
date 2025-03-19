@@ -71,7 +71,7 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
             if bush_empty and type(opp_card) == card.BlankCard :
                 return True
             else :
-                False
+                return False
         
         # get booleans
         s1_in_strat_check = is_in_strat(card_to_play, opp_card, 0)
@@ -276,8 +276,8 @@ class Playmat :
             QoL.exec_sigil_code(self.player_field[ind], sigils.on_sacrifices, None, locals())
 
             if type(self.player_field[ind]) == card_library.Cat and self.player_field[ind].has_sigil('many lives') : # make sure cat still has many lives
-                self.player_field[ind].spent_lives += 1
-                if self.player_field[ind].spent_lives >= 9 :
+                self.player_field[ind].spent_lives += 1 # type: ignore
+                if self.player_field[ind].spent_lives >= 9 : # type: ignore
                     self.player_field[ind] = card_library.UndeadCat()
 
             if not self.player_field[ind].sigil_in_category(sigils.on_sacrifices) :
@@ -486,7 +486,7 @@ class Playmat :
         # set up variables
         term_cols = os.get_terminal_size().columns
         card_gaps_space = ' '*((term_cols*55 // 100) // 5 - 15)
-        deck_string = QoL.print_deck(self.player_deck, sort=True, fruitful=True, numbered=True)
+        deck_string: str = QoL.print_deck(self.player_deck, sort=True, fruitful=True, numbered=True) # type: ignore
 
         # print remaining cards in deck
         QoL.clear()
