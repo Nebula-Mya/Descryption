@@ -390,7 +390,6 @@ def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
         '''
         # set up variables
         invalid_choice = False
-        no_slots = False
         sorted_deck = QoL.sort_deck(deck_list)
         
         while True :
@@ -402,19 +401,12 @@ def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
                 print(QoL.center_justified('Invalid choice'))
                 print()
                 invalid_choice = False
-            elif no_slots :
-                print(QoL.center_justified('That card has no open sigil slots'))
-                print()
-                no_slots = False
 
             # get user input
             card_index = input(QoL.center_justified('Enter the number of the card to receive a new sigil:').rstrip() + ' ')
             (is_int, card_index) = QoL.reps_int(card_index, -1)
             if not is_int or card_index not in range(len(sorted_deck)) :
                 invalid_choice = True
-                continue
-            elif not sorted_deck[card_index].has_sigil('') :
-                no_slots = True
                 continue
 
             return sorted_deck[card_index]
@@ -432,18 +424,18 @@ def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
         '''
         # set up functions
         same_sigil = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) # check if two sigils are the same or variations of the same sigil
-        good_sigil = lambda reciever, sigil : sigil != '' and not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be transferred
+        good_sigil = lambda reciever, sigil : not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be transferred
         poss_transfers = lambda reciever, sacrifice : sum([good_sigil(reciever, sigil) for sigil in sacrifice.sigils]) # check how many sigils can be transferred
         good_sigils = lambda reciever, sacrifice : poss_transfers(reciever, sacrifice) > 0 # check if any sigils can be transferred
 
         # set up variables
         invalid_choice = False
-        deck_have_sigil = QoL.sort_deck([card_ for card_ in deck_list if good_sigils(reciever, card_)])
+        deck_can_sacc: list[card.BlankCard] = QoL.sort_deck([card_ for card_ in deck_list if good_sigils(reciever, card_)])
 
         while True :
             # print the player's deck with only cards that have sigils
             QoL.clear()
-            QoL.print_deck(deck_have_sigil, numbered=True, centered=True, blocked=True)
+            QoL.print_deck(deck_can_sacc, numbered=True, centered=True, blocked=True)
 
             if invalid_choice :
                 print(QoL.center_justified('Invalid choice'))
@@ -453,13 +445,13 @@ def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
             # get user input
             card_index = input(QoL.center_justified('Enter the number of the card to sacrifice for its sigil:').rstrip() + ' ')
             (is_int, card_index) = QoL.reps_int(card_index, -1)
-            if not is_int or card_index not in range(len(deck_have_sigil)) :
+            if not is_int or card_index not in range(len(deck_can_sacc)) :
                 invalid_choice = True
                 continue
 
-            return deck_have_sigil[card_index]
+            return deck_can_sacc[card_index]
 
-    def get_sigil_slot(reciever, sacrifice) :
+    def get_sigil_slot(reciever, sacrifice) : #TODO: update for full reciever and/or empty sacrifice
         '''
         allows the player to choose which sigil to transfer
         
@@ -512,7 +504,7 @@ def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
 
             case _ : raise ValueError('No sigils can be transferred')
 
-    def confirm_choice(reciever, sacrifice, sigil_indexes) :
+    def confirm_choice(reciever, sacrifice, sigil_indexes) : #TODO: update for full reciever and/or empty sacrifice
         '''
         allows the player to confirm their choice of cards and sigils
         
