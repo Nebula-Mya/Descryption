@@ -430,7 +430,7 @@ def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
 
         # set up variables
         invalid_choice = False
-        deck_can_sacc: list[card.BlankCard] = QoL.sort_deck([card_ for card_ in deck_list if good_sigils(reciever, card_)])
+        deck_can_sacc: list[card.BlankCard] = QoL.sort_deck([card_ for card_ in deck_list if good_sigils(reciever, card_) and card_.__str__ != reciever.__str__])
 
         while True :
             # print the player's deck with only cards that have sigils
@@ -451,7 +451,7 @@ def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
 
             return deck_can_sacc[card_index]
 
-    def get_sigil_slot(reciever, sacrifice) : #TODO: update for full reciever and/or empty sacrifice
+    def get_sigil_slot(reciever: card.BlankCard, sacrifice: card.BlankCard) : #TODO: update for full reciever and/or empty sacrifice
         '''
         allows the player to choose which sigil to transfer
         
@@ -476,7 +476,7 @@ def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
         good_sigil = lambda reciever, sigil : sigil != '' and not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be transferred
         poss_transfers = lambda reciever, sacrifice : sum([good_sigil(reciever, sigil) for sigil in sacrifice.sigils]) # check how many sigils can be transferred
 
-        match poss_transfers(reciever, sacrifice) :
+        match poss_transfers(reciever, sacrifice) : #FIXME: allow choosing which sigil is replaced if full reciever
             case 2 :
                 # both sigils can be transferred
                 if reciever.sigils == ['', ''] : return [0,1]
@@ -502,9 +502,9 @@ def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
 
             case 1 : return [1 - good_sigil(reciever, sacrifice.sigils[0])]
 
-            case _ : raise ValueError('No sigils can be transferred')
+            case _ : return [] # raise ValueError('No sigils can be transferred')
 
-    def confirm_choice(reciever, sacrifice, sigil_indexes) : #TODO: update for full reciever and/or empty sacrifice
+    def confirm_choice(reciever: card.BlankCard, sacrifice: card.BlankCard, sigil_indexes) : 
         '''
         allows the player to confirm their choice of cards and sigils
         
@@ -518,6 +518,7 @@ def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
         '''
         # set up variables
         if len(sigil_indexes) == 2 : result_sigils = sacrifice.sigils
+        elif len(sigil_indexes) == 0 : result_sigils = reciever.sigils
         elif reciever.sigils[0] == '' : result_sigils = [sacrifice.sigils[sigil_indexes[0]], reciever.sigils[1]]
         else : result_sigils = [reciever.sigils[0], sacrifice.sigils[sigil_indexes[0]]]
         result_card = card.BlankCard(species=reciever.species, cost=reciever.saccs, attack=reciever.base_attack, life=reciever.base_life, sigils=result_sigils)
@@ -556,7 +557,7 @@ def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
                 continue
 
             # add the sigil to the card
-            for index in sigil_indexes :
+            for index in sigil_indexes : #FIXME: allow replacing (opt argument with new sigil index)
                 campaign.add_sigil(reciever, sacrifice.sigils[index])
 
             # remove the sacrificed card from the deck

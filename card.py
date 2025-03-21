@@ -51,19 +51,19 @@ class BlankCard() :
             sigils = ['','']
 
         # basic variables
-        self.is_poisoned = False
-        self.hooked = False
-        self.species = species
-        self.saccs = cost
-        self.base_attack = attack
-        self.current_attack = attack
-        self.base_life = life
-        self.current_life = life
-        self.sigils = sigils
-        self.status = status
-        self.zone = zone
-        self.blank_cost = blank_cost
-        self.blank_stats = blank_stats
+        self.is_poisoned: bool = False
+        self.hooked: bool = False
+        self.species: str = species
+        self.saccs: int = cost
+        self.base_attack: int = attack
+        self.current_attack: int = attack
+        self.base_life: int = life
+        self.current_life: int = life
+        self.sigils: list[str] = sigils
+        self.status: str = status
+        self.zone: int = zone
+        self.blank_cost: bool = blank_cost
+        self.blank_stats: bool = blank_stats
         
         # create ASCII art for card
         self.update_ASCII()

@@ -7,19 +7,22 @@ import duel
 import random
 import time
 import sigils
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import rogue
 
-def card_battle(campaign, Poss_Leshy=None) : 
+def card_battle(campaign: rogue.rogue_campaign, Poss_Leshy: list[card.BlankCard]=[]) : 
     '''
     starts a card battle between the player and Leshy, with the player's deck being campaign.player_deck
     
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
-        Poss_Leshy: the possible cards for Leshy's deck, defaults to all allowed Leshy cards with costs <= to player's max cost (list)
+        Poss_Leshy: the possible cards for Leshy's deck, defaults to all allowed Leshy cards with costs <= to player's max cost if list is empty or not given(list)
 
     Returns:
         bool: True if the player wins, False if the player loses
     '''
-    def gameplay(campaign, Poss_Leshy) :
+    def gameplay(campaign: rogue.rogue_campaign, Poss_Leshy: list[card.BlankCard]) :
         data_to_read = [
             ['settings', 'difficulty', 'leshy median plays'],
             ['settings', 'difficulty', 'leshy plays variance'],
@@ -30,7 +33,7 @@ def card_battle(campaign, Poss_Leshy=None) :
 
         deck_size = len(campaign.player_deck)
 
-        if Poss_Leshy :
+        if len(Poss_Leshy) == 0 :
             leshy_deck = duel.deck_gen(Poss_Leshy, int(deck_size * 1.5))
         else :
             player_max_cost = max([card.saccs for card in campaign.player_deck.cards])
@@ -129,7 +132,7 @@ def get_higher_difficulty() :
         case _ :
             raise ValueError(f"invalid difficulty number: {difficulty_number}")
 
-def error_checks(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold) :
+def error_checks(deck_size: int, hand_size: int, Leshy_play_count_median: int, Leshy_play_count_variance: int, Leshy_in_strategy_chance: int, Leshy_strat_change_threshold: int) :
     if deck_size < 1 :
         raise ValueError('Deck size must be at least 1.')
     if hand_size < 1 :
@@ -145,7 +148,7 @@ def error_checks(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count
     if Leshy_strat_change_threshold < -5 or Leshy_strat_change_threshold > 5 :
         raise ValueError('Leshy strategy change threshold must be between -5 and 5.')
 
-def pre_boss_flavor(campaign) :
+def pre_boss_flavor(campaign: rogue.rogue_campaign) :
     '''
     prints pre boss fight flavor text and displays
     adds smoke cards to the player's deck
@@ -166,7 +169,7 @@ def pre_boss_flavor(campaign) :
     print()
     input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
-def post_boss_flavor(campaign, result, overkill=0, deck_out=False) :
+def post_boss_flavor(campaign: rogue.rogue_campaign, result: bool, overkill: int=0, deck_out: bool=False) :
     '''
     prints post boss fight flavor text and displays
     removes smoke cards from the player's deck
