@@ -1,82 +1,41 @@
-campaign: <__main__.rogue_campaign object at 0x7efd961f7ee0>
-
-weights: [
-    1,
-    0,
-    1,
-    1,
-    0,
-    1,
-    1,
-    5
-]
-
-weight_labels: [
-    'card_choice',
-    'sigil_sacrifice',
-    'merge_cards',
-    'pelt_shop',
-    'card_shop',
-    'break_rocks',
-    'campfire',
-    'card_battle'
-]
-
-total: 10
-
-i: 7
+campaign: <rogue.rogue_campaign object at 0x7f4f7da96500>
 
 level: 0
 
 progress: 0
 
-teeth: 3
+teeth: 0
 
 lives: 2
 
 dead_campfire: False
 
 player deck: [
-    <card_library.Warren object at 0x7efd961b6d10>,
-    <card_library.Raven object at 0x7efd961b6b90>,
-    <card_library.Raven object at 0x7efd961b6b00>,
-    <card_library.Cat object at 0x7efd961b6aa0>,
-    <card_library.Warren object at 0x7efd961b6a40>,
-    <card_library.Pronghorn object at 0x7efd961b69e0>,
-    <card_library.Salmon object at 0x7efd961b6980>,
-    <card_library.Raven object at 0x7efd961b53f0>,
-    <card_library.Shrew object at 0x7efd961b5390>
+    <card_library.Wolf object at 0x7f4f7d99e0b0>,
+    <card_library.Stoat object at 0x7f4f7d99e110>,
+    <card_library.Bullfrog object at 0x7f4f7d99e170>,
+    <card_library.Rabbit object at 0x7f4f7d99e1d0>
 ]
 
 squirrel deck: [
-    <card_library.Squirrel object at 0x7efd961b52d0>,
-    <card_library.Squirrel object at 0x7efd961b5270>,
-    <card_library.Squirrel object at 0x7efd961b5210>,
-    <card_library.Squirrel object at 0x7efd961b51b0>,
-    <card_library.Squirrel object at 0x7efd961b5150>,
-    <card_library.Squirrel object at 0x7efd961b50f0>,
-    <card_library.Squirrel object at 0x7efd961b5090>,
-    <card_library.Squirrel object at 0x7efd961b5030>,
-    <card_library.Squirrel object at 0x7efd961b4fd0>,
-    <card_library.Squirrel object at 0x7efd961b4f70>
+    <card_library.Squirrel object at 0x7f4f7d99e290>,
+    <card_library.Squirrel object at 0x7f4f7d99e2f0>,
+    <card_library.Squirrel object at 0x7f4f7d99e350>,
+    <card_library.Squirrel object at 0x7f4f7d99e3b0>,
+    <card_library.Squirrel object at 0x7f4f7d99e410>,
+    <card_library.Squirrel object at 0x7f4f7d99e470>,
+    <card_library.Squirrel object at 0x7f4f7d99e4d0>,
+    <card_library.Squirrel object at 0x7f4f7d99e530>,
+    <card_library.Squirrel object at 0x7f4f7d99e590>,
+    <card_library.Squirrel object at 0x7f4f7d99e5f0>
 ]
 
-Warren at 0x7efd961b7130: {'is_poisoned': False, 'hooked': False, 'species': 'Warren', 'saccs': 1, 'base_attack': 0, 'current_attack': 0, 'base_life': 2, 'current_life': 2, 'sigils': ['airborne', 'vole hole'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:1', 'stats': '0/2', 'name': 'Warren   ', 'text_lines': ['', ',-------------,', '|Warren    C:1|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '|  ___        |', '| /…¨…\\       |', '| ‾‾‾‾‾       |', '|          0/2|', "'-------------'", '        ']}
+Wolf at 0x7f4f7dbfe3b0: {'is_poisoned': False, 'hooked': False, 'species': 'Wolf', 'saccs': 2, 'base_attack': 3, 'current_attack': 3, 'base_life': 2, 'current_life': 2, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:2', 'stats': '3/2', 'name': 'Wolf     ', 'text_lines': ['', ',-------------,', '|Wolf      C:2|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          3/2|', "'-------------'", '        ']}
 
-Raven at 0x7efd961b70d0: {'is_poisoned': False, 'hooked': False, 'species': 'Raven', 'saccs': 2, 'base_attack': 2, 'current_attack': 2, 'base_life': 3, 'current_life': 3, 'sigils': ['airborne', 'airborne'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:2', 'stats': '2/3', 'name': 'Raven    ', 'text_lines': ['', ',-------------,', '|Raven     C:2|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '|   _         |', '| ɩΞΞɭ        |', '|  ɩΞΞð       |', '|          2/3|', "'-------------'", '        ']}
+Stoat at 0x7f4f7dbff250: {'is_poisoned': False, 'hooked': False, 'species': 'Stoat', 'saccs': 1, 'base_attack': 1, 'current_attack': 1, 'base_life': 3, 'current_life': 3, 'sigils': ['', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:1', 'stats': '1/3', 'name': 'Stoat    ', 'text_lines': ['', ',-------------,', '|Stoat     C:1|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          1/3|', "'-------------'", '        ']}
 
-Raven at 0x7efd961b7070: {'is_poisoned': False, 'hooked': False, 'species': 'Raven', 'saccs': 2, 'base_attack': 2, 'current_attack': 2, 'base_life': 3, 'current_life': 3, 'sigils': ['airborne', 'airborne'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:2', 'stats': '2/3', 'name': 'Raven    ', 'text_lines': ['', ',-------------,', '|Raven     C:2|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '|   _         |', '| ɩΞΞɭ        |', '|  ɩΞΞð       |', '|          2/3|', "'-------------'", '        ']}
+Bullfrog at 0x7f4f7da97f10: {'is_poisoned': False, 'hooked': False, 'species': 'Bullfrog', 'saccs': 1, 'base_attack': 1, 'current_attack': 1, 'base_life': 2, 'current_life': 2, 'sigils': ['mighty leap', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:1', 'stats': '1/2', 'name': 'Bullfrog ', 'text_lines': ['', ',-------------,', '|Bullfrog  C:1|', '|             |', '|             |', '|    _____    |', '|    ʅ   ʃ    |', '|    ɩð_ʃ     |', '|             |', '|             |', '|          1/2|', "'-------------'", '        ']}
 
-Cat at 0x7efd961b7010: {'is_poisoned': False, 'hooked': False, 'species': 'Cat', 'saccs': 1, 'base_attack': 0, 'current_attack': 0, 'base_life': 1, 'current_life': 1, 'sigils': ['airborne', 'many lives'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:1', 'stats': '0/1', 'name': 'Cat      ', 'text_lines': ['', ',-------------,', '|Cat       C:1|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '|   Ω         |', '|  CXƆ        |', '|   V         |', '|          0/1|', "'-------------'", '        '], 'spent_lives': 0}
-
-Warren at 0x7efd961b6fb0: {'is_poisoned': False, 'hooked': False, 'species': 'Warren', 'saccs': 1, 'base_attack': 0, 'current_attack': 0, 'base_life': 2, 'current_life': 2, 'sigils': ['airborne', 'vole hole'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:1', 'stats': '0/2', 'name': 'Warren   ', 'text_lines': ['', ',-------------,', '|Warren    C:1|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '|  ___        |', '| /…¨…\\       |', '| ‾‾‾‾‾       |', '|          0/2|', "'-------------'", '        ']}
-
-Pronghorn at 0x7efd961b6f50: {'is_poisoned': False, 'hooked': False, 'species': 'Pronghorn', 'saccs': 2, 'base_attack': 1, 'current_attack': 1, 'base_life': 3, 'current_life': 3, 'sigils': ['airborne', 'lane shift right'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:2', 'stats': '1/3', 'name': 'Pronghorn', 'text_lines': ['', ',-------------,', '|Pronghorn C:2|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '| ,-,         |', '| | |->       |', "| '-'         |", '|          1/3|', "'-------------'", '        ']}
-
-Salmon at 0x7efd961b6ef0: {'is_poisoned': False, 'hooked': False, 'species': 'Salmon', 'saccs': 2, 'base_attack': 2, 'current_attack': 2, 'base_life': 2, 'current_life': 2, 'sigils': ['airborne', 'waterborne'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:2', 'stats': '2/2', 'name': 'Salmon   ', 'text_lines': ['', ',-------------,', '|Salmon    C:2|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '| <⁻v⁻>       |', '| ˎ\\ /ˏ       |', '| λ/λ\\λ       |', '|          2/2|', "'-------------'", '        ']}
-
-Raven at 0x7efd961b6e90: {'is_poisoned': False, 'hooked': False, 'species': 'Raven', 'saccs': 2, 'base_attack': 2, 'current_attack': 2, 'base_life': 3, 'current_life': 3, 'sigils': ['airborne', 'airborne'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:2', 'stats': '2/3', 'name': 'Raven    ', 'text_lines': ['', ',-------------,', '|Raven     C:2|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '|   _         |', '| ɩΞΞɭ        |', '|  ɩΞΞð       |', '|          2/3|', "'-------------'", '        ']}
-
-Shrew at 0x7efd961b6e30: {'is_poisoned': False, 'hooked': False, 'species': 'Shrew', 'saccs': 0, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['airborne', 'lane shift left'], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 12, 'cost': 'C:0', 'stats': '1/1', 'name': 'Shrew    ', 'text_lines': ['', ',-------------,', '|Shrew     C:0|', '|             |', '|         _   |', '|       ɩΞΞɭ  |', '|        ɩΞΞð |', '|   ,-,       |', '| <-| |       |', "|   '-'       |", '|          1/1|', "'-------------'", '        ']}
+Rabbit at 0x7f4f7da97fd0: {'is_poisoned': False, 'hooked': False, 'species': 'Rabbit', 'saccs': 0, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ['lane shift right', ''], 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '1/1', 'name': 'Rabbit   ', 'text_lines': ['', ',-------------,', '|Rabbit    C:0|', '|             |', '|             |', '|    ,-,      |', '|    | |->    |', "|    '-'      |", '|             |', '|             |', '|          1/1|', "'-------------'", '        ']}
 
 Ouroboros level: 3
