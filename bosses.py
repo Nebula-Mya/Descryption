@@ -210,7 +210,7 @@ def post_boss_flavor(campaign: rogue.rogue_campaign, result: bool, overkill: int
         ASCII_text.print_candelabra(wick_states)
         print()
 
-def turn_structure(playfield) :
+def turn_structure(playfield: field.Playmat) :
     '''
     the turn structure for boss fights, excluding checking for win conditions and switching turns
 
@@ -221,7 +221,7 @@ def turn_structure(playfield) :
         tuple: win, winner, overkill, deck_out, played (bool, str, int, bool, list)
     '''
     # set up variables
-    played = []
+    played: list[card.BlankCard] = []
 
     # playtest feature to quick quit
     # if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) :
@@ -259,7 +259,7 @@ def turn_structure(playfield) :
 
     return (False, '', 0, False, played)
 
-def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=True, field_cards: list[card.BlankCard]=[]) :
+def init_boss_playfield(campaign: rogue.rogue_campaign, Poss_Leshy: dict[int, list[type[card.BlankCard]]]={}, first_cards: list[card.BlankCard]=[], advance: bool=True, field_cards: list[card.BlankCard]=[]) :
     '''
     creates the playfield for a boss fight
 
@@ -274,7 +274,7 @@ def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=Tru
 
     deck_size = len(campaign.player_deck)
 
-    if Poss_Leshy :
+    if len(Poss_Leshy) != 0 :
         leshy_deck = duel.deck_gen(Poss_Leshy, int(deck_size * 1.5), hidden_cost=True)
     else :
         player_max_cost = max([card.saccs for card in campaign.player_deck.cards])
@@ -285,12 +285,11 @@ def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=Tru
     playfield = field.Playmat(campaign.player_deck.shuffle(fair_hand=True), campaign.squirrel_deck.shuffle(), leshy_deck.shuffle(), play_median, play_var, opp_strat, opp_threshold)
 
     # add first cards to top of deck
-    if first_cards :
-        first_cards.reverse()
-        for _ in range(len(first_cards)) :
-            playfield.opponent_deck.pop()
-        for card_ in first_cards :
-            playfield.opponent_deck.insert(0, card_)
+    first_cards.reverse()
+    for _ in range(len(first_cards)) :
+        playfield.opponent_deck.pop()
+    for card_ in first_cards :
+        playfield.opponent_deck.insert(0, card_)
 
     # add starting field cards
     for zone in range(1, 5) : 
@@ -309,7 +308,7 @@ def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=Tru
 
     return playfield
 
-def random_extra_sigil(possibles, hidden_cost=False) :
+def random_extra_sigil(possibles: list[type[card.BlankCard]], hidden_cost: bool=False) :
     '''
     creates a card with a random sigil from the list of possibles
 
@@ -321,7 +320,7 @@ def random_extra_sigil(possibles, hidden_cost=False) :
         card: the chosen card with a random sigil added (card object)
     '''
     # set up functions
-    def sigil_name(sigil) :
+    def sigil_name(sigil: str) :
         match sigil :
             case '' : return 'No Sigil'
             case _ if 'hefty' in sigil : return 'Hefty'
@@ -332,7 +331,7 @@ def random_extra_sigil(possibles, hidden_cost=False) :
     good_sigil = lambda reciever, sigil : sigil not in ['', '???'] and not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be added
     
     # choose card
-    chosen_card = QoL.random_card(possibles, hidden_cost=hidden_cost)
+    chosen_card: card.BlankCard = QoL.random_card(possibles, hidden_cost=hidden_cost)
 
     # get sigil slot
     if chosen_card.has_sigil('') :
