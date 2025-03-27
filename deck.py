@@ -130,7 +130,7 @@ class Deck() :
             card_.update_ASCII()
 
     def __str__(self) : 
-        return QoL.print_deck(self.cards, sort=True, fruitful=True, numbered=True)
+        return QoL.print_deck(self.cards, sort=True, numbered=True)
 
     def __len__(self) :
         return len(self.cards)

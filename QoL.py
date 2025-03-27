@@ -328,7 +328,7 @@ def sort_deck(deck) :
     deck = sorted(deck, key=lambda x: x.name) # sort by name (will be sub-sorting under cost)
     return sorted(deck, key=lambda x: x.saccs)
 
-def print_deck(deck, sort=False, fruitful=False, numbered=False, centered=False, blocked=False) -> str:
+def print_deck(deck, sort=False, numbered=False, centered=False, blocked=False) -> str:
     '''
     prints a list of cards in a deck, with optional sorting
 

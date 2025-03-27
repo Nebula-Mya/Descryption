@@ -503,7 +503,7 @@ class Playmat :
         # set up variables
         term_cols = os.get_terminal_size().columns
         card_gaps_space = ' '*((term_cols*55 // 100) // 5 - 15)
-        graveyard_string = QoL.print_deck(self.graveyard, sort=False, fruitful=True, numbered=True)
+        graveyard_string = QoL.print_deck(self.graveyard, sort=False, numbered=True)
 
         # print graveyard
         QoL.clear()
@@ -517,7 +517,7 @@ class Playmat :
         # set up variables
         term_cols = os.get_terminal_size().columns
         card_gaps_space = ' '*((term_cols*55 // 100) // 5 - 15)
-        hand_string = QoL.print_deck(self.hand, sort=False, fruitful=True)
+        hand_string = QoL.print_deck(self.hand, sort=False)
 
         # print hand
         print(card_gaps_space + 'Hand:', end='')
