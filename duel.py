@@ -344,7 +344,7 @@ def resource_gen(size) :
     if size < 1 :
         raise ValueError('Deck size must be at least 1.')
 
-    squirrels = [card_library.Squirrel() for _ in range(size)]
+    squirrels: list[card.BlankCard] = [card_library.Squirrel() for _ in range(size)]
 
     return deck.Deck(squirrels)
 

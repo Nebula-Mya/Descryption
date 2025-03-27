@@ -328,7 +328,7 @@ def sort_deck(deck) :
     deck = sorted(deck, key=lambda x: x.name) # sort by name (will be sub-sorting under cost)
     return sorted(deck, key=lambda x: x.saccs)
 
-def print_deck(deck, sort=False, fruitful=False, numbered=False, centered=False, blocked=False) :
+def print_deck(deck, sort=False, fruitful=False, numbered=False, centered=False, blocked=False) -> str:
     '''
     prints a list of cards in a deck, with optional sorting
 
@@ -386,8 +386,7 @@ def print_deck(deck, sort=False, fruitful=False, numbered=False, centered=False,
 
     if centered :
         deck_string = center_justified(deck_string, blocked, -2)
-    if fruitful :
-        return deck_string
+    return deck_string
     
     print(deck_string)
 
