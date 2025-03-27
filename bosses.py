@@ -1,3 +1,8 @@
+from __future__ import annotations # prevent type hints needing import at runtime
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import rogue
+
 import card_library
 import card
 import field
@@ -7,11 +12,8 @@ import duel
 import random
 import time
 import sigils
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    import rogue
 
-def card_battle(campaign: rogue.rogue_campaign, Poss_Leshy: list[card.BlankCard]=[]) : 
+def card_battle(campaign: rogue.rogue_campaign, Poss_Leshy: list[card.BlankCard]=[])  -> bool: 
     '''
     starts a card battle between the player and Leshy, with the player's deck being campaign.player_deck
     
@@ -22,7 +24,7 @@ def card_battle(campaign: rogue.rogue_campaign, Poss_Leshy: list[card.BlankCard]
     Returns:
         bool: True if the player wins, False if the player loses
     '''
-    def gameplay(campaign: rogue.rogue_campaign, Poss_Leshy: list[card.BlankCard]) :
+    def gameplay(campaign: rogue.rogue_campaign, Poss_Leshy: list[card.BlankCard])  -> bool:
         data_to_read = [
             ['settings', 'difficulty', 'leshy median plays'],
             ['settings', 'difficulty', 'leshy plays variance'],
@@ -132,7 +134,7 @@ def get_higher_difficulty() :
         case _ :
             raise ValueError(f"invalid difficulty number: {difficulty_number}")
 
-def error_checks(deck_size: int, hand_size: int, Leshy_play_count_median: int, Leshy_play_count_variance: int, Leshy_in_strategy_chance: int, Leshy_strat_change_threshold: int) :
+def error_checks(deck_size: int, hand_size: int, Leshy_play_count_median: int, Leshy_play_count_variance: int, Leshy_in_strategy_chance: int, Leshy_strat_change_threshold: int)  -> None:
     if deck_size < 1 :
         raise ValueError('Deck size must be at least 1.')
     if hand_size < 1 :
@@ -148,7 +150,7 @@ def error_checks(deck_size: int, hand_size: int, Leshy_play_count_median: int, L
     if Leshy_strat_change_threshold < -5 or Leshy_strat_change_threshold > 5 :
         raise ValueError('Leshy strategy change threshold must be between -5 and 5.')
 
-def pre_boss_flavor(campaign: rogue.rogue_campaign) :
+def pre_boss_flavor(campaign: rogue.rogue_campaign)  -> None:
     '''
     prints pre boss fight flavor text and displays
     adds smoke cards to the player's deck
@@ -169,7 +171,7 @@ def pre_boss_flavor(campaign: rogue.rogue_campaign) :
     print()
     input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
-def post_boss_flavor(campaign: rogue.rogue_campaign, result: bool, overkill: int=0, deck_out: bool=False) :
+def post_boss_flavor(campaign: rogue.rogue_campaign, result: bool, overkill: int=0, deck_out: bool=False)  -> None:
     '''
     prints post boss fight flavor text and displays
     removes smoke cards from the player's deck
@@ -308,7 +310,7 @@ def init_boss_playfield(campaign: rogue.rogue_campaign, Poss_Leshy: dict[int, li
 
     return playfield
 
-def random_extra_sigil(possibles: list[type[card.BlankCard]], hidden_cost: bool=False) :
+def random_extra_sigil(possibles: list[type[card.BlankCard]], hidden_cost: bool=False) -> card.BlankCard:
     '''
     creates a card with a random sigil from the list of possibles
 
@@ -347,14 +349,14 @@ def random_extra_sigil(possibles: list[type[card.BlankCard]], hidden_cost: bool=
 
     return chosen_card
 
-def trading(playfield) :
+def trading(playfield: field.Playmat)  -> None:
     '''
     allows the player to trade wolf pelts from their hand for the trader's cards on the board
 
     Arguments:
         playfield: the current playfield object (field object)
     '''
-    def player_vers(traded_card) :
+    def player_vers(traded_card: card.BlankCard)  -> card.BlankCard:
         '''
         switches the player's card to its opposite version if necessary
 
@@ -379,7 +381,7 @@ def trading(playfield) :
         
         return traded_card
     
-    def view_hand(playfield) :
+    def view_hand(playfield: field.Playmat)  -> None:
         invalid_index = False
         while True :
             QoL.clear()
@@ -402,7 +404,7 @@ def trading(playfield) :
             else :
                 invalid_index = True
 
-    def get_card_from_row(row) :
+    def get_card_from_row(row: dict[int, card.BlankCard])  -> card.BlankCard | None:
         '''
         allows player to choose a card from a row to trade
         
@@ -430,7 +432,7 @@ def trading(playfield) :
             else :
                 invalid_index = True
     
-    def trade_card(playfield) :
+    def trade_card(playfield: field.Playmat)  -> None:
         '''
         allows the player to trade a wolf pelt for a card
         
@@ -497,8 +499,8 @@ def trading(playfield) :
             case '5' : break
             case _ : invalid_choice = True
 
-def boss_fight_prospector(campaign) : # boss fight 1
-    def gameplay(campaign) :
+def boss_fight_prospector(campaign: rogue.rogue_campaign)  -> bool: # boss fight 1
+    def gameplay(campaign: rogue.rogue_campaign) :
         pre_boss_flavor(campaign)
 
         playfield = init_boss_playfield(campaign, first_cards=[card_library.PackMule(True), card_library.Coyote(True)])
@@ -565,8 +567,8 @@ def boss_fight_prospector(campaign) : # boss fight 1
 
     return gameplay(campaign)[1] == 'player' # add flavor text, context, etc.
 
-def boss_fight_angler(campaign) : # boss fight 2
-    def gameplay(campaign) :
+def boss_fight_angler(campaign: rogue.rogue_campaign)  -> bool: # boss fight 2
+    def gameplay(campaign: rogue.rogue_campaign) :
         pre_boss_flavor(campaign)
 
         poss_angler_p1 = {
@@ -700,8 +702,8 @@ def boss_fight_angler(campaign) : # boss fight 2
 
     return gameplay(campaign)[1] == 'player' # add flavor text, context, etc.
 
-def boss_fight_trapper_trader(campaign) : # boss fight 3
-    def gameplay(campaign) :
+def boss_fight_trapper_trader(campaign: rogue.rogue_campaign)  -> bool: # boss fight 3
+    def gameplay(campaign: rogue.rogue_campaign) :
         pre_boss_flavor(campaign)
 
         poss_trapper = {
@@ -826,12 +828,12 @@ def boss_fight_trapper_trader(campaign) : # boss fight 3
 
     return gameplay(campaign)[1] == 'player' # add flavor text, context, etc.
 
-def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck trials)
+def boss_fight_leshy(campaign: rogue.rogue_campaign)  -> bool: # boss fight 4 (still need to implement deck trials)
     ## Leshy's reaction to the moon being destroyed is part of field.check_states()
-    def deck_trials(campaign) :
+    def deck_trials(campaign: rogue.rogue_campaign) :
         pass # implement once deck trials and boons are added (needs consumables and bones)
 
-    def mining(playfield, battle_state) :
+    def mining(playfield: field.Playmat, battle_state: battle_state) :
         # dialogue / explanation
         if not battle_state.has_mined :
             QoL.clear()
@@ -854,7 +856,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
         # replace player's cards with gold nuggets
         for zone in nugget_zones : playfield.summon_card(card=card_library.GoldNugget(True), zone=zone, field=playfield.player_field)
 
-    def hooking(playfield, battle_state, played) :
+    def hooking(playfield: field.Playmat, battle_state: battle_state, played: list[card.BlankCard]) :
         # dialogue / explanation
         if not battle_state.used_all_masks :
             QoL.clear()
@@ -883,7 +885,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
                     playfield.summon_card(card=card.BlankCard(), zone=zone, field=playfield.player_field)
                     break
 
-    def trading_leshy(playfield, battle_state) :
+    def trading_leshy(playfield: field.Playmat, battle_state: battle_state) :
         # dialogue / explanation
         if not battle_state.used_all_masks :
             QoL.clear()
@@ -965,7 +967,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
 
             self.mask_worn = True
         
-        def use(self, playfield, played) :
+        def use(self, playfield: field.Playmat, played: list[card.BlankCard]) :
             '''
             uses and removes the current mask
 
@@ -990,7 +992,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
 
             self.mask_worn = False
 
-        def mask(self, playfield, played) :
+        def mask(self, playfield: field.Playmat, played: list[card.BlankCard]) :
             '''
             uses or changes the mask
             
@@ -1006,7 +1008,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
             else : 
                 self.change()
 
-        def win(self, playfield) :
+        def win(self, playfield: field.Playmat) :
             '''
             executes the code for beating a phase, depending on the current phase, increments the phase, and returns whether the player has won the entire fight
 
@@ -1105,7 +1107,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
             
             return False
 
-    def gameplay(campaign) :
+    def gameplay(campaign: rogue.rogue_campaign) :
         # pre boss events
         deck_trials(campaign)
 

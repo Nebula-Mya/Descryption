@@ -1,3 +1,5 @@
+from __future__ import annotations # prevent type hints needing import at runtime
+
 import QoL
 import os
 import math
@@ -17,7 +19,7 @@ def print_title() :
 
     print(QoL.center_justified(title, blocked=True))
 
-def print_scales(score: dict[str, int], score_gap: int) :
+def print_scales(score: dict[str, int], score_gap: int)  -> None:
     player_adv = max(0, score['player'] - score['opponent'])
     opponent_adv = max(0, score['opponent'] - score['player'])
     if player_adv :
@@ -38,7 +40,7 @@ def print_scales(score: dict[str, int], score_gap: int) :
 {spc}    /___\\'''.format(plr=player_weight, lsh=opponent_weight, spc=' '*score_gap)
     print(scales)
 
-def print_win(overkill: int=0) :
+def print_win(overkill: int=0)  -> None:
     '''
     Prints the ASCII art for the win screen.
     
@@ -74,7 +76,7 @@ __/\\\\\\______________/\\\\\\__/\\\\\\\\\\\\\\\\\\\\\\__/\\\\\\\\\\_____/\\\\\\
     
     print(QoL.center_justified(win, blocked=True))
 
-def print_lose(deck_out: bool=False) :
+def print_lose(deck_out: bool=False)  -> None:
     '''
     Prints the ASCII art for the lose screen.
     
@@ -123,7 +125,7 @@ def print_WiP() :
 
     print(QoL.center_justified(WiP, blocked=True))
 
-def print_candelabra(wick_states: list[int]) :
+def print_candelabra(wick_states: list[int])  -> None:
     '''
     Prints the ASCII art for the candelabra.
     

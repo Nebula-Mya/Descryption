@@ -1,5 +1,16 @@
-<!-- LTeX: enabled=false -->
+<!  - LTeX: enabled=false   ->
 - [ ] add typing to all functions (search 'def .*\([^)]' across all files)
+  - [x] ASCII_text.py
+  - [x] bosses.py
+  - [ ] card_library.py
+  - [ ] card.py
+  - [ ] deck.py
+  - [ ] duel.py
+  - [ ] field.py
+  - [ ] menu.py
+  - [ ] QoL.py
+  - [ ] rogue.py
+  - [ ] sigils.py
 - [ ] allow sigil_sacrifice to replace sigils
 - [ ] allow sigil_sacrifice to sacc cards without sigils
 - [ ] make merging optional for merge_cards

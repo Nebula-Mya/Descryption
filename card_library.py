@@ -1,3 +1,5 @@
+from __future__ import annotations # prevent type hints needing import at runtime
+
 import card
 import QoL
 import random
