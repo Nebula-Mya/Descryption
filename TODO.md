@@ -1,10 +1,10 @@
-- [ ] add typing to all functions (search 'def .*\([^)]' ignore '*.md, test*,ASCII*, bosses.py, card_lib*, card.py, deck.py' across all files)
+- [ ] add typing to all functions (search 'def .*\([^)]' ignore '*.md, test*,ASCII*, bosses.py, card_lib*, card.py, deck.py, duel.py' across all files)
   - [x] ASCII_text.py
   - [x] bosses.py
   - [x] card_library.py
   - [x] card.py
   - [x] deck.py
-  - [ ] duel.py
+  - [x] duel.py
   - [ ] field.py
   - [ ] menu.py
   - [ ] QoL.py
