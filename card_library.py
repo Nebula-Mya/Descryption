@@ -444,7 +444,7 @@ class Moon(card.BlankCard) :
         self.zone = zone
         self.update_ASCII()
 
-    def sigil_in_category(self, category: list[card.BlankCard] | dict[Any, card.BlankCard], sigil_slot: int=-1) :
+    def sigil_in_category(self, category: list[str] | dict[Any, str], sigil_slot: int=-1) :
         sigils_ = ['mighty leap', 'tidal lock', 'omni strike']
 
         return any([sigil in sigils_ for sigil in category])

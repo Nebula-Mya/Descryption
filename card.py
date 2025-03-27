@@ -1,4 +1,7 @@
 from __future__ import annotations # prevent type hints needing import at runtime
+from typing import TYPE_CHECKING
+if TYPE_CHECKING :
+    from typing import Any
 
 import sigils
 import os
@@ -47,7 +50,7 @@ class BlankCard() :
     Functions :
         print() : prints self.name
     '''
-    def __init__(self, species = '', cost = 0, attack = 0, life = 0, sigils: tuple[str, str] = ('',''), status = 'alive', zone = 0, blank_cost = False, blank_stats = False) :
+    def __init__(self, species: str = '', cost: int = 0, attack: int = 0, life: int = 0, sigils: tuple[str, str] = ('',''), status: str = 'alive', zone: int = 0, blank_cost: bool = False, blank_stats: bool = False) :
         # basic variables
         self.is_poisoned: bool = False
         self.hooked: bool = False
@@ -77,7 +80,7 @@ class BlankCard() :
         self.current_attack = self.base_attack
         self.current_life = self.base_life
 
-    def attack(self, front_left_card, front_card, front_right_card, hand, is_players=False, bushes={}) :
+    def attack(self, front_left_card: BlankCard, front_card: BlankCard, front_right_card: BlankCard, hand: list[BlankCard], is_players: bool=False, bushes: dict[int, BlankCard]={}) -> int:
         '''
         attacks zone(s) in front
 
@@ -119,7 +122,7 @@ class BlankCard() :
             self.line_cursor = 2
         return self.text_lines[self.line_cursor - 1]
 
-    def take_damage(self, damage, hand, from_air=False, in_opp_field=False, in_bushes=False, bushes={}, deathtouch=False) :
+    def take_damage(self, damage: int, hand: list[BlankCard], from_air: bool=False, in_opp_field: bool=False, in_bushes: bool=False, bushes: dict[int, BlankCard]={}, deathtouch: bool=False)  -> int:
         '''
         reduces current life by damage
 
@@ -156,7 +159,7 @@ class BlankCard() :
         
         return teeth     
 
-    def play(self, zone) :
+    def play(self, zone: int) :
         '''
         resets stats and updates zone
         '''
@@ -361,7 +364,7 @@ class BlankCard() :
 '-------------'
         '''.format(species=self.name, C=self.cost, h1=hook_indicator[0], h2=hook_indicator[1], s1r1=sigils.Dict[self.sigils[0]][0][0], s1r2=sigils.Dict[self.sigils[0]][0][1], s1r3=sigils.Dict[self.sigils[0]][0][2], s2r1=sigils.Dict[self.sigils[1]][0][0], s2r2=sigils.Dict[self.sigils[1]][0][1], s2r3=sigils.Dict[self.sigils[1]][0][2], S=self.stats).split("\n")
 
-    def sigil_in_category(self, category, sigil_slot=None) :
+    def sigil_in_category(self, category: list[str] | dict[Any, str], sigil_slot: int=-1) :
         '''
         checks if a sigil is in a category
 
@@ -371,12 +374,12 @@ class BlankCard() :
         Returns:
             whether the sigil is in the category (bool)
         '''
-        if sigil_slot :
+        if sigil_slot != -1 :
             return self.sigils[sigil_slot] in category
         
         return self.sigils[0] in category or self.sigils[1] in category
 
-    def has_sigil(self, sigil_name) :
+    def has_sigil(self, sigil_name: str) :
         '''
         checks if a card has a sigil
 
