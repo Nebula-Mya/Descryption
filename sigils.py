@@ -34,9 +34,9 @@ import card
 import QoL
 
 if attacking_field[zone].sigils[0] == 'lane shift right' :
-    changed_direction = ['lane shift left', attacking_field[zone].sigils[1]]
+    changed_direction = ('lane shift left', attacking_field[zone].sigils[1])
 else :
-    changed_direction = [attacking_field[zone].sigils[0], 'lane shift left']
+    changed_direction = (attacking_field[zone].sigils[0], 'lane shift left')
 
 if zone == 4 or QoL.hefty_check(attacking_field, zone + 1, 'right') == 0 :
     attacking_field[zone].sigils = changed_direction
@@ -57,9 +57,9 @@ import card
 import QoL
 
 if attacking_field[zone].sigils[0] == 'lane shift left' :
-    changed_direction = ['lane shift right', attacking_field[zone].sigils[1]]
+    changed_direction = ('lane shift right', attacking_field[zone].sigils[1])
 else :
-    changed_direction = [attacking_field[zone].sigils[0], 'lane shift right']
+    changed_direction = (attacking_field[zone].sigils[0], 'lane shift right')
 
 if zone == 1 or QoL.hefty_check(attacking_field, zone - 1, 'left') == 0 :
     attacking_field[zone].sigils = changed_direction
@@ -193,9 +193,9 @@ pass
 import card_library
 import card
 
-other_sigils = ['airborne'] + [sigil for sigil in self.sigils if sigil != 'bees within']
-if other_sigils == ['airborne', 'airborne'] :
-    other_sigils = ['airborne','']
+other_sigils = ('airborne', [sigil for sigil in self.sigils if sigil != 'bees within'][0])
+if other_sigils == ('airborne', 'airborne') :
+    other_sigils = ('airborne','')
 
 if type(self) == card.BlankCard or self.status == 'dead' or from_air:
     teeth = damage
@@ -221,9 +221,9 @@ import QoL
 import card
 
 if attacking_field[zone].sigils[0] == 'hefty (right)' :
-    changed_direction = ['hefty (left)', attacking_field[zone].sigils[1]]
+    changed_direction = ('hefty (left)', attacking_field[zone].sigils[1])
 else :
-    changed_direction = [attacking_field[zone].sigils[0], 'hefty (left)']
+    changed_direction = (attacking_field[zone].sigils[0], 'hefty (left)')
 
 if zone == 4 :
     attacking_field[zone].sigils = changed_direction
@@ -255,9 +255,9 @@ import QoL
 import card
 
 if attacking_field[zone].sigils[0] == 'hefty (left)' :
-    changed_direction = ['hefty (right)', attacking_field[zone].sigils[1]]
+    changed_direction = ('hefty (right)', attacking_field[zone].sigils[1])
 else :
-    changed_direction = [attacking_field[zone].sigils[0], 'hefty (right)']
+    changed_direction = (attacking_field[zone].sigils[0], 'hefty (right)')
 
 if zone == 1 :
     attacking_field[zone].sigils = changed_direction
@@ -303,7 +303,7 @@ teeth = damage
         '''#py
 import card_library
 
-other_sigils = [sigil for sigil in self.player_field[zone].sigils if sigil != 'vole hole'] + ['']
+other_sigils = ([sigil for sigil in self.player_field[zone].sigils if sigil != 'vole hole'][0], '')
 
 self.hand.append(card_library.Vole(sigils=other_sigils))
 '''
@@ -324,7 +324,7 @@ points += front_card.take_damage(self.current_attack, hand, deathtouch=True, in_
 import card_library
 import card
 
-other_sigils = [sigil for sigil in self.player_field[zone].sigils if sigil != 'dam builder'] + ['']
+other_sigils = ([sigil for sigil in self.player_field[zone].sigils if sigil != 'dam builder'][0], '')
 
 if zone == 1 :
     poss_zones = [2]
@@ -515,9 +515,9 @@ import QoL
 import card
 
 if attacking_field[zone].sigils[0] == 'hefty (right)' :
-    changed_direction = ['hefty (left)', attacking_field[zone].sigils[1]]
+    changed_direction = ('hefty (left)', attacking_field[zone].sigils[1])
 else :
-    changed_direction = [attacking_field[zone].sigils[0], 'hefty (left)']
+    changed_direction = (attacking_field[zone].sigils[0], 'hefty (left)')
 
 if zone == 4 :
     attacking_field[zone].sigils = changed_direction
@@ -549,9 +549,9 @@ import QoL
 import card
 
 if attacking_field[zone].sigils[0] == 'hefty (left)' :
-    changed_direction = ['hefty (right)', attacking_field[zone].sigils[1]]
+    changed_direction = ('hefty (right)', attacking_field[zone].sigils[1])
 else :
-    changed_direction = [attacking_field[zone].sigils[0], 'hefty (right)']
+    changed_direction = (attacking_field[zone].sigils[0], 'hefty (right)')
 
 if zone == 1 :
     attacking_field[zone].sigils = changed_direction
@@ -681,7 +681,7 @@ if __name__ == '__main__':
         if key == '':
             continue
         print(tab + QoL.title_case(key) + ':')
-        example = card.BlankCard(sigils=[key, ''])
+        example = card.BlankCard(sigils=(key, ''))
         example.species = 'EXAMPLE CARD'
         example.explain()
         print()

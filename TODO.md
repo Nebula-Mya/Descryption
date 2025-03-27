@@ -2,7 +2,7 @@
 - [ ] add typing to all functions (search 'def .*\([^)]' across all files)
   - [x] ASCII_text.py
   - [x] bosses.py
-  - [ ] card_library.py
+  - [x] card_library.py
   - [ ] card.py
   - [ ] deck.py
   - [ ] duel.py

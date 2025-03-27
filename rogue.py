@@ -193,8 +193,15 @@ def card_battle(campaign: rogue_campaign, Poss_Leshy=None) :
             campaign.remove_life()
             QoL.clear()
             print('\n'*3)
-            wick_states = (campaign.lives) * [2] + [3]
-            wick_states += [0] * (3 - len(wick_states))
+
+            match campaign.lives: 
+                case 1 :
+                    wick_states: tuple[int, int, int] = (2, 3, 0)
+                case 2 : 
+                    wick_states: tuple[int, int, int] = (2, 2, 3)
+                case _ :
+                    wick_states: tuple[int, int, int] = (2, 2, 2)
+
             ASCII_text.print_candelabra(wick_states)
             print()
             input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
@@ -203,8 +210,15 @@ def card_battle(campaign: rogue_campaign, Poss_Leshy=None) :
         campaign.add_teeth(overkill)
         QoL.clear()
         print('\n'*3)
-        wick_states = (campaign.lives) * [2]
-        wick_states += [0] * (3 - len(wick_states))
+
+        match campaign.lives: 
+            case 1 :
+                wick_states: tuple[int, int, int] = (2, 0, 0)
+            case 2 : 
+                wick_states: tuple[int, int, int] = (2, 2, 0)
+            case _ :
+                wick_states: tuple[int, int, int] = (2, 2, 2)
+
         ASCII_text.print_candelabra(wick_states)
         print()
         input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
@@ -324,8 +338,8 @@ def card_choice(campaign: rogue_campaign) :
         campaign.add_card(card_options[card_index])
 
     def cost_cards(campaign: rogue_campaign) : # generate a list of 3 taken from card_library.Poss_Cost, only seeing the costs of the cards
-        card_options = duel.deck_gen(card_library.Poss_Playr, 3).cards
-        card_options_hidden = [card.BlankCard(species='???', cost=option.cost[-1], sigils=['???',''], blank_stats=True) for option in card_options]
+        card_options: list[card.BlankCard] = duel.deck_gen(card_library.Poss_Playr, 3).cards
+        card_options_hidden = [card.BlankCard(species='???', cost=option.saccs, sigils=('???',''), blank_stats=True) for option in card_options]
         card_index = card_choose(campaign, card_options_hidden)
         QoL.clear()
         print('\n'*5)
@@ -521,8 +535,8 @@ def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
         # set up variables
         if len(sigil_indexes) == 2 : result_sigils = sacrifice.sigils
         elif len(sigil_indexes) == 0 : result_sigils = reciever.sigils
-        elif reciever.sigils[0] == '' : result_sigils = [sacrifice.sigils[sigil_indexes[0]], reciever.sigils[1]]
-        else : result_sigils = [reciever.sigils[0], sacrifice.sigils[sigil_indexes[0]]]
+        elif reciever.sigils[0] == '' : result_sigils = (sacrifice.sigils[sigil_indexes[0]], reciever.sigils[1])
+        else : result_sigils = (reciever.sigils[0], sacrifice.sigils[sigil_indexes[0]])
         result_card = card.BlankCard(species=reciever.species, cost=reciever.saccs, attack=reciever.base_attack, life=reciever.base_life, sigils=result_sigils)
 
         # generate the equation
@@ -1227,8 +1241,10 @@ def break_rocks(campaign: rogue_campaign) : # format visuals
                 while not good_sigil(hidden_reward, selected_sigil) : selected_sigil = random.choice(list(sigils.Dict.keys()))
 
                 sigil_slot = hidden_reward.sigils.index('')
-
-                hidden_reward.sigils[sigil_slot] = selected_sigil
+                
+                match sigil_slot :
+                    case 0 : hidden_reward.sigils = (selected_sigil, hidden_reward.sigils[1])
+                    case 1 : hidden_reward.sigils = (hidden_reward.sigils[0], selected_sigil)
                 hidden_reward.update_ASCII()
 
         # one of the rewards is a golden pelt
@@ -1892,8 +1908,9 @@ if __name__ == '__main__' :
             if random.randint(0,4) > 0 :
                 card_: card.BlankCard
                 for card_ in campaign.player_deck.cards :
-                    card_.sigils[1] = card_.sigils[0]
-                    card_.sigils[0]='airborne'
+                    # card_.sigils[1] = card_.sigils[0]
+                    # card_.sigils[0]='airborne'
+                    card_.sigils = ('airborne', card_.sigils[0])
                     card_.update_ASCII()
             campaign.add_teeth(random.randint(0,3))
             

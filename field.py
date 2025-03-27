@@ -760,7 +760,7 @@ if __name__ == '__main__' :
         # place a hefty card in the player's field
         playmat.player_field[2] = card_library.MooseBuck()
         playmat.player_field[2].play(zone=2)
-        playmat.player_field[2].sigils = ['hefty (right)','']
+        playmat.player_field[2].sigils = ('hefty (right)','')
         playmat.player_field[2].update_ASCII()
 
         # print the field
@@ -800,7 +800,7 @@ if __name__ == '__main__' :
         # place a hefty card in the player's field
         playmat.player_field[4] = card_library.MooseBuck()
         playmat.player_field[4].play(zone=4)
-        playmat.player_field[4].sigils = ['hefty (left)','']
+        playmat.player_field[4].sigils = ('hefty (left)','')
         playmat.player_field[4].update_ASCII()
 
         # print the field

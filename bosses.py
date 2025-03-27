@@ -44,8 +44,13 @@ def card_battle(campaign: rogue.rogue_campaign, Poss_Leshy: list[card.BlankCard]
         
         QoL.clear()
         print('\n')
-        wick_states = [2] + [3] * (campaign.lives - 1)
-        wick_states += [0] * (3 - len(wick_states))
+        match campaign.lives: 
+            case 1 :
+                wick_states: tuple[int, int, int] = (2, 0, 0)
+            case 2 : 
+                wick_states: tuple[int, int, int] = (2, 3, 0)
+            case _ :
+                wick_states: tuple[int, int, int] = (2, 3, 3)
         ASCII_text.print_candelabra(wick_states)
         print(QoL.center_justified('As you approach the figure, Leshy blows out all but one of your candles.').rstrip())
         print(QoL.center_justified('"Beat this boss and I\'ll relight your candles."').rstrip())
@@ -58,7 +63,7 @@ def card_battle(campaign: rogue.rogue_campaign, Poss_Leshy: list[card.BlankCard]
             campaign.lives = 0
             QoL.clear()
             print('\n'*3)
-            ASCII_text.print_candelabra([3, 0, 0])
+            ASCII_text.print_candelabra((3, 0, 0))
             print()
             input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
             return False
@@ -66,8 +71,13 @@ def card_battle(campaign: rogue.rogue_campaign, Poss_Leshy: list[card.BlankCard]
         campaign.add_teeth(overkill)
         QoL.clear()
         print('\n'*3)
-        wick_states = (campaign.lives) * [2]
-        wick_states += [0] * (3 - len(wick_states))
+        match campaign.lives: 
+            case 1 :
+                wick_states: tuple[int, int, int] = (2, 0, 0)
+            case 2 : 
+                wick_states: tuple[int, int, int] = (2, 1, 0)
+            case _ :
+                wick_states: tuple[int, int, int] = (2, 1, 1)
         ASCII_text.print_candelabra(wick_states)
         print()
         return True
@@ -161,8 +171,15 @@ def pre_boss_flavor(campaign: rogue.rogue_campaign)  -> None:
     # pre fight flavor text, extra lives being extinguished, etc.
     QoL.clear()
     print('\n')
-    wick_states = [2] + [3] * (campaign.lives - 1)
-    wick_states += [0] * (3 - len(wick_states))
+
+    match campaign.lives: 
+        case 1 :
+            wick_states: tuple[int, int, int] = (2, 0, 0)
+        case 2 : 
+            wick_states: tuple[int, int, int] = (2, 3, 0)
+        case _ :
+            wick_states: tuple[int, int, int] = (2, 3, 3)
+
     for _ in range(0, campaign.lives - 1) :
         campaign.add_card(card_library.Smoke())
     ASCII_text.print_candelabra(wick_states)
@@ -201,14 +218,21 @@ def post_boss_flavor(campaign: rogue.rogue_campaign, result: bool, overkill: int
     if not result : # player lost
         QoL.clear()
         print('\n'*3)
-        ASCII_text.print_candelabra([3, 0, 0])
+        ASCII_text.print_candelabra((3, 0, 0))
         print()
         input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
     else : # player won
         QoL.clear()
         print('\n'*3)
-        wick_states = (campaign.lives) * [2]
-        wick_states += [0] * (3 - len(wick_states))
+
+        match campaign.lives: 
+            case 1 :
+                wick_states: tuple[int, int, int] = (2, 0, 0)
+            case 2 : 
+                wick_states: tuple[int, int, int] = (2, 1, 0)
+            case _ :
+                wick_states: tuple[int, int, int] = (2, 1, 1)
+
         ASCII_text.print_candelabra(wick_states)
         print()
 
@@ -343,7 +367,11 @@ def random_extra_sigil(possibles: list[type[card.BlankCard]], hidden_cost: bool=
 
     # while not good_sigil(hidden_reward, selected_sigil) : selected_sigil = random.choice(list(sigils.Dict.keys()))
     while not good_sigil(chosen_card, sigil := random.choice(list(sigils.Dict.keys()))) : pass
-    else : chosen_card.sigils[sigil_slot] = sigil
+    else :
+        match sigil_slot :
+            case 0: chosen_card.sigils = (sigil, chosen_card.sigils[1])
+            case 1: chosen_card.sigils = (chosen_card.sigils[0], sigil)
+            case _: raise ValueError
 
     chosen_card.update_ASCII()
 
@@ -366,10 +394,18 @@ def trading(playfield: field.Playmat)  -> None:
         if any([traded_card.has_sigil(mover) for mover in sigils.movers]) :
             for (sigil, index) in [(sigil, traded_card.sigils.index(sigil)) for sigil in traded_card.sigils if sigil in sigils.movers] : 
                 match (sigil, index) :
-                    case ('lane shift left', index) : traded_card.sigils[index] = 'lane shift right'
-                    case ('lane shift right', index) : traded_card.sigils[index] = 'lane shift left'
-                    case ('hefty (left)', index) : traded_card.sigils[index] = 'hefty (right)'
-                    case ('hefty (right)', index) : traded_card.sigils[index] = 'hefty (left)'
+                    # case ('lane shift left', index) : traded_card.sigils[index] = 'lane shift right'
+                    # case ('lane shift right', index) : traded_card.sigils[index] = 'lane shift left'
+                    # case ('hefty (left)', index) : traded_card.sigils[index] = 'hefty (right)'
+                    # case ('hefty (right)', index) : traded_card.sigils[index] = 'hefty (left)'
+                    case ('lane shift left', 0) : traded_card.sigils = ('lane shift right', traded_card.sigils[1])
+                    case ('lane shift left', 1) : traded_card.sigils = (traded_card.sigils[0], 'lane shift right')
+                    case ('lane shift right', 0) : traded_card.sigils = ('lane shift left', traded_card.sigils[1])
+                    case ('lane shift right', 1) : traded_card.sigils = (traded_card.sigils[0], 'lane shift left')
+                    case ('hefty (left)', 0) : traded_card.sigils = ('hefty (right)', traded_card.sigils[1])
+                    case ('hefty (left)', 1) : traded_card.sigils = (traded_card.sigils[0], 'hefty (right)')
+                    case ('hefty (right)', 0) : traded_card.sigils = ('hefty (left)', traded_card.sigils[1])
+                    case ('hefty (right)', 1) : traded_card.sigils = (traded_card.sigils[0], 'hefty (left)')
             traded_card.update_ASCII()
         
         if type(traded_card) == card_library.OppositeRabbit :
@@ -684,7 +720,7 @@ def boss_fight_angler(campaign: rogue.rogue_campaign)  -> bool: # boss fight 2
 
                     # fill angler's field and bushes with grizzly bears with mighty leap
                     for zone in range(1, 5) :
-                        for field in [playfield.opponent_field, playfield.bushes] : playfield.summon_card(card=card_library.Grizzly(blank_cost=True, sigils=['mighty leap', '']), zone=zone, field=field)
+                        for field in [playfield.opponent_field, playfield.bushes] : playfield.summon_card(card=card_library.Grizzly(blank_cost=True, sigils=('mighty leap', '')), zone=zone, field=field)
 
                 # change deck to be angler's second phase deck
                 playfield.opponent_deck = duel.deck_gen(poss_angler_p2, len(playfield.opponent_deck), hidden_cost=True).cards
@@ -810,7 +846,7 @@ def boss_fight_trapper_trader(campaign: rogue.rogue_campaign)  -> bool: # boss f
 
                     # fill trader's field and bushes with grizzly bears with mighty leap
                     for zone in range(1, 5) :
-                        for field in [playfield.opponent_field, playfield.bushes] : playfield.summon_card(card=card_library.Grizzly(blank_cost=True, sigils=['mighty leap', '']), zone=zone, field=field)
+                        for field in [playfield.opponent_field, playfield.bushes] : playfield.summon_card(card=card_library.Grizzly(blank_cost=True, sigils=('mighty leap', '')), zone=zone, field=field)
 
                 # empty trader's deck
                 playfield.opponent_deck = []

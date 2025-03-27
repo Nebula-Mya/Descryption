@@ -13,7 +13,7 @@ class BlankCard() :
         cost : number of sacrifices needed for summoning (int)
         attack : base attack stat (int)
         life : base life stat (int)
-        sigils : the sigils the card currently has (list[str])
+        sigils : the sigils the card currently has (tuple[str, str])
         status : whether the card is alive or dead (str)
         zone : the zone the card is in, with 0 as default (int)
         blank_cost : whether the card has a blank cost (bool)
@@ -47,11 +47,7 @@ class BlankCard() :
     Functions :
         print() : prints self.name
     '''
-    def __init__(self, species = '', cost = 0, attack = 0, life = 0, sigils = None, status = 'alive', zone = 0, blank_cost = False, blank_stats = False) :
-        # manage mutable default arguments
-        if sigils is None :
-            sigils = ['','']
-
+    def __init__(self, species = '', cost = 0, attack = 0, life = 0, sigils: tuple[str, str] = ('',''), status = 'alive', zone = 0, blank_cost = False, blank_stats = False) :
         # basic variables
         self.is_poisoned: bool = False
         self.hooked: bool = False
@@ -61,7 +57,7 @@ class BlankCard() :
         self.current_attack: int = attack
         self.base_life: int = life
         self.current_life: int = life
-        self.sigils: list[str] = sigils
+        self.sigils: tuple[str, str] = sigils
         self.status: str = status
         self.zone: int = zone
         self.blank_cost: bool = blank_cost
@@ -375,9 +371,6 @@ class BlankCard() :
         Returns:
             whether the sigil is in the category (bool)
         '''
-        if len(self.sigils) != 2 :
-            raise ValueError('Sigils must be a list of length 2')
-        
         if sigil_slot :
             return self.sigils[sigil_slot] in category
         
@@ -403,7 +396,7 @@ class BlankCard() :
         self.update_ASCII()
 
 if __name__ == "__main__" :
-    testblank = BlankCard(sigils=['???',''], cost=17, species="foo")
+    testblank = BlankCard(sigils=('???',''), cost=17, species="foo")
     print()
     print('Blank Card')
     print(testblank.text_lines)

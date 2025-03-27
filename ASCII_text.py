@@ -125,17 +125,22 @@ def print_WiP() :
 
     print(QoL.center_justified(WiP, blocked=True))
 
-def print_candelabra(wick_states: list[int])  -> None:
+def print_candelabra(wick_states: tuple[int, int, int])  -> None:
     '''
     Prints the ASCII art for the candelabra.
     
     Arguments:
-        wick_states: the states of the wicks in the order middle, right, left [int, int, int]
+        wick_states: the states of the wicks in the order middle, right, left (int, int, int)
             0 = unlit
             1 = lit (newly)
             2 = lit (continuing)
             3 = extinguished
     '''
+
+    for state in wick_states :
+        if state not in range(0,4) :
+            raise ValueError
+        
     wick_sprites = [
         [ # unlit
             '       ',
@@ -456,4 +461,4 @@ if __name__ == '__main__' :
     print('-'*term_cols)
     print_WiP()
     print('-'*term_cols)
-    print_candelabra([2, 3, 0])
+    print_candelabra((2, 3, 0))

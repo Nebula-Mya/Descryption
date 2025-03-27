@@ -1,4 +1,7 @@
 from __future__ import annotations # prevent type hints needing import at runtime
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    import card
 
 import math
 import os
@@ -604,7 +607,7 @@ def random_card(possible_cards, weighted=True, alpha=2.2, beta=3.3, few_rare=Tru
     else : cost = lambda : random.choice(list(card_dict.keys()))
 
     # get card type
-    template_card = random.choice(card_dict[cost()])
+    template_card: type[card.BlankCard] = random.choice(card_dict[cost()])
     if few_rare and template_card in card_library.Rare_Cards: # lower chances of rare cards
         template_card = random.choice(card_dict[cost()])
 
