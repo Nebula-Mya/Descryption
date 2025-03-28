@@ -110,10 +110,10 @@ class BlankCard() :
 
         return points
 
-    def __str__(self) :
+    def __str__(self)  -> str:
         return '<' + str(type(self))[8:-2] + ' object at ' + hex(id(self)) + '>'
 
-    def text_by_line(self) :
+    def text_by_line(self)  -> str:
         '''
         returns one line of the card's ASCII art at a time
         '''
@@ -306,17 +306,17 @@ class BlankCard() :
 
         # update cost, stats, and name for displaying card
         if self.blank_cost or self.species == '':
-            self.cost = ''
+            self.cost: str = ''
         else :
             self.cost = "C:" + hex(self.saccs % 16)[2]
         
         if self.blank_stats or self.species == '':
-            self.stats = ' '*3
+            self.stats: str = ' '*3
         else :
             self.stats = hex(self.current_attack % 16)[2] + "/" + hex(self.current_life % 16)[2]
 
         if self.species == '' or self.blank_cost : # takes advantage of extra space from having no cost
-            self.name = self.species.ljust(12)[:12]
+            self.name: str = self.species.ljust(12)[:12]
         else :
             self.name = self.species.ljust(9)[:9]
 
@@ -335,7 +335,7 @@ class BlankCard() :
             else :
                 sigil_ind = 0
 
-            self.text_lines = '''
+            self.text_lines: list[str] = '''
 ,-------------,
 |{species} {C}|
 |{h1}          |

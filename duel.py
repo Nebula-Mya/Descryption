@@ -76,7 +76,7 @@ def choose_and_play(field: field.Playmat) -> card.BlankCard | None:
             else :
                 return card_to_play
 
-def choose_draw(field: field.Playmat) :
+def choose_draw(field: field.Playmat) : # type: ignore (Pylance doesn't believe in field.Playmat here)
     '''
     the whole process of choosing a card to draw and drawing it
 

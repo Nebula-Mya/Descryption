@@ -978,13 +978,13 @@ def boss_fight_leshy(campaign: rogue.rogue_campaign)  -> bool: # boss fight 4 (s
             mask: uses or changes the mask
             win: executes the code for beating a phase, depending on the current phase, increments the phase, and returns whether the player has won the entire fight
         '''
-        def __init__(self) :
-            self.masks = ['Prospector', 'Angler', 'Trader']
-            self.mask_index = 0
-            self.mask_worn = False
-            self.phase = 1
-            self.used_all_masks = False
-            self.has_mined = False
+        def __init__(self)  -> None:
+            self.masks: list[str] = ['Prospector', 'Angler', 'Trader']
+            self.mask_index: int = 0
+            self.mask_worn: bool = False
+            self.phase: int = 1
+            self.used_all_masks: bool = False
+            self.has_mined: bool = False
 
         def change(self) :
             '''

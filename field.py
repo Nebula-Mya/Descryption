@@ -1,4 +1,7 @@
 from __future__ import annotations # prevent type hints needing import at runtime
+from typing import TYPE_CHECKING
+if TYPE_CHECKING :
+    from typing import Any, Callable
 
 import card
 import card_library
@@ -11,7 +14,7 @@ import duel
 import sigils
 import time
 
-def ai_category_checking(categories, player_field, card_to_play, bushes, score, strat_change_threshold) :
+def ai_category_checking(categories: list[dict[str, Any]], player_field: dict[int, card.BlankCard], card_to_play: card.BlankCard, bushes: dict[int, card.BlankCard], score: dict[str, int], strat_change_threshold: int)  -> tuple[list[int], list[int]]:
     '''
     checks the categories and current game state to determine which zones Leshy should play to
 
@@ -27,7 +30,9 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
         in_strategy: the zones in strategy (list)
         out_of_strategy: the zones out of strategy (list)
     '''
-    def is_in_strat(card_to_play, opp_card, sigil_slot) :
+    def is_in_strat(card_to_play: card.BlankCard, opp_card: card.BlankCard, sigil_slot: int)  -> bool:
+        if sigil_slot not in range(0,2) : raise ValueError
+
         # set up variables
         self_attack = card_to_play.current_attack
         self_life = card_to_play.current_life
@@ -45,7 +50,9 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
         
         return False
     
-    def is_out_strat(card_to_play, opp_card, sigil_slot) :
+    def is_out_strat(card_to_play: card.BlankCard, opp_card: card.BlankCard, sigil_slot: int) :
+        if sigil_slot not in range(0,2) : raise ValueError
+
         # set up variables
         self_attack = card_to_play.current_attack
         self_life = card_to_play.current_life
@@ -59,7 +66,7 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
         
         return False
     
-    def add_to_in_strat(card_to_play, player_field, bushes, zone) :
+    def add_to_in_strat(card_to_play: card.BlankCard, player_field: dict[int, card.BlankCard], bushes: dict[int, card.BlankCard], zone: int) :
         # error handling
         if zone not in range(1, 5) :
             raise ValueError('Invalid zone.')
@@ -96,7 +103,7 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
 
     return in_strategy, out_of_strategy
 
-def get_corpse_eaters(hand) :
+def get_corpse_eaters(hand: list[card.BlankCard]) -> list[int] :
     '''
     gets the indexes of all corpse eaters in the hand
 
@@ -106,7 +113,7 @@ def get_corpse_eaters(hand) :
     Returns:
         corpse_eaters: the corpse eaters in the hand (list)
     '''
-    corpse_eaters = []
+    corpse_eaters: list[int] = []
     for card in [card for card in range(len(hand)) if hand[card].has_sigil('corpse eater')] : 
         corpse_eaters.append(card)
     return corpse_eaters
@@ -147,30 +154,30 @@ class Playmat :
         print_field() : prints the field and score scales
         print_full_field() : prints the field and player's hand
     '''
-    def __init__(self, deck, squirrels, opponent_deck, Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold) :
+    def __init__(self, deck: list[card.BlankCard], squirrels: list[card.BlankCard], opponent_deck: list[card.BlankCard], Leshy_play_count_median: int, Leshy_play_count_variance: int, Leshy_in_strategy_chance: int, Leshy_strat_change_threshold: int) :
         # basic variables
-        self.hand = []
-        self.graveyard = []
-        self.score = {'player': 0, 'opponent': 0}
-        self.active = 'player'
-        self.player_deck = deck
-        self.player_squirrels = squirrels
-        self.opponent_deck = opponent_deck
-        self.Leshy_play_count_median = Leshy_play_count_median
-        self.Leshy_play_count_variance = Leshy_play_count_variance
-        self.Leshy_in_strategy_chance = Leshy_in_strategy_chance
-        self.Leshy_strat_change_threshold = Leshy_strat_change_threshold
+        self.hand: list[card.BlankCard] = []
+        self.graveyard: list[card.BlankCard] = []
+        self.score: dict[str, int] = {'player': 0, 'opponent': 0}
+        self.active: str = 'player'
+        self.player_deck: list[card.BlankCard] = deck
+        self.player_squirrels: list[card.BlankCard] = squirrels
+        self.opponent_deck: list[card.BlankCard] = opponent_deck
+        self.Leshy_play_count_median: int = Leshy_play_count_median
+        self.Leshy_play_count_variance: int = Leshy_play_count_variance
+        self.Leshy_in_strategy_chance: int = Leshy_in_strategy_chance
+        self.Leshy_strat_change_threshold: int = Leshy_strat_change_threshold
 
         # create the rows of the field
-        gen_blank_row = lambda: {column: card.BlankCard() for column in range(6)}
-        self.bushes = gen_blank_row()
-        self.player_field = gen_blank_row()
-        self.opponent_field = gen_blank_row()
+        gen_blank_row: Callable[[], dict[int, card.BlankCard]] = lambda: {column: card.BlankCard() for column in range(6)}
+        self.bushes: dict[int, card.BlankCard] = gen_blank_row()
+        self.player_field: dict[int, card.BlankCard] = gen_blank_row()
+        self.opponent_field: dict[int, card.BlankCard] = gen_blank_row()
         for zone in range(1, 5) :
             for field in [self.player_field, self.bushes, self.opponent_field] :
                 field[zone].play(zone=zone)
     
-    def draw(self, deck) :
+    def draw(self, deck: str) :
         '''
         draws a card from a deck to the hand
         
@@ -189,13 +196,15 @@ class Playmat :
                     raise ValueError('Deck is empty.')
                 self.hand.append(self.player_squirrels[0])
                 self.player_squirrels.pop(0)
+            
+            case _ : raise ValueError
         
         # show card explanation
         self.print_field()
         self.hand[-1].explain()
         input('Press enter to continue.')
 
-    def play_card(self, index, zone) :
+    def play_card(self, index: int, zone: int) :
         '''
         plays a card to the field from the hand (first opens card explanation and has player select saccs, then plays card to zone)
 
@@ -460,7 +469,7 @@ class Playmat :
         else :
             raise ValueError('Invalid active player.')
 
-    def check_win(self) :
+    def check_win(self) -> tuple[bool, str, int, bool] :
         '''
         checks for a win condition
 
@@ -523,14 +532,14 @@ class Playmat :
         print(card_gaps_space + 'Hand:', end='')
         print(hand_string)
 
-    def print_field(self, score_scale=True) :
+    def print_field(self, score_scale: bool=True) :
         '''
         prints the field and score scales (clears screen first)
 
         Arguments:
             score_scale: whether to print the score scales, defaults to True (bool)
         '''
-        def get_connector(gaps, row, line, moon_lines) :
+        def get_connector(gaps: int, row: int, line: int, moon_lines: str) -> list[str] :
             '''
             gets the connectors for the given row and line
 
@@ -726,7 +735,7 @@ if __name__ == '__main__' :
         playmat.print_full_field()
 
     def test_hefty() :
-        def advance_hefty(playmat) :
+        def advance_hefty(playmat: Playmat) :
             # get user input before advancing
             input("Press enter to advance.")
 

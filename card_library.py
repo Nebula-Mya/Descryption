@@ -127,7 +127,7 @@ class Beehive(card.BlankCard) :
 class Cat(card.BlankCard) :
     def __init__(self, blank_cost: bool=False, sigils: tuple[str, str]=('many lives','')) :
         super().__init__(species='Cat', cost=1, attack=0, life=1, sigils=sigils, blank_cost=blank_cost)
-        self.spent_lives = 0
+        self.spent_lives: int = 0
     
     def reset_stats(self):
         super().reset_stats()
@@ -234,7 +234,7 @@ class PlyrDeathCard1(card.BlankCard) : # death card
                 ]
         [death_name, death_attack, death_life, death_cost, death_sigils, death_easter] = QoL.read_data(data_to_read)
         super().__init__(species=death_name, cost=death_cost, attack=death_attack, life=death_life, sigils=death_sigils, blank_cost=blank_cost)
-        self.easter = death_easter
+        self.easter: bool = death_easter
 
 class PlyrDeathCard2(card.BlankCard) : # death card
     def __init__(self, blank_cost: bool=False) :
@@ -248,7 +248,7 @@ class PlyrDeathCard2(card.BlankCard) : # death card
                 ]
         [death_name, death_attack, death_life, death_cost, death_sigils, death_easter] = QoL.read_data(data_to_read)
         super().__init__(species=death_name, cost=death_cost, attack=death_attack, life=death_life, sigils=death_sigils, blank_cost=blank_cost)
-        self.easter = death_easter
+        self.easter: bool = death_easter
 
 class PlyrDeathCard3(card.BlankCard) : # death card
     def __init__(self, blank_cost: bool=False) :
@@ -262,7 +262,7 @@ class PlyrDeathCard3(card.BlankCard) : # death card
                 ]
         [death_name, death_attack, death_life, death_cost, death_sigils, death_easter] = QoL.read_data(data_to_read)
         super().__init__(species=death_name, cost=death_cost, attack=death_attack, life=death_life, sigils=death_sigils, blank_cost=blank_cost)
-        self.easter = death_easter
+        self.easter: bool = death_easter
 
 class RabbitPelt(card.BlankCard) : # only given in campaign
     def __init__(self, blank_cost: bool=False, sigils: tuple[str, str]=('','')) :
@@ -325,7 +325,7 @@ class Tree(card.BlankCard) : # terrain card
             case 2 : area_type = 'Snowy Fir'
             case _ : area_type = 'Tree'
         super().__init__(species=area_type, cost=0, attack=0, life=3, sigils=sigils, blank_cost=blank_cost)
-        self.level = level
+        self.level: int = level
 
 class Moon(card.BlankCard) :
     # class attributes
@@ -341,24 +341,24 @@ class Moon(card.BlankCard) :
     status: str = 'alive'
 
     def __init__(self, row: int, column: int) :
-        self.zone = column
-        self.coords = (row, column)
-        self.ASCII = ASCII_text.moon_parts[self.coords[0]][self.coords[1]]
+        self.zone: int = column
+        self.coords: tuple[int, int] = (row, column)
+        self.ASCII: str = ASCII_text.moon_parts[self.coords[0]][self.coords[1]]
         self.update_ASCII()
     
-    def text_by_line(self) :
+    def text_by_line(self)  -> str:
         text = self.ASCII.split('\n')[self.line_cursor].format(moon_lines=self.moon_lines, life_lines=ASCII_text.moon_life_lines(Moon.current_life))
-        self.line_cursor = (self.line_cursor + 1) % 11
+        self.line_cursor: int = (self.line_cursor + 1) % 11
         return text.ljust(15)[:15]
 
     def update_ASCII(self) :
         # reset line cursor
-        self.line_cursor = 0
+        self.line_cursor: int = 0
 
         # update ASCII art for card
-        inner_str = ASCII_text.moon_inner_str()
-        split_ASCII = ASCII_text.split_moon_lines(inner_str)['cards']
-        self.moon_lines = [split_ASCII[n][self.coords[1] - 1] for n in range(20)][0+(self.coords[0] == 1)*10:10+(self.coords[0] == 1)*10]
+        inner_str: str = ASCII_text.moon_inner_str()
+        split_ASCII: list[Any] = ASCII_text.split_moon_lines(inner_str)['cards']
+        self.moon_lines: list[Any] = [split_ASCII[n][self.coords[1] - 1] for n in range(20)][0+(self.coords[0] == 1)*10:10+(self.coords[0] == 1)*10]
 
     def explain(self) :
         ### sigils, in order, are : mighty leap, tidal lock, and omni strike

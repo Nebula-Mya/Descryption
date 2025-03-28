@@ -1,7 +1,5 @@
 from __future__ import annotations # prevent type hints needing import at runtime
 from typing import TYPE_CHECKING
-
-from card import BlankCard
 if TYPE_CHECKING :
     import card
 
