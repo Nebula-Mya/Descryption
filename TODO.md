@@ -1,4 +1,4 @@
-- [ ] add typing to all functions (search '(?:def .*\([^:)]*\) ?:)|(?:self\.\S* ?[^=><!+-]= )' exclude '*.md, test*,ASCII*, bosses.py, card_lib*, card.py, deck.py, duel.py, field.py' across all files)
+- [ ] add typing to all functions (search '(?:def .*\([^:)]*\) ?:)|(?:self\.\S* ?[^=><!+-]= )' exclude '*.md, test*,ASCII*, bosses.py, card_lib*, card.py, deck.py, duel.py, field.py, menu.py' across all files)
   - [x] ASCII_text.py
   - [x] bosses.py
   - [x] card_library.py
@@ -6,7 +6,7 @@
   - [x] deck.py
   - [x] duel.py
   - [x] field.py
-  - [ ] menu.py
+  - [x] menu.py
   - [ ] QoL.py
   - [ ] rogue.py
   - [ ] sigils.py

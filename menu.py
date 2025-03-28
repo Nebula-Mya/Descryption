@@ -219,14 +219,14 @@ def set_difficulty() :
     '''
     sets the difficulty to the player's choice, chosen from a list of difficulties
     '''
-    def change_difficulty_data(difficulty_index) :
+    def change_difficulty_data(difficulty_index: int) :
         '''
         sets the difficulty
 
         Arguments:
             difficulty_index: the new difficulty's index (int)
         '''
-        def write_difficulty(name, number, median, var, strat, threshold) :
+        def write_difficulty(name: str, number: int, median: int, var: int, strat: int, threshold: int) :
             data_to_write = [
                 (['settings', 'difficulty', 'leshy median plays'], median),
                 (['settings', 'difficulty', 'leshy plays variance'], var),
