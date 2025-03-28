@@ -1,4 +1,4 @@
-- [ ] add typing to all functions (search '(?:def .*\([^:)]*\) ?:)|(?:self\.\S* ?[^=><!+-]= )' exclude '*.md, test*,ASCII*, bosses.py, card_lib*, card.py, deck.py, duel.py, field.py, menu.py' across all files)
+- [ ] add typing to all functions (search '(?:def .*\([^:)]*\) ?:)|(?:self\.\S* ?[^=><!+-]= )' exclude '*.md, test*,ASCII*, bosses.py, card_lib*, card.py, deck.py, duel.py, field.py, menu.py, QoL.py' across all files)
   - [x] ASCII_text.py
   - [x] bosses.py
   - [x] card_library.py
@@ -7,7 +7,7 @@
   - [x] duel.py
   - [x] field.py
   - [x] menu.py
-  - [ ] QoL.py
+  - [x] QoL.py
   - [ ] rogue.py
   - [ ] sigils.py
 - [ ] allow sigil_sacrifice to replace sigils

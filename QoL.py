@@ -20,7 +20,7 @@ def clear() :
     else : # mac/linux
         os.system('clear')
 
-def read_data(data_to_read) :
+def read_data(data_to_read: list[list[str]]) -> list[Any]:
     '''
     reads the specified data from the config file
 
@@ -30,7 +30,7 @@ def read_data(data_to_read) :
     Returns:
         the specified data from the config file (list)
     '''
-    def get_data_value(data_keys, data) :
+    def get_data_value(data_keys: list[str], data: dict[str, Any]) -> Any :
         '''
         gets the value from the config file using a list of subsequent keys
     
@@ -63,14 +63,14 @@ def read_data(data_to_read) :
         data_to_return = [get_data_value(data_path, data) for data_path in data_to_read]
         return data_to_return
 
-def write_data(data_to_write) :
+def write_data(data_to_write: list[tuple[list, Any]]) :
     '''
     writes the specified data to the config file
     
     Arguments:
         data_to_write: the data to write, where subsequent keys are ordered by depth (list[tuple][list, any])
     '''
-    def set_data_value(data_keys, value_to_set, data) :
+    def set_data_value(data_keys: list[str], value_to_set: Any, data: dict[str, Any]) :
         '''
         sets a value in the config file using a list of subsequent keys
 
@@ -108,7 +108,7 @@ def write_data(data_to_write) :
     with open(data_file, 'w') as file :
         json.dump(data, file, indent=4)
 
-def center_justified(text, blocked=False, shift=0) :
+def center_justified(text: str, blocked: bool=False, shift: int=0) -> str :
     '''
     centers text in the console
 
@@ -141,7 +141,7 @@ def center_justified(text, blocked=False, shift=0) :
     
     return centered_text
 
-def split_nicely(text, first_line_length, gen_line_length, max_lines=10, add_blank_lines=False) :
+def split_nicely(text: str, first_line_length: int, gen_line_length: int, max_lines: int=10, add_blank_lines: bool=False) -> list[str] :
     '''
     splits text into lines of a certain length
 
@@ -202,7 +202,7 @@ def split_nicely(text, first_line_length, gen_line_length, max_lines=10, add_bla
 
     return lines
 
-def title_case(string) :
+def title_case(string: str) -> str :
     '''
     converts a string to title case
 
@@ -235,7 +235,7 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars: dic
         the variables to return (list)
     '''
     
-    def get_combo_code(sigil) :
+    def get_combo_code(sigil: list[str]) -> str :
         '''
         get the code block for a combination of sigils
         
@@ -245,11 +245,13 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars: dic
         Returns:
             the code block (str)
         '''
+        if len(sigil) != 2 : raise ValueError
+
         # imports
         import sigils
 
         # sort sigils
-        combo = tuple(sorted(sigil))
+        combo: tuple[str, str] = tuple(sorted(sigil)) # type: ignore (error prevents this)
 
         # get code block
         return sigils.Combos.get(combo, "")
@@ -277,7 +279,7 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars: dic
 
     return returned_vars
 
-def hefty_check(field, zone, direction) :
+def hefty_check(field: dict[int, card.BlankCard], zone: int, direction: str) -> int :
     '''
     recursively checks how many cards can be pushed by a card with hefty sigil
 
@@ -314,7 +316,7 @@ def hefty_check(field, zone, direction) :
         case _ :
             return 0
 
-def sort_deck(deck) :
+def sort_deck(deck: list[card.BlankCard]) -> list[card.BlankCard] :
     '''
     sorts a deck by cost and name
 
@@ -340,15 +342,15 @@ def print_deck(deck, sort=False, numbered=False, centered=False, blocked=False) 
         centered: whether to center the deck (bool)
         blocked: whether to block the deck when centered (bool)
     '''
-    def card_gap_numbered(card_gaps, number) :
+    def card_gap_numbered(card_gaps: int, number: int) :
         number_str = str(number)
         return ' ' * (card_gaps - len(number_str) - 1) + number_str + ' '
     
-    def line_str(line, card_gaps, row, numbered) :
-        card_gaps_space = ' ' * card_gaps
+    def line_str(line: int, card_gaps: int, row: list[card.BlankCard], numbered: bool) :
+        card_gaps_space: str = ' ' * card_gaps
 
         if line == 0 and numbered :
-            text = ''
+            text: str = ''
             for card in row :
                 text += card_gap_numbered(card_gaps, card_number[0]) + card.text_by_line()
                 card_number[0] += 1
@@ -390,7 +392,7 @@ def print_deck(deck, sort=False, numbered=False, centered=False, blocked=False) 
     
     print(deck_string)
 
-def reps_int(string, increment=0) :
+def reps_int(string: str, increment: int=0) -> tuple[bool, int] :
     '''
     checks if a string represents an integer and returns it
 
@@ -438,14 +440,14 @@ def bind_int(value: int, lower_bound=-math.inf, upper_bound=math.inf) :
         case _ : # misc errors
             raise ValueError('invalid bounds')
 
-def ping(dict={'ping':'pong'}) : # for testing
+def ping(dict: dict[Any, Any]={'ping':'pong'}) : # for testing
     '''
     writes variables to ping.txt
 
     Arguments:
         dict: the variables to write (dict)
     '''
-    def depth(object) :
+    def depth(object: Any) -> int:
         '''
         gets the depth of a list or dictionary
 
@@ -462,7 +464,7 @@ def ping(dict={'ping':'pong'}) : # for testing
 
         return 1 + max([depth(value) for value in object.values()])
 
-    def format_list(list) :
+    def format_list(list: list[Any]) -> list[str] :
         '''
         formats a list as a string with lines and indentation
 
@@ -498,7 +500,7 @@ def ping(dict={'ping':'pong'}) : # for testing
 
         return lines
 
-    def format_dict(dictionary) :
+    def format_dict(dictionary: dict[Any, Any])  -> list[str] :
         '''
         formats a dictionary as a string with lines and indentation
 
@@ -536,7 +538,7 @@ def ping(dict={'ping':'pong'}) : # for testing
 
         return lines
 
-    def format_values(dictionary) :
+    def format_values(dictionary: dict[Any, Any])  -> dict[Any, str]:
         '''
         formats the values of a dictionary as strings with lines and indentation
 
@@ -566,7 +568,7 @@ def ping(dict={'ping':'pong'}) : # for testing
     with open('ping.txt', 'w') as file :
         file.write(data_to_write)
 
-def random_card(possible_cards, weighted=True, alpha=2.2, beta=3.3, few_rare=True, hidden_cost=False) :
+def random_card(possible_cards: list[Any] | dict[Any, Any], weighted: bool=True, alpha: float=2.2, beta: float=3.3, few_rare: bool=True, hidden_cost: bool=False) -> card.BlankCard:
     '''
     gets a random card from a set of possible cards
 
