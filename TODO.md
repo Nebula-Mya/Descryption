@@ -8,7 +8,7 @@
   - [x] field.py
   - [x] menu.py
   - [x] QoL.py
-  - [ ] rogue.py
+  - [X] rogue.py
   - [ ] sigils.py
   - [ ] remove any Any annotations
 - [ ] allow sigil_sacrifice to replace sigils
