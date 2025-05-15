@@ -98,9 +98,9 @@ class Deck() :
         # change sigil
         match sigil_slot :
             case 0 :
-                sorted_deck[index].sigils[0] = sigil
+                sorted_deck[index].sigils = (sigil, sorted_deck[index].sigils[1])
             case 1 :
-                sorted_deck[index].sigils[1] = sigil
+                sorted_deck[index].sigils = (sigil, sorted_deck[index].sigils[0])
         
         sorted_deck[index].update_ASCII()
 

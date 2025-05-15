@@ -13,7 +13,7 @@ import random
 import time
 import sigils
 
-def card_battle(campaign: rogue.rogue_campaign, Poss_Leshy: list[card.BlankCard]=[])  -> bool: 
+def card_battle(campaign: rogue.rogue_campaign, Poss_Leshy: list[type[card.BlankCard]]=[])  -> bool: 
     '''
     starts a card battle between the player and Leshy, with the player's deck being campaign.player_deck
     
@@ -24,7 +24,7 @@ def card_battle(campaign: rogue.rogue_campaign, Poss_Leshy: list[card.BlankCard]
     Returns:
         bool: True if the player wins, False if the player loses
     '''
-    def gameplay(campaign: rogue.rogue_campaign, Poss_Leshy: list[card.BlankCard])  -> bool:
+    def gameplay(campaign: rogue.rogue_campaign, Poss_Leshy: list[type[card.BlankCard]])  -> bool:
         data_to_read = [
             ['settings', 'difficulty', 'leshy median plays'],
             ['settings', 'difficulty', 'leshy plays variance'],
@@ -607,10 +607,10 @@ def boss_fight_angler(campaign: rogue.rogue_campaign)  -> bool: # boss fight 2
     def gameplay(campaign: rogue.rogue_campaign) :
         pre_boss_flavor(campaign)
 
-        poss_angler_p1 = {
+        poss_angler_p1: dict[int, list[type[card.BlankCard]]] = {
             1 : [card_library.Kingfisher, card_library.Otter]
         }
-        poss_angler_p2 = {
+        poss_angler_p2: dict[int, list[type[card.BlankCard]]] = {
             0 : [card_library.BaitBucket]
         }
         playfield = init_boss_playfield(campaign, Poss_Leshy=poss_angler_p1, advance=False)

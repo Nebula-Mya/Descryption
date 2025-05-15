@@ -330,7 +330,7 @@ def sort_deck(deck: list[card.BlankCard]) -> list[card.BlankCard] :
     deck = sorted(deck, key=lambda x: x.name) # sort by name (will be sub-sorting under cost)
     return sorted(deck, key=lambda x: x.saccs)
 
-def print_deck(deck, sort=False, numbered=False, centered=False, blocked=False) -> str:
+def print_deck(deck: list[card.BlankCard], sort=False, numbered=False, centered=False, blocked=False) -> str:
     '''
     prints a list of cards in a deck, with optional sorting
 
@@ -408,7 +408,7 @@ def reps_int(string: str, increment: int=0) -> tuple[bool, int] :
     except ValueError : # if not, default to 0 and return False
         return False, 0
 
-def bind_int(value: int, lower_bound=-math.inf, upper_bound=math.inf) :
+def bind_int(value: int, lower_bound=-math.inf, upper_bound=math.inf) -> int:
     '''
     binds an integer to a range (inclusive)
 
@@ -432,11 +432,11 @@ def bind_int(value: int, lower_bound=-math.inf, upper_bound=math.inf) :
     
     match (lower_bound != -math.inf, upper_bound != math.inf) :
         case (True, False) : # only lower bound
-            return max(value, lower_bound)
+            return int(max(value, lower_bound))
         case (False, True) : # only upper bound
-            return min(value, upper_bound)
+            return int(min(value, upper_bound))
         case (True, True) : # both bounds
-            return min(max(value, lower_bound), upper_bound)
+            return int(min(max(value, lower_bound), upper_bound))
         case _ : # misc errors
             raise ValueError('invalid bounds')
 
@@ -568,7 +568,7 @@ def ping(dict: dict[Any, Any]={'ping':'pong'}) : # for testing
     with open('ping.txt', 'w') as file :
         file.write(data_to_write)
 
-def random_card(possible_cards: list[Any] | dict[Any, Any], weighted: bool=True, alpha: float=2.2, beta: float=3.3, few_rare: bool=True, hidden_cost: bool=False) -> card.BlankCard:
+def random_card(possible_cards: list[type[card.BlankCard]] | dict[int, list[type[card.BlankCard]]], weighted: bool=True, alpha: float=2.2, beta: float=3.3, few_rare: bool=True, hidden_cost: bool=False) -> card.BlankCard:
     '''
     gets a random card from a set of possible cards
 

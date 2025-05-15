@@ -1,4 +1,7 @@
-from __future__ import annotations # prevent type hints needing import at runtime
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING :
+    from typing import Callable
 
 import deck
 import duel
@@ -17,13 +20,13 @@ class rogue_campaign :
     the current campaign data, such as the current level, the current decks, teeth (money), progress in the level, candles, etc.
     
     Attributes:
-        level: the current level of the campaign (int)
-        progress: the current progress in the level (int)
-        player_deck: the player's deck (deck.Deck)
-        squirrel_deck: the squirrel deck (deck.Deck)
-        teeth: the player's money (int)
-        lives: the player's lives (int)
-        dead_campfire : if the survivors have been poisoned (bool)
+        level: the current level of the campaign
+        progress: the current progress in the level
+        player_deck: the player's deck
+        squirrel_deck: the squirrel deck
+        teeth: the player's money
+        lives: the player's lives
+        dead_campfire : if the survivors have been poisoned
 
     Methods:
         add_teeth: adds teeth to the player's total
@@ -37,61 +40,61 @@ class rogue_campaign :
         has_lost: checks if the player has lost
         var_dict: returns a dictionary of the campaign's variables
     '''
-    def __init__(self, start_decklist, start_teeth=0, lives=2) :
+    def __init__(self, start_decklist: list[card.BlankCard], start_teeth: int=0, lives: int=2) -> None:
         '''
         initializes the campaign object
         
         Arguments:
-            start_decklist: the starting decklist for the player (list)
-            start_teeth: the starting amount of teeth for the player, defaults to 0 (int)
-            lives: the starting amount of lives for the player, defaults to 2 (int)
+            start_decklist: the starting decklist for the player
+            start_teeth: the starting amount of teeth for the player, defaults to 0
+            lives: the starting amount of lives for the player, defaults to 2
         '''
-        self.level = 0
-        self.progress = 0
-        self.player_deck = deck.Deck(start_decklist)
-        self.squirrel_deck = duel.resource_gen(10)
-        self.teeth = start_teeth
-        self.lives = lives
-        self.dead_campfire = False
+        self.level: int = 0
+        self.progress: int = 0
+        self.player_deck: deck.Deck = deck.Deck(start_decklist)
+        self.squirrel_deck: deck.Deck = duel.resource_gen(10)
+        self.teeth: int = start_teeth
+        self.lives: int = lives
+        self.dead_campfire: bool = False
 
-    def add_teeth(self, amount) :
+    def add_teeth(self, amount: int) -> None:
         self.teeth += amount
     
-    def add_life(self) :
+    def add_life(self)  -> None:
         self.lives += 1
     
-    def remove_life(self) :
+    def remove_life(self)  -> None:
         self.lives -= 1
         if self.lives <= 0 :
             lost_run(self)
 
-    def add_card(self, card) :
+    def add_card(self, card: card.BlankCard) -> None:
         '''
         adds a card to the player's deck
         
         Arguments:
-            card: the card to add to the player's deck (card object)
+            card: the card to add to the player's deck
         '''
         self.player_deck.add_card(card)
 
-    def remove_card(self, card) :
+    def remove_card(self, card: card.BlankCard) -> None:
         '''
         removes a card from the player's deck
         
         Arguments:
-            card: the card to remove from the player's deck (card object)
+            card: the card to remove from the player's deck
         '''
         sorted_deck = QoL.sort_deck(self.player_deck.cards)
         index = sorted_deck.index(card)
         self.player_deck.remove_card(index)
 
-    def add_sigil(self, card, sigil) :
+    def add_sigil(self, card: card.BlankCard, sigil: str) -> None:
         '''
         changes the sigil of a card in the player's deck
         
         Arguments:
-            card: the card to change the sigil of (card object)
-            sigil: sigil to change to (str)
+            card: the card to change the sigil of
+            sigil: sigil to change to
         '''
         sorted_deck = QoL.sort_deck(self.player_deck.cards)
         index = sorted_deck.index(card)
@@ -105,16 +108,16 @@ class rogue_campaign :
         
         self.player_deck.change_sigil(index, sigil, sigil_slot)
     
-    def shuffle_deck(self) :
+    def shuffle_deck(self) -> list[card.BlankCard]:
         return self.player_deck.shuffle()
     
-    def print_deck(self) :
+    def print_deck(self) -> None:
         print(self.player_deck)
 
-    def has_lost(self) :
+    def has_lost(self) -> bool:
         return self.lives <= 0
 
-    def var_dict(self) :
+    def var_dict(self) -> dict[str, list[card.BlankCard]]:
         vars_dict = vars(self)
         vars_dict['player deck'] = [card_ for card_ in vars_dict['player_deck'].cards]
         vars_dict['squirrel deck'] = [card_ for card_ in vars_dict['squirrel_deck'].cards]
@@ -127,17 +130,17 @@ class rogue_campaign :
         del vars(self)['squirrel deck']
         return vars_dict
 
-def card_equation(card1, card2, result) :
+def card_equation(card1: card.BlankCard, card2: card.BlankCard, result: card.BlankCard) -> list[str]:
     '''
     generate the display text for combining cards
 
     Arguments:
-        card1: the first card (card object)
-        card2: the second card (card object)
-        result: the resulting card (card object)
+        card1: the first card
+        card2: the second card
+        result: the resulting card
     
     Returns:
-        lines: the display text for combining the cards (list[str])
+        lines: the display text for combining the cards
     '''
     # set up variables
     plus_lines = '''{blank_lines}{spc}  |  {spc}
@@ -157,18 +160,18 @@ def card_equation(card1, card2, result) :
 
     return new_lines
 
-def card_battle(campaign: rogue_campaign, Poss_Leshy=None) : 
+def card_battle(campaign: rogue_campaign, Poss_Leshy: None | list[type[card.BlankCard]]=None)  -> bool: 
     '''
     starts a card battle between the player and Leshy, with the player's deck being campaign.player_deck
     
     Arguments:
-        campaign: the current campaign object (rogue_campaign object)
-        Poss_Leshy: the possible cards for Leshy's deck, defaults to all allowed Leshy cards with costs <= to player's max cost (list)
+        campaign: the current campaign object
+        Poss_Leshy: the possible cards for Leshy's deck, defaults to all allowed Leshy cards with costs <= to player's max cost
 
     Returns:
         bool: True if the player wins, False if the player loses
     '''
-    def gameplay(campaign: rogue_campaign, Poss_Leshy) :
+    def gameplay(campaign: rogue_campaign, Poss_Leshy: list[type[card.BlankCard]] | dict[int, list[type[card.BlankCard]]] | None) -> bool:
         data_to_read = [
             ['settings', 'difficulty', 'leshy median plays'],
             ['settings', 'difficulty', 'leshy plays variance'],
@@ -226,14 +229,14 @@ def card_battle(campaign: rogue_campaign, Poss_Leshy=None) :
     
     return gameplay(campaign, Poss_Leshy) # add flavor text, context, etc.
 
-def card_choice(campaign: rogue_campaign) : 
+def card_choice(campaign: rogue_campaign) -> None: 
     '''
     allows the player to choose a card to add to their deck from a list of 3, with the list being generated from different card categories
 
     Arguments:
-        campaign: the current campaign object (rogue_campaign object)
+        campaign: the current campaign object
     '''
-    def card_choose(campaign: rogue_campaign, cards) : # choose a card from a list of 3 and add it to the player's deck
+    def card_choose(campaign: rogue_campaign, cards: list[card.BlankCard]) -> int: # choose a card from a list of 3 and add it to the player's deck
         # set up variables
         invalid_choice = False
 
@@ -326,7 +329,7 @@ def card_choice(campaign: rogue_campaign) :
                 case _ :
                     invalid_choice = True
 
-    def normal_cards(campaign: rogue_campaign) : # generate a list of 3 taken from card_library.Poss_Playr
+    def normal_cards(campaign: rogue_campaign) -> None: # generate a list of 3 taken from card_library.Poss_Playr
         card_options = duel.deck_gen(card_library.Poss_Playr, 3).cards
         card_index = card_choose(campaign, card_options)
         QoL.clear()
@@ -337,7 +340,7 @@ def card_choice(campaign: rogue_campaign) :
         input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
         campaign.add_card(card_options[card_index])
 
-    def cost_cards(campaign: rogue_campaign) : # generate a list of 3 taken from card_library.Poss_Cost, only seeing the costs of the cards
+    def cost_cards(campaign: rogue_campaign) -> None: # generate a list of 3 taken from card_library.Poss_Cost, only seeing the costs of the cards
         card_options: list[card.BlankCard] = duel.deck_gen(card_library.Poss_Playr, 3).cards
         card_options_hidden = [card.BlankCard(species='???', cost=option.saccs, sigils=('???',''), blank_stats=True) for option in card_options]
         card_index = card_choose(campaign, card_options_hidden)
@@ -349,7 +352,7 @@ def card_choice(campaign: rogue_campaign) :
         input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
         campaign.add_card(card_options[card_index])
 
-    def death_cards(campaign: rogue_campaign) : # generate a list of 3 death cards taken from card_library.Poss_Death, only available after 5 deaths
+    def death_cards(campaign: rogue_campaign) -> None: # generate a list of 3 death cards taken from card_library.Poss_Death, only available after 5 deaths
         card_options = random.sample(card_library.Poss_Death, 3)
         card_options = [card_() for card_ in card_options]
         card_index = card_choose(campaign, card_options)
@@ -361,7 +364,7 @@ def card_choice(campaign: rogue_campaign) :
         input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
         campaign.add_card(card_options[card_index])
 
-    def rare_cards(campaign: rogue_campaign) : # generate a list of 3 rare cards taken from card_library.Rare_Cards, occurs after boss fights
+    def rare_cards(campaign: rogue_campaign) -> None: # generate a list of 3 rare cards taken from card_library.Rare_Cards, occurs after boss fights
         card_options = random.sample(card_library.Rare_Cards, 3)
         card_options = [card_() for card_ in card_options]
         card_index = card_choose(campaign, card_options)
@@ -373,7 +376,7 @@ def card_choice(campaign: rogue_campaign) :
         input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
         campaign.add_card(card_options[card_index])
 
-    def gameplay(campaign: rogue_campaign) :
+    def gameplay(campaign: rogue_campaign) -> None:
         choice_categories = ['normal', 'cost', 'rare']
         [wins, losses] = QoL.read_data([['progress markers', 'wins'], ['progress markers', 'losses']])
         if wins + losses >= 5 :
@@ -387,22 +390,22 @@ def card_choice(campaign: rogue_campaign) :
 
     gameplay(campaign) # add flavor text, context, etc.
 
-def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
+def sigil_sacrifice(campaign: rogue_campaign) -> None: # format visuals
     '''
     allows the player to sacrifice a card to give its sigil to another card
     
     Arguments:
-        campaign: the current campaign object (rogue_campaign object)
+        campaign: the current campaign object
     '''
-    def get_reciever(deck_list) :
+    def get_reciever(deck_list: list[card.BlankCard]) -> card.BlankCard:
         '''
         allows the player to choose a card to receive a sigil
         
         Arguments:
-            deck_list: the list of cards to choose from (list[card object])
+            deck_list: the list of cards to choose from
             
         Returns:
-            card object: the card to receive the sigil
+            the card to receive the sigil
         '''
         # set up variables
         invalid_choice = False
@@ -427,16 +430,16 @@ def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
 
             return sorted_deck[card_index]
         
-    def get_sacrifice(deck_list, reciever) :
+    def get_sacrifice(deck_list: list[card.BlankCard], reciever: card.BlankCard) -> card.BlankCard:
         '''
         allows the player to choose a card to sacrifice
         
         Arguments:
-            deck_list: the list of cards to choose from (list[card object])
-            reciever: the card to receive the sigil (card object)
+            deck_list: the list of cards to choose from
+            reciever: the card to receive the sigil
             
         Returns:
-            card object: the card to sacrifice
+            the card to sacrifice
         '''
         # set up functions
         same_sigil = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) # check if two sigils are the same or variations of the same sigil
@@ -467,7 +470,7 @@ def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
 
             return deck_can_sacc[card_index]
 
-    def get_sigil_slot(reciever: card.BlankCard, sacrifice: card.BlankCard) : #TODO: update for full reciever and/or empty sacrifice
+    def get_sigil_slot(reciever: card.BlankCard, sacrifice: card.BlankCard) -> list[int]: #TODO: update for full reciever and/or empty sacrifice
         '''
         allows the player to choose which sigil to transfer
         
@@ -479,7 +482,7 @@ def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
             list: the indexes of the sigils to transfer
         '''
         # set up variables
-        def sigil_name(sigil) :
+        def sigil_name(sigil: str) -> str:
             match sigil :
                 case '' : return 'No Sigil'
                 case _ if 'hefty' in sigil : return 'Hefty'
@@ -520,7 +523,7 @@ def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
 
             case _ : return [] # raise ValueError('No sigils can be transferred')
 
-    def confirm_choice(reciever: card.BlankCard, sacrifice: card.BlankCard, sigil_indexes) : 
+    def confirm_choice(reciever: card.BlankCard, sacrifice: card.BlankCard, sigil_indexes: list[int]) -> bool: 
         '''
         allows the player to confirm their choice of cards and sigils
         
@@ -554,7 +557,7 @@ def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
         
         return True
 
-    def gameplay(campaign: rogue_campaign) :
+    def gameplay(campaign: rogue_campaign) -> None:
         # set up variables
         deck_list = campaign.player_deck.cards
 
@@ -583,14 +586,14 @@ def sigil_sacrifice(campaign: rogue_campaign) : # format visuals
 
     gameplay(campaign) # add flavor text, context, etc.
 
-def merge_cards(campaign: rogue_campaign) : # format visuals
+def merge_cards(campaign: rogue_campaign) -> None: # format visuals
     '''
     allows the player to merge two cards of the same species into one, with the new card having combined stats and sigils
     
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
     '''
-    def select_first(deck_list) :
+    def select_first(deck_list: list[card.BlankCard]) -> card.BlankCard:
         '''
         allows the player to choose the first card to merge
         
@@ -631,7 +634,7 @@ def merge_cards(campaign: rogue_campaign) : # format visuals
 
             return sorted_deck[card_index]
 
-    def select_second(deck_list, card_1) :
+    def select_second(deck_list: list[card.BlankCard], card_1: card.BlankCard) -> card.BlankCard:
         '''
         allows the player to choose the second card to merge
         
@@ -665,7 +668,7 @@ def merge_cards(campaign: rogue_campaign) : # format visuals
 
             return same_species[card_index]
 
-    def get_sigils(card_1, card_2) :
+    def get_sigils(card_1: card.BlankCard, card_2: card.BlankCard) -> tuple[str, str]:
         '''
         allows the player to choose which sigils to keep
         
@@ -674,16 +677,16 @@ def merge_cards(campaign: rogue_campaign) : # format visuals
             card_2: the second card to merge (card object)
             
         Returns:
-            list[str]: the sigils to keep
+            the sigils to keep
         '''
-        def sigil_name(sigil) :
+        def sigil_name(sigil: str) -> str:
             match sigil :
                 case '' : return 'No Sigil'
                 case _ if 'hefty' in sigil : return 'Hefty'
                 case _ if 'lane shift' in sigil : return 'Sprinter'
                 case _ : return QoL.title_case(sigil)
 
-        unique_sigils = []
+        unique_sigils: list[str] = []
         for sigil in card_1.sigils + card_2.sigils :
             if sigil != '' and not any(sigil_name(sigil) == sigil_name(sigil_) for sigil_ in unique_sigils) :
                 unique_sigils.append(sigil)
@@ -692,7 +695,7 @@ def merge_cards(campaign: rogue_campaign) : # format visuals
             if len(unique_sigils) < 2 : # make sure there are 2 sigils
                 unique_sigils += [''] * (2 - len(unique_sigils))
             
-            return unique_sigils
+            return (unique_sigils[0], unique_sigils[1])
         
         # set up variables
         all_sigils = [sigil for sigil in card_1.sigils + card_2.sigils if sigil != '']
@@ -700,7 +703,7 @@ def merge_cards(campaign: rogue_campaign) : # format visuals
         invalid_choice = False
         iter = -1
         iter_names = ['first', 'second']
-        final_sigils = []
+        final_sigils: list[str] = []
 
         while True :
             # print the sigils and their effects
@@ -726,16 +729,16 @@ def merge_cards(campaign: rogue_campaign) : # format visuals
             final_sigils.append(all_sigils[sigil_index])
 
             if iter > 0 :
-                return final_sigils
+                return (final_sigils[0], final_sigils[1])
 
-    def confirm_choice(card_1, card_2, result_sigils) :
+    def confirm_choice(card_1: card.BlankCard, card_2: card.BlankCard, result_sigils: tuple[str, str]) -> tuple[bool, card.BlankCard]:
         '''
         allows the player to confirm their choice of cards and sigils
         
         Arguments:
             card_1: the first card to merge (card object)
             card_2: the second card to merge (card object)
-            result_sigils: the sigils to keep (list[str])
+            result_sigils: the sigils to keep
             
         Returns:
             bool: True if the player confirms their choice, False if they do not
@@ -761,11 +764,11 @@ def merge_cards(campaign: rogue_campaign) : # format visuals
         confirm_input = input(QoL.center_justified('Are you sure these are the cards you want to use? (y/n)').rstrip() + ' ')
 
         if confirm_input.lower() != 'y' :
-            return False, None
+            return False, card.BlankCard()
         
         return True, card_result
 
-    def gameplay(campaign: rogue_campaign) :
+    def gameplay(campaign: rogue_campaign) -> None:
         # set up variables
         deck_list = campaign.player_deck.cards
 
@@ -795,7 +798,7 @@ def merge_cards(campaign: rogue_campaign) : # format visuals
 
     gameplay(campaign) # add flavor text, context, etc.
 
-def pelt_shop(campaign: rogue_campaign) : # format visuals
+def pelt_shop(campaign: rogue_campaign) -> None: # format visuals
     '''
     allow the player to buy pelts from the trapper with teeth
 
@@ -806,7 +809,7 @@ def pelt_shop(campaign: rogue_campaign) : # format visuals
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
     '''
-    def display_shop(campaign: rogue_campaign, pelt_dict, new_pelts) :
+    def display_shop(campaign: rogue_campaign, pelt_dict: dict[str, tuple[int, type[card.BlankCard]]], new_pelts: list[card.BlankCard]) -> None:
         # set up variables
         card_gap_spaces = ' '*((os.get_terminal_size().columns*55 // 100) // 5 - 15)
         price_tags = QoL.center_justified(card_gap_spaces.join([f'{pelt_name.title()}: {str(pelt_dict[pelt_name][0]).ljust(13 - len(pelt_name))}' for pelt_name in pelt_dict]))
@@ -826,7 +829,7 @@ def pelt_shop(campaign: rogue_campaign) : # format visuals
         print(f'{card_gap_spaces}Cart:', end='')
         print(cart, end='')
 
-    def buy_pelt(campaign: rogue_campaign, pelt_name, pelt_dict, new_pelts) :
+    def buy_pelt(campaign: rogue_campaign, pelt_name: str, pelt_dict: dict[str, tuple[int, type[card.BlankCard]]], new_pelts: list[card.BlankCard]) -> None:
         if campaign.teeth >= pelt_dict[pelt_name][0] :
             campaign.add_teeth(-pelt_dict[pelt_name][0])
             new_pelts.append(pelt_dict[pelt_name][1]())
@@ -835,14 +838,14 @@ def pelt_shop(campaign: rogue_campaign) : # format visuals
             print('\n')
             input(QoL.center_justified(f'You do not have enough teeth to buy a {pelt_name.lower()} (press enter to go back)').rstrip() + ' ')
 
-    def gameplay(campaign: rogue_campaign, cost_modifier) :
+    def gameplay(campaign: rogue_campaign, cost_modifier: int) -> None:
         # set up variables
-        pelt_dict = {
-            'rabbit pelt': [QoL.bind_int((1 + cost_modifier), 1, 2), card_library.RabbitPelt],
-            'wolf pelt': [QoL.bind_int((2 + cost_modifier), 2, 6), card_library.WolfPelt],
-            'golden pelt': [QoL.bind_int((3 + cost_modifier), 3, 11), card_library.GoldenPelt]
+        pelt_dict: dict[str, tuple[int, type[card.BlankCard]]] = {
+            'rabbit pelt': (QoL.bind_int((1 + cost_modifier), 1, 2), card_library.RabbitPelt),
+            'wolf pelt': (QoL.bind_int((2 + cost_modifier), 2, 6), card_library.WolfPelt),
+            'golden pelt': (QoL.bind_int((3 + cost_modifier), 3, 11), card_library.GoldenPelt)
         }
-        new_pelts = [card_library.RabbitPelt()] # give the player a free rabbit pelt
+        new_pelts: list[card.BlankCard] = [card_library.RabbitPelt()] # give the player a free rabbit pelt
         invalid_choice = False
 
         while True :
@@ -895,11 +898,11 @@ def pelt_shop(campaign: rogue_campaign) : # format visuals
             campaign.add_card(pelt)
 
     [beat_trapper] = QoL.read_data([['progress markers', 'beat trapper']])
-    cost_modifier = 0 + campaign.level - beat_trapper
+    cost_modifier: int = 0 + campaign.level - beat_trapper
 
     gameplay(campaign, cost_modifier) # add flavor text, context, etc.
 
-def card_shop(campaign: rogue_campaign) : # format visuals
+def card_shop(campaign: rogue_campaign) -> None: # format visuals
     '''
     allow the player to buy cards from the trader with pelts from their deck
 
@@ -907,16 +910,20 @@ def card_shop(campaign: rogue_campaign) : # format visuals
         campaign: the current campaign object (rogue_campaign object)
     '''
     # set up functions
-    same_sigil = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) 
+    same_sigil: Callable[[str, str], bool] = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) 
 
-    def add_sigil_wolf(card_) :
+    def add_sigil_wolf(card_: card.BlankCard) -> card.BlankCard:
         allowed_sigils = [sigil for sigil in sigils.Dict if not (any(same_sigil(sigil, sigil_) for sigil_ in card_.sigils) or sigil in ['', '???'])]
         sigil_slot = card_.sigils.index('')
-        card_.sigils[sigil_slot] = random.choice(allowed_sigils)
+        # card_.sigils[sigil_slot] = random.choice(allowed_sigils)
+        if sigil_slot == 0 :
+            card_.sigils = (random.choice(allowed_sigils), card_.sigils[1])
+        elif sigil_slot == 1 :
+            card_.sigils = (card_.sigils[0], random.choice(allowed_sigils))
         card_.update_ASCII()
         return card_
     
-    def pelt_trade(campaign: rogue_campaign, pelt, available_cards) : 
+    def pelt_trade(campaign: rogue_campaign, pelt: card.BlankCard, available_cards: list[card.BlankCard]) -> bool: 
         '''
         allows the player to trade a pelt for a card
 
@@ -955,9 +962,9 @@ def card_shop(campaign: rogue_campaign) : # format visuals
                 case '' : return False
                 case _ : invalid_choice = True
 
-    def random_card(possible_cards, alpha=2.2, beta=3.3, rare=False, open_sigil=False) :
-        not_open = lambda card_ : open_sigil and not card_.has_sigil('')
-        not_rare = lambda card_ : rare and type(card_) not in card_library.Rare_Cards
+    def random_card(possible_cards, alpha=2.2, beta=3.3, rare=False, open_sigil=False) -> card.BlankCard:
+        not_open: Callable[[card.BlankCard], bool] = lambda card_ : open_sigil and not card_.has_sigil('')
+        not_rare: Callable[[card.BlankCard], bool] = lambda card_ : rare and type(card_) not in card_library.Rare_Cards
 
         rando_card = QoL.random_card(possible_cards=possible_cards, alpha=alpha, beta=beta, few_rare=(not rare))
         while not_open(rando_card) or not_rare(rando_card) :

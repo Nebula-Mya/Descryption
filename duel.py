@@ -311,7 +311,7 @@ def view_play_attack(field: field.Playmat) -> list[card.BlankCard] :
         
     return played
 
-def deck_gen(possible_cards: dict[Any, Any] | list[Any], size: int, hidden_cost: bool=False) :
+def deck_gen(possible_cards: list[type[card.BlankCard]] | dict[int, list[type[card.BlankCard]]], size: int, hidden_cost: bool=False) :
     '''
     generates a deck from a list of possible cards
     
