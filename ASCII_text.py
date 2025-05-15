@@ -1,3 +1,5 @@
+from __future__ import annotations # prevent type hints needing import at runtime
+
 import QoL
 import os
 import math
@@ -17,7 +19,7 @@ def print_title() :
 
     print(QoL.center_justified(title, blocked=True))
 
-def print_scales(score, score_gap) :
+def print_scales(score: dict[str, int], score_gap: int)  -> None:
     player_adv = max(0, score['player'] - score['opponent'])
     opponent_adv = max(0, score['opponent'] - score['player'])
     if player_adv :
@@ -38,7 +40,7 @@ def print_scales(score, score_gap) :
 {spc}    /___\\'''.format(plr=player_weight, lsh=opponent_weight, spc=' '*score_gap)
     print(scales)
 
-def print_win(overkill=0) :
+def print_win(overkill: int=0)  -> None:
     '''
     Prints the ASCII art for the win screen.
     
@@ -74,7 +76,7 @@ __/\\\\\\______________/\\\\\\__/\\\\\\\\\\\\\\\\\\\\\\__/\\\\\\\\\\_____/\\\\\\
     
     print(QoL.center_justified(win, blocked=True))
 
-def print_lose(deck_out=False) :
+def print_lose(deck_out: bool=False)  -> None:
     '''
     Prints the ASCII art for the lose screen.
     
@@ -123,17 +125,22 @@ def print_WiP() :
 
     print(QoL.center_justified(WiP, blocked=True))
 
-def print_candelabra(wick_states) :
+def print_candelabra(wick_states: tuple[int, int, int])  -> None:
     '''
     Prints the ASCII art for the candelabra.
     
     Arguments:
-        wick_states: the states of the wicks in the order middle, right, left [int, int, int]
+        wick_states: the states of the wicks in the order middle, right, left (int, int, int)
             0 = unlit
             1 = lit (newly)
             2 = lit (continuing)
             3 = extinguished
     '''
+
+    for state in wick_states :
+        if state not in range(0,4) :
+            raise ValueError
+        
     wick_sprites = [
         [ # unlit
             '       ',
@@ -146,7 +153,7 @@ def print_candelabra(wick_states) :
         [ # lit (newly)
             '  /(   ',
             ' ( ;)ˎ ',
-            ' \(_)/ ',
+            ' \\(_)/ ',
             'ˏ₋-|-₋ˎ',
             '|ˋ⁻⁻⁻ˊ|',
             '|     |'
@@ -154,7 +161,7 @@ def print_candelabra(wick_states) :
         [ # lit (continuing)
             '  /(   ',
             ' ( ;)ˎ ',
-            ' \(_)/ ',
+            ' \\(_)/ ',
             'ˏ₋-|-₋ˎ',
             '|ˋʅȷᵕȣ|',
             '| ₍₎ ᵕ|'
@@ -215,7 +222,7 @@ def print_candelabra(wick_states) :
 
     print(QoL.center_justified(candelabra.format(*wicks), blocked=True))
 
-def split_moon_lines(string) :
+def split_moon_lines(string: str) :
     '''
     splits the moon card's inside into 20 lines of various characters
 
@@ -298,7 +305,7 @@ def moon_inner_str() :
 
     return moon_str.format(gap=gap, gap_half=gap_half, gap_half_up=gap_half_up, gap_center=gap_center, connect=connect)
     
-def moon_life_lines(life) :
+def moon_life_lines(life: int) :
     '''
     generates a 7x3 ASCII representation of the moon's life (2 digits)
 
@@ -454,4 +461,4 @@ if __name__ == '__main__' :
     print('-'*term_cols)
     print_WiP()
     print('-'*term_cols)
-    print_candelabra([2, 3, 0])
+    print_candelabra((2, 3, 0))
