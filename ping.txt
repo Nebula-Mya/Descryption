@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 __name__: __main__
+=======
+campaign: <rogue.rogue_campaign object at 0x70aa9c0c7b00>
+>>>>>>> Stashed changes
 
 __doc__: None
 
@@ -10,6 +14,7 @@ __spec__: None
 
 __annotations__: {}
 
+<<<<<<< Updated upstream
 __builtins__: <module 'builtins' (built-in)>
 
 __file__: /mnt/c/Users/MaWmM/Documents/GitHub/Descryption/deck.py
@@ -21,6 +26,35 @@ QoL: <module 'QoL' from '/mnt/c/Users/MaWmM/Documents/GitHub/Descryption/QoL.py'
 random: <module 'random' from '/usr/lib/python3.10/random.py'>
 
 copy: <module 'copy' from '/usr/lib/python3.10/copy.py'>
+=======
+player deck: [
+    <card_library.Wolf object at 0x70aa9c0fc1a0>,
+    <card_library.Stoat object at 0x70aa9c0fc200>,
+    <card_library.Bullfrog object at 0x70aa9c0fc260>,
+    <card_library.Rabbit object at 0x70aa9c0fc2c0>
+]
+
+squirrel deck: [
+    <card_library.Squirrel object at 0x70aa9c0fc380>,
+    <card_library.Squirrel object at 0x70aa9c0fc3e0>,
+    <card_library.Squirrel object at 0x70aa9c0fc440>,
+    <card_library.Squirrel object at 0x70aa9c0fc4a0>,
+    <card_library.Squirrel object at 0x70aa9c0fc500>,
+    <card_library.Squirrel object at 0x70aa9c0fc560>,
+    <card_library.Squirrel object at 0x70aa9c0fc5c0>,
+    <card_library.Squirrel object at 0x70aa9c0fc620>,
+    <card_library.Squirrel object at 0x70aa9c0fc680>,
+    <card_library.Squirrel object at 0x70aa9c0fc6e0>
+]
+
+Wolf at 0x70aa9c09acf0: {'is_poisoned': False, 'hooked': False, 'species': 'Wolf', 'saccs': 2, 'base_attack': 3, 'current_attack': 3, 'base_life': 2, 'current_life': 2, 'sigils': ('', ''), 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:2', 'stats': '3/2', 'name': 'Wolf     ', 'text_lines': ['', ',-------------,', '|Wolf      C:2|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          3/2|', "'-------------'", '        ']}
+
+Stoat at 0x70aa9c1668d0: {'is_poisoned': False, 'hooked': False, 'species': 'Stoat', 'saccs': 1, 'base_attack': 1, 'current_attack': 1, 'base_life': 3, 'current_life': 3, 'sigils': ('', ''), 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:1', 'stats': '1/3', 'name': 'Stoat    ', 'text_lines': ['', ',-------------,', '|Stoat     C:1|', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|             |', '|          1/3|', "'-------------'", '        ']}
+
+Bullfrog at 0x70aa9c0c7a70: {'is_poisoned': False, 'hooked': False, 'species': 'Bullfrog', 'saccs': 1, 'base_attack': 1, 'current_attack': 1, 'base_life': 2, 'current_life': 2, 'sigils': ('mighty leap', ''), 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:1', 'stats': '1/2', 'name': 'Bullfrog ', 'text_lines': ['', ',-------------,', '|Bullfrog  C:1|', '|             |', '|             |', '|    _____    |', '|    ʅ   ʃ    |', '|    ɩð_ʃ     |', '|             |', '|             |', '|          1/2|', "'-------------'", '        ']}
+
+Rabbit at 0x70aa9c0c79e0: {'is_poisoned': False, 'hooked': False, 'species': 'Rabbit', 'saccs': 0, 'base_attack': 1, 'current_attack': 1, 'base_life': 1, 'current_life': 1, 'sigils': ('lane shift right', ''), 'status': 'alive', 'zone': 0, 'blank_cost': False, 'blank_stats': False, 'line_cursor': 1, 'cost': 'C:0', 'stats': '1/1', 'name': 'Rabbit   ', 'text_lines': ['', ',-------------,', '|Rabbit    C:0|', '|             |', '|             |', '|    ,-,      |', '|    | |->    |', "|    '-'      |", '|             |', '|             |', '|          1/1|', "'-------------'", '        ']}
+>>>>>>> Stashed changes
 
 Deck: <class '__main__.Deck'>
 
