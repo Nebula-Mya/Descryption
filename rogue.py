@@ -442,10 +442,10 @@ def sigil_sacrifice(campaign: rogue_campaign) -> None: #REMINDME: format visuals
             the card to sacrifice
         '''
         # set up functions
-        same_sigil = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) # check if two sigils are the same or variations of the same sigil
-        good_sigil = lambda reciever, sigil : not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be transferred
-        poss_transfers = lambda reciever, sacrifice : sum([good_sigil(reciever, sigil) for sigil in sacrifice.sigils]) # check how many sigils can be transferred
-        good_sigils = lambda reciever, sacrifice : poss_transfers(reciever, sacrifice) > 0 # check if any sigils can be transferred
+        same_sigil: Callable[[str, str], bool] = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) # check if two sigils are the same or variations of the same sigil
+        good_sigil: Callable[[card.BlankCard, str], bool] = lambda reciever, sigil : not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be transferred
+        poss_transfers: Callable[[card.BlankCard, card.BlankCard], int] = lambda reciever, sacrifice : sum([good_sigil(reciever, sigil) for sigil in sacrifice.sigils]) # check how many sigils can be transferred
+        good_sigils: Callable[[card.BlankCard, card.BlankCard], bool] = lambda reciever, sacrifice : poss_transfers(reciever, sacrifice) > 0 # check if any sigils can be transferred
 
         # set up variables
         invalid_choice = False
@@ -491,9 +491,9 @@ def sigil_sacrifice(campaign: rogue_campaign) -> None: #REMINDME: format visuals
         sigil_names = [sigil_name(sacrifice.sigils[i]) for i in range(2)]
 
         # set up functions
-        same_sigil = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) # check if two sigils are the same or variations of the same sigil
-        good_sigil = lambda reciever, sigil : sigil != '' and not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be transferred
-        poss_transfers = lambda reciever, sacrifice : sum([good_sigil(reciever, sigil) for sigil in sacrifice.sigils]) # check how many sigils can be transferred
+        same_sigil: Callable[[str, str], bool] = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) # check if two sigils are the same or variations of the same sigil
+        good_sigil: Callable[[card.BlankCard, str], bool] = lambda reciever, sigil : sigil != '' and not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be transferred
+        poss_transfers: Callable[[card.BlankCard, card.BlankCard], int] = lambda reciever, sacrifice : sum([good_sigil(reciever, sigil) for sigil in sacrifice.sigils]) # check how many sigils can be transferred
 
         match poss_transfers(reciever, sacrifice) : #FIXME: allow choosing which sigil is replaced if full reciever
             case 2 :
@@ -962,7 +962,7 @@ def card_shop(campaign: rogue_campaign) -> None: #REMINDME: format visuals
                 case '' : return False
                 case _ : invalid_choice = True
 
-    def random_card(possible_cards, alpha=2.2, beta=3.3, rare=False, open_sigil=False) -> card.BlankCard:
+    def random_card(possible_cards: dict[int, list[type[card.BlankCard]]]|list[type[card.BlankCard]], alpha: float=2.2, beta: float=3.3, rare: bool=False, open_sigil: bool=False) -> card.BlankCard:
         not_open: Callable[[card.BlankCard], bool] = lambda card_ : open_sigil and not card_.has_sigil('')
         not_rare: Callable[[card.BlankCard], bool] = lambda card_ : rare and type(card_) not in card_library.Rare_Cards
 
@@ -1694,7 +1694,7 @@ def split_road(campaign: rogue_campaign) -> None: #REMINDME: format visuals
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
     '''
-    def get_event(campaign: rogue_campaign, previous_events=[]) -> tuple[str, str, int]:
+    def get_event(campaign: rogue_campaign, previous_events: list[int]=[]) -> tuple[str, str, int]:
         '''
         generate an event for a path according to weights
         

@@ -1,4 +1,5 @@
-from __future__ import annotations # prevent type hints needing import at runtime
+from __future__ import annotations
+from typing import NoReturn # prevent type hints needing import at runtime
 
 import duel
 import QoL
@@ -9,7 +10,7 @@ import rogue
 
 version_ID = 'v0.2.0b-alpha'
 
-def reset_progress() : 
+def reset_progress() -> None : 
     '''
     resets player progress if the player chooses to
     '''
@@ -56,7 +57,7 @@ def reset_progress() :
     if reset_choice == 'y' :
         QoL.write_data(data_to_write)
     
-def reset_death_card() :
+def reset_death_card() -> None :
     '''
     resets the death cards to the easter egg death cards if the player chooses to
     '''
@@ -101,7 +102,7 @@ def reset_death_card() :
                 ]
         QoL.write_data(data_to_write)
 
-def set_deck_size() :
+def set_deck_size() -> None :
     '''
     sets the deck size to the player's choice between the current hand size and 101
     '''
@@ -158,7 +159,7 @@ def set_deck_size() :
                 QoL.write_data([(['settings', 'deck size'], choice)])
                 return
 
-def set_hand_size() :
+def set_hand_size() -> None :
     '''
     sets the hand size to the player's choice between 1 and the current deck size
     '''
@@ -215,18 +216,18 @@ def set_hand_size() :
                 QoL.write_data([(['settings', 'hand size'], choice)])
                 return
 
-def set_difficulty() :
+def set_difficulty() -> None :
     '''
     sets the difficulty to the player's choice, chosen from a list of difficulties
     '''
-    def change_difficulty_data(difficulty_index: int) :
+    def change_difficulty_data(difficulty_index: int) -> None :
         '''
         sets the difficulty
 
         Arguments:
             difficulty_index: the new difficulty's index (int)
         '''
-        def write_difficulty(name: str, number: int, median: int, var: int, strat: int, threshold: int) :
+        def write_difficulty(name: str, number: int, median: int, var: int, strat: int, threshold: int) -> None :
             data_to_write = [
                 (['settings', 'difficulty', 'leshy median plays'], median),
                 (['settings', 'difficulty', 'leshy plays variance'], var),
@@ -292,11 +293,11 @@ def set_difficulty() :
                 change_difficulty_data(choice)
                 return
         
-def settings() :
+def settings() -> None :
     '''
     allows the player to change the difficulty, deck size, hand size, and reset Ouroboros
     '''
-    def print_settings_options() :
+    def print_settings_options() -> None :
         '''
         prints the settings options
         '''
@@ -347,7 +348,7 @@ def settings() :
             case _ :
                 invalid_choice = True
 
-def main_menu() :
+def main_menu() -> NoReturn :
     '''
     displays the main menu and allows the player to start a game, change settings, or exit the game
     '''

@@ -1,7 +1,5 @@
 from __future__ import annotations # prevent type hints needing import at runtime
 from typing import TYPE_CHECKING
-if TYPE_CHECKING :
-    from typing import Any
 
 import card_library
 import deck
@@ -76,7 +74,7 @@ def choose_and_play(field: field.Playmat) -> card.BlankCard | None:
             else :
                 return card_to_play
 
-def choose_draw(field: field.Playmat) : # type: ignore (Pylance doesn't believe in field.Playmat here)
+def choose_draw(field: field.Playmat) -> None :
     '''
     the whole process of choosing a card to draw and drawing it
 
@@ -157,7 +155,7 @@ def winner_check(field: field.Playmat, silent: bool=False) -> tuple[bool, str, i
             ASCII_text.print_lose(deck_out)
     return (win, winner, overkill, deck_out)
 
-def view_remaining(field: field.Playmat) : 
+def view_remaining(field: field.Playmat) -> None : 
     '''
     displays the remaining cards in the player's deck (sorted so as to not allow cheating), and allows the player to view a card
     
@@ -184,7 +182,7 @@ def view_remaining(field: field.Playmat) :
         else :
             invalid_index = True
 
-def view_graveyard(field: field.Playmat) :
+def view_graveyard(field: field.Playmat) -> None :
     '''
     displays the cards in the graveyard and allows the player to view a card
     
@@ -211,14 +209,14 @@ def view_graveyard(field: field.Playmat) :
         else :
             invalid_index = True
 
-def view_cards(field: field.Playmat) :
+def view_cards(field: field.Playmat) -> None :
     '''
     menu for player to choose to view bushes, leshy's field, or player's field, all of which are executed by this function
 
     Arguments:
         field: the field object to view (field object)
     '''
-    def pick_from_row(row: dict[int, card.BlankCard]) :
+    def pick_from_row(row: dict[int, card.BlankCard]) -> None :
         '''
         allows player to choose a card from a row to view
         
@@ -311,7 +309,7 @@ def view_play_attack(field: field.Playmat) -> list[card.BlankCard] :
         
     return played
 
-def deck_gen(possible_cards: list[type[card.BlankCard]] | dict[int, list[type[card.BlankCard]]], size: int, hidden_cost: bool=False) :
+def deck_gen(possible_cards: list[type[card.BlankCard]] | dict[int, list[type[card.BlankCard]]], size: int, hidden_cost: bool=False) -> deck.Deck :
     '''
     generates a deck from a list of possible cards
     
@@ -333,7 +331,7 @@ def deck_gen(possible_cards: list[type[card.BlankCard]] | dict[int, list[type[ca
 
     return deck.Deck(deck_list)
 
-def resource_gen(size: int) :
+def resource_gen(size: int) -> deck.Deck :
     '''
     generates a resource deck
 

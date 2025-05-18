@@ -1,4 +1,5 @@
 from __future__ import annotations # prevent type hints needing import at runtime
+from dataclasses import field
 from typing import TYPE_CHECKING
 if TYPE_CHECKING :
     from typing import Any, Callable
@@ -50,7 +51,7 @@ def ai_category_checking(categories: list[dict[str, Any]], player_field: dict[in
         
         return False
     
-    def is_out_strat(card_to_play: card.BlankCard, opp_card: card.BlankCard, sigil_slot: int) :
+    def is_out_strat(card_to_play: card.BlankCard, opp_card: card.BlankCard, sigil_slot: int) -> bool :
         if sigil_slot not in range(0,2) : raise ValueError
 
         # set up variables
@@ -66,7 +67,7 @@ def ai_category_checking(categories: list[dict[str, Any]], player_field: dict[in
         
         return False
     
-    def add_to_in_strat(card_to_play: card.BlankCard, player_field: dict[int, card.BlankCard], bushes: dict[int, card.BlankCard], zone: int) :
+    def add_to_in_strat(card_to_play: card.BlankCard, player_field: dict[int, card.BlankCard], bushes: dict[int, card.BlankCard], zone: int) -> bool :
         # error handling
         if zone not in range(1, 5) :
             raise ValueError('Invalid zone.')
@@ -177,7 +178,7 @@ class Playmat :
             for field in [self.player_field, self.bushes, self.opponent_field] :
                 field[zone].play(zone=zone)
     
-    def draw(self, deck: str) :
+    def draw(self, deck: str) -> None :
         '''
         draws a card from a deck to the hand
         
@@ -204,7 +205,7 @@ class Playmat :
         self.hand[-1].explain()
         input('Press enter to continue.')
 
-    def play_card(self, index: int, zone: int) :
+    def play_card(self, index: int, zone: int) -> bool :
         '''
         plays a card to the field from the hand (first opens card explanation and has player select saccs, then plays card to zone)
 
@@ -236,11 +237,11 @@ class Playmat :
             print('Sacrifices required:', cost)
             print('Select sacrifices: (press enter to go back)', end=' ')
 
-        def fail_saccs() :
+        def fail_saccs() -> tuple[list[int], int, bool]:
                 sacc_list = []
                 cost = og_cost # to prevent goat cheesing
                 worthy_sacc = False
-                return [sacc_list, cost, worthy_sacc]
+                return sacc_list, cost, worthy_sacc
 
         # get sacrifices
         worthy_sacc = False
@@ -260,7 +261,7 @@ class Playmat :
 
             if len(sacc_indexes) > cost - len(sacc_list) and not worthy_sacc : # too many saccs, serves as guard clause
                 print('Too many sacrifices.')
-                [sacc_list, cost, worthy_sacc] = fail_saccs() # reset saccs and cost to prevent player confusion, may change if alternate behavior is desired
+                sacc_list, cost, worthy_sacc = fail_saccs() # reset saccs and cost to prevent player confusion, may change if alternate behavior is desired
                 continue
 
             for sacc_index in sacc_indexes :
@@ -277,10 +278,10 @@ class Playmat :
                 continue
             if zone not in sacc_list : # playing on top of a card that wasn't sacrificed
                 print('Cannot play on top of a non sacrificed card.')
-                [sacc_list, cost, worthy_sacc] = fail_saccs()
+                sacc_list, cost, worthy_sacc = fail_saccs()
             elif self.player_field[zone].has_sigil('many lives') : # playing on top of a card with many lives
                 print('Cannot play on top of a card with many lives.')
-                [sacc_list, cost, worthy_sacc] = fail_saccs()
+                sacc_list, cost, worthy_sacc = fail_saccs()
         
         # remove saccs
         for ind in sacc_list :
@@ -306,7 +307,7 @@ class Playmat :
             self.print_field()
             return True
     
-    def attack(self) :
+    def attack(self) -> None :
         '''
         attacks with all of the active player's cards in play and updates score
         '''
@@ -348,7 +349,7 @@ class Playmat :
             if did_shift :
                 shifted_card = zone_card
 
-    def check_states(self) :
+    def check_states(self) -> None :
         '''
         checks for dead cards and removes them, plus returns unkillables if player's turn. Also summons corpse eaters if necessary.
         '''
@@ -426,7 +427,7 @@ class Playmat :
             open_corpses.remove(zone_choice)
             corpse_eaters = get_corpse_eaters(self.hand) # update corpse eaters
 
-    def advance(self) : 
+    def advance(self) -> None : 
         '''
         advances cards from bushes to field, utilizing opponent AI to play cards
         '''
@@ -458,7 +459,7 @@ class Playmat :
 
             played += 1
 
-    def switch(self) :
+    def switch(self) -> None :
         '''
         switches the active player
         '''
@@ -490,7 +491,7 @@ class Playmat :
         
         return True, 'opponent', 0, True # opponent wins via deck out
 
-    def print_remaining(self) :
+    def print_remaining(self) -> None :
         '''
         prints the remaining cards in the deck (sorted) and the squirrels (sorted) (clears screen first)
         '''
@@ -505,7 +506,7 @@ class Playmat :
         print(deck_string + '\n')
         print(card_gaps_space + 'Remaining squirrels: ' + str(len(self.player_squirrels)) + '\n')
 
-    def print_graveyard(self) :
+    def print_graveyard(self) -> None :
         '''
         prints the cards in the graveyard (in order) (clears screen first)
         '''
@@ -519,7 +520,7 @@ class Playmat :
         print(card_gaps_space + 'Graveyard:')
         print(graveyard_string, end='')
     
-    def print_hand(self) : 
+    def print_hand(self) -> None : 
         '''
         prints the cards in the player's hand (does NOT clear screen first)
         '''
@@ -532,7 +533,7 @@ class Playmat :
         print(card_gaps_space + 'Hand:', end='')
         print(hand_string)
 
-    def print_field(self, score_scale: bool=True) :
+    def print_field(self, score_scale: bool=True) -> None :
         '''
         prints the field and score scales (clears screen first)
 
@@ -590,14 +591,14 @@ class Playmat :
         print(field_string, end='')
         if score_scale : ASCII_text.print_scales(self.score, score_gap)
 
-    def print_full_field(self) :
+    def print_full_field(self) -> None :
         '''
         prints the field and player's hand (clears screen first)
         '''
         self.print_field()
         self.print_hand()
 
-    def summon_card(self, card, field, zone) :
+    def summon_card(self, card: card.BlankCard, field: dict[int, card.BlankCard], zone: int) -> None :
         '''
         summons a card to the field
 
@@ -612,7 +613,7 @@ class Playmat :
 if __name__ == '__main__' :
     import sys
 
-    def test_advancing() :
+    def test_advancing() -> None :
             QoL.clear()
 
             # create decks
@@ -636,7 +637,7 @@ if __name__ == '__main__' :
             # Print the field after advancing
             playmat.print_field()
 
-    def test_split_dam() :
+    def test_split_dam() -> None :
         QoL.clear()
 
         # create decks
@@ -686,7 +687,7 @@ if __name__ == '__main__' :
         # print the field
         playmat.print_field()
 
-    def test_corpse_eaters() :
+    def test_corpse_eaters() -> None :
         QoL.clear()
 
         # create decks
@@ -734,8 +735,8 @@ if __name__ == '__main__' :
         # print the field
         playmat.print_full_field()
 
-    def test_hefty() :
-        def advance_hefty(playmat: Playmat) :
+    def test_hefty() -> None :
+        def advance_hefty(playmat: Playmat) -> None :
             # get user input before advancing
             input("Press enter to advance.")
 
@@ -831,7 +832,7 @@ if __name__ == '__main__' :
         for _ in range(3) :
             advance_hefty(playmat)
 
-    def test_empty_deck() :
+    def test_empty_deck() -> None :
         QoL.clear()
 
         # create decks

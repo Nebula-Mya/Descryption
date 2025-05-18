@@ -1,5 +1,5 @@
 from __future__ import annotations # prevent type hints needing import at runtime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 if TYPE_CHECKING:
     import rogue
 
@@ -96,7 +96,7 @@ def card_battle(campaign: rogue.rogue_campaign, Poss_Leshy: list[type[card.Blank
 
 ##### if the player wins, relight candles and update config file
 
-def get_higher_difficulty() :
+def get_higher_difficulty() -> tuple[int, int, int, int] :
     '''
     gets the higher difficulty settings for bosses
     
@@ -236,7 +236,7 @@ def post_boss_flavor(campaign: rogue.rogue_campaign, result: bool, overkill: int
         ASCII_text.print_candelabra(wick_states)
         print()
 
-def turn_structure(playfield: field.Playmat) :
+def turn_structure(playfield: field.Playmat) -> tuple[bool, str, int, bool, list[card.BlankCard]]:
     '''
     the turn structure for boss fights, excluding checking for win conditions and switching turns
 
@@ -285,7 +285,7 @@ def turn_structure(playfield: field.Playmat) :
 
     return (False, '', 0, False, played)
 
-def init_boss_playfield(campaign: rogue.rogue_campaign, Poss_Leshy: dict[int, list[type[card.BlankCard]]]={}, first_cards: list[card.BlankCard]=[], advance: bool=True, field_cards: list[card.BlankCard]=[]) :
+def init_boss_playfield(campaign: rogue.rogue_campaign, Poss_Leshy: dict[int, list[type[card.BlankCard]]]={}, first_cards: list[card.BlankCard]=[], advance: bool=True, field_cards: list[card.BlankCard]=[]) -> field.Playmat:
     '''
     creates the playfield for a boss fight
 
@@ -346,15 +346,15 @@ def random_extra_sigil(possibles: list[type[card.BlankCard]], hidden_cost: bool=
         card: the chosen card with a random sigil added (card object)
     '''
     # set up functions
-    def sigil_name(sigil: str) :
+    def sigil_name(sigil: str) -> str :
         match sigil :
             case '' : return 'No Sigil'
             case _ if 'hefty' in sigil : return 'Hefty'
             case _ if 'lane shift' in sigil : return 'Sprinter'
             case _ : return QoL.title_case(sigil)
 
-    same_sigil = lambda sigil_1, sigil_2 : sigil_1 != '' and sigil_name(sigil_1) == sigil_name(sigil_2) # check if two sigils are the same or variations of the same sigil
-    good_sigil = lambda reciever, sigil : sigil not in ['', '???'] and not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be added
+    same_sigil: Callable[[str, str], bool] = lambda sigil_1, sigil_2 : sigil_1 != '' and sigil_name(sigil_1) == sigil_name(sigil_2) # check if two sigils are the same or variations of the same sigil
+    good_sigil: Callable[[card.BlankCard, str], bool] = lambda reciever, sigil : sigil not in ['', '???'] and not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be added
     
     # choose card
     chosen_card: card.BlankCard = QoL.random_card(possibles, hidden_cost=hidden_cost)
@@ -536,7 +536,7 @@ def trading(playfield: field.Playmat)  -> None:
             case _ : invalid_choice = True
 
 def boss_fight_prospector(campaign: rogue.rogue_campaign)  -> bool: # boss fight 1
-    def gameplay(campaign: rogue.rogue_campaign) :
+    def gameplay(campaign: rogue.rogue_campaign) -> tuple[bool, str, int, bool]:
         pre_boss_flavor(campaign)
 
         playfield = init_boss_playfield(campaign, first_cards=[card_library.PackMule(True), card_library.Coyote(True)])
@@ -604,7 +604,7 @@ def boss_fight_prospector(campaign: rogue.rogue_campaign)  -> bool: # boss fight
     return gameplay(campaign)[1] == 'player' # add flavor text, context, etc.
 
 def boss_fight_angler(campaign: rogue.rogue_campaign)  -> bool: # boss fight 2
-    def gameplay(campaign: rogue.rogue_campaign) :
+    def gameplay(campaign: rogue.rogue_campaign) -> tuple[bool, str, int, bool] :
         pre_boss_flavor(campaign)
 
         poss_angler_p1: dict[int, list[type[card.BlankCard]]] = {
@@ -739,7 +739,7 @@ def boss_fight_angler(campaign: rogue.rogue_campaign)  -> bool: # boss fight 2
     return gameplay(campaign)[1] == 'player' # add flavor text, context, etc.
 
 def boss_fight_trapper_trader(campaign: rogue.rogue_campaign)  -> bool: # boss fight 3
-    def gameplay(campaign: rogue.rogue_campaign) :
+    def gameplay(campaign: rogue.rogue_campaign) -> tuple[bool, str, int, bool] :
         pre_boss_flavor(campaign)
 
         poss_trapper = {
@@ -866,10 +866,10 @@ def boss_fight_trapper_trader(campaign: rogue.rogue_campaign)  -> bool: # boss f
 
 def boss_fight_leshy(campaign: rogue.rogue_campaign)  -> bool: # boss fight 4 (still need to implement deck trials)
     ## Leshy's reaction to the moon being destroyed is part of field.check_states()
-    def deck_trials(campaign: rogue.rogue_campaign) :
+    def deck_trials(campaign: rogue.rogue_campaign) -> None :
         pass # implement once deck trials and boons are added (needs consumables and bones)
 
-    def mining(playfield: field.Playmat, battle_state: battle_state) :
+    def mining(playfield: field.Playmat, battle_state: battle_state) -> None :
         # dialogue / explanation
         if not battle_state.has_mined :
             QoL.clear()
@@ -892,7 +892,7 @@ def boss_fight_leshy(campaign: rogue.rogue_campaign)  -> bool: # boss fight 4 (s
         # replace player's cards with gold nuggets
         for zone in nugget_zones : playfield.summon_card(card=card_library.GoldNugget(True), zone=zone, field=playfield.player_field)
 
-    def hooking(playfield: field.Playmat, battle_state: battle_state, played: list[card.BlankCard]) :
+    def hooking(playfield: field.Playmat, battle_state: battle_state, played: list[card.BlankCard]) -> None :
         # dialogue / explanation
         if not battle_state.used_all_masks :
             QoL.clear()
@@ -921,7 +921,7 @@ def boss_fight_leshy(campaign: rogue.rogue_campaign)  -> bool: # boss fight 4 (s
                     playfield.summon_card(card=card.BlankCard(), zone=zone, field=playfield.player_field)
                     break
 
-    def trading_leshy(playfield: field.Playmat, battle_state: battle_state) :
+    def trading_leshy(playfield: field.Playmat, battle_state: battle_state) -> None :
         # dialogue / explanation
         if not battle_state.used_all_masks :
             QoL.clear()
@@ -986,7 +986,7 @@ def boss_fight_leshy(campaign: rogue.rogue_campaign)  -> bool: # boss fight 4 (s
             self.used_all_masks: bool = False
             self.has_mined: bool = False
 
-        def change(self) :
+        def change(self) -> None :
             '''
             changes the mask to the next one
             '''
@@ -1003,7 +1003,7 @@ def boss_fight_leshy(campaign: rogue.rogue_campaign)  -> bool: # boss fight 4 (s
 
             self.mask_worn = True
         
-        def use(self, playfield: field.Playmat, played: list[card.BlankCard]) :
+        def use(self, playfield: field.Playmat, played: list[card.BlankCard]) -> None :
             '''
             uses and removes the current mask
 
@@ -1028,7 +1028,7 @@ def boss_fight_leshy(campaign: rogue.rogue_campaign)  -> bool: # boss fight 4 (s
 
             self.mask_worn = False
 
-        def mask(self, playfield: field.Playmat, played: list[card.BlankCard]) :
+        def mask(self, playfield: field.Playmat, played: list[card.BlankCard]) -> None :
             '''
             uses or changes the mask
             
@@ -1044,7 +1044,7 @@ def boss_fight_leshy(campaign: rogue.rogue_campaign)  -> bool: # boss fight 4 (s
             else : 
                 self.change()
 
-        def win(self, playfield: field.Playmat) :
+        def win(self, playfield: field.Playmat) -> bool :
             '''
             executes the code for beating a phase, depending on the current phase, increments the phase, and returns whether the player has won the entire fight
 
@@ -1143,7 +1143,7 @@ def boss_fight_leshy(campaign: rogue.rogue_campaign)  -> bool: # boss fight 4 (s
             
             return False
 
-    def gameplay(campaign: rogue.rogue_campaign) :
+    def gameplay(campaign: rogue.rogue_campaign) -> tuple[bool, str, int, bool] :
         # pre boss events
         deck_trials(campaign)
 

@@ -61,18 +61,18 @@ class Ouroboros(card.BlankCard) :
     oro_level = QoL.read_data([['progress markers', 'ouro level']])[0]
 
     @classmethod
-    def set_level(cls) :
+    def set_level(cls) -> None :
         cls.oro_level = QoL.read_data([['progress markers', 'ouro level']])[0]
     
     @classmethod
-    def increase_level(cls) :
+    def increase_level(cls) -> None :
         cls.oro_level += 1
 
     def __init__(self, blank_cost: bool=False, sigils: tuple[str, str]=('unkillable','')) :
         Ouroboros.set_level()
         super().__init__(species='Ouroboros', cost=2, attack=Ouroboros.oro_level, life=Ouroboros.oro_level, sigils=sigils, blank_cost=blank_cost)
 
-    def level_up(self) :
+    def level_up(self) -> None :
         self.base_attack += 1
         self.base_life += 1
         Ouroboros.increase_level()
@@ -80,7 +80,7 @@ class Ouroboros(card.BlankCard) :
         self.update_ASCII()
         QoL.write_data([(['progress markers', 'ouro level'], Ouroboros.oro_level)])
 
-    def die(self) :
+    def die(self) -> None :
         self.level_up()
         super().die()
 
@@ -129,7 +129,7 @@ class Cat(card.BlankCard) :
         super().__init__(species='Cat', cost=1, attack=0, life=1, sigils=sigils, blank_cost=blank_cost)
         self.spent_lives: int = 0
     
-    def reset_stats(self):
+    def reset_stats(self) -> None :
         super().reset_stats()
         self.spent_lives = 0
 
@@ -317,7 +317,7 @@ class Stump(card.BlankCard) : # terrain card
         super().__init__(species='Stump', cost=0, attack=0, life=3, sigils=sigils, blank_cost=blank_cost)
 
 class Tree(card.BlankCard) : # terrain card
-    def __init__(self, blank_cost: bool=False, sigils=None, level=0) :
+    def __init__(self, blank_cost: bool=False, sigils: None|tuple[str, str]=None, level: int=0):
         if sigils is None :
             sigils = ('mighty leap','')
         match level :
@@ -351,16 +351,16 @@ class Moon(card.BlankCard) :
         self.line_cursor: int = (self.line_cursor + 1) % 11
         return text.ljust(15)[:15]
 
-    def update_ASCII(self) :
+    def update_ASCII(self) -> None :
         # reset line cursor
         self.line_cursor: int = 0
 
         # update ASCII art for card
         inner_str: str = ASCII_text.moon_inner_str()
-        split_ASCII: list[Any] = ASCII_text.split_moon_lines(inner_str)['cards']
-        self.moon_lines: list[Any] = [split_ASCII[n][self.coords[1] - 1] for n in range(20)][0+(self.coords[0] == 1)*10:10+(self.coords[0] == 1)*10]
+        split_ASCII: list[list[str]] = ASCII_text.split_moon_lines(inner_str)['cards']
+        self.moon_lines: list[str] = [split_ASCII[n][self.coords[1] - 1] for n in range(20)][0+(self.coords[0] == 1)*10:10+(self.coords[0] == 1)*10]
 
-    def explain(self) :
+    def explain(self) -> None :
         ### sigils, in order, are : mighty leap, tidal lock, and omni strike
 
         # set up variables
@@ -398,7 +398,7 @@ class Moon(card.BlankCard) :
         # print display text
         print(explanation)
 
-    def attack(self, front_left_card: card.BlankCard, front_card: card.BlankCard, front_right_card: card.BlankCard, hand: list[card.BlankCard], is_players: bool=False, bushes: dict[int, card.BlankCard]={}) :
+    def attack(self, front_left_card: card.BlankCard, front_card: card.BlankCard, front_right_card: card.BlankCard, hand: list[card.BlankCard], is_players: bool=False, bushes: dict[int, card.BlankCard]={}) -> int :
         # set up variables
         points = 0
 
@@ -412,7 +412,7 @@ class Moon(card.BlankCard) :
 
         return points
 
-    def reset_stats(self) :
+    def reset_stats(self) -> None :
         self.zone = 0
         Moon.status = 'alive'
         Moon.is_poisoned = False
@@ -421,7 +421,7 @@ class Moon(card.BlankCard) :
         Moon.current_life = Moon.base_life
         self.update_ASCII()
 
-    def take_damage(self, damage: int, hand: list[card.BlankCard], from_air: bool=False, in_opp_field: bool=False, in_bushes: bool=False, bushes: dict[int, card.BlankCard]={}, deathtouch: bool=False) :
+    def take_damage(self, damage: int, hand: list[card.BlankCard], from_air: bool=False, in_opp_field: bool=False, in_bushes: bool=False, bushes: dict[int, card.BlankCard]={}, deathtouch: bool=False) -> int :
         # set up variables
         teeth = 0
 
@@ -437,24 +437,24 @@ class Moon(card.BlankCard) :
         
         return teeth   
 
-    def play(self, zone: int) :
+    def play(self, zone: int) -> None :
         if zone not in range (1, 5) : # error handling
             raise ValueError('Zone must be between 1 and 4')
         self.reset_stats()
         self.zone = zone
         self.update_ASCII()
 
-    def sigil_in_category(self, category: list[str] | dict[Any, str], sigil_slot: int=-1) :
+    def sigil_in_category(self, category: list[str] | dict[int, str], sigil_slot: int=-1) -> bool :
         sigils_ = ['mighty leap', 'tidal lock', 'omni strike']
 
         return any([sigil in sigils_ for sigil in category])
 
-    def has_sigil(self, sigil_name: str) :
+    def has_sigil(self, sigil_name: str) -> bool :
         sigils_ = ['mighty leap', 'tidal lock', 'omni strike']
 
         return any([sigil == sigil_name for sigil in sigils_])
 
-    def hook(self) :
+    def hook(self) -> None :
         Moon.hooked = not Moon.hooked
         self.update_ASCII()
 

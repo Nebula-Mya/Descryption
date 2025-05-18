@@ -8,14 +8,14 @@ import QoL
 
 class TestOuroborosLevelUp(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None :
         self.prev_level = QoL.read_data([['progress markers', 'ouro level']])[0]
         QoL.write_data([(['progress markers', 'ouro level'], 1)])
 
-    def tearDown(self):
+    def tearDown(self) -> None :
         QoL.write_data([(['progress markers', 'ouro level'], self.prev_level)])
 
-    def test_ouroboros_level_up(self):
+    def test_ouroboros_level_up(self) -> None :
         # Create multiple instances of Ouroboros
         ouroboros1 = card_library.Ouroboros()
         ouroboros2 = card_library.Ouroboros()

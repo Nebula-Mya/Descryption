@@ -1,10 +1,11 @@
-from __future__ import annotations # prevent type hints needing import at runtime
+from __future__ import annotations
+from typing import Callable # prevent type hints needing import at runtime
 
 import QoL
 import os
 import math
 
-def print_title() :
+def print_title() -> None :
     title = '''
 ████████▄     ▄████████    ▄████████   ▄████████    ▄████████  ▄██   ▄      ▄███████▄     ███      ▄█   ▄██████▄   ███▄▄▄▄  
 ███   ▀███   ███    ███   ███    ███  ███    ███   ███    ███  ███   ██▄   ███    ███ ▀█████████▄ ███  ███    ███  ███▀▀▀██▄
@@ -19,7 +20,7 @@ def print_title() :
 
     print(QoL.center_justified(title, blocked=True))
 
-def print_scales(score: dict[str, int], score_gap: int)  -> None:
+def print_scales(score: dict[str, int], score_gap: int) -> None :
     player_adv = max(0, score['player'] - score['opponent'])
     opponent_adv = max(0, score['opponent'] - score['player'])
     if player_adv :
@@ -112,7 +113,7 @@ __/\\\\\\___________________/\\\\\\\\\\__________/\\\\\\\\\\\\\\\\\\\\\\____/\\\
     
     print(QoL.center_justified(lose, blocked=True))
 
-def print_WiP() :
+def print_WiP() -> None :
     WiP = '''
  __________________________
 |System             |–|‡‡|×|
@@ -222,7 +223,7 @@ def print_candelabra(wick_states: tuple[int, int, int])  -> None:
 
     print(QoL.center_justified(candelabra.format(*wicks), blocked=True))
 
-def split_moon_lines(string: str) :
+def split_moon_lines(string: str) -> dict[str, list[list[str]]]:
     '''
     splits the moon card's inside into 20 lines of various characters
 
@@ -246,10 +247,10 @@ def split_moon_lines(string: str) :
     term_cols = os.get_terminal_size().columns
     gaps = (term_cols*55 // 100) // 5 - 15
 
-    split_string = lambda string, length : (string[:max(length, 0)], string[max(length, 0):])
+    split_string: Callable[[str, int], tuple[str, str]] = lambda string, length : (string[:max(length, 0)], string[max(length, 0):])
 
     # set up variables
-    split_lines = {
+    split_lines: dict[str, list[list[str]]] = {
         'cards' : [],
         'connectors' : []
     }
@@ -275,7 +276,7 @@ def split_moon_lines(string: str) :
     
     return split_lines
 
-def moon_inner_str() :
+def moon_inner_str() -> str:
     gap_num = (os.get_terminal_size().columns*55 // 100) // 5 - 15
     gap = ' '*gap_num
     gap_half = ' '*(gap_num // 2)
@@ -305,7 +306,7 @@ def moon_inner_str() :
 
     return moon_str.format(gap=gap, gap_half=gap_half, gap_half_up=gap_half_up, gap_center=gap_center, connect=connect)
     
-def moon_life_lines(life: int) :
+def moon_life_lines(life: int) -> list[str] :
     '''
     generates a 7x3 ASCII representation of the moon's life (2 digits)
 

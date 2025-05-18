@@ -1,7 +1,8 @@
 from __future__ import annotations # prevent type hints needing import at runtime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 if TYPE_CHECKING:
     import card
+    from typing import Any
 
 import math
 import os
@@ -9,9 +10,8 @@ import sys
 import json
 import random
 import copy
-from typing import Any
 
-def clear() :
+def clear() -> None :
     '''
     clears the console
     '''
@@ -63,14 +63,14 @@ def read_data(data_to_read: list[list[str]]) -> list[Any]:
         data_to_return = [get_data_value(data_path, data) for data_path in data_to_read]
         return data_to_return
 
-def write_data(data_to_write: list[tuple[list, Any]]) :
+def write_data(data_to_write: list[tuple[list, Any]]) -> None :
     '''
     writes the specified data to the config file
     
     Arguments:
         data_to_write: the data to write, where subsequent keys are ordered by depth (list[tuple][list, any])
     '''
-    def set_data_value(data_keys: list[str], value_to_set: Any, data: dict[str, Any]) :
+    def set_data_value(data_keys: list[str], value_to_set: Any, data: dict[str, Any]) -> None :
         '''
         sets a value in the config file using a list of subsequent keys
 
@@ -124,7 +124,7 @@ def center_justified(text: str, blocked: bool=False, shift: int=0) -> str :
     text_lines = text.split('\n')
     # text_lines = [line.lstrip() for line in text.split('\n')]
     term_width = os.get_terminal_size().columns
-    center_space = lambda line_width : (term_width - line_width) // 2
+    center_space: Callable[[int], int] = lambda line_width : (term_width - line_width) // 2
     centered_text = ''
 
     if blocked :
@@ -220,7 +220,7 @@ def title_case(string: str) -> str :
     title_cased_words = [words[0].capitalize()] + [word.capitalize() if word not in lower_words else word for word in words[1:]]
     return ' '.join(title_cased_words)
 
-def exec_sigil_code(current_card, applicables, global_vars=None, local_vars: dict[str, Any] = {}, vars_to_return=[]) :
+def exec_sigil_code(current_card: card.BlankCard, applicables: list[str], global_vars: None|dict[str, Any]=None, local_vars: dict[str, Any] = {}, vars_to_return: list[Any]=[]) -> list[Any]:
     '''
     executes sigil code
     
@@ -235,7 +235,7 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars: dic
         the variables to return (list)
     '''
     
-    def get_combo_code(sigil: list[str]) -> str :
+    def get_combo_code(sigil: tuple[str, str]) -> str :
         '''
         get the code block for a combination of sigils
         
@@ -330,7 +330,7 @@ def sort_deck(deck: list[card.BlankCard]) -> list[card.BlankCard] :
     deck = sorted(deck, key=lambda x: x.name) # sort by name (will be sub-sorting under cost)
     return sorted(deck, key=lambda x: x.saccs)
 
-def print_deck(deck: list[card.BlankCard], sort=False, numbered=False, centered=False, blocked=False) -> str:
+def print_deck(deck: list[card.BlankCard], sort: bool=False, numbered: bool=False, centered: bool=False, blocked: bool=False) -> str:
     '''
     prints a list of cards in a deck, with optional sorting
 
@@ -342,11 +342,11 @@ def print_deck(deck: list[card.BlankCard], sort=False, numbered=False, centered=
         centered: whether to center the deck (bool)
         blocked: whether to block the deck when centered (bool)
     '''
-    def card_gap_numbered(card_gaps: int, number: int) :
+    def card_gap_numbered(card_gaps: int, number: int) -> str :
         number_str = str(number)
         return ' ' * (card_gaps - len(number_str) - 1) + number_str + ' '
     
-    def line_str(line: int, card_gaps: int, row: list[card.BlankCard], numbered: bool) :
+    def line_str(line: int, card_gaps: int, row: list[card.BlankCard], numbered: bool) -> str:
         card_gaps_space: str = ' ' * card_gaps
 
         if line == 0 and numbered :
@@ -408,7 +408,7 @@ def reps_int(string: str, increment: int=0) -> tuple[bool, int] :
     except ValueError : # if not, default to 0 and return False
         return False, 0
 
-def bind_int(value: int, lower_bound=-math.inf, upper_bound=math.inf) -> int:
+def bind_int(value: int, lower_bound: float|int=-math.inf, upper_bound: float|int=math.inf) -> int:
     '''
     binds an integer to a range (inclusive)
 
@@ -440,7 +440,7 @@ def bind_int(value: int, lower_bound=-math.inf, upper_bound=math.inf) -> int:
         case _ : # misc errors
             raise ValueError('invalid bounds')
 
-def ping(dict: dict[Any, Any]={'ping':'pong'}) : # for testing
+def ping(dict: dict[Any, Any]={'ping':'pong'}) -> None : # for testing
     '''
     writes variables to ping.txt
 
@@ -604,8 +604,8 @@ def random_card(possible_cards: list[type[card.BlankCard]] | dict[int, list[type
     if weighted:
         cost_values = list(card_dict)
         cost_values.sort()
-        cost = lambda : cost_values[math.floor((cost_values.__len__()) * random.betavariate(alpha, beta))]
-    else : cost = lambda : random.choice(list(card_dict.keys()))
+        cost: Callable[[], int] = lambda : cost_values[math.floor((cost_values.__len__()) * random.betavariate(alpha, beta))]
+    else : cost: Callable[[], int] = lambda : random.choice(list(card_dict.keys()))
 
     # get card type
     template_card: type[card.BlankCard] = random.choice(card_dict[cost()])
