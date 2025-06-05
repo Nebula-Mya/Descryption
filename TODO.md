@@ -1,4 +1,4 @@
-- [ ] add typing to all functions, search: 
+- [X] add typing to all functions, search: 
 
       def [^\n\)]+([,\(] ?(?!self)(?!cls)[a-z0-9_]+[, =\)]).*?.+: ?\n|( +)def __init__.+(:?\n\1\1.+){0,}(:?\n\1\1self\.\S* ?=)|(def(?! __.+__) .*?\) ?:)|[^:\]\n]+ = lambda
 

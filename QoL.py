@@ -330,23 +330,25 @@ def sort_deck(deck: list[card.BlankCard]) -> list[card.BlankCard] :
     deck = sorted(deck, key=lambda x: x.name) # sort by name (will be sub-sorting under cost)
     return sorted(deck, key=lambda x: x.saccs)
 
-def print_deck(deck: list[card.BlankCard], sort: bool=False, numbered: bool=False, centered: bool=False, blocked: bool=False) -> str:
+def print_deck(deck: list[card.BlankCard], sort: bool=False, numbered: bool=False, centered: bool=False, blocked: bool=False, silent: bool=False) -> str:
     '''
     prints a list of cards in a deck, with optional sorting
 
     Arguments:
         deck: deck to print (list)
         sort: whether to sort the deck before printing (bool)
-        fruitful: whether to return the deck string instead of printing it (bool)
         numbered: whether to number the cards (bool)
         centered: whether to center the deck (bool)
         blocked: whether to block the deck when centered (bool)
+        silent: whether to prevent the str from being printed (bool)
     '''
     def card_gap_numbered(card_gaps: int, number: int) -> str :
         number_str = str(number)
         return ' ' * (card_gaps - len(number_str) - 1) + number_str + ' '
     
     def line_str(line: int, card_gaps: int, row: list[card.BlankCard], numbered: bool) -> str:
+        if numbered :
+            card_gaps = max(card_gaps, 4)
         card_gaps_space: str = ' ' * card_gaps
 
         if line == 0 and numbered :
@@ -366,12 +368,13 @@ def print_deck(deck: list[card.BlankCard], sort: bool=False, numbered: bool=Fals
     
     # get terminal size
     term_cols = os.get_terminal_size().columns
-    card_gaps = (term_cols*55 // 100) // 5 - 15
-
-    # get number of cards per row
-    cards_per_row = term_cols // (card_gaps + 15)
-    if cards_per_row >= 9 :
-        cards_per_row = 8
+    max_width = term_cols*80 // 100
+    indent = min((term_cols - max_width) // 2, 4)
+    if numbered :
+        cards_per_row = min(max_width // 19, 8)
+    else :
+        cards_per_row = min(max_width // 15, 8)
+    card_gaps = max_width // cards_per_row - 15
 
     # sort deck if needed
     if sort :
@@ -384,14 +387,17 @@ def print_deck(deck: list[card.BlankCard], sort: bool=False, numbered: bool=Fals
     deck_string = ''
     for row in chunked :
         line_strings = [line_str(line, card_gaps, row, numbered) for line in range(11)]
-        deck_string += '\n' + '\n'.join(line_strings)
+        prefix = '\n' + ' '*indent
+        deck_string += prefix + prefix.join(line_strings)
 
     if centered :
         deck_string = center_justified(deck_string, blocked, -2)
+        
+    if not silent :
+        print(deck_string)
+
     return deck_string
     
-    print(deck_string)
-
 def reps_int(string: str, increment: int=0) -> tuple[bool, int] :
     '''
     checks if a string represents an integer and returns it

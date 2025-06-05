@@ -497,13 +497,17 @@ class Playmat :
         '''
         # set up variables
         term_cols = os.get_terminal_size().columns
-        card_gaps_space = ' '*((term_cols*55 // 100) // 5 - 15)
-        deck_string: str = QoL.print_deck(self.player_deck, sort=True, fruitful=True, numbered=True) # type: ignore
+        max_width = term_cols*80 // 100
+        indent = min((term_cols - max_width) // 2, 4)
+        cards_per_row = min(max_width // 15, 8)
+        card_gaps = max_width // cards_per_row - 15
+        card_gaps_space = ' '*(card_gaps + indent)
 
         # print remaining cards in deck
         QoL.clear()
         print(card_gaps_space + 'Remaining cards in deck:')
-        print(deck_string + '\n')
+        QoL.print_deck(self.player_deck, sort=True, numbered=True)
+        print('\n')
         print(card_gaps_space + 'Remaining squirrels: ' + str(len(self.player_squirrels)) + '\n')
 
     def print_graveyard(self) -> None :
@@ -512,13 +516,16 @@ class Playmat :
         '''
         # set up variables
         term_cols = os.get_terminal_size().columns
-        card_gaps_space = ' '*((term_cols*55 // 100) // 5 - 15)
-        graveyard_string = QoL.print_deck(self.graveyard, sort=False, numbered=True)
+        max_width = term_cols*80 // 100
+        indent = min((term_cols - max_width) // 2, 4)
+        cards_per_row = min(max_width // 15, 8)
+        card_gaps = max_width // cards_per_row - 15
+        card_gaps_space = ' '*(card_gaps + indent)
 
         # print graveyard
         QoL.clear()
         print(card_gaps_space + 'Graveyard:')
-        print(graveyard_string, end='')
+        QoL.print_deck(self.graveyard, sort=False, numbered=True)
     
     def print_hand(self) -> None : 
         '''
@@ -526,12 +533,15 @@ class Playmat :
         '''
         # set up variables
         term_cols = os.get_terminal_size().columns
-        card_gaps_space = ' '*((term_cols*55 // 100) // 5 - 15)
-        hand_string = QoL.print_deck(self.hand, sort=False)
+        max_width = term_cols*80 // 100
+        indent = min((term_cols - max_width) // 2, 4)
+        cards_per_row = min(max_width // 15, 8)
+        card_gaps = max_width // cards_per_row - 15
+        card_gaps_space = ' '*(card_gaps + indent)
 
         # print hand
         print(card_gaps_space + 'Hand:', end='')
-        print(hand_string)
+        QoL.print_deck(self.hand, sort=False)
 
     def print_field(self, score_scale: bool=True) -> None :
         '''

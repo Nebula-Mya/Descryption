@@ -813,9 +813,9 @@ def pelt_shop(campaign: rogue_campaign) -> None: #REMINDME: format visuals
         # set up variables
         card_gap_spaces = ' '*((os.get_terminal_size().columns*55 // 100) // 5 - 15)
         price_tags = QoL.center_justified(card_gap_spaces.join([f'{pelt_name.title()}: {str(pelt_dict[pelt_name][0]).ljust(13 - len(pelt_name))}' for pelt_name in pelt_dict]))
-        pelt_displays = QoL.print_deck([pelt_dict[pelt_name][1]() for pelt_name in pelt_dict], centered=True, blocked=True)
+        pelt_displays = QoL.print_deck([pelt_dict[pelt_name][1]() for pelt_name in pelt_dict], centered=True, blocked=True, silent=True)
         shop_display = f'{price_tags}{pelt_displays}'
-        cart = QoL.print_deck(new_pelts)
+        cart = QoL.print_deck(new_pelts, silent=True)
 
         # print the shop
         if campaign.teeth == 1 : 
