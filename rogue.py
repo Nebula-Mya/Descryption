@@ -796,6 +796,19 @@ def merge_cards(campaign: rogue_campaign) -> None: #REMINDME: format visuals
 
             break
 
+    prev_types: list[type[card.BlankCard]] = []
+
+    for c in campaign.player_deck.cards :
+        if type(c) in prev_types :
+            QoL.clear()
+            QoL.print_deck(campaign.player_deck.cards, numbered=True, centered=True, blocked=True)
+            print('\n')
+            print(QoL.center_justified("You don't have any cards to merge. (press enter to continue)"))
+
+            return
+        
+        prev_types.append(type(c))
+
     gameplay(campaign) # add flavor text, context, etc.
 
 def pelt_shop(campaign: rogue_campaign) -> None: #REMINDME: format visuals
