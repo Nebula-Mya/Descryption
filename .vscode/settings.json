@@ -2,12 +2,12 @@
     "python.testing.unittestArgs": [
         "-v",
         "-s",
-        ".unittest",
+        "./testing",
         "-p",
-        "test_*.py",
-        "*_test.py"
+        "*unit*.py"
     ],
     "python.testing.unittestEnabled": true,
     "python.analysis.typeCheckingMode": "basic",
-    "python.analysis.autoImportCompletions": true
+    "python.analysis.autoImportCompletions": true,
+    "python.testing.pytestEnabled": false
 }

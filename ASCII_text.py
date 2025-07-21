@@ -441,25 +441,3 @@ _|_ //{life_lines[0]} |
 --------------'""",
     }
 }
-
-if __name__ == '__main__' :
-    QoL.clear()
-    term_cols = os.get_terminal_size().columns
-    overkill = 3
-    score = {'player': 6, 'opponent': 2}
-    card_gaps = (term_cols*55 // 100) // 5 - 15
-    if card_gaps <= 0 :
-        score_gap = 28
-    else :
-        score_gap = card_gaps*9 + 28
-    print_title()
-    print('-'*term_cols)
-    print_win(overkill)
-    print('-'*term_cols)
-    print_lose()
-    print('-'*term_cols)
-    print_scales(score, score_gap)
-    print('-'*term_cols)
-    print_WiP()
-    print('-'*term_cols)
-    print_candelabra((2, 3, 0))

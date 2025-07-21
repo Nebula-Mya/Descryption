@@ -450,13 +450,3 @@ def main(deck_size: int, hand_size: int, Leshy_play_count_median: int, Leshy_pla
             
     if print_results : input('Press enter to continue.')
     return (win, winner, overkill, deck_out)
-
-if __name__ == '__main__' :
-    QoL.clear()
-    deck_size = 20
-    hand_size = 5
-    Leshy_play_count_median = 2
-    Leshy_play_count_variance = 1
-    Leshy_in_strategy_chance = 75
-    Leshy_strat_change_threshold = 3
-    main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold)

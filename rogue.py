@@ -1669,7 +1669,7 @@ def beat_leshy(campaign: rogue_campaign) -> None: #REMINDME: format visuals
 
     gameplay() # add flavor text, context, etc.
 
-def __event_weights(campaign: rogue_campaign, previous_events: list[int]) -> list[int]: # outside of split_road for testing purposes
+def event_weights(campaign: rogue_campaign, previous_events: list[int]) -> list[int]: # outside of split_road for testing purposes
     '''
     generate weights for event paths
     
@@ -1687,13 +1687,26 @@ def __event_weights(campaign: rogue_campaign, previous_events: list[int]) -> lis
 
     # set up variables
     weights = [
-        bool_to_bin(1 not in previous_events), # card choice
-        bool_to_bin(2 not in previous_events and len(campaign.player_deck) > 4 and any(card_.has_sigil('') for card_ in campaign.player_deck.cards)), # sigil sacrifice
-        bool_to_bin(any(type(card_1) == type(card_2) and card_1 != card_2 for card_1 in campaign.player_deck.cards for card_2 in campaign.player_deck.cards) and 3 not in previous_events and len(campaign.player_deck) > 4), # merge cards
-        bool_to_bin(4 not in previous_events), # pelt shop
-        bool_to_bin(any(type(card_) in [card_library.WolfPelt, card_library.RabbitPelt, card_library.GoldenPelt] for card_ in campaign.player_deck.cards) and 5 not in previous_events), # card shop
-        bool_to_bin(6 not in previous_events), # break rocks
-        bool_to_bin(7 not in previous_events), # campfire
+        # card choice
+        bool_to_bin(1 not in previous_events), 
+        
+        # sigil sacrifice
+        bool_to_bin(2 not in previous_events and len(campaign.player_deck) > 4 and any(card_.has_sigil('') for card_ in campaign.player_deck.cards)), 
+        
+        # merge cards
+        bool_to_bin(any(type(card_1) == type(card_2) and card_1 != card_2 for card_1 in campaign.player_deck.cards for card_2 in campaign.player_deck.cards) and 3 not in previous_events and len(campaign.player_deck) > 4), 
+        
+        # pelt shop
+        bool_to_bin(4 not in previous_events), 
+        
+        # card shop
+        bool_to_bin(any(type(card_) in [card_library.WolfPelt, card_library.RabbitPelt, card_library.GoldenPelt] for card_ in campaign.player_deck.cards) and 5 not in previous_events), 
+        
+        # break rocks
+        bool_to_bin(6 not in previous_events), 
+        
+        # campfire
+        bool_to_bin(7 not in previous_events), 
     ]
     # 50% chance for card battle
     weights.append(bool_to_bin(8 not in previous_events and len(campaign.player_deck) > 3, int_=sum(weights)))
@@ -1721,7 +1734,7 @@ def split_road(campaign: rogue_campaign) -> None: #REMINDME: format visuals
             list[str, str, int]: the event to run, the function to run it, and the number of the event
         '''
         # set up variables
-        weights = __event_weights(campaign, previous_events)
+        weights = event_weights(campaign, previous_events)
 
         match random.choices(range(1, 9), weights=weights)[0] :
             case 1 : return 'A choice of cards', 'card_choice(campaign)', 1
@@ -1819,7 +1832,7 @@ def main() -> None: # coordinates the game loop, calls split_road, manages losse
                     beat_leshy(campaign)
                     return
     ###         if it is, run boss event according to the current level and check if player has won
-                elif (campaign.level == 0 and bosses.boss_fight_prospector(campaign)) or (campaign.level == 1 and bosses.boss_fight_angler(campaign)) or (campaign.level == 2 and bosses.boss_fight_trapper_trader(campaign)) :
+                elif (campaign.level == 0 and bosses.boss_fight_prospector(campaign)) or (campaign.level == 1 and bosses.boss_fight_angler(campaign)) or (campaign.level == 2 and bosses.boss_fight_janus(campaign)) :
     ###             if they have, update the level, reset the progress, and print flavor text for the new area
                     campaign.level += 1
                     campaign.progress = 0
@@ -1849,124 +1862,4 @@ def main() -> None: # coordinates the game loop, calls split_road, manages losse
                 campaign.player_deck.refresh_ASCII()
 
 if __name__ == '__main__' :
-    import sys
-
-    # run main or tests based on command line arguments
-    if len(sys.argv) == 1 : main()
-    else :
-        def print_info(command_arg: str) -> None:
-            if command_arg in ['death_card', 'lost', 'win'] : # print death cards
-                current_death_cards: list[card.BlankCard] = [card_library.PlyrDeathCard1(), card_library.PlyrDeathCard2(), card_library.PlyrDeathCard3()]
-
-                # print the menu
-                print()
-                print(QoL.center_justified('Current death cards: '))
-                QoL.print_deck(current_death_cards, centered=True)
-            else :
-                print()
-                print(QoL.center_justified('Current deck: '))
-                campaign.print_deck()
-        
-        def __test_split_odds(campaign: rogue_campaign) -> None:
-            weights = __event_weights(campaign, [])
-            weight_labels = [
-                "card_choice",
-                "sigil_sacrifice",
-                "merge_cards",
-                "pelt_shop",
-                "card_shop",
-                "break_rocks",
-                "campfire",
-                "card_battle"
-            ]
-
-            total = str(sum(weights))
-            print()
-            for i in range(0,8) :
-                print(weight_labels[i] + " : " + str(weights[i]) + "/" + total)
-
-            QoL.ping(locals() | campaign.var_dict() | {'Ouroboros level': card_library.Ouroboros.oro_level})
-
-        # set up variables
-        if sys.argv[1] == 'split_odds' :
-            deck_size = random.randint(2,10)
-        else :
-            deck_size = 20
-        campaign = rogue_campaign(duel.deck_gen(card_library.Poss_Playr, deck_size).cards, 0, 2)
-        if sys.argv[1] in ['shop', 'pelt', 'split'] :
-            campaign.add_card(card_library.RabbitPelt())
-            campaign.add_card(card_library.WolfPelt())
-            campaign.add_card(card_library.GoldenPelt())
-            campaign.add_teeth(10)
-
-        # get death cards if necessary
-        if sys.argv[1] in ['death_card', 'lost', 'win'] :
-            data_to_read = [
-                ['death cards', 'first', 'name'],
-                ['death cards', 'first', 'attack'],
-                ['death cards', 'first', 'life'],
-                ['death cards', 'first', 'cost'],
-                ['death cards', 'first', 'sigils'],
-                ['death cards', 'first', 'easter'],
-                ['death cards', 'second', 'name'],
-                ['death cards', 'second', 'attack'],
-                ['death cards', 'second', 'life'],
-                ['death cards', 'second', 'cost'],
-                ['death cards', 'second', 'sigils'],
-                ['death cards', 'second', 'easter'],
-                ['death cards', 'third', 'name'],
-                ['death cards', 'third', 'attack'],
-                ['death cards', 'third', 'life'],
-                ['death cards', 'third', 'cost'],
-                ['death cards', 'third', 'sigils'],
-                ['death cards', 'third', 'easter']
-            ]
-            death_card_data = QoL.read_data(data_to_read)
-            death_card_write = [(data_to_read[ind], death_card_data[ind]) for ind in range(len(data_to_read))]
-
-        if sys.argv[1] == 'split_odds' :
-            if random.randint(0,4) == 0 :
-                campaign.add_card(card_library.GoldenPelt())
-            if random.randint(0,4) > 0 :
-                card_: card.BlankCard
-                for card_ in campaign.player_deck.cards :
-                    # card_.sigils[1] = card_.sigils[0]
-                    # card_.sigils[0]='airborne'
-                    card_.sigils = ('airborne', card_.sigils[0])
-                    card_.update_ASCII()
-            campaign.add_teeth(random.randint(0,3))
-            
-            print_info(sys.argv[1])
-            print("teeth : " + str(campaign.teeth))
-            __test_split_odds(campaign)
-        else :
-            # print deck or death cards
-            print_info(sys.argv[1])
-
-            input(QoL.center_justified('Press enter to continue...').rstrip())
-
-            match sys.argv[1] :
-                case 'duel' : card_battle(campaign)
-                case 'choice' : card_choice(campaign)
-                case 'stones' : sigil_sacrifice(campaign)
-                case 'merge' : merge_cards(campaign)
-                case 'pelt' : pelt_shop(campaign)
-                case 'shop' : card_shop(campaign)
-                case 'rocks' : break_rocks(campaign)
-                case 'campfire' : campfire(campaign)
-                case 'death_card' : add_death_card(campaign)
-                case 'lost' : lost_run(campaign)
-                case 'win' : beat_leshy(campaign)
-                case 'split' : split_road(campaign)
-                case 'boss_1' : bosses.boss_fight_prospector(campaign)
-                case 'boss_2' : bosses.boss_fight_angler(campaign)
-                case 'boss_3' : bosses.boss_fight_trapper_trader(campaign)
-                case 'boss_4' : bosses.boss_fight_leshy(campaign)
-                case _ : pass
-
-            print_info(sys.argv[1])
-
-        # restore death cards
-        if sys.argv[1] in ['death_card', 'lost', 'win'] :
-            input(QoL.center_justified('Press Enter to restore death cards...').rstrip())
-            QoL.write_data(death_card_write)
+    main()

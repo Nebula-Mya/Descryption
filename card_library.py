@@ -484,8 +484,8 @@ Canines: list[type[card.BlankCard]] = [Wolf, Bloodhound, Coyote]
 Hooved: list[type[card.BlankCard]] = [BlackGoat, MooseBuck, Pronghorn, PackMule]
 Squirrels: list[type[card.BlankCard]] = [Squirrel]
 
-# categories for Leshy's AI
-AI_categories: list[dict[str, Any]] = [
+# categories for Leshy's dynamic behavior
+strat_categories: list[dict[str, Any]] = [
     # good against airbornes (glass cannons and those with mighty leap)
     {
         'category' : 'anti_air', 
@@ -543,25 +543,3 @@ AI_categories: list[dict[str, Any]] = [
         'stats' : (lambda self_attack, self_life, opp_attack, opp_life : self_attack >= opp_life)
         },
 ]
-
-if __name__ == '__main__' :
-    import deck
-    Leshy_cardlist = deck.Deck([])
-    for cost in Poss_Leshy :
-        for card_ in Poss_Leshy[cost] :
-            Leshy_cardlist.add_card(card_(True)) # type: ignore
-
-    Player_cardlist = deck.Deck([])
-    for cost in Poss_Playr :
-        for card_ in Poss_Playr[cost] :
-            if card_ not in Player_cardlist.cards :
-                Player_cardlist.add_card(card_())
-
-    QoL.clear()
-    print(QoL.center_justified('Leshy Card List'))
-    print()
-    print(Leshy_cardlist)
-    print()
-    print(QoL.center_justified('Player Card List'))
-    print()
-    print(Player_cardlist)

@@ -84,7 +84,7 @@ def card_battle(campaign: rogue.rogue_campaign, Poss_Leshy: list[type[card.Blank
     
     return gameplay(campaign, Poss_Leshy) # add flavor text, context, etc.
 
-##### bosses will use the basic AI, but with higher difficulty settings and have their unique mechanics (pickaxe, ship, extra sigils, moon)
+##### bosses will use the normal decision making, but with higher difficulty settings and have their unique mechanics (pickaxe, ship, extra sigils, moon)
 
 ##### bosses essentially work as two duels, but winning the first duel triggers a special event (the bosses unique mechanic) and the second duel starts from where the first left off
 
@@ -738,7 +738,7 @@ def boss_fight_angler(campaign: rogue.rogue_campaign)  -> bool: # boss fight 2
 
     return gameplay(campaign)[1] == 'player' # add flavor text, context, etc.
 
-def boss_fight_trapper_trader(campaign: rogue.rogue_campaign)  -> bool: # boss fight 3
+def boss_fight_janus(campaign: rogue.rogue_campaign)  -> bool: # boss fight 3
     def gameplay(campaign: rogue.rogue_campaign) -> tuple[bool, str, int, bool] :
         pre_boss_flavor(campaign)
 

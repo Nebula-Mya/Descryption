@@ -132,18 +132,6 @@ class Deck() :
 
     def __len__(self) :
         return len(self.cards)
-
-if __name__ == '__main__' :
-    import card_library
-    import duel
-
-    test_deck_player = duel.deck_gen(card_library.Poss_Playr, 16)
-    test_deck_opponent = duel.deck_gen(card_library.Poss_Leshy, 16)
-
-    # display decks
-    QoL.clear()
-    print('Possible player deck:')
-    print(test_deck_player)
-    print()
-    print('Possible opponent deck:')
-    print(test_deck_opponent)
+    
+    def __contains__(self, x) -> bool:
+        return x in self.cards

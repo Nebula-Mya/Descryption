@@ -620,26 +620,3 @@ def random_card(possible_cards: list[type[card.BlankCard]] | dict[int, list[type
 
     # return
     return copy.deepcopy(template_card(blank_cost=hidden_cost))
-
-if __name__ == '__main__' :
-    clear()
-
-    # get original values
-    [play_var, oro_attack] = read_data([['settings', 'difficulty', 'leshy plays variance'], ['ouroboros', 'attack']])
-
-    # change values
-    data_to_write = [
-        (['settings', 'difficulty', 'leshy plays variance'], 5),
-        (['ouroboros', 'attack'], 10)
-    ]
-    write_data(data_to_write)
-
-    read_data([['settings']])
-    read_data([['settings', 'hand size'], ['ouroboros', 'attack']])
-
-    # return to original values
-    data_to_write = [
-        (['settings', 'difficulty', 'leshy plays variance'], play_var),
-        (['ouroboros', 'attack'], oro_attack)
-    ]
-    write_data(data_to_write)

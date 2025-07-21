@@ -395,11 +395,3 @@ class BlankCard() :
         '''
         self.hooked = not self.hooked
         self.update_ASCII()
-
-if __name__ == "__main__" :
-    testblank = BlankCard(sigils=('???',''), cost=17, species="foo")
-    print()
-    print('Blank Card')
-    print(testblank.text_lines)
-    print(len(testblank.text_lines))
-    testblank.explain()

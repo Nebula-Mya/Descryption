@@ -668,20 +668,3 @@ on_damages = ['mighty leap', 'waterborne', 'bees within']
 on_sacrifices = ['many lives', 'unkillable']
 movers = ['lane shift right','lane shift left','hefty (right)','hefty (left)']
 misc = ['corpse eater', 'worthy sacrifice'] # these need to be hardcoded
-
-if __name__ == '__main__':
-    import card
-    import QoL
-    import os
-    QoL.clear()
-    term_cols = os.get_terminal_size().columns
-    card_gaps = (term_cols*55 // 100) // 5 - 15
-    tab = ' '*(card_gaps // 2)
-    for key in Dict:
-        if key == '':
-            continue
-        print(tab + QoL.title_case(key) + ':')
-        example = card.BlankCard(sigils=(key, ''))
-        example.species = 'EXAMPLE CARD'
-        example.explain()
-        print()
