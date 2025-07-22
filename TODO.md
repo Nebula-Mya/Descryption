@@ -1,4 +1,4 @@
- - [ ] create event node class (use enum for event type)
+ - [X] create event node class (use enum for event type)
 
    - 1-3 outgoing, 1-2 ingoing
 
