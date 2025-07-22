@@ -14,7 +14,7 @@
   - [X] rogue.py
   - [X] sigils.py
   - [X] remove any easily removed Any annotations
-- [ ] allow sigil_sacrifice to replace sigils
-- [ ] allow sigil_sacrifice to sacc cards without sigils
+- [X] allow sigil_sacrifice to replace sigils
+- [X] allow sigil_sacrifice to sacc cards without sigils
 - [X] prevent softlock if merging with no duplicates
 - [X] refactor testing into unit tests

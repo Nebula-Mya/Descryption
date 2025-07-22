@@ -1,4 +1,3 @@
-import random
 import unittest
 
 import sys
@@ -7,7 +6,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../'
 
 import card
 import deck
-import duel
 import rogue
 import card_library
 import QoL

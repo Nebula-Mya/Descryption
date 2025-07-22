@@ -1,13 +1,12 @@
-import random
 import unittest
 
 import sys
 import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 
 import card
 import card_library
 import duel
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 import QoL
 import rogue
 import bosses

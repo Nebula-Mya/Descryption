@@ -390,6 +390,132 @@ def card_choice(campaign: rogue_campaign) -> None:
 
     gameplay(campaign) # add flavor text, context, etc.
 
+def get_sigils(card1: card.BlankCard, card2: card.BlankCard) -> tuple[str, str]: 
+    '''
+    allows the player to choose which sigil to transfer
+
+    Arguments:
+        card1: a card to contribute sigil(s) (card object)
+        card2: a card to contribute sigil(s) (card object)
+        
+    Returns:
+        tuple(str, str): the sigils of the resulting card
+    '''
+    same_sigil: Callable[[str, str], bool] = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) # check if two sigils are the same or variations of the same sigil
+
+    # find all possible options, allow user to choose
+    # if reciever has sigils R1, R2 and sacrifice has sigils S1, S2, then possibilities are:
+    #     S1, S2 (if reciever is empty)
+    #     R1, R2 (if sacrifice is empty)
+    #     R1, S1 (if none are empty)
+    #     R2, S1 (if reciever is full)
+    #     R1, S2 (if sacrifice is full)
+    #     R2, S2 (if both are full)
+    # probs ignore any repeat combos
+    poss_combos: list[tuple[str, str]] = []
+    match card1.sigils, card2.sigils :
+        case ("",""), ("","") :
+            return ("","")
+
+        case (r1, r2), ("", "") :
+            return (r1, r2)
+        
+        case ("", ""), (s1, s2) :
+            return (s1, s2)
+        
+        case (r1, ""), (s1, "") :
+            if same_sigil(r1, s1) : return (r1, "")
+            return (r1, s1)
+        
+        case (r1, r2), (s1, "") :
+            # r1 and r2 can't be the same
+            if same_sigil(r1, s1) : return (r2, s1)
+            elif same_sigil(r2, s1) : return (r1, s1)
+            else : 
+                poss_combos.append((r1, s1))
+                poss_combos.append((r2, s1))
+
+        case (r1, ""), (s1, s2) :
+            # s1 and s2 can't be the same
+            if same_sigil(r1, s1) : return (r1, s2)
+            elif same_sigil(r1, s2) : return (r1, s1)
+            else : 
+                poss_combos.append((r1, s1))
+                poss_combos.append((r1, s2))
+
+        case (r1, r2), (s1, s2) :
+            # r1 != r2
+            # s1 != s2
+            if same_sigil(r1, s1) : 
+                # r1 == s1
+                # r1 != s2 (s1 != s2)
+                # r2 != s1 (r1 != r2)
+                # r2 ?= s2
+                poss_combos.append((r1,s2))
+                poss_combos.append((r2,s1))
+                if not same_sigil(r2, s2) :
+                    poss_combos.append((r2, s2))
+
+            elif same_sigil(r1, s2) :
+                # r1 != s1
+                # r1 == s2
+                # r2 ?= s1
+                # r2 != s2 (r1 != r2)
+                poss_combos.append((r1, s1))
+                poss_combos.append((r2, s2))
+                if not same_sigil(r2, s1) :
+                    poss_combos.append((r2, s1))
+
+            elif same_sigil(r2, s1) :
+                # r1 != s1
+                # r1 != s2
+                # r2 == s1
+                # r2 != s2 (s1 != s2)
+                poss_combos.append((r1, s1))
+                poss_combos.append((r1, s2))
+                poss_combos.append((r2, s2))
+
+            elif same_sigil(r2, s2) :
+                # r1 != s1
+                # r1 != s2
+                # r2 != s1
+                # r2 == s2 (s1 != s2)
+                poss_combos.append((r1, s1))
+                poss_combos.append((r1, s2))
+                poss_combos.append((r2, s1))
+
+            else :
+                poss_combos.append((r1, s1))
+                poss_combos.append((r1, s2))
+                poss_combos.append((r2, s1))
+                poss_combos.append((r2, s2))
+
+    # print sacrifice explanation
+    invalid_choice = False
+
+    while True :
+        # print the sacrifice card
+        QoL.clear()
+        card2.explain()
+
+        if invalid_choice :
+            print(QoL.center_justified('Invalid choice'))
+            invalid_choice = False
+        else :
+            print()
+            print()
+
+        i = 0
+        for combo in poss_combos :
+            i += 1
+            print("{idx}) {s1}, {s2}".format(idx=i, s1=combo[0], s2=combo[1]))
+
+        (is_int, sigil_index) = QoL.reps_int( input(QoL.center_justified(f'What sigil combination would you like?').rstrip() + ' ' ), -1)
+
+        if is_int and sigil_index in range(i) :
+            return poss_combos[sigil_index]
+        invalid_choice = True
+
 def sigil_sacrifice(campaign: rogue_campaign) -> None: #REMINDME: format visuals
     '''
     allows the player to sacrifice a card to give its sigil to another card
@@ -441,15 +567,8 @@ def sigil_sacrifice(campaign: rogue_campaign) -> None: #REMINDME: format visuals
         Returns:
             the card to sacrifice
         '''
-        # set up functions
-        same_sigil: Callable[[str, str], bool] = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) # check if two sigils are the same or variations of the same sigil
-        good_sigil: Callable[[card.BlankCard, str], bool] = lambda reciever, sigil : not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be transferred
-        poss_transfers: Callable[[card.BlankCard, card.BlankCard], int] = lambda reciever, sacrifice : sum([good_sigil(reciever, sigil) for sigil in sacrifice.sigils]) # check how many sigils can be transferred
-        good_sigils: Callable[[card.BlankCard, card.BlankCard], bool] = lambda reciever, sacrifice : poss_transfers(reciever, sacrifice) > 0 # check if any sigils can be transferred
-
-        # set up variables
         invalid_choice = False
-        deck_can_sacc: list[card.BlankCard] = QoL.sort_deck([card_ for card_ in deck_list if good_sigils(reciever, card_) and card_.__str__ != reciever.__str__])
+        deck_can_sacc: list[card.BlankCard] = QoL.sort_deck([card_ for card_ in deck_list if card_ != reciever])
 
         while True :
             # print the player's deck with only cards that have sigils
@@ -470,60 +589,7 @@ def sigil_sacrifice(campaign: rogue_campaign) -> None: #REMINDME: format visuals
 
             return deck_can_sacc[card_index]
 
-    def get_sigil_slot(reciever: card.BlankCard, sacrifice: card.BlankCard) -> list[int]: #TODO: update for full reciever and/or empty sacrifice
-        '''
-        allows the player to choose which sigil to transfer
-        
-        Arguments:
-            reciever: the card to receive the sigil (card object)
-            sacrifice: the card to sacrifice (card object)
-            
-        Returns:
-            list: the indexes of the sigils to transfer
-        '''
-        # set up variables
-        def sigil_name(sigil: str) -> str:
-            match sigil :
-                case '' : return 'No Sigil'
-                case _ if 'hefty' in sigil : return 'Hefty'
-                case _ if 'lane shift' in sigil : return 'Sprinter'
-                case _ : return QoL.title_case(sigil)
-        sigil_names = [sigil_name(sacrifice.sigils[i]) for i in range(2)]
-
-        # set up functions
-        same_sigil: Callable[[str, str], bool] = lambda sigil_1, sigil_2 : sigil_1 != '' and (sigil_1 == sigil_2 or all('lane shift' in sigil for sigil in [sigil_1, sigil_2]) or all('hefty' in sigil for sigil in [sigil_1, sigil_2])) # check if two sigils are the same or variations of the same sigil
-        good_sigil: Callable[[card.BlankCard, str], bool] = lambda reciever, sigil : sigil != '' and not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be transferred
-        poss_transfers: Callable[[card.BlankCard, card.BlankCard], int] = lambda reciever, sacrifice : sum([good_sigil(reciever, sigil) for sigil in sacrifice.sigils]) # check how many sigils can be transferred
-
-        match poss_transfers(reciever, sacrifice) : #FIXME: allow choosing which sigil is replaced if full reciever
-            case 2 :
-                # both sigils can be transferred
-                if reciever.sigils == ['', ''] : return [0,1]
-
-                # print sacrifice explanation
-                invalid_choice = False
-
-                while True :
-                    # print the sacrifice card
-                    QoL.clear()
-                    sacrifice.explain()
-
-                    if invalid_choice :
-                        print(QoL.center_justified('Invalid choice'))
-                        print()
-                        invalid_choice = False
-
-                    (is_int, sigil_index) = QoL.reps_int( input(QoL.center_justified(f'Would you like to transfer 1) {sigil_names[0]} or 2) {sigil_names[1]}? ').rstrip() + ' ' ), -1)
-
-                    if is_int and sigil_index in range(2) :
-                        return [sigil_index]
-                    invalid_choice = True
-
-            case 1 : return [1 - good_sigil(reciever, sacrifice.sigils[0])]
-
-            case _ : return [] # raise ValueError('No sigils can be transferred')
-
-    def confirm_choice(reciever: card.BlankCard, sacrifice: card.BlankCard, sigil_indexes: list[int]) -> bool: 
+    def confirm_choice(reciever: card.BlankCard, sacrifice: card.BlankCard, result_sigils: tuple[str,str]) -> bool: 
         '''
         allows the player to confirm their choice of cards and sigils
         
@@ -535,11 +601,6 @@ def sigil_sacrifice(campaign: rogue_campaign) -> None: #REMINDME: format visuals
         Returns:
             bool: True if the player confirms their choice, False if they do not
         '''
-        # set up variables
-        if len(sigil_indexes) == 2 : result_sigils = sacrifice.sigils
-        elif len(sigil_indexes) == 0 : result_sigils = reciever.sigils
-        elif reciever.sigils[0] == '' : result_sigils = (sacrifice.sigils[sigil_indexes[0]], reciever.sigils[1])
-        else : result_sigils = (reciever.sigils[0], sacrifice.sigils[sigil_indexes[0]])
         result_card = card.BlankCard(species=reciever.species, cost=reciever.saccs, attack=reciever.base_attack, life=reciever.base_life, sigils=result_sigils)
 
         # generate the equation
@@ -569,24 +630,26 @@ def sigil_sacrifice(campaign: rogue_campaign) -> None: #REMINDME: format visuals
             sacrifice = get_sacrifice(deck_list, reciever)
 
             # if sacrifice has 2 sigils and the recieving card doesn't have two open slots, ask which sigil to transfer
-            sigil_indexes = get_sigil_slot(reciever, sacrifice)
+            sigil_combo = get_sigils(reciever, sacrifice)
 
             # confirm the sacrifice (visually show the sigil being transferred as an addition equation)
-            if not confirm_choice(reciever, sacrifice, sigil_indexes) :
+            if not confirm_choice(reciever, sacrifice, sigil_combo) :
                 continue
 
             # add the sigil to the card
-            for index in sigil_indexes : #FIXME: allow replacing (opt argument with new sigil index)
-                campaign.add_sigil(reciever, sacrifice.sigils[index])
+            reciever.sigils = sigil_combo
 
             # remove the sacrificed card from the deck
             campaign.remove_card(sacrifice)
+
+            campaign.player_deck.refresh_ASCII()
 
             break
 
     gameplay(campaign) # add flavor text, context, etc.
 
 def merge_cards(campaign: rogue_campaign) -> None: #REMINDME: format visuals
+    #FIXME: use sigil helpers from sacrifice
     '''
     allows the player to merge two cards of the same species into one, with the new card having combined stats and sigils
     
@@ -667,69 +730,6 @@ def merge_cards(campaign: rogue_campaign) -> None: #REMINDME: format visuals
                 continue
 
             return same_species[card_index]
-
-    def get_sigils(card_1: card.BlankCard, card_2: card.BlankCard) -> tuple[str, str]:
-        '''
-        allows the player to choose which sigils to keep
-        
-        Arguments:
-            card_1: the first card to merge (card object)
-            card_2: the second card to merge (card object)
-            
-        Returns:
-            the sigils to keep
-        '''
-        def sigil_name(sigil: str) -> str:
-            match sigil :
-                case '' : return 'No Sigil'
-                case _ if 'hefty' in sigil : return 'Hefty'
-                case _ if 'lane shift' in sigil : return 'Sprinter'
-                case _ : return QoL.title_case(sigil)
-
-        unique_sigils: list[str] = []
-        for sigil in card_1.sigils + card_2.sigils :
-            if sigil != '' and not any(sigil_name(sigil) == sigil_name(sigil_) for sigil_ in unique_sigils) :
-                unique_sigils.append(sigil)
-
-        if len(unique_sigils) <= 2 : # if there are 2 or fewer unique sigils, return all sigils
-            if len(unique_sigils) < 2 : # make sure there are 2 sigils
-                unique_sigils += [''] * (2 - len(unique_sigils))
-            
-            return (unique_sigils[0], unique_sigils[1])
-        
-        # set up variables
-        all_sigils = [sigil for sigil in card_1.sigils + card_2.sigils if sigil != '']
-        options = '\n' + '\n'.join([f'{i+1}. {sigil_name(sigil)}: {sigils.Dict[sigil][1]}' for i, sigil in enumerate(all_sigils)]) + '\n'
-        invalid_choice = False
-        iter = -1
-        iter_names = ['first', 'second']
-        final_sigils: list[str] = []
-
-        while True :
-            # print the sigils and their effects
-            QoL.clear()
-            print(QoL.center_justified('Sigils to choose from:'))
-            print(QoL.center_justified(options, blocked=True))
-
-            if invalid_choice :
-                print(QoL.center_justified('Invalid choice'))
-                print()
-                invalid_choice = False
-            else :
-                iter += 1
-
-            # get user input
-            sigil_index = input(QoL.center_justified(f'Enter the number of the {iter_names[iter]} sigil to keep:').rstrip() + ' ')
-            (is_int, sigil_index) = QoL.reps_int(sigil_index, -1)
-
-            if not is_int or sigil_index not in range(len(all_sigils)) :
-                invalid_choice = True
-                continue
-
-            final_sigils.append(all_sigils[sigil_index])
-
-            if iter > 0 :
-                return (final_sigils[0], final_sigils[1])
 
     def confirm_choice(card_1: card.BlankCard, card_2: card.BlankCard, result_sigils: tuple[str, str]) -> tuple[bool, card.BlankCard]:
         '''
