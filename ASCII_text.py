@@ -1,8 +1,11 @@
+from __future__ import annotations
+from typing import Callable # prevent type hints needing import at runtime
+
 import QoL
 import os
 import math
 
-def print_title() :
+def print_title() -> None :
     title = '''
 ████████▄     ▄████████    ▄████████   ▄████████    ▄████████  ▄██   ▄      ▄███████▄     ███      ▄█   ▄██████▄   ███▄▄▄▄  
 ███   ▀███   ███    ███   ███    ███  ███    ███   ███    ███  ███   ██▄   ███    ███ ▀█████████▄ ███  ███    ███  ███▀▀▀██▄
@@ -17,7 +20,7 @@ def print_title() :
 
     print(QoL.center_justified(title, blocked=True))
 
-def print_scales(score, score_gap) :
+def print_scales(score: dict[str, int], score_gap: int) -> None :
     player_adv = max(0, score['player'] - score['opponent'])
     opponent_adv = max(0, score['opponent'] - score['player'])
     if player_adv :
@@ -38,7 +41,7 @@ def print_scales(score, score_gap) :
 {spc}    /___\\'''.format(plr=player_weight, lsh=opponent_weight, spc=' '*score_gap)
     print(scales)
 
-def print_win(overkill=0) :
+def print_win(overkill: int=0)  -> None:
     '''
     Prints the ASCII art for the win screen.
     
@@ -74,7 +77,7 @@ __/\\\\\\______________/\\\\\\__/\\\\\\\\\\\\\\\\\\\\\\__/\\\\\\\\\\_____/\\\\\\
     
     print(QoL.center_justified(win, blocked=True))
 
-def print_lose(deck_out=False) :
+def print_lose(deck_out: bool=False)  -> None:
     '''
     Prints the ASCII art for the lose screen.
     
@@ -110,7 +113,7 @@ __/\\\\\\___________________/\\\\\\\\\\__________/\\\\\\\\\\\\\\\\\\\\\\____/\\\
     
     print(QoL.center_justified(lose, blocked=True))
 
-def print_WiP() :
+def print_WiP() -> None :
     WiP = '''
  __________________________
 |System             |–|‡‡|×|
@@ -123,17 +126,22 @@ def print_WiP() :
 
     print(QoL.center_justified(WiP, blocked=True))
 
-def print_candelabra(wick_states) :
+def print_candelabra(wick_states: tuple[int, int, int])  -> None:
     '''
     Prints the ASCII art for the candelabra.
     
     Arguments:
-        wick_states: the states of the wicks in the order middle, right, left [int, int, int]
+        wick_states: the states of the wicks in the order middle, right, left (int, int, int)
             0 = unlit
             1 = lit (newly)
             2 = lit (continuing)
             3 = extinguished
     '''
+
+    for state in wick_states :
+        if state not in range(0,4) :
+            raise ValueError
+        
     wick_sprites = [
         [ # unlit
             '       ',
@@ -146,7 +154,7 @@ def print_candelabra(wick_states) :
         [ # lit (newly)
             '  /(   ',
             ' ( ;)ˎ ',
-            ' \(_)/ ',
+            ' \\(_)/ ',
             'ˏ₋-|-₋ˎ',
             '|ˋ⁻⁻⁻ˊ|',
             '|     |'
@@ -154,7 +162,7 @@ def print_candelabra(wick_states) :
         [ # lit (continuing)
             '  /(   ',
             ' ( ;)ˎ ',
-            ' \(_)/ ',
+            ' \\(_)/ ',
             'ˏ₋-|-₋ˎ',
             '|ˋʅȷᵕȣ|',
             '| ₍₎ ᵕ|'
@@ -215,7 +223,7 @@ def print_candelabra(wick_states) :
 
     print(QoL.center_justified(candelabra.format(*wicks), blocked=True))
 
-def split_moon_lines(string) :
+def split_moon_lines(string: str) -> dict[str, list[list[str]]]:
     '''
     splits the moon card's inside into 20 lines of various characters
 
@@ -239,10 +247,10 @@ def split_moon_lines(string) :
     term_cols = os.get_terminal_size().columns
     gaps = (term_cols*55 // 100) // 5 - 15
 
-    split_string = lambda string, length : (string[:max(length, 0)], string[max(length, 0):])
+    split_string: Callable[[str, int], tuple[str, str]] = lambda string, length : (string[:max(length, 0)], string[max(length, 0):])
 
     # set up variables
-    split_lines = {
+    split_lines: dict[str, list[list[str]]] = {
         'cards' : [],
         'connectors' : []
     }
@@ -268,7 +276,7 @@ def split_moon_lines(string) :
     
     return split_lines
 
-def moon_inner_str() :
+def moon_inner_str() -> str:
     gap_num = (os.get_terminal_size().columns*55 // 100) // 5 - 15
     gap = ' '*gap_num
     gap_half = ' '*(gap_num // 2)
@@ -298,7 +306,7 @@ def moon_inner_str() :
 
     return moon_str.format(gap=gap, gap_half=gap_half, gap_half_up=gap_half_up, gap_center=gap_center, connect=connect)
     
-def moon_life_lines(life) :
+def moon_life_lines(life: int) -> list[str] :
     '''
     generates a 7x3 ASCII representation of the moon's life (2 digits)
 
@@ -433,25 +441,3 @@ _|_ //{life_lines[0]} |
 --------------'""",
     }
 }
-
-if __name__ == '__main__' :
-    QoL.clear()
-    term_cols = os.get_terminal_size().columns
-    overkill = 3
-    score = {'player': 6, 'opponent': 2}
-    card_gaps = (term_cols*55 // 100) // 5 - 15
-    if card_gaps <= 0 :
-        score_gap = 28
-    else :
-        score_gap = card_gaps*9 + 28
-    print_title()
-    print('-'*term_cols)
-    print_win(overkill)
-    print('-'*term_cols)
-    print_lose()
-    print('-'*term_cols)
-    print_scales(score, score_gap)
-    print('-'*term_cols)
-    print_WiP()
-    print('-'*term_cols)
-    print_candelabra([2, 3, 0])

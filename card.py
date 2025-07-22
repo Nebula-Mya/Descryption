@@ -1,3 +1,6 @@
+from __future__ import annotations # prevent type hints needing import at runtime
+from typing import TYPE_CHECKING
+
 import sigils
 import os
 import QoL
@@ -11,7 +14,7 @@ class BlankCard() :
         cost : number of sacrifices needed for summoning (int)
         attack : base attack stat (int)
         life : base life stat (int)
-        sigils : the sigils the card currently has (list[str])
+        sigils : the sigils the card currently has (tuple[str, str])
         status : whether the card is alive or dead (str)
         zone : the zone the card is in, with 0 as default (int)
         blank_cost : whether the card has a blank cost (bool)
@@ -45,30 +48,26 @@ class BlankCard() :
     Functions :
         print() : prints self.name
     '''
-    def __init__(self, species = '', cost = 0, attack = 0, life = 0, sigils = None, status = 'alive', zone = 0, blank_cost = False, blank_stats = False) :
-        # manage mutable default arguments
-        if sigils is None :
-            sigils = ['','']
-
+    def __init__(self, species: str = '', cost: int = 0, attack: int = 0, life: int = 0, sigils: tuple[str, str] = ('',''), status: str = 'alive', zone: int = 0, blank_cost: bool = False, blank_stats: bool = False) :
         # basic variables
-        self.is_poisoned = False
-        self.hooked = False
-        self.species = species
-        self.saccs = cost
-        self.base_attack = attack
-        self.current_attack = attack
-        self.base_life = life
-        self.current_life = life
-        self.sigils = sigils
-        self.status = status
-        self.zone = zone
-        self.blank_cost = blank_cost
-        self.blank_stats = blank_stats
+        self.is_poisoned: bool = False
+        self.hooked: bool = False
+        self.species: str = species
+        self.saccs: int = cost
+        self.base_attack: int = attack
+        self.current_attack: int = attack
+        self.base_life: int = life
+        self.current_life: int = life
+        self.sigils: tuple[str, str] = sigils
+        self.status: str = status
+        self.zone: int = zone
+        self.blank_cost: bool = blank_cost
+        self.blank_stats: bool = blank_stats
         
         # create ASCII art for card
         self.update_ASCII()
         
-    def reset_stats(self) :
+    def reset_stats(self) -> None :
         '''
         resets current stats to base stats
         '''
@@ -79,7 +78,7 @@ class BlankCard() :
         self.current_attack = self.base_attack
         self.current_life = self.base_life
 
-    def attack(self, front_left_card, front_card, front_right_card, hand, is_players=False, bushes={}) :
+    def attack(self, front_left_card: BlankCard, front_card: BlankCard, front_right_card: BlankCard, hand: list[BlankCard], is_players: bool=False, bushes: dict[int, BlankCard]={}) -> int:
         '''
         attacks zone(s) in front
 
@@ -109,10 +108,10 @@ class BlankCard() :
 
         return points
 
-    def __str__(self) :
+    def __str__(self)  -> str:
         return '<' + str(type(self))[8:-2] + ' object at ' + hex(id(self)) + '>'
 
-    def text_by_line(self) :
+    def text_by_line(self)  -> str:
         '''
         returns one line of the card's ASCII art at a time
         '''
@@ -121,7 +120,7 @@ class BlankCard() :
             self.line_cursor = 2
         return self.text_lines[self.line_cursor - 1]
 
-    def take_damage(self, damage, hand, from_air=False, in_opp_field=False, in_bushes=False, bushes={}, deathtouch=False) :
+    def take_damage(self, damage: int, hand: list[BlankCard], from_air: bool=False, in_opp_field: bool=False, in_bushes: bool=False, bushes: dict[int, BlankCard]={}, deathtouch: bool=False)  -> int:
         '''
         reduces current life by damage
 
@@ -158,7 +157,7 @@ class BlankCard() :
         
         return teeth     
 
-    def play(self, zone) :
+    def play(self, zone: int) -> None :
         '''
         resets stats and updates zone
         '''
@@ -168,19 +167,19 @@ class BlankCard() :
         self.zone = zone
         self.update_ASCII()
 
-    def die(self) :
+    def die(self) -> None :
         '''
         resets stats and updates ASCII
         '''
         self.reset_stats()
         self.update_ASCII()
 
-    def explain(self) :
+    def explain(self) -> None :
         '''
         prints explanation of stats and sigil for player
         '''
         # set up variables
-        explanation = ''
+        explanation: str = ''
 
         # get terminal size
         term_cols = os.get_terminal_size().columns
@@ -289,7 +288,7 @@ class BlankCard() :
 
         print(explanation)
 
-    def update_ASCII(self) :
+    def update_ASCII(self) -> None :
         '''
         updates the ASCII art for the card
         '''
@@ -300,22 +299,22 @@ class BlankCard() :
         self.line_cursor = 1
 
         # get hook indicator if hooked
-        if self.hooked : hook_indicator = ['ʆ\ ', 'ʖ \\']
+        if self.hooked : hook_indicator = ['ʆ\\ ', 'ʖ \\']
         else : hook_indicator = [' '*3, ' '*3]
 
         # update cost, stats, and name for displaying card
         if self.blank_cost or self.species == '':
-            self.cost = ''
+            self.cost: str = ''
         else :
             self.cost = "C:" + hex(self.saccs % 16)[2]
         
         if self.blank_stats or self.species == '':
-            self.stats = ' '*3
+            self.stats: str = ' '*3
         else :
             self.stats = hex(self.current_attack % 16)[2] + "/" + hex(self.current_life % 16)[2]
 
         if self.species == '' or self.blank_cost : # takes advantage of extra space from having no cost
-            self.name = self.species.ljust(12)[:12]
+            self.name: str = self.species.ljust(12)[:12]
         else :
             self.name = self.species.ljust(9)[:9]
 
@@ -334,7 +333,7 @@ class BlankCard() :
             else :
                 sigil_ind = 0
 
-            self.text_lines = '''
+            self.text_lines: list[str] = '''
 ,-------------,
 |{species} {C}|
 |{h1}          |
@@ -363,25 +362,22 @@ class BlankCard() :
 '-------------'
         '''.format(species=self.name, C=self.cost, h1=hook_indicator[0], h2=hook_indicator[1], s1r1=sigils.Dict[self.sigils[0]][0][0], s1r2=sigils.Dict[self.sigils[0]][0][1], s1r3=sigils.Dict[self.sigils[0]][0][2], s2r1=sigils.Dict[self.sigils[1]][0][0], s2r2=sigils.Dict[self.sigils[1]][0][1], s2r3=sigils.Dict[self.sigils[1]][0][2], S=self.stats).split("\n")
 
-    def sigil_in_category(self, category, sigil_slot=None) :
+    def sigil_in_category(self, category: list[str], sigil_slot: int=-1) -> bool:
         '''
         checks if a sigil is in a category
 
         Arguments:
-            category: the category to check (list or dict)
+            category: the category to check (list)
         
         Returns:
             whether the sigil is in the category (bool)
         '''
-        if len(self.sigils) != 2 :
-            raise ValueError('Sigils must be a list of length 2')
-        
-        if sigil_slot :
+        if sigil_slot != -1 :
             return self.sigils[sigil_slot] in category
         
         return self.sigils[0] in category or self.sigils[1] in category
 
-    def has_sigil(self, sigil_name) :
+    def has_sigil(self, sigil_name: str) -> bool:
         '''
         checks if a card has a sigil
 
@@ -393,17 +389,9 @@ class BlankCard() :
         '''
         return any(sigil_name == sigil for sigil in self.sigils)
 
-    def hook(self) :
+    def hook(self) -> None:
         '''
         hooks or unhooks the card
         '''
         self.hooked = not self.hooked
         self.update_ASCII()
-
-if __name__ == "__main__" :
-    testblank = BlankCard(sigils=['???',''], cost=17, species="foo")
-    print()
-    print('Blank Card')
-    print(testblank.text_lines)
-    print(len(testblank.text_lines))
-    testblank.explain()

@@ -1,10 +1,17 @@
+from __future__ import annotations # prevent type hints needing import at runtime
+from typing import TYPE_CHECKING, Callable
+if TYPE_CHECKING:
+    import card
+    from typing import Any
+
+import math
 import os
 import sys
 import json
 import random
 import copy
 
-def clear() :
+def clear() -> None :
     '''
     clears the console
     '''
@@ -13,7 +20,7 @@ def clear() :
     else : # mac/linux
         os.system('clear')
 
-def read_data(data_to_read) :
+def read_data(data_to_read: list[list[str]]) -> list[Any]:
     '''
     reads the specified data from the config file
 
@@ -23,7 +30,7 @@ def read_data(data_to_read) :
     Returns:
         the specified data from the config file (list)
     '''
-    def get_data_value(data_keys, data) :
+    def get_data_value(data_keys: list[str], data: dict[str, Any]) -> Any :
         '''
         gets the value from the config file using a list of subsequent keys
     
@@ -56,14 +63,14 @@ def read_data(data_to_read) :
         data_to_return = [get_data_value(data_path, data) for data_path in data_to_read]
         return data_to_return
 
-def write_data(data_to_write) :
+def write_data(data_to_write: list[tuple[list, Any]]) -> None :
     '''
     writes the specified data to the config file
     
     Arguments:
         data_to_write: the data to write, where subsequent keys are ordered by depth (list[tuple][list, any])
     '''
-    def set_data_value(data_keys, value_to_set, data) :
+    def set_data_value(data_keys: list[str], value_to_set: Any, data: dict[str, Any]) -> None :
         '''
         sets a value in the config file using a list of subsequent keys
 
@@ -101,7 +108,7 @@ def write_data(data_to_write) :
     with open(data_file, 'w') as file :
         json.dump(data, file, indent=4)
 
-def center_justified(text, blocked=False, shift=0) :
+def center_justified(text: str, blocked: bool=False, shift: int=0) -> str :
     '''
     centers text in the console
 
@@ -117,7 +124,7 @@ def center_justified(text, blocked=False, shift=0) :
     text_lines = text.split('\n')
     # text_lines = [line.lstrip() for line in text.split('\n')]
     term_width = os.get_terminal_size().columns
-    center_space = lambda line_width : (term_width - line_width) // 2
+    center_space: Callable[[int], int] = lambda line_width : (term_width - line_width) // 2
     centered_text = ''
 
     if blocked :
@@ -134,7 +141,7 @@ def center_justified(text, blocked=False, shift=0) :
     
     return centered_text
 
-def split_nicely(text, first_line_length, gen_line_length, max_lines=10, add_blank_lines=False) :
+def split_nicely(text: str, first_line_length: int, gen_line_length: int, max_lines: int=10, add_blank_lines: bool=False) -> list[str] :
     '''
     splits text into lines of a certain length
 
@@ -195,7 +202,7 @@ def split_nicely(text, first_line_length, gen_line_length, max_lines=10, add_bla
 
     return lines
 
-def title_case(string) :
+def title_case(string: str) -> str :
     '''
     converts a string to title case
 
@@ -213,7 +220,7 @@ def title_case(string) :
     title_cased_words = [words[0].capitalize()] + [word.capitalize() if word not in lower_words else word for word in words[1:]]
     return ' '.join(title_cased_words)
 
-def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None, vars_to_return=[]) :
+def exec_sigil_code(current_card: card.BlankCard, applicables: list[str], global_vars: None|dict[str, Any]=None, local_vars: dict[str, Any] = {}, vars_to_return: list[Any]=[]) -> list[Any]:
     '''
     executes sigil code
     
@@ -228,7 +235,7 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None
         the variables to return (list)
     '''
     
-    def get_combo_code(sigil) :
+    def get_combo_code(sigil: tuple[str, str]) -> str :
         '''
         get the code block for a combination of sigils
         
@@ -238,14 +245,16 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None
         Returns:
             the code block (str)
         '''
+        if len(sigil) != 2 : raise ValueError
+
         # imports
         import sigils
 
         # sort sigils
-        combo = tuple(sorted(sigil))
+        combo: tuple[str, str] = tuple(sorted(sigil)) # type: ignore (error prevents this)
 
         # get code block
-        return sigils.Combos.get(combo, None)
+        return sigils.Combos.get(combo, "")
     
     # imports
     import sigils
@@ -270,7 +279,7 @@ def exec_sigil_code(current_card, applicables, global_vars=None, local_vars=None
 
     return returned_vars
 
-def hefty_check(field, zone, direction) :
+def hefty_check(field: dict[int, card.BlankCard], zone: int, direction: str) -> int :
     '''
     recursively checks how many cards can be pushed by a card with hefty sigil
 
@@ -307,7 +316,7 @@ def hefty_check(field, zone, direction) :
         case _ :
             return 0
 
-def sort_deck(deck) :
+def sort_deck(deck: list[card.BlankCard]) -> list[card.BlankCard] :
     '''
     sorts a deck by cost and name
 
@@ -321,27 +330,29 @@ def sort_deck(deck) :
     deck = sorted(deck, key=lambda x: x.name) # sort by name (will be sub-sorting under cost)
     return sorted(deck, key=lambda x: x.saccs)
 
-def print_deck(deck, sort=False, fruitful=False, numbered=False, centered=False, blocked=False) :
+def print_deck(deck: list[card.BlankCard], sort: bool=False, numbered: bool=False, centered: bool=False, blocked: bool=False, silent: bool=False) -> str:
     '''
     prints a list of cards in a deck, with optional sorting
 
     Arguments:
         deck: deck to print (list)
         sort: whether to sort the deck before printing (bool)
-        fruitful: whether to return the deck string instead of printing it (bool)
         numbered: whether to number the cards (bool)
         centered: whether to center the deck (bool)
         blocked: whether to block the deck when centered (bool)
+        silent: whether to prevent the str from being printed (bool)
     '''
-    def card_gap_numbered(card_gaps, number) :
+    def card_gap_numbered(card_gaps: int, number: int) -> str :
         number_str = str(number)
         return ' ' * (card_gaps - len(number_str) - 1) + number_str + ' '
     
-    def line_str(line, card_gaps, row, numbered) :
-        card_gaps_space = ' ' * card_gaps
+    def line_str(line: int, card_gaps: int, row: list[card.BlankCard], numbered: bool) -> str:
+        if numbered :
+            card_gaps = max(card_gaps, 4)
+        card_gaps_space: str = ' ' * card_gaps
 
         if line == 0 and numbered :
-            text = ''
+            text: str = ''
             for card in row :
                 text += card_gap_numbered(card_gaps, card_number[0]) + card.text_by_line()
                 card_number[0] += 1
@@ -357,12 +368,13 @@ def print_deck(deck, sort=False, fruitful=False, numbered=False, centered=False,
     
     # get terminal size
     term_cols = os.get_terminal_size().columns
-    card_gaps = (term_cols*55 // 100) // 5 - 15
-
-    # get number of cards per row
-    cards_per_row = term_cols // (card_gaps + 15)
-    if cards_per_row >= 9 :
-        cards_per_row = 8
+    max_width = term_cols*80 // 100
+    indent = min((term_cols - max_width) // 2, 4)
+    if numbered :
+        cards_per_row = min(max_width // 19, 8)
+    else :
+        cards_per_row = min(max_width // 15, 8)
+    card_gaps = max_width // cards_per_row - 15
 
     # sort deck if needed
     if sort :
@@ -375,16 +387,18 @@ def print_deck(deck, sort=False, fruitful=False, numbered=False, centered=False,
     deck_string = ''
     for row in chunked :
         line_strings = [line_str(line, card_gaps, row, numbered) for line in range(11)]
-        deck_string += '\n' + '\n'.join(line_strings)
+        prefix = '\n' + ' '*indent
+        deck_string += prefix + prefix.join(line_strings)
 
     if centered :
         deck_string = center_justified(deck_string, blocked, -2)
-    if fruitful :
-        return deck_string
-    
-    print(deck_string)
+        
+    if not silent :
+        print(deck_string)
 
-def reps_int(string, increment=0) :
+    return deck_string
+    
+def reps_int(string: str, increment: int=0) -> tuple[bool, int] :
     '''
     checks if a string represents an integer and returns it
 
@@ -400,7 +414,7 @@ def reps_int(string, increment=0) :
     except ValueError : # if not, default to 0 and return False
         return False, 0
 
-def bind_int(value, lower_bound=None, upper_bound=None) :
+def bind_int(value: int, lower_bound: float|int=-math.inf, upper_bound: float|int=math.inf) -> int:
     '''
     binds an integer to a range (inclusive)
 
@@ -409,39 +423,37 @@ def bind_int(value, lower_bound=None, upper_bound=None) :
 
     Arguments:
         value: the integer to bind (int)
-        lower_bound: the lower bound to bind to, defaults to None (int)
-        upper_bound: the upper bound to bind to, defaults to None (int)
+        lower_bound: the lower bound to bind to, defaults to -math.inf (int)
+        upper_bound: the upper bound to bind to, defaults to math.inf (int)
     '''
     # error handling
     if type(value) != int :
-        raise ValueError('value must be an integer')
-    if lower_bound == None and upper_bound == None :
-        raise ValueError('at least one bound must be specified')
-    if lower_bound != None and upper_bound != None and lower_bound > upper_bound :
+        raise TypeError('value must be an integer')
+    if lower_bound > upper_bound :
         raise ValueError('lower bound must be less than or equal to upper bound')
-    if lower_bound != None and type(lower_bound) != int :
-        raise ValueError('lower bound must be an integer')
-    if upper_bound != None and type(upper_bound) != int :
-        raise ValueError('upper bound must be an integer')
+    if lower_bound != -math.inf and type(lower_bound) != int :
+        raise TypeError('lower bound must be an integer')
+    if upper_bound != math.inf and type(upper_bound) != int :
+        raise TypeError('upper bound must be an integer')
     
-    match (lower_bound != None, upper_bound != None) :
+    match (lower_bound != -math.inf, upper_bound != math.inf) :
         case (True, False) : # only lower bound
-            return max(value, lower_bound)
+            return int(max(value, lower_bound))
         case (False, True) : # only upper bound
-            return min(value, upper_bound)
+            return int(min(value, upper_bound))
         case (True, True) : # both bounds
-            return min(max(value, lower_bound), upper_bound)
+            return int(min(max(value, lower_bound), upper_bound))
         case _ : # misc errors
             raise ValueError('invalid bounds')
 
-def ping(dict={'ping':'pong'}) : # for testing
+def ping(dict: dict[Any, Any]={'ping':'pong'}) -> None : # for testing
     '''
     writes variables to ping.txt
 
     Arguments:
         dict: the variables to write (dict)
     '''
-    def depth(object) :
+    def depth(object: Any) -> int:
         '''
         gets the depth of a list or dictionary
 
@@ -458,7 +470,7 @@ def ping(dict={'ping':'pong'}) : # for testing
 
         return 1 + max([depth(value) for value in object.values()])
 
-    def format_list(list) :
+    def format_list(list: list[Any]) -> list[str] :
         '''
         formats a list as a string with lines and indentation
 
@@ -494,7 +506,7 @@ def ping(dict={'ping':'pong'}) : # for testing
 
         return lines
 
-    def format_dict(dictionary) :
+    def format_dict(dictionary: dict[Any, Any])  -> list[str] :
         '''
         formats a dictionary as a string with lines and indentation
 
@@ -532,7 +544,7 @@ def ping(dict={'ping':'pong'}) : # for testing
 
         return lines
 
-    def format_values(dictionary) :
+    def format_values(dictionary: dict[Any, Any])  -> dict[Any, str]:
         '''
         formats the values of a dictionary as strings with lines and indentation
 
@@ -562,7 +574,7 @@ def ping(dict={'ping':'pong'}) : # for testing
     with open('ping.txt', 'w') as file :
         file.write(data_to_write)
 
-def random_card(possible_cards, weighted=True, alpha=2.2, beta=3.3, few_rare=True, hidden_cost=False) :
+def random_card(possible_cards: list[type[card.BlankCard]] | dict[int, list[type[card.BlankCard]]], weighted: bool=True, alpha: float=2.2, beta: float=3.3, few_rare: bool=True, hidden_cost: bool=False) -> card.BlankCard:
     '''
     gets a random card from a set of possible cards
 
@@ -598,36 +610,13 @@ def random_card(possible_cards, weighted=True, alpha=2.2, beta=3.3, few_rare=Tru
     if weighted:
         cost_values = list(card_dict)
         cost_values.sort()
-        cost = lambda : cost_values[math.floor((cost_values.__len__()) * random.betavariate(alpha, beta))]
-    else : cost = lambda : random.choice(list(card_dict.keys()))
+        cost: Callable[[], int] = lambda : cost_values[math.floor((cost_values.__len__()) * random.betavariate(alpha, beta))]
+    else : cost: Callable[[], int] = lambda : random.choice(list(card_dict.keys()))
 
     # get card type
-    template_card = random.choice(card_dict[cost()])
+    template_card: type[card.BlankCard] = random.choice(card_dict[cost()])
     if few_rare and template_card in card_library.Rare_Cards: # lower chances of rare cards
         template_card = random.choice(card_dict[cost()])
 
     # return
     return copy.deepcopy(template_card(blank_cost=hidden_cost))
-
-if __name__ == '__main__' :
-    clear()
-
-    # get original values
-    [play_var, oro_attack] = read_data([['settings', 'difficulty', 'leshy plays variance'], ['ouroboros', 'attack']])
-
-    # change values
-    data_to_write = [
-        (['settings', 'difficulty', 'leshy plays variance'], 5),
-        (['ouroboros', 'attack'], 10)
-    ]
-    write_data(data_to_write)
-
-    read_data([['settings']])
-    read_data([['settings', 'hand size'], ['ouroboros', 'attack']])
-
-    # return to original values
-    data_to_write = [
-        (['settings', 'difficulty', 'leshy plays variance'], play_var),
-        (['ouroboros', 'attack'], oro_attack)
-    ]
-    write_data(data_to_write)

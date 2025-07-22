@@ -1,3 +1,9 @@
+from __future__ import annotations # prevent type hints needing import at runtime
+from dataclasses import field
+from typing import TYPE_CHECKING
+if TYPE_CHECKING :
+    from typing import Any, Callable
+
 import card
 import card_library
 import QoL
@@ -9,7 +15,7 @@ import duel
 import sigils
 import time
 
-def ai_category_checking(categories, player_field, card_to_play, bushes, score, strat_change_threshold) :
+def smart_category_checking(categories: list[dict[str, Any]], player_field: dict[int, card.BlankCard], card_to_play: card.BlankCard, bushes: dict[int, card.BlankCard], score: dict[str, int], strat_change_threshold: int)  -> tuple[list[int], list[int]]:
     '''
     checks the categories and current game state to determine which zones Leshy should play to
 
@@ -25,7 +31,9 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
         in_strategy: the zones in strategy (list)
         out_of_strategy: the zones out of strategy (list)
     '''
-    def is_in_strat(card_to_play, opp_card, sigil_slot) :
+    def is_in_strat(card_to_play: card.BlankCard, opp_card: card.BlankCard, sigil_slot: int)  -> bool:
+        if sigil_slot not in range(0,2) : raise ValueError
+
         # set up variables
         self_attack = card_to_play.current_attack
         self_life = card_to_play.current_life
@@ -43,7 +51,9 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
         
         return False
     
-    def is_out_strat(card_to_play, opp_card, sigil_slot) :
+    def is_out_strat(card_to_play: card.BlankCard, opp_card: card.BlankCard, sigil_slot: int) -> bool :
+        if sigil_slot not in range(0,2) : raise ValueError
+
         # set up variables
         self_attack = card_to_play.current_attack
         self_life = card_to_play.current_life
@@ -57,7 +67,7 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
         
         return False
     
-    def add_to_in_strat(card_to_play, player_field, bushes, zone) :
+    def add_to_in_strat(card_to_play: card.BlankCard, player_field: dict[int, card.BlankCard], bushes: dict[int, card.BlankCard], zone: int) -> bool :
         # error handling
         if zone not in range(1, 5) :
             raise ValueError('Invalid zone.')
@@ -71,7 +81,7 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
             if bush_empty and type(opp_card) == card.BlankCard :
                 return True
             else :
-                False
+                return False
         
         # get booleans
         s1_in_strat_check = is_in_strat(card_to_play, opp_card, 0)
@@ -94,7 +104,7 @@ def ai_category_checking(categories, player_field, card_to_play, bushes, score, 
 
     return in_strategy, out_of_strategy
 
-def get_corpse_eaters(hand) :
+def get_corpse_eaters(hand: list[card.BlankCard]) -> list[int] :
     '''
     gets the indexes of all corpse eaters in the hand
 
@@ -104,7 +114,7 @@ def get_corpse_eaters(hand) :
     Returns:
         corpse_eaters: the corpse eaters in the hand (list)
     '''
-    corpse_eaters = []
+    corpse_eaters: list[int] = []
     for card in [card for card in range(len(hand)) if hand[card].has_sigil('corpse eater')] : 
         corpse_eaters.append(card)
     return corpse_eaters
@@ -145,30 +155,30 @@ class Playmat :
         print_field() : prints the field and score scales
         print_full_field() : prints the field and player's hand
     '''
-    def __init__(self, deck, squirrels, opponent_deck, Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold) :
+    def __init__(self, deck: list[card.BlankCard], squirrels: list[card.BlankCard], opponent_deck: list[card.BlankCard], Leshy_play_count_median: int, Leshy_play_count_variance: int, Leshy_in_strategy_chance: int, Leshy_strat_change_threshold: int) :
         # basic variables
-        self.hand = []
-        self.graveyard = []
-        self.score = {'player': 0, 'opponent': 0}
-        self.active = 'player'
-        self.player_deck = deck
-        self.player_squirrels = squirrels
-        self.opponent_deck = opponent_deck
-        self.Leshy_play_count_median = Leshy_play_count_median
-        self.Leshy_play_count_variance = Leshy_play_count_variance
-        self.Leshy_in_strategy_chance = Leshy_in_strategy_chance
-        self.Leshy_strat_change_threshold = Leshy_strat_change_threshold
+        self.hand: list[card.BlankCard] = []
+        self.graveyard: list[card.BlankCard] = []
+        self.score: dict[str, int] = {'player': 0, 'opponent': 0}
+        self.active: str = 'player'
+        self.player_deck: list[card.BlankCard] = deck
+        self.player_squirrels: list[card.BlankCard] = squirrels
+        self.opponent_deck: list[card.BlankCard] = opponent_deck
+        self.Leshy_play_count_median: int = Leshy_play_count_median
+        self.Leshy_play_count_variance: int = Leshy_play_count_variance
+        self.Leshy_in_strategy_chance: int = Leshy_in_strategy_chance
+        self.Leshy_strat_change_threshold: int = Leshy_strat_change_threshold
 
         # create the rows of the field
-        gen_blank_row = lambda: {column: card.BlankCard() for column in range(6)}
-        self.bushes = gen_blank_row()
-        self.player_field = gen_blank_row()
-        self.opponent_field = gen_blank_row()
+        gen_blank_row: Callable[[], dict[int, card.BlankCard]] = lambda: {column: card.BlankCard() for column in range(6)}
+        self.bushes: dict[int, card.BlankCard] = gen_blank_row()
+        self.player_field: dict[int, card.BlankCard] = gen_blank_row()
+        self.opponent_field: dict[int, card.BlankCard] = gen_blank_row()
         for zone in range(1, 5) :
             for field in [self.player_field, self.bushes, self.opponent_field] :
                 field[zone].play(zone=zone)
     
-    def draw(self, deck) :
+    def draw(self, deck: str) -> None :
         '''
         draws a card from a deck to the hand
         
@@ -187,13 +197,15 @@ class Playmat :
                     raise ValueError('Deck is empty.')
                 self.hand.append(self.player_squirrels[0])
                 self.player_squirrels.pop(0)
+            
+            case _ : raise ValueError
         
         # show card explanation
         self.print_field()
         self.hand[-1].explain()
         input('Press enter to continue.')
 
-    def play_card(self, index, zone) :
+    def play_card(self, index: int, zone: int) -> bool :
         '''
         plays a card to the field from the hand (first opens card explanation and has player select saccs, then plays card to zone)
 
@@ -225,11 +237,11 @@ class Playmat :
             print('Sacrifices required:', cost)
             print('Select sacrifices: (press enter to go back)', end=' ')
 
-        def fail_saccs() :
+        def fail_saccs() -> tuple[list[int], int, bool]:
                 sacc_list = []
                 cost = og_cost # to prevent goat cheesing
                 worthy_sacc = False
-                return [sacc_list, cost, worthy_sacc]
+                return sacc_list, cost, worthy_sacc
 
         # get sacrifices
         worthy_sacc = False
@@ -249,7 +261,7 @@ class Playmat :
 
             if len(sacc_indexes) > cost - len(sacc_list) and not worthy_sacc : # too many saccs, serves as guard clause
                 print('Too many sacrifices.')
-                [sacc_list, cost, worthy_sacc] = fail_saccs() # reset saccs and cost to prevent player confusion, may change if alternate behavior is desired
+                sacc_list, cost, worthy_sacc = fail_saccs() # reset saccs and cost to prevent player confusion, may change if alternate behavior is desired
                 continue
 
             for sacc_index in sacc_indexes :
@@ -266,18 +278,18 @@ class Playmat :
                 continue
             if zone not in sacc_list : # playing on top of a card that wasn't sacrificed
                 print('Cannot play on top of a non sacrificed card.')
-                [sacc_list, cost, worthy_sacc] = fail_saccs()
+                sacc_list, cost, worthy_sacc = fail_saccs()
             elif self.player_field[zone].has_sigil('many lives') : # playing on top of a card with many lives
                 print('Cannot play on top of a card with many lives.')
-                [sacc_list, cost, worthy_sacc] = fail_saccs()
+                sacc_list, cost, worthy_sacc = fail_saccs()
         
         # remove saccs
         for ind in sacc_list :
             QoL.exec_sigil_code(self.player_field[ind], sigils.on_sacrifices, None, locals())
 
             if type(self.player_field[ind]) == card_library.Cat and self.player_field[ind].has_sigil('many lives') : # make sure cat still has many lives
-                self.player_field[ind].spent_lives += 1
-                if self.player_field[ind].spent_lives >= 9 :
+                self.player_field[ind].spent_lives += 1 # type: ignore
+                if self.player_field[ind].spent_lives >= 9 : # type: ignore
                     self.player_field[ind] = card_library.UndeadCat()
 
             if not self.player_field[ind].sigil_in_category(sigils.on_sacrifices) :
@@ -295,7 +307,7 @@ class Playmat :
             self.print_field()
             return True
     
-    def attack(self) :
+    def attack(self) -> None :
         '''
         attacks with all of the active player's cards in play and updates score
         '''
@@ -337,7 +349,7 @@ class Playmat :
             if did_shift :
                 shifted_card = zone_card
 
-    def check_states(self) :
+    def check_states(self) -> None :
         '''
         checks for dead cards and removes them, plus returns unkillables if player's turn. Also summons corpse eaters if necessary.
         '''
@@ -415,9 +427,9 @@ class Playmat :
             open_corpses.remove(zone_choice)
             corpse_eaters = get_corpse_eaters(self.hand) # update corpse eaters
 
-    def advance(self) : 
+    def advance(self) -> None : 
         '''
-        advances cards from bushes to field, utilizing opponent AI to play cards
+        advances cards from bushes to field, utilizing opponent intelligence to play cards
         '''
         # set up variables
         played = 0
@@ -433,7 +445,7 @@ class Playmat :
         
         while played < play_count and [zone for zone in range(1, 5) if type(self.bushes[zone]) == card.BlankCard] :
             # intelligent choosing of zones to prioritize
-            in_strategy, out_of_strategy = ai_category_checking(card_library.AI_categories, self.player_field, self.opponent_deck[0], self.bushes, self.score, self.Leshy_strat_change_threshold)
+            in_strategy, out_of_strategy = smart_category_checking(card_library.strat_categories, self.player_field, self.opponent_deck[0], self.bushes, self.score, self.Leshy_strat_change_threshold)
 
             # playing cards to zones
             if (random.randint(1,100) <= self.Leshy_in_strategy_chance and in_strategy) or not out_of_strategy:
@@ -447,7 +459,7 @@ class Playmat :
 
             played += 1
 
-    def switch(self) :
+    def switch(self) -> None :
         '''
         switches the active player
         '''
@@ -458,7 +470,7 @@ class Playmat :
         else :
             raise ValueError('Invalid active player.')
 
-    def check_win(self) :
+    def check_win(self) -> tuple[bool, str, int, bool] :
         '''
         checks for a win condition
 
@@ -479,56 +491,66 @@ class Playmat :
         
         return True, 'opponent', 0, True # opponent wins via deck out
 
-    def print_remaining(self) :
+    def print_remaining(self) -> None :
         '''
         prints the remaining cards in the deck (sorted) and the squirrels (sorted) (clears screen first)
         '''
         # set up variables
         term_cols = os.get_terminal_size().columns
-        card_gaps_space = ' '*((term_cols*55 // 100) // 5 - 15)
-        deck_string = QoL.print_deck(self.player_deck, sort=True, fruitful=True, numbered=True)
+        max_width = term_cols*80 // 100
+        indent = min((term_cols - max_width) // 2, 4)
+        cards_per_row = min(max_width // 15, 8)
+        card_gaps = max_width // cards_per_row - 15
+        card_gaps_space = ' '*(card_gaps + indent)
 
         # print remaining cards in deck
         QoL.clear()
         print(card_gaps_space + 'Remaining cards in deck:')
-        print(deck_string + '\n')
+        QoL.print_deck(self.player_deck, sort=True, numbered=True)
+        print('\n')
         print(card_gaps_space + 'Remaining squirrels: ' + str(len(self.player_squirrels)) + '\n')
 
-    def print_graveyard(self) :
+    def print_graveyard(self) -> None :
         '''
         prints the cards in the graveyard (in order) (clears screen first)
         '''
         # set up variables
         term_cols = os.get_terminal_size().columns
-        card_gaps_space = ' '*((term_cols*55 // 100) // 5 - 15)
-        graveyard_string = QoL.print_deck(self.graveyard, sort=False, fruitful=True, numbered=True)
+        max_width = term_cols*80 // 100
+        indent = min((term_cols - max_width) // 2, 4)
+        cards_per_row = min(max_width // 15, 8)
+        card_gaps = max_width // cards_per_row - 15
+        card_gaps_space = ' '*(card_gaps + indent)
 
         # print graveyard
         QoL.clear()
         print(card_gaps_space + 'Graveyard:')
-        print(graveyard_string, end='')
+        QoL.print_deck(self.graveyard, sort=False, numbered=True)
     
-    def print_hand(self) : 
+    def print_hand(self) -> None : 
         '''
         prints the cards in the player's hand (does NOT clear screen first)
         '''
         # set up variables
         term_cols = os.get_terminal_size().columns
-        card_gaps_space = ' '*((term_cols*55 // 100) // 5 - 15)
-        hand_string = QoL.print_deck(self.hand, sort=False, fruitful=True)
+        max_width = term_cols*80 // 100
+        indent = min((term_cols - max_width) // 2, 4)
+        cards_per_row = min(max_width // 15, 8)
+        card_gaps = max_width // cards_per_row - 15
+        card_gaps_space = ' '*(card_gaps + indent)
 
         # print hand
         print(card_gaps_space + 'Hand:', end='')
-        print(hand_string)
+        QoL.print_deck(self.hand, sort=False)
 
-    def print_field(self, score_scale=True) :
+    def print_field(self, score_scale: bool=True) -> None :
         '''
         prints the field and score scales (clears screen first)
 
         Arguments:
             score_scale: whether to print the score scales, defaults to True (bool)
         '''
-        def get_connector(gaps, row, line, moon_lines) :
+        def get_connector(gaps: int, row: int, line: int, moon_lines: str) -> list[str] :
             '''
             gets the connectors for the given row and line
 
@@ -579,14 +601,14 @@ class Playmat :
         print(field_string, end='')
         if score_scale : ASCII_text.print_scales(self.score, score_gap)
 
-    def print_full_field(self) :
+    def print_full_field(self) -> None :
         '''
         prints the field and player's hand (clears screen first)
         '''
         self.print_field()
         self.print_hand()
 
-    def summon_card(self, card, field, zone) :
+    def summon_card(self, card: card.BlankCard, field: dict[int, card.BlankCard], zone: int) -> None :
         '''
         summons a card to the field
 
@@ -597,278 +619,3 @@ class Playmat :
         '''
         field[zone] = card
         field[zone].play(zone=zone)
-
-if __name__ == '__main__' :
-    import sys
-
-    def test_advancing() :
-            QoL.clear()
-
-            # create decks
-            leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
-            player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
-            player_squirrels = duel.resource_gen(20)
-
-            # Create a sample playmat with cards on the field
-            playmat = Playmat(player_deck.shuffle(), player_squirrels.shuffle(), leshy_deck.shuffle(), 2, 1, 75, 3)
-            card_list = []
-            for cost in card_library.Poss_Playr :
-                for species in card_library.Poss_Playr[cost] :
-                    card_list.append(species())
-                    card_list.append(card.BlankCard())
-            for zone in range(1, 5) :
-                playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
-
-            # Call the advance method
-            playmat.advance()
-
-            # Print the field after advancing
-            playmat.print_field()
-
-    def test_split_dam() :
-        QoL.clear()
-
-        # create decks
-        leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
-        player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
-        player_squirrels = duel.resource_gen(20)
-
-        # Create a sample playmat with cards on the field
-        playmat = Playmat(player_deck.shuffle(), player_squirrels.shuffle(), leshy_deck.shuffle(), 2, 1, 75, 3)
-        card_list = []
-        for cost in card_library.Poss_Playr :
-            for species in card_library.Poss_Playr[cost] :
-                card_list.append(species())
-                card_list.append(card.BlankCard())
-        for zone in range(1, 5) :
-            if zone == 3 :
-                playmat.player_field[zone] = card.BlankCard()
-                continue
-            playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
-        
-        # place a split card in the middle of leshy's field and advance twice
-        playmat.opponent_field[3] = card_library.BoppitW(True)
-        playmat.advance()
-        playmat.advance()
-
-        # print the field
-        playmat.print_field()
-
-        # get user input before advancing
-        input("Press enter to advance. (summoning a dam builder to zone 3)")
-
-        # place a dam builder in the middle of player's field
-        playmat.hand.append(card_library.Beaver())
-        playmat.hand[0].saccs = 0
-        playmat.play_card(0, 3)
-
-        # print the field
-        playmat.print_field()
-
-        # get user input before advancing
-        input("Press enter to advance. (kill the split card)")
-
-        # kill the split card
-        playmat.opponent_field[3].status = 'dead'
-        playmat.check_states()
-
-        # print the field
-        playmat.print_field()
-
-    def test_corpse_eaters() :
-        QoL.clear()
-
-        # create decks
-        leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
-        player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
-        player_squirrels = duel.resource_gen(20)
-
-        # Create a sample playmat with cards on the field
-        playmat = Playmat(player_deck.shuffle(), player_squirrels.shuffle(), leshy_deck.shuffle(), 2, 1, 75, 3)
-        card_list = []
-        for cost in card_library.Poss_Playr :
-            for species in card_library.Poss_Playr[cost] :
-                card_list.append(species())
-                card_list.append(card.BlankCard())
-        for zone in range(1, 5) :
-            playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
-        
-        # populate hand
-        for _ in range(5) :
-            if random.randint(1, 2) == 1 :
-                playmat.hand.append(card_library.CorpseMaggots(blank_cost=True))
-            else :
-                playmat.hand.append(card_library.Squirrel())
-        
-        # print the field
-        playmat.print_full_field()
-
-        # get user input
-        input("Press enter to advance. (kill 2 cards)")
-
-        # kill 2 cards and check states
-        cards_to_kill = []
-        for zone in range(1, 5) :
-            if type(playmat.player_field[zone]) != card.BlankCard :
-                cards_to_kill.append(zone)
-        kill_count = 2
-        if len(cards_to_kill) < 2 :
-            kill_count = len(cards_to_kill)
-        for n in range(kill_count) :
-            zone_to_kill = random.choice(cards_to_kill)
-            playmat.player_field[zone_to_kill].status = 'dead'
-            cards_to_kill.remove(zone_to_kill)
-        playmat.check_states()
-
-        # print the field
-        playmat.print_full_field()
-
-    def test_hefty() :
-        def advance_hefty(playmat) :
-            # get user input before advancing
-            input("Press enter to advance.")
-
-            # advance
-            playmat.attack()
-
-            # print the field
-            playmat.print_field()
-            print(playmat.player_field)
-
-        QoL.clear()
-
-        # create decks
-        leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
-        player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
-        player_squirrels = duel.resource_gen(20)
-
-
-        ### test hefty (right) ###
-        # Create a sample playmat with cards on the field
-        playmat = Playmat(player_deck.shuffle(), player_squirrels.shuffle(), leshy_deck.shuffle(), 2, 1, 75, 3)
-        card_list = []
-        for cost in card_library.Poss_Playr :
-            for species in card_library.Poss_Playr[cost] :
-                card_list.append(species())
-                card_list.append(card.BlankCard())
-        for zone in range(1, 5) :
-            playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
-            playmat.player_field[zone].zone = zone
-
-        # place a hefty card in the player's field
-        playmat.player_field[2] = card_library.MooseBuck()
-        playmat.player_field[2].play(zone=2)
-        playmat.player_field[2].sigils = ['hefty (right)','']
-        playmat.player_field[2].update_ASCII()
-
-        # print the field
-        playmat.print_field()
-        print(playmat.player_field)
-
-        advance_hefty(playmat)
-
-        # get user input before advancing
-        input("Press enter to play a squirrel to the right of the hefty card.")
-
-        # place a card to the right of the hefty card
-        playmat.player_field[4] = card_library.Squirrel()
-
-        # print the field
-        playmat.print_field()
-        print(playmat.player_field)
-
-        for _ in range(3) :
-            advance_hefty(playmat)
-
-        # get user input before moving on
-        input("Press enter to move on to the next test.")
-
-        ### test hefty (left) ###
-        # Create a sample playmat with cards on the field
-        playmat = Playmat(player_deck.shuffle(), player_squirrels.shuffle(), leshy_deck.shuffle(), 2, 1, 75, 3)
-        card_list = []
-        for cost in card_library.Poss_Playr :
-            for species in card_library.Poss_Playr[cost] :
-                card_list.append(species())
-                card_list.append(card.BlankCard())
-        for zone in range(1, 5) :
-            playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
-            playmat.player_field[zone].zone = zone
-        
-        # place a hefty card in the player's field
-        playmat.player_field[4] = card_library.MooseBuck()
-        playmat.player_field[4].play(zone=4)
-        playmat.player_field[4].sigils = ['hefty (left)','']
-        playmat.player_field[4].update_ASCII()
-
-        # print the field
-        playmat.print_field()
-        print(playmat.player_field)
-
-        advance_hefty(playmat)
-
-        # get user input before advancing
-        input("Press enter to play a squirrel to the left of the hefty card.")
-
-        # place a card to the left of the hefty card
-        playmat.player_field[2] = card_library.Squirrel()
-
-        # print the field
-        playmat.print_field()
-        print(playmat.player_field)
-
-        for _ in range(3) :
-            advance_hefty(playmat)
-
-    def test_empty_deck() :
-        QoL.clear()
-
-        # create decks
-        leshy_deck = duel.deck_gen(card_library.Poss_Leshy, 20)
-        player_deck = duel.deck_gen(card_library.Poss_Playr, 20)
-        player_squirrels = duel.resource_gen(20)
-
-        # Create a sample playmat with cards on the field
-        playmat = Playmat(player_deck.shuffle(), player_squirrels.shuffle(), leshy_deck.shuffle(), 2, 1, 75, 3)
-        card_list = []
-        for cost in card_library.Poss_Playr :
-            for species in card_library.Poss_Playr[cost] :
-                card_list.append(species())
-                card_list.append(card.BlankCard())
-        for zone in range(1, 5) :
-            playmat.player_field[zone] = copy.deepcopy(random.choice(card_list))
-            playmat.player_field[zone].zone = zone
-        playmat.print_full_field()
-
-        # empty squirrels
-        playmat.player_squirrels = []
-
-        # draw with empty squirrels
-        input("Press enter to draw with empty squirrels.")
-        duel.choose_draw(playmat)
-
-        # empty deck
-        playmat.player_deck = []
-        playmat.player_squirrels = duel.resource_gen(20).shuffle()
-
-        # draw with empty deck
-        input("Press enter to draw with empty deck.")
-        duel.choose_draw(playmat)
-
-        # see hand
-        input("Press enter to see hand.")
-        playmat.print_full_field()
-    
-    match sys.argv[1] :
-        case 'advancing' :
-            test_advancing()
-        case 'split_dam' :
-            test_split_dam()
-        case 'corpse_eaters' :
-            test_corpse_eaters()
-        case 'hefty' :
-            test_hefty()
-        case 'empty_deck' :
-            test_empty_deck()
-        case _ :
-            pass

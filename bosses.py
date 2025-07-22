@@ -1,3 +1,8 @@
+from __future__ import annotations # prevent type hints needing import at runtime
+from typing import TYPE_CHECKING, Callable
+if TYPE_CHECKING:
+    import rogue
+
 import card_library
 import card
 import field
@@ -8,18 +13,18 @@ import random
 import time
 import sigils
 
-def card_battle(campaign, Poss_Leshy=None) : 
+def card_battle(campaign: rogue.rogue_campaign, Poss_Leshy: list[type[card.BlankCard]]=[])  -> bool: 
     '''
     starts a card battle between the player and Leshy, with the player's deck being campaign.player_deck
     
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
-        Poss_Leshy: the possible cards for Leshy's deck, defaults to all allowed Leshy cards with costs <= to player's max cost (list)
+        Poss_Leshy: the possible cards for Leshy's deck, defaults to all allowed Leshy cards with costs <= to player's max cost if list is empty or not given(list)
 
     Returns:
         bool: True if the player wins, False if the player loses
     '''
-    def gameplay(campaign, Poss_Leshy) :
+    def gameplay(campaign: rogue.rogue_campaign, Poss_Leshy: list[type[card.BlankCard]])  -> bool:
         data_to_read = [
             ['settings', 'difficulty', 'leshy median plays'],
             ['settings', 'difficulty', 'leshy plays variance'],
@@ -30,7 +35,7 @@ def card_battle(campaign, Poss_Leshy=None) :
 
         deck_size = len(campaign.player_deck)
 
-        if Poss_Leshy :
+        if len(Poss_Leshy) == 0 :
             leshy_deck = duel.deck_gen(Poss_Leshy, int(deck_size * 1.5))
         else :
             player_max_cost = max([card.saccs for card in campaign.player_deck.cards])
@@ -39,8 +44,13 @@ def card_battle(campaign, Poss_Leshy=None) :
         
         QoL.clear()
         print('\n')
-        wick_states = [2] + [3] * (campaign.lives - 1)
-        wick_states += [0] * (3 - len(wick_states))
+        match campaign.lives: 
+            case 1 :
+                wick_states: tuple[int, int, int] = (2, 0, 0)
+            case 2 : 
+                wick_states: tuple[int, int, int] = (2, 3, 0)
+            case _ :
+                wick_states: tuple[int, int, int] = (2, 3, 3)
         ASCII_text.print_candelabra(wick_states)
         print(QoL.center_justified('As you approach the figure, Leshy blows out all but one of your candles.').rstrip())
         print(QoL.center_justified('"Beat this boss and I\'ll relight your candles."').rstrip())
@@ -53,7 +63,7 @@ def card_battle(campaign, Poss_Leshy=None) :
             campaign.lives = 0
             QoL.clear()
             print('\n'*3)
-            ASCII_text.print_candelabra([3, 0, 0])
+            ASCII_text.print_candelabra((3, 0, 0))
             print()
             input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
             return False
@@ -61,15 +71,20 @@ def card_battle(campaign, Poss_Leshy=None) :
         campaign.add_teeth(overkill)
         QoL.clear()
         print('\n'*3)
-        wick_states = (campaign.lives) * [2]
-        wick_states += [0] * (3 - len(wick_states))
+        match campaign.lives: 
+            case 1 :
+                wick_states: tuple[int, int, int] = (2, 0, 0)
+            case 2 : 
+                wick_states: tuple[int, int, int] = (2, 1, 0)
+            case _ :
+                wick_states: tuple[int, int, int] = (2, 1, 1)
         ASCII_text.print_candelabra(wick_states)
         print()
         return True
     
     return gameplay(campaign, Poss_Leshy) # add flavor text, context, etc.
 
-##### bosses will use the basic AI, but with higher difficulty settings and have their unique mechanics (pickaxe, ship, extra sigils, moon)
+##### bosses will use the normal decision making, but with higher difficulty settings and have their unique mechanics (pickaxe, ship, extra sigils, moon)
 
 ##### bosses essentially work as two duels, but winning the first duel triggers a special event (the bosses unique mechanic) and the second duel starts from where the first left off
 
@@ -81,7 +96,7 @@ def card_battle(campaign, Poss_Leshy=None) :
 
 ##### if the player wins, relight candles and update config file
 
-def get_higher_difficulty() :
+def get_higher_difficulty() -> tuple[int, int, int, int] :
     '''
     gets the higher difficulty settings for bosses
     
@@ -129,7 +144,7 @@ def get_higher_difficulty() :
         case _ :
             raise ValueError(f"invalid difficulty number: {difficulty_number}")
 
-def error_checks(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold) :
+def error_checks(deck_size: int, hand_size: int, Leshy_play_count_median: int, Leshy_play_count_variance: int, Leshy_in_strategy_chance: int, Leshy_strat_change_threshold: int)  -> None:
     if deck_size < 1 :
         raise ValueError('Deck size must be at least 1.')
     if hand_size < 1 :
@@ -145,7 +160,7 @@ def error_checks(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count
     if Leshy_strat_change_threshold < -5 or Leshy_strat_change_threshold > 5 :
         raise ValueError('Leshy strategy change threshold must be between -5 and 5.')
 
-def pre_boss_flavor(campaign) :
+def pre_boss_flavor(campaign: rogue.rogue_campaign)  -> None:
     '''
     prints pre boss fight flavor text and displays
     adds smoke cards to the player's deck
@@ -156,8 +171,15 @@ def pre_boss_flavor(campaign) :
     # pre fight flavor text, extra lives being extinguished, etc.
     QoL.clear()
     print('\n')
-    wick_states = [2] + [3] * (campaign.lives - 1)
-    wick_states += [0] * (3 - len(wick_states))
+
+    match campaign.lives: 
+        case 1 :
+            wick_states: tuple[int, int, int] = (2, 0, 0)
+        case 2 : 
+            wick_states: tuple[int, int, int] = (2, 3, 0)
+        case _ :
+            wick_states: tuple[int, int, int] = (2, 3, 3)
+
     for _ in range(0, campaign.lives - 1) :
         campaign.add_card(card_library.Smoke())
     ASCII_text.print_candelabra(wick_states)
@@ -166,7 +188,7 @@ def pre_boss_flavor(campaign) :
     print()
     input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
-def post_boss_flavor(campaign, result, overkill=0, deck_out=False) :
+def post_boss_flavor(campaign: rogue.rogue_campaign, result: bool, overkill: int=0, deck_out: bool=False)  -> None:
     '''
     prints post boss fight flavor text and displays
     removes smoke cards from the player's deck
@@ -196,18 +218,25 @@ def post_boss_flavor(campaign, result, overkill=0, deck_out=False) :
     if not result : # player lost
         QoL.clear()
         print('\n'*3)
-        ASCII_text.print_candelabra([3, 0, 0])
+        ASCII_text.print_candelabra((3, 0, 0))
         print()
         input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
     else : # player won
         QoL.clear()
         print('\n'*3)
-        wick_states = (campaign.lives) * [2]
-        wick_states += [0] * (3 - len(wick_states))
+
+        match campaign.lives: 
+            case 1 :
+                wick_states: tuple[int, int, int] = (2, 0, 0)
+            case 2 : 
+                wick_states: tuple[int, int, int] = (2, 1, 0)
+            case _ :
+                wick_states: tuple[int, int, int] = (2, 1, 1)
+
         ASCII_text.print_candelabra(wick_states)
         print()
 
-def turn_structure(playfield) :
+def turn_structure(playfield: field.Playmat) -> tuple[bool, str, int, bool, list[card.BlankCard]]:
     '''
     the turn structure for boss fights, excluding checking for win conditions and switching turns
 
@@ -218,7 +247,7 @@ def turn_structure(playfield) :
         tuple: win, winner, overkill, deck_out, played (bool, str, int, bool, list)
     '''
     # set up variables
-    played = []
+    played: list[card.BlankCard] = []
 
     # playtest feature to quick quit
     # if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) :
@@ -256,7 +285,7 @@ def turn_structure(playfield) :
 
     return (False, '', 0, False, played)
 
-def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=True, field_cards: list[card.BlankCard]=None) :
+def init_boss_playfield(campaign: rogue.rogue_campaign, Poss_Leshy: dict[int, list[type[card.BlankCard]]]={}, first_cards: list[card.BlankCard]=[], advance: bool=True, field_cards: list[card.BlankCard]=[]) -> field.Playmat:
     '''
     creates the playfield for a boss fight
 
@@ -271,7 +300,7 @@ def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=Tru
 
     deck_size = len(campaign.player_deck)
 
-    if Poss_Leshy :
+    if len(Poss_Leshy) != 0 :
         leshy_deck = duel.deck_gen(Poss_Leshy, int(deck_size * 1.5), hidden_cost=True)
     else :
         player_max_cost = max([card.saccs for card in campaign.player_deck.cards])
@@ -282,16 +311,17 @@ def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=Tru
     playfield = field.Playmat(campaign.player_deck.shuffle(fair_hand=True), campaign.squirrel_deck.shuffle(), leshy_deck.shuffle(), play_median, play_var, opp_strat, opp_threshold)
 
     # add first cards to top of deck
-    if first_cards :
-        first_cards.reverse()
-        for _ in range(len(first_cards)) :
-            playfield.opponent_deck.pop()
-        for card_ in first_cards :
-            playfield.opponent_deck.insert(0, card_)
+    first_cards.reverse()
+    for _ in range(len(first_cards)) :
+        playfield.opponent_deck.pop()
+    for card_ in first_cards :
+        playfield.opponent_deck.insert(0, card_)
 
     # add starting field cards
-    if field_cards!=None : 
-        for zone in range(1, 5) : playfield.summon_card(card=field_cards.pop(), zone=zone, field=playfield.opponent_field)
+    for zone in range(1, 5) : 
+        if field_cards.__len__ == 0: 
+            break
+        playfield.summon_card(card=field_cards.pop(), zone=zone, field=playfield.opponent_field)
 
     # advance from bushes
     if advance : playfield.advance()
@@ -304,7 +334,7 @@ def init_boss_playfield(campaign, Poss_Leshy=None, first_cards=None, advance=Tru
 
     return playfield
 
-def random_extra_sigil(possibles, hidden_cost=False) :
+def random_extra_sigil(possibles: list[type[card.BlankCard]], hidden_cost: bool=False) -> card.BlankCard:
     '''
     creates a card with a random sigil from the list of possibles
 
@@ -316,18 +346,18 @@ def random_extra_sigil(possibles, hidden_cost=False) :
         card: the chosen card with a random sigil added (card object)
     '''
     # set up functions
-    def sigil_name(sigil) :
+    def sigil_name(sigil: str) -> str :
         match sigil :
             case '' : return 'No Sigil'
             case _ if 'hefty' in sigil : return 'Hefty'
             case _ if 'lane shift' in sigil : return 'Sprinter'
             case _ : return QoL.title_case(sigil)
 
-    same_sigil = lambda sigil_1, sigil_2 : sigil_1 != '' and sigil_name(sigil_1) == sigil_name(sigil_2) # check if two sigils are the same or variations of the same sigil
-    good_sigil = lambda reciever, sigil : sigil not in ['', '???'] and not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be added
+    same_sigil: Callable[[str, str], bool] = lambda sigil_1, sigil_2 : sigil_1 != '' and sigil_name(sigil_1) == sigil_name(sigil_2) # check if two sigils are the same or variations of the same sigil
+    good_sigil: Callable[[card.BlankCard, str], bool] = lambda reciever, sigil : sigil not in ['', '???'] and not same_sigil(reciever.sigils[0], sigil) and not same_sigil(reciever.sigils[1], sigil) # check if a sigil can be added
     
     # choose card
-    chosen_card = QoL.random_card(possibles, hidden_cost=hidden_cost)
+    chosen_card: card.BlankCard = QoL.random_card(possibles, hidden_cost=hidden_cost)
 
     # get sigil slot
     if chosen_card.has_sigil('') :
@@ -337,20 +367,24 @@ def random_extra_sigil(possibles, hidden_cost=False) :
 
     # while not good_sigil(hidden_reward, selected_sigil) : selected_sigil = random.choice(list(sigils.Dict.keys()))
     while not good_sigil(chosen_card, sigil := random.choice(list(sigils.Dict.keys()))) : pass
-    else : chosen_card.sigils[sigil_slot] = sigil
+    else :
+        match sigil_slot :
+            case 0: chosen_card.sigils = (sigil, chosen_card.sigils[1])
+            case 1: chosen_card.sigils = (chosen_card.sigils[0], sigil)
+            case _: raise ValueError
 
     chosen_card.update_ASCII()
 
     return chosen_card
 
-def trading(playfield) :
+def trading(playfield: field.Playmat)  -> None:
     '''
     allows the player to trade wolf pelts from their hand for the trader's cards on the board
 
     Arguments:
         playfield: the current playfield object (field object)
     '''
-    def player_vers(traded_card) :
+    def player_vers(traded_card: card.BlankCard)  -> card.BlankCard:
         '''
         switches the player's card to its opposite version if necessary
 
@@ -360,10 +394,18 @@ def trading(playfield) :
         if any([traded_card.has_sigil(mover) for mover in sigils.movers]) :
             for (sigil, index) in [(sigil, traded_card.sigils.index(sigil)) for sigil in traded_card.sigils if sigil in sigils.movers] : 
                 match (sigil, index) :
-                    case ('lane shift left', index) : traded_card.sigils[index] = 'lane shift right'
-                    case ('lane shift right', index) : traded_card.sigils[index] = 'lane shift left'
-                    case ('hefty (left)', index) : traded_card.sigils[index] = 'hefty (right)'
-                    case ('hefty (right)', index) : traded_card.sigils[index] = 'hefty (left)'
+                    # case ('lane shift left', index) : traded_card.sigils[index] = 'lane shift right'
+                    # case ('lane shift right', index) : traded_card.sigils[index] = 'lane shift left'
+                    # case ('hefty (left)', index) : traded_card.sigils[index] = 'hefty (right)'
+                    # case ('hefty (right)', index) : traded_card.sigils[index] = 'hefty (left)'
+                    case ('lane shift left', 0) : traded_card.sigils = ('lane shift right', traded_card.sigils[1])
+                    case ('lane shift left', 1) : traded_card.sigils = (traded_card.sigils[0], 'lane shift right')
+                    case ('lane shift right', 0) : traded_card.sigils = ('lane shift left', traded_card.sigils[1])
+                    case ('lane shift right', 1) : traded_card.sigils = (traded_card.sigils[0], 'lane shift left')
+                    case ('hefty (left)', 0) : traded_card.sigils = ('hefty (right)', traded_card.sigils[1])
+                    case ('hefty (left)', 1) : traded_card.sigils = (traded_card.sigils[0], 'hefty (right)')
+                    case ('hefty (right)', 0) : traded_card.sigils = ('hefty (left)', traded_card.sigils[1])
+                    case ('hefty (right)', 1) : traded_card.sigils = (traded_card.sigils[0], 'hefty (left)')
             traded_card.update_ASCII()
         
         if type(traded_card) == card_library.OppositeRabbit :
@@ -375,7 +417,7 @@ def trading(playfield) :
         
         return traded_card
     
-    def view_hand(playfield) :
+    def view_hand(playfield: field.Playmat)  -> None:
         invalid_index = False
         while True :
             QoL.clear()
@@ -398,7 +440,7 @@ def trading(playfield) :
             else :
                 invalid_index = True
 
-    def get_card_from_row(row) :
+    def get_card_from_row(row: dict[int, card.BlankCard])  -> card.BlankCard | None:
         '''
         allows player to choose a card from a row to trade
         
@@ -426,7 +468,7 @@ def trading(playfield) :
             else :
                 invalid_index = True
     
-    def trade_card(playfield) :
+    def trade_card(playfield: field.Playmat)  -> None:
         '''
         allows the player to trade a wolf pelt for a card
         
@@ -493,8 +535,8 @@ def trading(playfield) :
             case '5' : break
             case _ : invalid_choice = True
 
-def boss_fight_prospector(campaign) : # boss fight 1
-    def gameplay(campaign) :
+def boss_fight_prospector(campaign: rogue.rogue_campaign)  -> bool: # boss fight 1
+    def gameplay(campaign: rogue.rogue_campaign) -> tuple[bool, str, int, bool]:
         pre_boss_flavor(campaign)
 
         playfield = init_boss_playfield(campaign, first_cards=[card_library.PackMule(True), card_library.Coyote(True)])
@@ -561,14 +603,14 @@ def boss_fight_prospector(campaign) : # boss fight 1
 
     return gameplay(campaign)[1] == 'player' # add flavor text, context, etc.
 
-def boss_fight_angler(campaign) : # boss fight 2
-    def gameplay(campaign) :
+def boss_fight_angler(campaign: rogue.rogue_campaign)  -> bool: # boss fight 2
+    def gameplay(campaign: rogue.rogue_campaign) -> tuple[bool, str, int, bool] :
         pre_boss_flavor(campaign)
 
-        poss_angler_p1 = {
+        poss_angler_p1: dict[int, list[type[card.BlankCard]]] = {
             1 : [card_library.Kingfisher, card_library.Otter]
         }
-        poss_angler_p2 = {
+        poss_angler_p2: dict[int, list[type[card.BlankCard]]] = {
             0 : [card_library.BaitBucket]
         }
         playfield = init_boss_playfield(campaign, Poss_Leshy=poss_angler_p1, advance=False)
@@ -576,7 +618,7 @@ def boss_fight_angler(campaign) : # boss fight 2
         # game loop
         second_phase = False
         turn_count = 0
-        played = []
+        played: list[card.BlankCard] = []
         while True :
             # gameplay
             (win, winner, overkill, deck_out, played_new) = turn_structure(playfield)
@@ -602,7 +644,7 @@ def boss_fight_angler(campaign) : # boss fight 2
                         print('\n'*2)
                         input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
                     
-                    to_hook = None
+                    to_hook = card.BlankCard()
                     while to_hook not in playfield.player_field.values() : # ensure a card is hooked
                         to_hook = played[-1]
                         played.pop()
@@ -678,7 +720,7 @@ def boss_fight_angler(campaign) : # boss fight 2
 
                     # fill angler's field and bushes with grizzly bears with mighty leap
                     for zone in range(1, 5) :
-                        for field in [playfield.opponent_field, playfield.bushes] : playfield.summon_card(card=card_library.Grizzly(blank_cost=True, sigils=['mighty leap', '']), zone=zone, field=field)
+                        for field in [playfield.opponent_field, playfield.bushes] : playfield.summon_card(card=card_library.Grizzly(blank_cost=True, sigils=('mighty leap', '')), zone=zone, field=field)
 
                 # change deck to be angler's second phase deck
                 playfield.opponent_deck = duel.deck_gen(poss_angler_p2, len(playfield.opponent_deck), hidden_cost=True).cards
@@ -696,8 +738,8 @@ def boss_fight_angler(campaign) : # boss fight 2
 
     return gameplay(campaign)[1] == 'player' # add flavor text, context, etc.
 
-def boss_fight_trapper_trader(campaign) : # boss fight 3
-    def gameplay(campaign) :
+def boss_fight_janus(campaign: rogue.rogue_campaign)  -> bool: # boss fight 3
+    def gameplay(campaign: rogue.rogue_campaign) -> tuple[bool, str, int, bool] :
         pre_boss_flavor(campaign)
 
         poss_trapper = {
@@ -804,7 +846,7 @@ def boss_fight_trapper_trader(campaign) : # boss fight 3
 
                     # fill trader's field and bushes with grizzly bears with mighty leap
                     for zone in range(1, 5) :
-                        for field in [playfield.opponent_field, playfield.bushes] : playfield.summon_card(card=card_library.Grizzly(blank_cost=True, sigils=['mighty leap', '']), zone=zone, field=field)
+                        for field in [playfield.opponent_field, playfield.bushes] : playfield.summon_card(card=card_library.Grizzly(blank_cost=True, sigils=('mighty leap', '')), zone=zone, field=field)
 
                 # empty trader's deck
                 playfield.opponent_deck = []
@@ -822,12 +864,12 @@ def boss_fight_trapper_trader(campaign) : # boss fight 3
 
     return gameplay(campaign)[1] == 'player' # add flavor text, context, etc.
 
-def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck trials)
+def boss_fight_leshy(campaign: rogue.rogue_campaign)  -> bool: # boss fight 4 (still need to implement deck trials)
     ## Leshy's reaction to the moon being destroyed is part of field.check_states()
-    def deck_trials(campaign) :
+    def deck_trials(campaign: rogue.rogue_campaign) -> None :
         pass # implement once deck trials and boons are added (needs consumables and bones)
 
-    def mining(playfield, battle_state) :
+    def mining(playfield: field.Playmat, battle_state: battle_state) -> None :
         # dialogue / explanation
         if not battle_state.has_mined :
             QoL.clear()
@@ -850,7 +892,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
         # replace player's cards with gold nuggets
         for zone in nugget_zones : playfield.summon_card(card=card_library.GoldNugget(True), zone=zone, field=playfield.player_field)
 
-    def hooking(playfield, battle_state, played) :
+    def hooking(playfield: field.Playmat, battle_state: battle_state, played: list[card.BlankCard]) -> None :
         # dialogue / explanation
         if not battle_state.used_all_masks :
             QoL.clear()
@@ -863,9 +905,9 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
             input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
 
         # hook and use hook
-        to_hook = None
+        to_hook = card.BlankCard()
         while to_hook not in playfield.player_field.values() : # ensure a card is hooked
-            to_hook = played[-1]
+            to_hook: card.BlankCard = played[-1]
             played.pop()
         to_hook.hook()
 
@@ -879,7 +921,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
                     playfield.summon_card(card=card.BlankCard(), zone=zone, field=playfield.player_field)
                     break
 
-    def trading(playfield, battle_state) :
+    def trading_leshy(playfield: field.Playmat, battle_state: battle_state) -> None :
         # dialogue / explanation
         if not battle_state.used_all_masks :
             QoL.clear()
@@ -936,15 +978,15 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
             mask: uses or changes the mask
             win: executes the code for beating a phase, depending on the current phase, increments the phase, and returns whether the player has won the entire fight
         '''
-        def __init__(self) :
-            self.masks = ['Prospector', 'Angler', 'Trader']
-            self.mask_index = 0
-            self.mask_worn = False
-            self.phase = 1
-            self.used_all_masks = False
-            self.has_mined = False
+        def __init__(self)  -> None:
+            self.masks: list[str] = ['Prospector', 'Angler', 'Trader']
+            self.mask_index: int = 0
+            self.mask_worn: bool = False
+            self.phase: int = 1
+            self.used_all_masks: bool = False
+            self.has_mined: bool = False
 
-        def change(self) :
+        def change(self) -> None :
             '''
             changes the mask to the next one
             '''
@@ -961,7 +1003,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
 
             self.mask_worn = True
         
-        def use(self, playfield, played) :
+        def use(self, playfield: field.Playmat, played: list[card.BlankCard]) -> None :
             '''
             uses and removes the current mask
 
@@ -973,7 +1015,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
             match self.masks[self.mask_index] :
                 case 'Prospector' : mining(playfield, self)
                 case 'Angler' : hooking(playfield, self, played)
-                case 'Trader' : trading(playfield, self)
+                case 'Trader' : trading_leshy(playfield, self)
 
             if not self.used_all_masks :
                 curr_mask = self.masks[self.mask_index].lower()
@@ -986,7 +1028,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
 
             self.mask_worn = False
 
-        def mask(self, playfield, played) :
+        def mask(self, playfield: field.Playmat, played: list[card.BlankCard]) -> None :
             '''
             uses or changes the mask
             
@@ -1002,7 +1044,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
             else : 
                 self.change()
 
-        def win(self, playfield) :
+        def win(self, playfield: field.Playmat) -> bool :
             '''
             executes the code for beating a phase, depending on the current phase, increments the phase, and returns whether the player has won the entire fight
 
@@ -1101,7 +1143,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
             
             return False
 
-    def gameplay(campaign) :
+    def gameplay(campaign: rogue.rogue_campaign) -> tuple[bool, str, int, bool] :
         # pre boss events
         deck_trials(campaign)
 
@@ -1119,7 +1161,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
         duel_state = battle_state()
 
         # game loop
-        played = []
+        played: list[card.BlankCard] = []
         while True :
             # gameplay
             (win, winner, overkill, deck_out, played_new) = turn_structure(playfield)
@@ -1143,7 +1185,7 @@ def boss_fight_leshy(campaign) : # boss fight 4 (still need to implement deck tr
                 campaign.lives = 0
                 break
 
-            elif win and duel_state.win() :
+            elif win and duel_state.win(playfield) :
                 post_boss_flavor(campaign, True, overkill=overkill)
                 QoL.write_data([(['progress markers', 'beat leshy'], True)])
                 break

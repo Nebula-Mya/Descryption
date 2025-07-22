@@ -1,3 +1,6 @@
+from __future__ import annotations # prevent type hints needing import at runtime
+from typing import TYPE_CHECKING
+
 import card_library
 import deck
 import field
@@ -6,7 +9,7 @@ import ASCII_text
 import os
 import card
 
-def choose_and_play(field) :
+def choose_and_play(field: field.Playmat) -> card.BlankCard | None:
     '''
     the whole process of choosing a card to play and playing it
     player can choose to go back at any time, and if so nothing will happen
@@ -71,7 +74,7 @@ def choose_and_play(field) :
             else :
                 return card_to_play
 
-def choose_draw(field: field.Playmat) :
+def choose_draw(field: field.Playmat) -> None :
     '''
     the whole process of choosing a card to draw and drawing it
 
@@ -122,7 +125,7 @@ def choose_draw(field: field.Playmat) :
             case _ :
                 invalid_choice = True
 
-def winner_check(field, silent=False) :
+def winner_check(field: field.Playmat, silent: bool=False) -> tuple[bool, str, int, bool] :
     '''
     checks if the game is over and prints the appropriate message
 
@@ -152,7 +155,7 @@ def winner_check(field, silent=False) :
             ASCII_text.print_lose(deck_out)
     return (win, winner, overkill, deck_out)
 
-def view_remaining(field) : 
+def view_remaining(field: field.Playmat) -> None : 
     '''
     displays the remaining cards in the player's deck (sorted so as to not allow cheating), and allows the player to view a card
     
@@ -179,7 +182,7 @@ def view_remaining(field) :
         else :
             invalid_index = True
 
-def view_graveyard(field) :
+def view_graveyard(field: field.Playmat) -> None :
     '''
     displays the cards in the graveyard and allows the player to view a card
     
@@ -206,14 +209,14 @@ def view_graveyard(field) :
         else :
             invalid_index = True
 
-def view_cards(field) :
+def view_cards(field: field.Playmat) -> None :
     '''
     menu for player to choose to view bushes, leshy's field, or player's field, all of which are executed by this function
 
     Arguments:
         field: the field object to view (field object)
     '''
-    def pick_from_row(row) :
+    def pick_from_row(row: dict[int, card.BlankCard]) -> None :
         '''
         allows player to choose a card from a row to view
         
@@ -264,7 +267,7 @@ def view_cards(field) :
             case _ :
                 invalid_choice = True
 
-def view_play_attack(field: field.Playmat) :
+def view_play_attack(field: field.Playmat) -> list[card.BlankCard] :
     '''
     menu for player to choose to view deck (will happen), view graveyard (will happen), play a card (will happen), or attack and end turn (won't happen, will be in main loop)
 
@@ -306,7 +309,7 @@ def view_play_attack(field: field.Playmat) :
         
     return played
 
-def deck_gen(possible_cards, size, hidden_cost=False) :
+def deck_gen(possible_cards: list[type[card.BlankCard]] | dict[int, list[type[card.BlankCard]]], size: int, hidden_cost: bool=False) -> deck.Deck :
     '''
     generates a deck from a list of possible cards
     
@@ -328,7 +331,7 @@ def deck_gen(possible_cards, size, hidden_cost=False) :
 
     return deck.Deck(deck_list)
 
-def resource_gen(size) :
+def resource_gen(size: int) -> deck.Deck :
     '''
     generates a resource deck
 
@@ -342,11 +345,11 @@ def resource_gen(size) :
     if size < 1 :
         raise ValueError('Deck size must be at least 1.')
 
-    squirrels = [card_library.Squirrel() for _ in range(size)]
+    squirrels: list[card.BlankCard] = [card_library.Squirrel() for _ in range(size)]
 
     return deck.Deck(squirrels)
 
-def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold, player_deck_obj=None, squirrels_deck_obj=None, opponent_deck_obj=None, print_results=True) :
+def main(deck_size: int, hand_size: int, Leshy_play_count_median: int, Leshy_play_count_variance: int, Leshy_in_strategy_chance: int, Leshy_strat_change_threshold: int, player_deck_obj: deck.Deck | None=None, squirrels_deck_obj: deck.Deck | None=None, opponent_deck_obj: deck.Deck | None=None, print_results: bool=True)  -> tuple[bool, str, int, bool]:
     '''
     main function for deck battles
     
@@ -447,13 +450,3 @@ def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_varianc
             
     if print_results : input('Press enter to continue.')
     return (win, winner, overkill, deck_out)
-
-if __name__ == '__main__' :
-    QoL.clear()
-    deck_size = 20
-    hand_size = 5
-    Leshy_play_count_median = 2
-    Leshy_play_count_variance = 1
-    Leshy_in_strategy_chance = 75
-    Leshy_strat_change_threshold = 3
-    main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold)

@@ -1,23 +1,25 @@
+from __future__ import annotations # prevent type hints needing import at runtime
+
 Dict = {    
     '' : [ # sigil name
         ["     ","     ","     "], # sigil icon
         '', # sigil description
-        '''
+        '''#py
 ''' # sigil code
     ],
         
     '???' : [
         ["?????","?????","?????"],
         '???',
-        '''
+        '''#py
 pass
 '''
     ],
 
     'bifurcate' : [
-        ["_   _"," \ / ","  |  "],
+        ["_   _"," \\ / ","  |  "],
         'Attacks diagonally, dealing damage to two targets.',
-        '''
+        '''#py
 for target_card in [front_left_card, front_right_card] :
     if (target_card.zone % 5) != 0 :
         points += target_card.take_damage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
@@ -27,14 +29,14 @@ for target_card in [front_left_card, front_right_card] :
     'lane shift right' : [
         [",-,  ","| |->","'-'  "], 
         'Moves to the right.',
-        '''
+        '''#py
 import card
 import QoL
 
 if attacking_field[zone].sigils[0] == 'lane shift right' :
-    changed_direction = ['lane shift left', attacking_field[zone].sigils[1]]
+    changed_direction = ('lane shift left', attacking_field[zone].sigils[1])
 else :
-    changed_direction = [attacking_field[zone].sigils[0], 'lane shift left']
+    changed_direction = (attacking_field[zone].sigils[0], 'lane shift left')
 
 if zone == 4 or QoL.hefty_check(attacking_field, zone + 1, 'right') == 0 :
     attacking_field[zone].sigils = changed_direction
@@ -50,14 +52,14 @@ elif type(attacking_field[zone+1]) == card.BlankCard :
     'lane shift left' : [
         ["  ,-,","<-| |","  '-'"],
         'Moves to the left.',
-        '''
+        '''#py
 import card
 import QoL
 
 if attacking_field[zone].sigils[0] == 'lane shift left' :
-    changed_direction = ['lane shift right', attacking_field[zone].sigils[1]]
+    changed_direction = ('lane shift right', attacking_field[zone].sigils[1])
 else :
-    changed_direction = [attacking_field[zone].sigils[0], 'lane shift right']
+    changed_direction = (attacking_field[zone].sigils[0], 'lane shift right')
 
 if zone == 1 or QoL.hefty_check(attacking_field, zone - 1, 'left') == 0 :
     attacking_field[zone].sigils = changed_direction
@@ -73,7 +75,7 @@ elif type(attacking_field[zone-1]) == card.BlankCard :
     'split' : [
         ["  |  ","()|()","  |  "],
         'Splits into two cards when killed.',
-        '''
+        '''#py
 import sigils
 
 if applicables == sigils.on_deaths and current_field[zone].status == 'dead' :
@@ -116,7 +118,7 @@ if applicables == sigils.on_deaths and current_field[zone].status == 'dead' :
     'unkillable' : [
         [",->-,","| X |","'-<-'"],
         'Returns to hand on death.',
-        '''
+        '''#py
 import sigils
 import card
 if applicables == sigils.on_deaths :
@@ -143,7 +145,7 @@ elif applicables == sigils.on_sacrifices :
     'venom' : [
         [" ___ "," \\ / "," ·V· "],
         'Poisons target on attack.',
-        '''
+        '''#py
 points += front_card.take_damage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
 front_card.is_poisoned = True
 '''
@@ -152,7 +154,7 @@ front_card.is_poisoned = True
     'airborne' : [
         ["  _  ","ɩΞΞɭ "," ɩΞΞð"],
         'Attacks from the air, ignoring other creatures.',
-        '''
+        '''#py
 points += front_card.take_damage(self.current_attack, hand, from_air=True, in_opp_field=is_players, bushes=bushes)
 '''
     ],
@@ -160,7 +162,7 @@ points += front_card.take_damage(self.current_attack, hand, from_air=True, in_op
     'mighty leap' : [
         ["_____","ʅ   ʃ","ɩð_ʃ "],
         'Can block airborne creatures.',
-        '''
+        '''#py
 import card
 if type(self) == card.BlankCard or self.status == 'dead' :
     teeth = damage
@@ -179,7 +181,7 @@ else :
     'worthy sacrifice' : [
         ["(C)  "," (C) ","  (C)"],
         'Worth three sacrifices.',
-        '''
+        '''#py
 pass
 '''
     ],
@@ -187,13 +189,13 @@ pass
     'bees within' : [
         [" /‾\\ ","|___|","  Ʈ->"],
         'Adds a bee to your hand when damaged.',
-        '''
+        '''#py
 import card_library
 import card
 
-other_sigils = ['airborne'] + [sigil for sigil in self.sigils if sigil != 'bees within']
-if other_sigils == ['airborne', 'airborne'] :
-    other_sigils = ['airborne','']
+other_sigils = ('airborne', [sigil for sigil in self.sigils if sigil != 'bees within'][0])
+if other_sigils == ('airborne', 'airborne') :
+    other_sigils = ('airborne','')
 
 if type(self) == card.BlankCard or self.status == 'dead' or from_air:
     teeth = damage
@@ -214,14 +216,14 @@ else :
     'hefty (right)' : [ 
         [". >>>","|)_[]","'———'"],
         'Moves to the right, pushing other creatures with it.',
-        '''
+        '''#py
 import QoL
 import card
 
 if attacking_field[zone].sigils[0] == 'hefty (right)' :
-    changed_direction = ['hefty (left)', attacking_field[zone].sigils[1]]
+    changed_direction = ('hefty (left)', attacking_field[zone].sigils[1])
 else :
-    changed_direction = [attacking_field[zone].sigils[0], 'hefty (left)']
+    changed_direction = (attacking_field[zone].sigils[0], 'hefty (left)')
 
 if zone == 4 :
     attacking_field[zone].sigils = changed_direction
@@ -248,14 +250,14 @@ else :
     'hefty (left)' : [
         ["<<< .","[]_(|","'———'"],
         'Moves to the left, pushing other creatures with it.',
-        '''
+        '''#py
 import QoL
 import card
 
 if attacking_field[zone].sigils[0] == 'hefty (left)' :
-    changed_direction = ['hefty (right)', attacking_field[zone].sigils[1]]
+    changed_direction = ('hefty (right)', attacking_field[zone].sigils[1])
 else :
-    changed_direction = [attacking_field[zone].sigils[0], 'hefty (right)']
+    changed_direction = (attacking_field[zone].sigils[0], 'hefty (right)')
 
 if zone == 1 :
     attacking_field[zone].sigils = changed_direction
@@ -282,7 +284,7 @@ else :
     'many lives' : [ 
         ["  Ω  "," CXƆ ","  V  "],
         "Doesn't die when sacrificed.",
-        '''
+        '''#py
 pass
 '''
     ],
@@ -290,7 +292,7 @@ pass
     'waterborne' : [
         ["<⁻v⁻>","ˎ\\ /ˏ","λ/λ\\λ"],
         'Attacks directed toward this card hit the owner directly.',
-        '''
+        '''#py
 teeth = damage
 '''
     ],
@@ -298,10 +300,10 @@ teeth = damage
     'vole hole' : [
         [" ___ ","/…¨…\\","‾‾‾‾‾"],
         'Adds a vole to your hand when played.',
-        '''
+        '''#py
 import card_library
 
-other_sigils = [sigil for sigil in self.player_field[zone].sigils if sigil != 'vole hole'] + ['']
+other_sigils = ([sigil for sigil in self.player_field[zone].sigils if sigil != 'vole hole'][0], '')
 
 self.hand.append(card_library.Vole(sigils=other_sigils))
 '''
@@ -310,7 +312,7 @@ self.hand.append(card_library.Vole(sigils=other_sigils))
     'touch of death' : [
         ["\\´‾`/","|°Δ°|","/\'\"\'\\"],
         'Always kills the card it attacks, regardless of health.',
-        '''
+        '''#py
 points += front_card.take_damage(self.current_attack, hand, deathtouch=True, in_opp_field=is_players, bushes=bushes)
 '''
     ],
@@ -318,11 +320,11 @@ points += front_card.take_damage(self.current_attack, hand, deathtouch=True, in_
     'dam builder' : [
         ["~~/\\ ","~/\\_\\","/__\\ "],
         'Builds dams on either side when played.',
-        '''
+        '''#py
 import card_library
 import card
 
-other_sigils = [sigil for sigil in self.player_field[zone].sigils if sigil != 'dam builder'] + ['']
+other_sigils = ([sigil for sigil in self.player_field[zone].sigils if sigil != 'dam builder'][0], '')
 
 if zone == 1 :
     poss_zones = [2]
@@ -339,7 +341,7 @@ for shifted_zone in poss_zones :
     'corpse eater' : [
         ["ᴦ==ͽ ","L(Ō) "," \'\"\' "],
         'Plays itself to a zone a card died in.',
-        '''
+        '''#py
 pass
 '''
     ],
@@ -347,7 +349,7 @@ pass
     'steel trap' : [ # will never be available to players
         [" ʌ^ʌ ","(-Θ-)"," ^ʌ^ "],
         'When this card perishes, the creature opposing it perishes as well. A Pelt is created in the your hand.',
-        '''
+        '''#py
 if current_field[zone].status == 'dead' :
     import card_library
     import card
@@ -372,34 +374,34 @@ if current_field[zone].status == 'dead' :
 }
 
 Combos = {
-    ('bifurcate', 'venom') : '''
+    ('bifurcate', 'venom') : '''#py
 for target_card in [front_left_card, front_right_card] :
     if (target_card.zone % 5) != 0 :
         points += target_card.takeDamage(self.current_attack, hand, in_opp_field=is_players, bushes=bushes)
         target_card.is_poisoned = True
 ''',
-    ('bifurcate', 'touch of death') : '''
+    ('bifurcate', 'touch of death') : '''#py
 for target_card in [front_left_card, front_right_card] :
     if (target_card.zone % 5) != 0 :
         points += front_card.take_damage(self.current_attack, hand, deathtouch=True, in_opp_field=is_players, bushes=bushes)
 ''',
-    ('airborne', 'bifurcate') : '''
+    ('airborne', 'bifurcate') : '''#py
 for target_card in [front_left_card, front_right_card] :
     if (target_card.zone % 5) != 0 :
         points += target_card.take_damage(self.current_attack, hand, from_air=True, in_opp_field=is_players, bushes=bushes)
 ''',
-    ('touch of death', 'venom') : '''
+    ('touch of death', 'venom') : '''#py
 points += front_card.take_damage(self.current_attack, hand, deathtouch=True, in_opp_field=is_players, bushes=bushes)
 front_card.is_poisoned = True
 ''',
-    ('airborne', 'venom') : '''
+    ('airborne', 'venom') : '''#py
 points += front_card.take_damage(self.current_attack, hand, from_air=True, in_opp_field=is_players, bushes=bushes)
 front_card.is_poisoned = True
 ''',
-    ('airborne', 'touch of death') : '''
+    ('airborne', 'touch of death') : '''#py
 points += front_card.take_damage(self.current_attack, hand, deathtouch=True, from_air=True, in_opp_field=is_players, bushes=bushes)
 ''', 
-    ('split', 'unkillable') : ''' # this is only called when applicable is on_deaths
+    ('split', 'unkillable') : '''#py # this is only called when applicable is on_deaths
 if current_field[zone].status == 'dead' :
     import card
     import card_library
@@ -445,7 +447,7 @@ if current_field[zone].status == 'dead' :
         current_field[zone].play(zone)
         corpses.append((zone, current_field))
 ''',
-    ('dam builder', 'vole hole') : '''
+    ('dam builder', 'vole hole') : '''#py
 import card_library
 import card
 
@@ -463,7 +465,7 @@ for shifted_zone in poss_zones :
         self.hand.append(card_library.Vole())
         self.player_field[shifted_zone].play(zone=shifted_zone)
 ''',
-    ('many lives', 'unkillable') : ''' # this is only called when applicable is on_sacrifices
+    ('many lives', 'unkillable') : '''#py # this is only called when applicable is on_sacrifices
 import card
 import card_library
 
@@ -474,7 +476,7 @@ self.hand[-1].saccs = 0
 self.hand[-1].update_ASCII()
 self.player_field[ind] = card.BlankCard()
 ''',
-    ('mighty leap', 'waterborne') : '''
+    ('mighty leap', 'waterborne') : '''#py
 if from_air :
     prev_life = self.current_life
     self.current_life -= damage
@@ -487,7 +489,7 @@ if from_air :
 else :
     teeth = damage
 ''',
-    ('bees within', 'mighty leap') : '''
+    ('bees within', 'mighty leap') : '''#py
 import card_library
 import card
 
@@ -505,17 +507,17 @@ else :
             excess_damage = damage - prev_life
             bushes[self.zone].take_damage(excess_damage, hand, from_air, in_bushes=True)
 ''',
-    ('lane shift left', 'lane shift right') : '''
+    ('lane shift left', 'lane shift right') : '''#py
 pass
 ''',
-    ('hefty (right)', 'lane shift right') : '''
+    ('hefty (right)', 'lane shift right') : '''#py
 import QoL
 import card
 
 if attacking_field[zone].sigils[0] == 'hefty (right)' :
-    changed_direction = ['hefty (left)', attacking_field[zone].sigils[1]]
+    changed_direction = ('hefty (left)', attacking_field[zone].sigils[1])
 else :
-    changed_direction = [attacking_field[zone].sigils[0], 'hefty (left)']
+    changed_direction = (attacking_field[zone].sigils[0], 'hefty (left)')
 
 if zone == 4 :
     attacking_field[zone].sigils = changed_direction
@@ -539,17 +541,17 @@ else :
             attacking_field[n].play(n)
         did_shift = True
 ''',
-    ('hefty (right)', 'lane shift left') : '''
+    ('hefty (right)', 'lane shift left') : '''#py
 pass
 ''',
-    ('hefty (left)', 'lane shift left') : '''
+    ('hefty (left)', 'lane shift left') : '''#py
 import QoL
 import card
 
 if attacking_field[zone].sigils[0] == 'hefty (left)' :
-    changed_direction = ['hefty (right)', attacking_field[zone].sigils[1]]
+    changed_direction = ('hefty (right)', attacking_field[zone].sigils[1])
 else :
-    changed_direction = [attacking_field[zone].sigils[0], 'hefty (right)']
+    changed_direction = (attacking_field[zone].sigils[0], 'hefty (right)')
 
 if zone == 1 :
     attacking_field[zone].sigils = changed_direction
@@ -573,10 +575,10 @@ else :
             attacking_field[n].play(n)
         did_shift = True
 ''',
-    ('hefty (left)', 'lane shift right') : '''
+    ('hefty (left)', 'lane shift right') : '''#py
 pass
 ''',
-    ('split', 'steel trap') : '''
+    ('split', 'steel trap') : '''#py
 import sigils
 
 if applicables == sigils.on_deaths and current_field[zone].status == 'dead' :
@@ -624,7 +626,7 @@ if applicables == sigils.on_deaths and current_field[zone].status == 'dead' :
             self.summon_card(card.BlankCard(), opposing_field, zone)
             self.hand.append(card_library.WolfPelt())
 ''',
-    ('steel trap', 'unkillable') : '''
+    ('steel trap', 'unkillable') : '''#py
 import sigils
 import card_library
 
@@ -666,20 +668,3 @@ on_damages = ['mighty leap', 'waterborne', 'bees within']
 on_sacrifices = ['many lives', 'unkillable']
 movers = ['lane shift right','lane shift left','hefty (right)','hefty (left)']
 misc = ['corpse eater', 'worthy sacrifice'] # these need to be hardcoded
-
-if __name__ == '__main__':
-    import card
-    import QoL
-    import os
-    QoL.clear()
-    term_cols = os.get_terminal_size().columns
-    card_gaps = (term_cols*55 // 100) // 5 - 15
-    tab = ' '*(card_gaps // 2)
-    for key in Dict:
-        if key == '':
-            continue
-        print(tab + QoL.title_case(key) + ':')
-        example = card.BlankCard(sigils=[key, ''])
-        example.species = 'EXAMPLE CARD'
-        example.explain()
-        print()
