@@ -1,4 +1,5 @@
 from __future__ import annotations
+from enum import Enum
 from typing import TYPE_CHECKING
 if TYPE_CHECKING :
     from typing import Callable, Any
@@ -1861,5 +1862,165 @@ def main() -> None: # coordinates the game loop, calls split_road, manages losse
                 campaign.progress += 1
                 campaign.player_deck.refresh_ASCII()
 
-if __name__ == '__main__' :
-    main()
+class Event_Type(Enum):
+    VISITED = 0
+    CARD_CHOICE = 1
+    SIGIL_SACRIFICE = 2
+    MERGE_CARDS = 3
+    PELT_SHOP = 4
+    CARD_SHOP = 5
+    BREAK_ROCKS = 6
+    CAMPFIRE = 7
+    CARD_BATTLE = 8
+
+    def __eq__(self, other: Event_Type) :
+        return self.value == other.value
+    
+    def run(self, campaign: rogue_campaign) :
+        match self.value :
+            case 0 : pass
+            case 1 : card_choice(campaign)
+            case 2 : sigil_sacrifice(campaign)
+            case 3 : merge_cards(campaign)
+            case 4 : pelt_shop(campaign)
+            case 5 : card_shop(campaign)
+            case 6 : break_rocks(campaign)
+            case 7 : campfire(campaign)
+            case 8 : card_battle(campaign)
+
+    def listing(self) -> str :
+        match self.value :
+            case 0 : return ""
+            case 1 : return 'A choice of cards'
+            case 2 : return 'A set of mysterious stones'
+            case 3 : return 'The Mycologists'
+            case 4 : return 'The Trapper'
+            case 5 : return 'The Trader'
+            case 6 : return 'The Prospector'
+            case 7 : return 'Survivors huddled around a campfire'
+            case _ : return 'A card battle'
+
+class Event_Node:
+    type: Event_Type
+    # ins: list[Event_Node]
+    outs: list[Event_Node]
+
+    def __init__(self, type: Event_Type) -> None :
+        self.type = type
+        # self.ins = []
+        self.outs = []
+
+    # def add_in(self, new_in: Event_Node) -> bool :
+    #     if len(self.ins) >= 2 : return False
+
+    #     self.ins.append(new_in)
+
+    #     return True
+    
+    # def rem_in(self) -> bool :
+    #     if len(self.ins) <=0 : return False
+
+    #     self.ins.pop()
+
+    #     return True
+
+    def add_out(self, new_out: Event_Node) -> bool :
+        if len(self.outs) >= 2 : return False
+
+        self.outs.append(new_out)
+
+        return True
+    
+    def clear_outs(self) -> None :
+        self.outs.clear()
+
+    def outdegree(self) -> int:
+        return len(self.outs)
+    
+    def peek(self, idx: int) -> Event_Node:
+        return self.outs[idx]
+    
+    def play(self, campaign: rogue_campaign) :
+        self.type.run(campaign)
+        self.type = Event_Type(0)
+    
+def map_gen(campaign: rogue_campaign, choice_fn: Callable[[rogue_campaign, list[Event_Type]], Event_Type], depth: int = 10, avg_width: float = 4.5) -> Event_Node :
+    '''
+    Generates a directed acyclic graph with a single starting node that is connected to all others. The graph has a diameter defined by the input. Each node represents an event that the player can choose, along with its outgoing edges. Nodes can only have 2 incoming and 2 outgoing edges.
+
+    Arguments:
+        campaign: the current campaign object
+        choice_fn: the function that generates possible events based on the campaign object and previously selected events
+        depth: defines the diameter of the graph, which is 1 + depth. Also the number of events the player will encounter before the level boss
+        avg_width: the desired amount of events possible for a certain layer, regardless of individual paths
+
+    Returns:
+        the starting node for the map, which is the only vertex connected to all other vertices
+    '''
+    start = Event_Node(Event_Type.VISITED)
+    prev_lyr: list[Event_Node] = [start]
+
+    for _ in range(depth) :
+        # set up / clean
+        new_nodes: list[Event_Node] = []
+        width_weights: list[float] = []
+
+        # get layer width
+        poss_widths = list(range(len(prev_lyr) - 1, len(prev_lyr) + 2))
+        for width in poss_widths: 
+            width_weights.append(max(0, (avg_width - 1) - abs(width - avg_width))**2)
+        layer_width = random.choices(poss_widths, width_weights)[0]
+
+        while True :
+            # set up / clean
+            invalid = False
+            parent_weights = [2]*len(prev_lyr)
+            cur_lyr: list[Event_Type] = []
+            for node in prev_lyr : node.clear_outs()
+
+            # get layer events
+            for _ in range(layer_width) :
+                new_event = choice_fn(campaign, cur_lyr)
+                cur_lyr.append(new_event)
+                new_child = Event_Node(new_event)
+                parent = random.choices(prev_lyr, parent_weights)[0]
+                parent.add_out(new_child)
+                parent_weights[prev_lyr.index(parent)] -= 1
+
+            # try to use merges to make useable, if not, continue loop
+            available_children: list[int] = []
+            for weight in parent_weights :
+                available_children.append(2-weight)
+            for i in range(len(prev_lyr)) : 
+                # only if childless
+                if prev_lyr[i].outdegree() != 0 : continue
+
+                # try left
+                if available_children[max(0, i-1)] >= 1 :
+                    merge_node = prev_lyr[i-1].peek(-1)
+                    prev_lyr[i].add_out(merge_node)
+                    # no need to update available_children, left node wont be checked again
+
+                # try right
+                elif available_children[min(len(available_children), i+1)] >= 1 :
+                    merge_node = prev_lyr[i+1].peek(0)
+                    prev_lyr[i].add_out(merge_node)
+                    available_children[i+1] -= 1
+
+                # current setup is unuseable
+                else : invalid = True ; break
+
+            if invalid : continue
+            break
+
+        # add children to new nodes
+        for parent in prev_lyr :
+            if new_nodes.count(parent.peek(0)) == 0 : new_nodes.append(parent.peek(0))
+
+            # a second child couldnt be merged to the left
+            if parent.outdegree() == 2 : new_nodes.append(parent.peek(-1))
+
+        # replace prev_lyr
+        prev_lyr = new_nodes.copy()
+
+    return start

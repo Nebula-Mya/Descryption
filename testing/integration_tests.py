@@ -4,6 +4,7 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 
+import sigils
 import card
 import card_library
 import duel
@@ -37,6 +38,14 @@ class Test_ASCII(unittest.TestCase):
 
     def test_lives(self) -> None:
         ASCII_text.print_candelabra((2,3,0))
+
+    def test_sigils(self) -> None:
+        sigil_cards: list[card.BlankCard] = []
+
+        for sigil in sigils.Dict.keys():
+            sigil_cards.append(card.BlankCard(sigils=(sigil,"")))
+        
+        QoL.print_deck(sigil_cards)
         
 class Test_Bosses(unittest.TestCase):
 
@@ -187,6 +196,13 @@ class Test_Events(unittest.TestCase):
     def test_split(self) -> None:
         self.buy_split_setUp()
         rogue.split_road(self.campaign)
+
+    def test_map(self) -> None:
+        
+        def event_choice(campaign: rogue.rogue_campaign, prev: list[rogue.Event_Type]) :
+            pass #TODO:
+
+        pass #TODO:
 
 class Test_Deck(unittest.TestCase):
     def test_print(self) -> None :
