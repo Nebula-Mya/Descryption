@@ -16,15 +16,19 @@ import ASCII_text
 class Test_ASCII(unittest.TestCase):
 
     def test_title(self) -> None:
+        print()
         ASCII_text.print_title()
 
     def test_win(self) -> None:
+        print()
         ASCII_text.print_win(3)
 
     def test_lose(self) -> None:
+        print()
         ASCII_text.print_lose()
         
     def test_score(self) -> None:
+        print()
         term_cols = os.get_terminal_size().columns
         card_gaps = (term_cols*55 // 100) // 5 - 15
         if card_gaps <= 0 :
@@ -34,12 +38,15 @@ class Test_ASCII(unittest.TestCase):
         ASCII_text.print_scales({'player': 6, 'opponent': 2}, score_gap)
 
     def test_WiP(self) -> None:
+        print()
         ASCII_text.print_WiP()
 
     def test_lives(self) -> None:
+        print()
         ASCII_text.print_candelabra((2,3,0))
 
     def test_sigils(self) -> None:
+        print()
         sigil_cards: list[card.BlankCard] = []
 
         for sigil in sigils.Dict.keys():
