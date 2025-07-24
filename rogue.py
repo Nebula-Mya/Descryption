@@ -506,6 +506,8 @@ def get_sigils(card1: card.BlankCard, card2: card.BlankCard) -> tuple[str, str]:
     while True :
         # print the sacrifice card
         QoL.clear()
+        card1.explain()
+        print()
         card2.explain()
 
         if invalid_choice :
@@ -619,6 +621,8 @@ def sigil_sacrifice(campaign: rogue_campaign) -> None: #REMINDME: format visuals
         # print the equation
         QoL.clear()
         print(QoL.center_justified(equation, blocked=True))
+        print()
+        result_card.explain()
 
         # get confirmation from the player
         confirm_input = input(QoL.center_justified('Are you sure these are the cards you want to use? (y/n)').rstrip() + ' ')
@@ -768,6 +772,8 @@ def merge_cards(campaign: rogue_campaign) -> None: #REMINDME: format visuals
         # print the equation
         QoL.clear()
         print(QoL.center_justified(equation, blocked=True))
+        print()
+        card_result.explain()
 
         # get confirmation from the player
         confirm_input = input(QoL.center_justified('Are you sure these are the cards you want to use? (y/n)').rstrip() + ' ')
@@ -809,16 +815,24 @@ def merge_cards(campaign: rogue_campaign) -> None: #REMINDME: format visuals
 
     for c in campaign.player_deck.cards :
         if type(c) in prev_types :
-            QoL.clear()
-            QoL.print_deck(campaign.player_deck.cards, numbered=True, centered=True, blocked=True)
-            print('\n')
-            print(QoL.center_justified("You don't have any cards to merge. (press enter to continue)"))
+            # QoL.clear()
+            # QoL.print_deck(QoL.sort_deck(campaign.player_deck.cards), numbered=True, centered=True, blocked=True)
+            # print('\n')
+            # print(QoL.center_justified("You don't have any cards to merge. (press enter to continue)"))
+            # input('')
+            gameplay(campaign) # add flavor text, context, etc.
 
             return
         
         prev_types.append(type(c))
 
-    gameplay(campaign) # add flavor text, context, etc.
+    # gameplay(campaign) # add flavor text, context, etc.
+
+    QoL.clear()
+    QoL.print_deck(QoL.sort_deck(campaign.player_deck.cards), numbered=True, centered=True, blocked=True)
+    print('\n')
+    print(QoL.center_justified("You don't have any cards to merge. (press enter to continue)"))
+    input('')
 
 def pelt_shop(campaign: rogue_campaign) -> None: #REMINDME: format visuals
     '''
