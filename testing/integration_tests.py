@@ -1,4 +1,9 @@
+from __future__ import annotations
+import random
 import unittest
+from typing import TYPE_CHECKING
+if TYPE_CHECKING :
+    from typing import Callable
 
 import sys
 import os
@@ -206,10 +211,32 @@ class Test_Events(unittest.TestCase):
 
     def test_map(self) -> None:
         
-        def event_choice(campaign: rogue.rogue_campaign, prev: list[rogue.Event_Type]) :
-            pass #TODO:
+        def event_choice(campaign: rogue.rogue_campaign, prev: list[rogue.Event_Type]) -> rogue.Event_Type:
+            bool_to_bin: Callable[[bool, int], int] = lambda bool_, int_=1 : int_ if bool_ else 0
 
-        pass #TODO:
+            weights: list[int] = [
+                bool_to_bin(rogue.Event_Type.CARD_CHOICE not in prev),
+
+                bool_to_bin(rogue.Event_Type.SIGIL_SACRIFICE not in prev),
+
+                bool_to_bin(rogue.Event_Type.MERGE_CARDS not in prev),
+                
+                bool_to_bin(rogue.Event_Type.PELT_SHOP not in prev),
+                
+                bool_to_bin(rogue.Event_Type.CARD_SHOP not in prev),
+                
+                bool_to_bin(rogue.Event_Type.BREAK_ROCKS not in prev),
+                
+                bool_to_bin(rogue.Event_Type.CAMPFIRE not in prev)
+            ]
+
+            weights.append(bool_to_bin(rogue.Event_Type.CARD_BATTLE not in prev, int_=sum(weights)))
+
+            return rogue.Event_Type(random.choices(range(1,9), weights=weights)[0])
+
+        start_node = rogue.map_gen(self.campaign, event_choice)
+
+        QoL.ping(start_node.var_tree())
 
 class Test_Deck(unittest.TestCase):
     def test_print(self) -> None :

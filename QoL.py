@@ -485,11 +485,11 @@ def ping(dict: dict[Any, Any]={'ping':'pong'}) -> None : # for testing
             if item == list[-1] : comma = ''
             else : comma = ','
 
-            if type(item) == dict : 
+            if type(item) == type({}) : 
                 item = format_dict(item)
-            elif type(item) == list : 
+            elif type(item) == type([]) : 
                 item = format_list(item)
-            elif type(item) == str :
+            elif type(item) == type("") :
                 item = [f"\'{item}\'"]
             else :
                 item = [item]
@@ -521,11 +521,11 @@ def ping(dict: dict[Any, Any]={'ping':'pong'}) -> None : # for testing
             if key == list(dictionary.keys())[-1] : comma = ''
             else : comma = ','
 
-            if type(dictionary[key]) == dict :
+            if type(dictionary[key]) == type({}) :
                 value = format_dict(dictionary[key])
-            elif type(dictionary[key]) == list :
+            elif type(dictionary[key]) == type([]) :
                 value = format_list(dictionary[key])
-            elif type(dictionary[key]) == str :
+            elif type(dictionary[key]) == type("") :
                 value = [f"\'{dictionary[key]}\'"]
             else :
                 value = [dictionary[key]]
@@ -552,11 +552,9 @@ def ping(dict: dict[Any, Any]={'ping':'pong'}) -> None : # for testing
             dictionary: the dictionary to format (dict)
         '''
         for key in dictionary :
-            if type(dictionary[key]) not in [dict, list] : # guard clause for non-dict/list values
-                continue
-            if type(dictionary[key]) == dict :
+            if type(dictionary[key]) == type({}) :
                 dictionary[key] = '\n'.join(format_dict(dictionary[key]))
-            elif type(dictionary[key]) == list :
+            elif type(dictionary[key]) == type([]) :
                 dictionary[key] = '\n'.join(format_list(dictionary[key]))
         
         return dictionary

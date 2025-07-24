@@ -1943,6 +1943,18 @@ class Event_Node:
     def play(self, campaign: rogue_campaign) :
         self.type.run(campaign)
         self.type = Event_Type(0)
+
+    def var_tree(self) -> dict[str, Any] :
+        var_dict: dict[str, Any]= {}
+
+        # var_dict[self.__repr__()] = vars(self)
+        var_dict["type"] = self.type
+        var_dict["outs"] = self.outs
+
+        for child in self.outs :
+            var_dict[child.__repr__()] = child.var_tree()
+
+        return var_dict
     
 def map_gen(campaign: rogue_campaign, choice_fn: Callable[[rogue_campaign, list[Event_Type]], Event_Type], depth: int = 10, avg_width: float = 4.5) -> Event_Node :
     '''
@@ -2002,7 +2014,7 @@ def map_gen(campaign: rogue_campaign, choice_fn: Callable[[rogue_campaign, list[
                     # no need to update available_children, left node wont be checked again
 
                 # try right
-                elif available_children[min(len(available_children), i+1)] >= 1 :
+                elif available_children[min(len(available_children)-1, i+1)] >= 1 :
                     merge_node = prev_lyr[i+1].peek(0)
                     prev_lyr[i].add_out(merge_node)
                     available_children[i+1] -= 1

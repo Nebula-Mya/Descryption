@@ -8,7 +8,7 @@
 
 
 
- - [ ] implement generation of map
+ - [X] implement generation of map
 
    - can't just use l-system: need to allow for merging of different paths
 
