@@ -55,60 +55,60 @@ class Test_Ouroboros_Level_Up(unittest.TestCase):
             self.assertEqual(ouroboros2.base_life, ouroboros2.oro_level - 1)
             self.assertEqual(card_library.Ouroboros.oro_level, 3)
 
-class Test_Events(unittest.TestCase):
+# class Test_Events(unittest.TestCase):
 
-    def setUp(self) -> None:
-        self.default_deck: list[card.BlankCard] = [card_library.Rabbit(), card_library.Stoat(), card_library.Wolf(), card_library.GoldenPelt(), card_library.GoldenPelt()]
-        self.campaign = rogue.rogue_campaign(self.default_deck, 0, 2)
+#     def setUp(self) -> None:
+#         self.default_deck: list[card.BlankCard] = [card_library.Rabbit(), card_library.Stoat(), card_library.Wolf(), card_library.GoldenPelt(), card_library.GoldenPelt()]
+#         self.campaign = rogue.rogue_campaign(self.default_deck, 0, 2)
         
-        weights = rogue.event_weights(self.campaign, [])
-        self.assertEqual([1,1,1,1,1,1,1,7], weights)
+#         weights = rogue.event_weights(self.campaign, [])
+#         self.assertEqual([1,1,1,1,1,1,1,7], weights)
 
-    def test_prev(self) -> None :
-        # odds
-        prev = [1,3,5,7]
-        weights = rogue.event_weights(self.campaign, prev)
-        self.assertEqual([0,1,0,1,0,1,0,3], weights)
+#     def test_prev(self) -> None :
+#         # odds
+#         prev = [1,3,5,7]
+#         weights = rogue.event_weights(self.campaign, prev)
+#         self.assertEqual([0,1,0,1,0,1,0,3], weights)
 
-        # evens 
-        prev = [2,4,6,8]
-        weights = rogue.event_weights(self.campaign, prev)
-        self.assertEqual([1,0,1,0,1,0,1,0], weights)
+#         # evens 
+#         prev = [2,4,6,8]
+#         weights = rogue.event_weights(self.campaign, prev)
+#         self.assertEqual([1,0,1,0,1,0,1,0], weights)
 
-    def test_small_deck(self) -> None :
-        self.campaign.remove_card(self.default_deck[0]) # 5 -> 4
+#     def test_small_deck(self) -> None :
+#         self.campaign.remove_card(self.default_deck[0]) # 5 -> 4
 
-        weights = rogue.event_weights(self.campaign, [])
-        self.assertEqual([1,0,0,1,1,1,1,5], weights)
+#         weights = rogue.event_weights(self.campaign, [])
+#         self.assertEqual([1,0,0,1,1,1,1,5], weights)
 
-        self.campaign.remove_card(self.default_deck[0]) # 4 -> 3
+#         self.campaign.remove_card(self.default_deck[0]) # 4 -> 3
 
-        weights = rogue.event_weights(self.campaign, [])
-        self.assertEqual([1,0,0,1,1,1,1,0], weights)
+#         weights = rogue.event_weights(self.campaign, [])
+#         self.assertEqual([1,0,0,1,1,1,1,0], weights)
 
-    def test_full_sigils(self) -> None :
-        for i in range(0,5) :
-            _card = self.campaign.player_deck.cards[i]
-            _card.sigils = ("airborne", "venom")
+#     def test_full_sigils(self) -> None :
+#         for i in range(0,5) :
+#             _card = self.campaign.player_deck.cards[i]
+#             _card.sigils = ("airborne", "venom")
 
-        weights = rogue.event_weights(self.campaign, [])
-        self.assertEqual([1,0,1,1,1,1,1,6], weights)
+#         weights = rogue.event_weights(self.campaign, [])
+#         self.assertEqual([1,0,1,1,1,1,1,6], weights)
 
-    def test_matching(self) -> None :
-        self.campaign.remove_card(self.default_deck[4])
-        self.campaign.add_card(card_library.RabbitPelt())
+#     def test_matching(self) -> None :
+#         self.campaign.remove_card(self.default_deck[4])
+#         self.campaign.add_card(card_library.RabbitPelt())
 
-        weights = rogue.event_weights(self.campaign, [])
-        self.assertEqual([1,1,0,1,1,1,1,6], weights)
+#         weights = rogue.event_weights(self.campaign, [])
+#         self.assertEqual([1,1,0,1,1,1,1,6], weights)
 
-    def test_pelts(self) -> None :
-        self.campaign.remove_card(self.default_deck[4])
-        self.campaign.remove_card(self.default_deck[3])
-        self.campaign.add_card(card_library.Bee())
-        self.campaign.add_card(card_library.Bee())
+#     def test_pelts(self) -> None :
+#         self.campaign.remove_card(self.default_deck[4])
+#         self.campaign.remove_card(self.default_deck[3])
+#         self.campaign.add_card(card_library.Bee())
+#         self.campaign.add_card(card_library.Bee())
 
-        weights = rogue.event_weights(self.campaign, [])
-        self.assertEqual([1,1,1,1,0,1,1,6], weights)
+#         weights = rogue.event_weights(self.campaign, [])
+#         self.assertEqual([1,1,1,1,0,1,1,6], weights)
 
 class Test_Deck(unittest.TestCase):
     def setUp(self) -> None:

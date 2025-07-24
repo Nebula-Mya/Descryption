@@ -28,6 +28,8 @@ class rogue_campaign :
         teeth: the player's money
         lives: the player's lives
         dead_campfire : if the survivors have been poisoned
+        map_root : the starting node of the map
+        current_node : the current node of the map
 
     Methods:
         add_teeth: adds teeth to the player's total
@@ -41,6 +43,9 @@ class rogue_campaign :
         has_lost: checks if the player has lost
         var_dict: returns a dictionary of the campaign's variables
     '''
+    level_length = 15
+    target_width = 4.5
+
     def __init__(self, start_decklist: list[card.BlankCard], start_teeth: int=0, lives: int=2) -> None:
         '''
         initializes the campaign object
@@ -57,6 +62,10 @@ class rogue_campaign :
         self.teeth: int = start_teeth
         self.lives: int = lives
         self.dead_campfire: bool = False
+        start_node = map_gen(self, event_choice, self.level_length, self.target_width)
+        # store root to be able to display full map
+        self.map_root = start_node
+        self.current_node = start_node
 
     def add_teeth(self, amount: int) -> None:
         self.teeth += amount
@@ -1670,82 +1679,82 @@ def beat_leshy(campaign: rogue_campaign) -> None: #REMINDME: format visuals
 
     gameplay() # add flavor text, context, etc.
 
-def event_weights(campaign: rogue_campaign, previous_events: list[int]) -> list[int]: # outside of split_road for testing purposes
-    '''
-    generate weights for event paths
+# def event_weights(campaign: rogue_campaign, previous_events: list[int]) -> list[int]: # outside of split_road for testing purposes
+#     '''
+#     generate weights for event paths
     
-    could change weights depending on campaign level, etc.
+#     could change weights depending on campaign level, etc.
 
-    Arguments:
-        campaign: the current campaign object (rogue_campaign object)
-        previous_events: the events that have already been generated (list[int])
+#     Arguments:
+#         campaign: the current campaign object (rogue_campaign object)
+#         previous_events: the events that have already been generated (list[int])
     
-    Returns:
-        list[int]: the weights
-    '''
-    # set up functions
-    bool_to_bin: Callable[[bool, int], int] = lambda bool_, int_=1 : int_ if bool_ else 0
+#     Returns:
+#         list[int]: the weights
+#     '''
+#     # set up functions
+#     bool_to_bin: Callable[[bool, int], int] = lambda bool_, int_=1 : int_ if bool_ else 0
 
-    # set up variables
-    weights = [
-        # card choice
-        bool_to_bin(1 not in previous_events), 
+#     # set up variables
+#     weights = [
+#         # card choice
+#         bool_to_bin(1 not in previous_events), 
         
-        # sigil sacrifice
-        bool_to_bin(2 not in previous_events and len(campaign.player_deck) > 4 and any(card_.has_sigil('') for card_ in campaign.player_deck.cards)), 
+#         # sigil sacrifice
+#         bool_to_bin(2 not in previous_events and len(campaign.player_deck) > 4 and any(card_.has_sigil('') for card_ in campaign.player_deck.cards)), 
         
-        # merge cards
-        bool_to_bin(any(type(card_1) == type(card_2) and card_1 != card_2 for card_1 in campaign.player_deck.cards for card_2 in campaign.player_deck.cards) and 3 not in previous_events and len(campaign.player_deck) > 4), 
+#         # merge cards
+#         bool_to_bin(any(type(card_1) == type(card_2) and card_1 != card_2 for card_1 in campaign.player_deck.cards for card_2 in campaign.player_deck.cards) and 3 not in previous_events and len(campaign.player_deck) > 4), 
         
-        # pelt shop
-        bool_to_bin(4 not in previous_events), 
+#         # pelt shop
+#         bool_to_bin(4 not in previous_events), 
         
-        # card shop
-        bool_to_bin(any(type(card_) in [card_library.WolfPelt, card_library.RabbitPelt, card_library.GoldenPelt] for card_ in campaign.player_deck.cards) and 5 not in previous_events), 
+#         # card shop
+#         bool_to_bin(any(type(card_) in [card_library.WolfPelt, card_library.RabbitPelt, card_library.GoldenPelt] for card_ in campaign.player_deck.cards) and 5 not in previous_events), 
         
-        # break rocks
-        bool_to_bin(6 not in previous_events), 
+#         # break rocks
+#         bool_to_bin(6 not in previous_events), 
         
-        # campfire
-        bool_to_bin(7 not in previous_events), 
-    ]
-    # 50% chance for card battle
-    weights.append(bool_to_bin(8 not in previous_events and len(campaign.player_deck) > 3, int_=sum(weights)))
+#         # campfire
+#         bool_to_bin(7 not in previous_events), 
+#     ]
+#     # 50% chance for card battle
+#     weights.append(bool_to_bin(8 not in previous_events and len(campaign.player_deck) > 3, int_=sum(weights)))
 
-    return weights
+#     return weights
 
 def split_road(campaign: rogue_campaign) -> None: #REMINDME: format visuals
     '''
-    presents the player with a choice from 1-3 paths, each with a different event, which will be known to the player before they choose
+    presents the player with a choice from 1-2 paths, each with a different event, which will be known to the player before they choose
     
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
     '''
-    def get_event(campaign: rogue_campaign, previous_events: list[int]=[]) -> tuple[str, str, int]:
-        '''
-        generate an event for a path according to weights
+    # def get_event(campaign: rogue_campaign, previous_events: list[int]=[]) -> tuple[str, str, int]:
+    #     '''
+    #     generate an event for a path according to weights
         
-        could change weights depending on campaign level, etc.
+    #     could change weights depending on campaign level, etc.
 
-        Arguments:
-            campaign: the current campaign object (rogue_campaign object)
-            previous_events: the events that have already been generated (list[int])
+    #     Arguments:
+    #         campaign: the current campaign object (rogue_campaign object)
+    #         previous_events: the events that have already been generated (list[int])
         
-        Returns:
-            list[str, str, int]: the event to run, the function to run it, and the number of the event
-        '''
-        # set up variables
-        weights = event_weights(campaign, previous_events)
+    #     Returns:
+    #         list[str, str, int]: the event to run, the function to run it, and the number of the event
+    #     '''
+    #     # set up variables
+    #     weights = event_weights(campaign, previous_events)
 
-        match random.choices(range(1, 9), weights=weights)[0] :
-            case 1 : return 'A choice of cards', 'card_choice(campaign)', 1
-            case 2 : return 'A set of mysterious stones', 'sigil_sacrifice(campaign)', 2
-            case 3 : return 'The Mycologists', 'merge_cards(campaign)', 3
-            case 4 : return 'The Trapper', 'pelt_shop(campaign)', 4
-            case 5 : return 'The Trader', 'card_shop(campaign)', 5
-            case 6 : return 'The Prospector', 'break_rocks(campaign)', 6
-            case 7 : return 'Survivors huddled around a campfire', 'campfire(campaign)', 7
-            case _ : return 'A card battle', 'card_battle(campaign)', 8
+    #     match random.choices(range(1, 9), weights=weights)[0] :
+    #         case 1 : return 'A choice of cards', 'card_choice(campaign)', 1
+    #         case 2 : return 'A set of mysterious stones', 'sigil_sacrifice(campaign)', 2
+    #         case 3 : return 'The Mycologists', 'merge_cards(campaign)', 3
+    #         case 4 : return 'The Trapper', 'pelt_shop(campaign)', 4
+    #         case 5 : return 'The Trader', 'card_shop(campaign)', 5
+    #         case 6 : return 'The Prospector', 'break_rocks(campaign)', 6
+    #         case 7 : return 'Survivors huddled around a campfire', 'campfire(campaign)', 7
+    #         case _ : return 'A card battle', 'card_battle(campaign)', 8
 
     def gameplay(campaign: rogue_campaign) -> None:
         # set up variables
@@ -1754,20 +1763,20 @@ def split_road(campaign: rogue_campaign) -> None: #REMINDME: format visuals
 
         # get the paths
         ## 50% chance for two paths, 25% for one and three
-        match random.randint(1, 4) :
-            case 1 : # one path
-                path_list = [get_event(campaign)]
-            case 2 : # three paths
-                # path_list = [get_event(campaign), get_event(campaign), get_event(campaign)]
-                path_list = [get_event(campaign)]
-                previous_events = [path_list[0][2]]
-                path_list.append(get_event(campaign, previous_events))
-                previous_events.append(path_list[1][2])
-                path_list.append(get_event(campaign, previous_events))
-            case _ : # two paths
-                path_list = [get_event(campaign)]
-                previous_events = [path_list[0][2]]
-                path_list.append(get_event(campaign, previous_events))
+        # match random.randint(1, 4) :
+        #     case 1 : # one path
+        #         path_list = [get_event(campaign)]
+        #     case 2 : # three paths
+        #         # path_list = [get_event(campaign), get_event(campaign), get_event(campaign)]
+        #         path_list = [get_event(campaign)]
+        #         previous_events = [path_list[0][2]]
+        #         path_list.append(get_event(campaign, previous_events))
+        #         previous_events.append(path_list[1][2])
+        #         path_list.append(get_event(campaign, previous_events))
+        #     case _ : # two paths
+        #         path_list = [get_event(campaign)]
+        #         previous_events = [path_list[0][2]]
+        #         path_list.append(get_event(campaign, previous_events))
 
         invalid_choice = False
         while True :
@@ -1777,8 +1786,8 @@ def split_road(campaign: rogue_campaign) -> None: #REMINDME: format visuals
             print('\n'*5)
             print(f'{card_gap}' + 'teeth: ' + str(campaign.teeth))
             print()
-            for ind in range(len(path_list)) : print(f'{card_gap}Path {str(ind + 1)}: {path_list[ind][0]}')
-            print(f'{card_gap}' + str(len(path_list)+1) + ": View Deck")
+            for ind in range(campaign.current_node.outdegree()) : print(f'{card_gap}Path {str(ind + 1)}: {campaign.current_node.peek(ind).type.listing()}')
+            print(f'{card_gap}' + str(campaign.current_node.outdegree()+1) + ": View Deck")
 
             if invalid_choice :
                 print(QoL.center_justified('Invalid choice') + '\n')
@@ -1790,7 +1799,12 @@ def split_road(campaign: rogue_campaign) -> None: #REMINDME: format visuals
             match QoL.reps_int(input(QoL.center_justified('Which path will you take?').rstrip() + ' '), -1) :
                 case [False, _] : invalid_choice = True
                 case [True, choice] : 
-                    if choice != len(path_list) : return exec(path_list[choice][1], globals(), locals())
+                    # if choice != len(path_list) : return exec(path_list[choice][1], globals(), locals())
+                    if choice >= 0 and choice < campaign.current_node.outdegree() :
+                        campaign.current_node = campaign.current_node.peek(choice)
+                        campaign.current_node.play(campaign)
+                        campaign.current_node.type = Event_Type.VISITED
+                        return
                     
                     # print the player's deck
                     QoL.clear()
@@ -1823,10 +1837,10 @@ def main() -> None: # coordinates the game loop, calls split_road, manages losse
 
     # loop is:
     while True :
-            QoL.ping(locals() | campaign.var_dict() | {'Ouroboros level': card_library.Ouroboros.oro_level})
+            QoL.ping(locals() | campaign.var_dict() | {'Ouroboros level': card_library.Ouroboros.oro_level} | campaign.map_root.var_tree())
 
     ###     check if area boss is next event (campaign.progress >= 10)
-            if campaign.progress >= 15 :
+            if campaign.progress >= campaign.level_length :
     ###         if it is, and its Leshy (campaign.level == 3), check if player has won
                 if campaign.level == 3 and bosses.boss_fight_leshy(campaign) :
     ###             if they have, run beat_leshy, and return (to main menu)
@@ -2036,3 +2050,27 @@ def map_gen(campaign: rogue_campaign, choice_fn: Callable[[rogue_campaign, list[
         prev_lyr = new_nodes.copy()
 
     return start
+
+def event_choice(campaign: rogue_campaign, prev: list[Event_Type]) -> Event_Type :
+    #REMINDME: use instance variables to allow for smarter generation
+    bool_to_bin: Callable[[bool, int], int] = lambda bool_, int_=1 : int_ if bool_ else 0
+
+    weights: list[int] = [
+        bool_to_bin(Event_Type.CARD_CHOICE not in prev),
+
+        bool_to_bin(Event_Type.SIGIL_SACRIFICE not in prev),
+
+        bool_to_bin(Event_Type.MERGE_CARDS not in prev),
+        
+        bool_to_bin(Event_Type.PELT_SHOP not in prev),
+        
+        bool_to_bin(Event_Type.CARD_SHOP not in prev),
+        
+        bool_to_bin(Event_Type.BREAK_ROCKS not in prev),
+        
+        bool_to_bin(Event_Type.CAMPFIRE not in prev)
+    ]
+
+    weights.append(bool_to_bin(Event_Type.CARD_BATTLE not in prev, int_=sum(weights)))
+
+    return Event_Type(random.choices(range(1,9), weights=weights)[0])

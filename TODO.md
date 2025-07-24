@@ -16,7 +16,7 @@
 
 
 
- - [ ] integrate map into rogue_campaign functionality
+ - [X] integrate map into rogue_campaign functionality
 
    - should only need to store the current node (event most recently chosen)
 
@@ -31,3 +31,5 @@
    - use an X (larger) for where the player is / has been
 
    - display vertically, allow scrolling (will worry about making it feel DOS-Y when im not actually working through the terminal aka post rust)
+
+   - have prebuilt strings for increasing/decrease by 1 to 2,3,4,5,6,7 (only increase to 7), allowing for events to be shared or not, then they can be pieced together to form the map
