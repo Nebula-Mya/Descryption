@@ -1166,7 +1166,7 @@ def boss_fight_leshy(campaign: rogue.rogue_campaign)  -> bool: # boss fight 4 (s
             # gameplay
             (win, winner, overkill, deck_out, played_new) = turn_structure(playfield)
             played += played_new
-            if win : # playtest feature to quick quit
+            if win :
                 result = winner == 'player'
                 post_boss_flavor(campaign, result)
                 if result :

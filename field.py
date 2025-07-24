@@ -535,7 +535,7 @@ class Playmat :
         term_cols = os.get_terminal_size().columns
         max_width = term_cols*80 // 100
         indent = min((term_cols - max_width) // 2, 4)
-        cards_per_row = min(max_width // 15, 8)
+        cards_per_row = min(max_width // 15, min(8, len(self.hand)))
         card_gaps = max_width // cards_per_row - 15
         card_gaps_space = ' '*(card_gaps + indent)
 
@@ -575,7 +575,7 @@ class Playmat :
         # set up variables
         field_string = ''
         term_cols = os.get_terminal_size().columns
-        card_gaps = (term_cols*55 // 100) // 5 - 15
+        card_gaps = (term_cols - 60) // (7*3)
         if card_gaps <= 0 :
             score_gap = 31
         else :
@@ -591,14 +591,17 @@ class Playmat :
             for line in range(11) :
                 if moon_on_field and row in [1, 2] : connector = get_connector(card_gaps, row, line, ASCII_text.moon_inner_str())
                 else : connector = [' '*card_gaps*3]*4
+                connector[0] = ''
                 for i in range(4) : field_string += connector[i] + cards[row][i].text_by_line()
                 field_string += '\n'
 
-            field_string += ' '*card_gaps + '-'*(card_gaps*13 + 60) + '\n' if row == 1 else '' # add a divider between opponent and player fields
+            # field_string += ' '*card_gaps + '-'*(card_gaps*13 + 60) + '\n' if row == 1 else '' # add a divider between opponent and player fields
+            field_string += '-'*(card_gaps*13 + 60) + '\n' if row == 1 else '' # add a divider between opponent and player fields
 
         # print field
         QoL.clear()
-        print(field_string, end='')
+        # print(field_string, end='')
+        print(QoL.center_justified(field_string),end='')
         if score_scale : ASCII_text.print_scales(self.score, score_gap)
 
     def print_full_field(self) -> None :

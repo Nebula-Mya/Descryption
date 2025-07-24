@@ -35,11 +35,16 @@ def print_scales(score: dict[str, int], score_gap: int) -> None :
             opponent_weight = 'O'*5
     
 
+#     scales = '''{spc}PLAYER  LESHY
+# {spc}{plr}   {lsh}
+# {spc}‾‾‾‾‾/‾\\‾‾‾‾‾
+# {spc}    /___\\'''.format(plr=player_weight, lsh=opponent_weight, spc=' '*score_gap)
+#     print(scales)
     scales = '''{spc}PLAYER  LESHY
 {spc}{plr}   {lsh}
 {spc}‾‾‾‾‾/‾\\‾‾‾‾‾
-{spc}    /___\\'''.format(plr=player_weight, lsh=opponent_weight, spc=' '*score_gap)
-    print(scales)
+{spc}    /___\\'''.format(plr=player_weight, lsh=opponent_weight, spc='')
+    print(QoL.center_justified(scales, blocked=True))
 
 def print_win(overkill: int=0)  -> None:
     '''

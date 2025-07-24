@@ -659,7 +659,6 @@ def sigil_sacrifice(campaign: rogue_campaign) -> None: #REMINDME: format visuals
     gameplay(campaign) # add flavor text, context, etc.
 
 def merge_cards(campaign: rogue_campaign) -> None: #REMINDME: format visuals
-    #FIXME: use sigil helpers from sacrifice
     '''
     allows the player to merge two cards of the same species into one, with the new card having combined stats and sigils
     
@@ -834,11 +833,12 @@ def pelt_shop(campaign: rogue_campaign) -> None: #REMINDME: format visuals
     '''
     def display_shop(campaign: rogue_campaign, pelt_dict: dict[str, tuple[int, type[card.BlankCard]]], new_pelts: list[card.BlankCard]) -> None:
         # set up variables
-        card_gap_spaces = ' '*((os.get_terminal_size().columns*55 // 100) // 5 - 15)
+        card_gaps = (os.get_terminal_size().columns*55 // 100) // 5 - 15
+        card_gap_spaces = ' '*(card_gaps)
         price_tags = QoL.center_justified(card_gap_spaces.join([f'{pelt_name.title()}: {str(pelt_dict[pelt_name][0]).ljust(13 - len(pelt_name))}' for pelt_name in pelt_dict]))
-        pelt_displays = QoL.print_deck([pelt_dict[pelt_name][1]() for pelt_name in pelt_dict], centered=True, blocked=True, silent=True)
+        pelt_displays = QoL.print_deck([pelt_dict[pelt_name][1]() for pelt_name in pelt_dict], centered=True, blocked=True, silent=True, exact_card_gap=card_gaps, beginning_space=False)
         shop_display = f'{price_tags}{pelt_displays}'
-        cart = QoL.print_deck(new_pelts, silent=True)
+        cart = QoL.print_deck(new_pelts, silent=True, beginning_space=False)
 
         # print the shop
         if campaign.teeth == 1 : 
@@ -1592,6 +1592,7 @@ def add_death_card(campaign: rogue_campaign) -> None: #REMINDME: format visuals
         cost_dialogue = 'Choose a card to take the cost from:'
         stat_dialogue = 'Choose a card to take the attack and life from:'
         sigil_dialogue = 'Choose a card to take the sigils from:'
+        #REMINDME: too wide
         flavor_pic = '''
     After you finish your work, Leshy hands you a blank card and takes a picture. The last thing you remember is the flash of the camera and this card in your hand.
 '''

@@ -330,7 +330,7 @@ def sort_deck(deck: list[card.BlankCard]) -> list[card.BlankCard] :
     deck = sorted(deck, key=lambda x: x.name) # sort by name (will be sub-sorting under cost)
     return sorted(deck, key=lambda x: x.saccs)
 
-def print_deck(deck: list[card.BlankCard], sort: bool=False, numbered: bool=False, centered: bool=False, blocked: bool=False, silent: bool=False) -> str:
+def print_deck(deck: list[card.BlankCard], sort: bool=False, numbered: bool=False, centered: bool=False, blocked: bool=False, silent: bool=False, exact_card_gap: None | int = None, beginning_space: bool = True, max_card_width: int = 6) -> str:
     '''
     prints a list of cards in a deck, with optional sorting
 
@@ -357,10 +357,12 @@ def print_deck(deck: list[card.BlankCard], sort: bool=False, numbered: bool=Fals
                 text += card_gap_numbered(card_gaps, card_number[0]) + card.text_by_line()
                 card_number[0] += 1
         else :
-            text = card_gaps_space + card_gaps_space.join(card.text_by_line() for card in row)
+            if numbered or beginning_space : text = card_gaps_space
+            else : text = ""
+            text += card_gaps_space.join(card.text_by_line() for card in row)
 
         if centered or numbered :
-            return text[1:]
+            return text
         return text
     
     # set up variables
@@ -371,10 +373,12 @@ def print_deck(deck: list[card.BlankCard], sort: bool=False, numbered: bool=Fals
     max_width = term_cols*80 // 100
     indent = min((term_cols - max_width) // 2, 4)
     if numbered :
-        cards_per_row = min(max_width // 19, 8)
+        cards_per_row = min(max_width // 19, max_card_width)
     else :
-        cards_per_row = min(max_width // 15, 8)
-    card_gaps = max_width // cards_per_row - 15
+        cards_per_row = min(max_width // 15, max_card_width)
+    if exact_card_gap == None:
+        card_gaps = max_width // cards_per_row - 15
+    else : card_gaps = exact_card_gap
 
     # sort deck if needed
     if sort :
