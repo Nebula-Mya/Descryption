@@ -319,7 +319,7 @@ def init_boss_playfield(campaign: rogue.rogue_campaign, Poss_Leshy: dict[int, li
 
     # add starting field cards
     for zone in range(1, 5) : 
-        if field_cards.__len__ == 0: 
+        if len(field_cards) == 0: 
             break
         playfield.summon_card(card=field_cards.pop(), zone=zone, field=playfield.opponent_field)
 
