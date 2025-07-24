@@ -518,7 +518,7 @@ def get_sigils(card1: card.BlankCard, card2: card.BlankCard) -> tuple[str, str]:
         i = 0
         for combo in poss_combos :
             i += 1
-            print("{idx}) {s1}, {s2}".format(idx=i, s1=combo[0], s2=combo[1]))
+            print("{idx}) {s1}, {s2}".format(idx=i, s1=sigils.sigil_title(combo[0]), s2=sigils.sigil_title(combo[1])))
 
         (is_int, sigil_index) = QoL.reps_int( input(QoL.center_justified(f'What sigil combination would you like?').rstrip() + ' ' ), -1)
 
