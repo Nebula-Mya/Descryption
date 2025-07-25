@@ -84,21 +84,22 @@ impl EguiApp {
         context_tx: mpsc::Sender<egui::Context>,
     ) -> Self {
         // load previous app state if possible
-        // REMINDME: not working; can't give correct channels in default
-        // if let Some(storage) = cc.storage {
-        //     return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
-        // }
+        if let Some(storage) = cc.storage {
+            let old_data: Self = eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
+            return Self {
+                input_tx: Some(input_tx),
+                output_rx: Some(output_rx),
+                context_tx: Some(context_tx),
+                ..old_data
+            }
+        }
 
         // if no previous app state, use the default config
         Self {
             input_tx: Some(input_tx),
             output_rx: Some(output_rx),
             context_tx: Some(context_tx),
-            // ..Default::default()
-            debug_uis: DebugUi::None,
-            tick_count: 0,
-            recent_msg: "".to_string(),
-            current_input: "".to_string(),
+            ..Default::default()
         }
     }
 }
