@@ -24,7 +24,7 @@
 
 
 
- - [ ] impliment map UI
+ - [X] implement map UI
 
    - text based
 

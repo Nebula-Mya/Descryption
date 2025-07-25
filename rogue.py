@@ -62,9 +62,7 @@ class rogue_campaign :
         self.teeth: int = start_teeth
         self.lives: int = lives
         self.dead_campfire: bool = False
-        map_data = map_gen(self, event_choice, self.level_length, self.target_width)
-        self.map_rows = map_data[1]
-        self.current_node = map_data[0]
+        self.current_node = map_gen(self, event_choice, self.level_length, self.target_width)
 
     def add_teeth(self, amount: int) -> None:
         self.teeth += amount
@@ -1800,7 +1798,7 @@ def split_road(campaign: rogue_campaign) -> None: #REMINDME: format visuals
             # print('\n'*5)
             # print(f'{card_gap}' + 'teeth: ' + str(campaign.teeth))
             # print()
-            # for ind in range(campaign.current_node.outdegree()) : print(f'{card_gap}Path {str(ind + 1)}: {campaign.current_node.peek(ind).type.listing()}')
+            # for ind in range(campaign.current_node.outdegree()) : print(f'{card_gap}Path {str(ind + 1)}: {campaign.current_node.peek(ind).type.map_descr()}')
             # print(f'{card_gap}' + str(campaign.current_node.outdegree()+1) + ": View Deck")
 
             # if invalid_choice :
@@ -1832,7 +1830,7 @@ def split_road(campaign: rogue_campaign) -> None: #REMINDME: format visuals
             print('\n'*5)
             print(f'{card_gap}' + 'teeth: ' + str(campaign.teeth))
             print()
-            # for ind in range(campaign.current_node.outdegree()) : print(f'{card_gap}Path {str(ind + 1)}: {campaign.current_node.peek(ind).type.listing()}')
+            # for ind in range(campaign.current_node.outdegree()) : print(f'{card_gap}Path {str(ind + 1)}: {campaign.current_node.peek(ind).type.map_descr()}')
             match campaign.current_node.outdegree() :
                 case 1 : print(f'{card_gap}' + "1: Continue on the path")
                 case 2 : print(f'{card_gap}' + "1: Take the left path\n" + f'{card_gap}' + "2: Take the right path")
@@ -1867,7 +1865,7 @@ def split_road(campaign: rogue_campaign) -> None: #REMINDME: format visuals
 
                     elif choice == campaign.current_node.outdegree() + 1 :
                         # look at the map
-                        campaign.current_node.view_map(first=True)
+                        campaign.current_node.view_map(campaign, first=True)
 
                     else :
                         invalid_choice = True
@@ -1895,10 +1893,11 @@ def main() -> None: # coordinates the game loop, calls split_road, manages losse
 
     # loop is:
     while True :
-            QoL.ping(locals() | campaign.var_dict() | {'Ouroboros level': card_library.Ouroboros.oro_level} | campaign.map_rows[0][0].var_tree())
+            QoL.ping(locals() | campaign.var_dict() | {'Ouroboros level': card_library.Ouroboros.oro_level} | campaign.current_node.var_tree())
 
     ###     check if area boss is next event (campaign.progress >= 10)
-            if campaign.progress >= campaign.level_length :
+            # if campaign.progress >= campaign.level_length :
+            if campaign.current_node.outdegree() == 0 :
     ###         if it is, and its Leshy (campaign.level == 3), check if player has won
                 if campaign.level == 3 and bosses.boss_fight_leshy(campaign) :
     ###             if they have, run beat_leshy, and return (to main menu)
@@ -1960,17 +1959,18 @@ class Event_Type(Enum):
             case 7 : campfire(campaign)
             case 8 : card_battle(campaign)
 
-    def listing(self) -> str :
+    def map_descr(self) -> str :
+        #REMINDME: rename to better fit with map
         match self.value :
             case 0 : return ""
-            case 1 : return 'A choice of cards'
-            case 2 : return 'A set of mysterious stones'
-            case 3 : return 'The Mycologists'
-            case 4 : return 'The Trapper'
-            case 5 : return 'The Trader'
-            case 6 : return 'The Prospector'
-            case 7 : return 'Survivors huddled around a campfire'
-            case _ : return 'A card battle'
+            case 1 : return 'a choice of cards.'
+            case 2 : return 'a set of mysterious stones.'
+            case 3 : return 'the Mycologists.'
+            case 4 : return 'the Trapper.'
+            case 5 : return 'the Trader.'
+            case 6 : return 'the Prospector.'
+            case 7 : return 'survivors huddled around a campfire.'
+            case _ : return 'a card battle.'
 
 class Event_Node:
     type: Event_Type
@@ -2014,34 +2014,103 @@ class Event_Node:
 
         return var_dict
     
-    def view_map(self, first=False) -> bool :
+    def view_map(self, campaign: rogue_campaign, first=False) -> bool :
         '''
         Recursive fn to let player view the following paths
 
         Arguments: 
+            campaign: the current campaign
             first: if this is the player's current location
 
         Returns
             if the player chose to put their map away
         '''
-        input("would be looking at map if it was implemented")
-
         # say what the events down the available paths are, along with if they join other paths
         # "Following the left path, you locate {event_name}.
         # You see that the right path joins with another, leading to {event_name}"
         # etc. 
         # offer players the options to look at each of the next paths (recursive), return to the previous junction (if first == False, returns False), or put their map away (returns True)
 
-        put_away = False
-        while not put_away :
+        # set up variables
+        term_cols = os.get_terminal_size().columns
+        card_gap: str = ((term_cols*55 // 100) // 5 - 15) * ' '
+
+        invalid_choice = False
+        while True :
             # all normal behavior in loop
-            break #TODO:
+            QoL.clear()
+            print('\n'*5)
+            
+            # tell player whats along the paths (centered)
+            descr_str = ""
+            match self.outdegree() :
+                case 0 : 
+                    # leads to the level's boss
+                    descr_str += "The path you're following, along with the other paths, ends at "
+                    match campaign.level :
+                        case 0 : descr_str += "the entrance of a mine."
+                        case 1 : descr_str += "a pier on the water."
+                        case 2 : descr_str += "the tent of a hunter."
+                        case 3 : descr_str += "an ominous cabin in the woods."
 
-            # recursive call is "put_away = child.view_map()"
+                case 1 :
+                    # path continues to ???
+                    descr_str += "The path you're following leads to " + self.outs[0].type.map_descr()
 
-        return True
+                case 2 :
+                    # path splits, describe
+                    descr_str += "The path you're following splits into two. "
+                    if self.outs[0].merger :
+                        # left path joins another
+                        descr_str += "You see that the path to the left joins with another, leading to " + self.outs[0].type.map_descr()
+                    else :
+                        descr_str += "Down the path to the left, you find " + self.outs[0].type.map_descr()
+
+                    if self.outs[1].merger : 
+                        # right path joins another
+                        descr_str += " After joining with another path, the right path offers " + self.outs[1].type.map_descr()
+                    else :
+                        descr_str += " On the other side, the path leads to " + self.outs[1].type.map_descr()
+            
+            print(QoL.center_justified(descr_str))
+            print()
+
+            # ask the player what they want to do
+            if self.outdegree() == 1 :
+                print(f'{card_gap}' + "1: Follow the path")
+
+            elif self.outdegree() == 2 :
+                print(f'{card_gap}' + "1: Follow the left path\n" + f'{card_gap}' + "2: Follow the right path")
+
+            if first :
+                print(f'{card_gap}' + str(self.outdegree() + 1) + ": Put the map away")
+            else :
+                print(f'{card_gap}' + str(self.outdegree() + 1) + ": Return to previous junction")
+                print(f'{card_gap}' + str(self.outdegree() + 2) + ": Put the map away")
+
+            if invalid_choice :
+                print(QoL.center_justified('Invalid choice'))
+                invalid_choice = False
+            else :
+                print('\n')
+
+            # get the player's choice
+            match QoL.reps_int(input(QoL.center_justified('What will you do?').rstrip() + ' '), -1) :
+                case [False, _] : invalid_choice = True
+                case [True, choice] : 
+                    if choice >= 0 and choice < self.outdegree() :
+                        if self.outs[choice].view_map(campaign) : return True
+
+                    elif choice == self.outdegree() and not first:
+                        return False
+                    
+                    elif (choice == self.outdegree() + 1 and not first) or (choice == self.outdegree() and first) :
+                        return True
+                    
+                    else :
+                        invalid_choice = True
     
-def map_gen(campaign: rogue_campaign, choice_fn: Callable[[rogue_campaign, list[Event_Type]], Event_Type], depth: int = 10, avg_width: float = 4.5) -> tuple[Event_Node, list[list[Event_Node]]] :
+def map_gen(campaign: rogue_campaign, choice_fn: Callable[[rogue_campaign, list[Event_Type]], Event_Type], depth: int = 10, avg_width: float = 4.5) -> Event_Node :
     '''
     Generates a directed acyclic graph with a single starting node that is connected to all others. The graph has a diameter defined by the input. Each node represents an event that the player can choose, along with its outgoing edges. Nodes can only have 2 incoming and 2 outgoing edges.
 
@@ -2053,11 +2122,8 @@ def map_gen(campaign: rogue_campaign, choice_fn: Callable[[rogue_campaign, list[
 
     Returns:
         the starting node for the map, which is the only vertex connected to all other vertices
-
-        the entire map, split into rows, from start to end, left to right
     '''
     start = Event_Node(Event_Type.VISITED)
-    rows: list[list[Event_Node]] = []
     prev_lyr: list[Event_Node] = [start]
 
     for _ in range(depth) :
@@ -2123,13 +2189,13 @@ def map_gen(campaign: rogue_campaign, choice_fn: Callable[[rogue_campaign, list[
             if parent.outdegree() == 2 : new_nodes.append(parent.peek(-1))
 
         # replace prev_lyr
-        rows.append(prev_lyr.copy())
         prev_lyr = new_nodes.copy()
 
-    return start, rows
+    return start
 
 def event_choice(campaign: rogue_campaign, prev: list[Event_Type]) -> Event_Type :
     #REMINDME: use instance variables to allow for smarter generation
+    # also avoid events repeating immediately along a path
     bool_to_bin: Callable[[bool, int], int] = lambda bool_, int_=1 : int_ if bool_ else 0
 
     weights: list[int] = [

@@ -289,7 +289,7 @@ class PackMule(card.BlankCard) : # only used by prospector
         super().__init__(species='Pack Mule', cost=0, attack=0, life=5, sigils=sigils, blank_cost=blank_cost)
 
 class Bloodhound(card.BlankCard) : 
-    def __init__(self, blank_cost: bool=False, sigils: tuple[str, str]=('','')) : # will have guardian sigil once implimented
+    def __init__(self, blank_cost: bool=False, sigils: tuple[str, str]=('','')) : # will have guardian sigil once implemented
         super().__init__(species='Bloodhound', cost=2, attack=2, life=3, sigils=sigils, blank_cost=blank_cost)
 
 class GoldNugget(card.BlankCard) : # only used by prospector

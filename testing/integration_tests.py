@@ -236,7 +236,7 @@ class Test_Events(unittest.TestCase):
 
         start_node = rogue.map_gen(self.campaign, event_choice)
 
-        QoL.ping({"rows": start_node[1]} | start_node[0].var_tree())
+        QoL.ping(start_node.var_tree())
 
 class Test_Deck(unittest.TestCase):
     def test_print(self) -> None :
