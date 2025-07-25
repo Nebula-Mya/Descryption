@@ -1796,15 +1796,51 @@ def split_road(campaign: rogue_campaign) -> None: #REMINDME: format visuals
         while True :
 
             # display the paths
+            # QoL.clear()
+            # print('\n'*5)
+            # print(f'{card_gap}' + 'teeth: ' + str(campaign.teeth))
+            # print()
+            # for ind in range(campaign.current_node.outdegree()) : print(f'{card_gap}Path {str(ind + 1)}: {campaign.current_node.peek(ind).type.listing()}')
+            # print(f'{card_gap}' + str(campaign.current_node.outdegree()+1) + ": View Deck")
+
+            # if invalid_choice :
+            #     print(QoL.center_justified('Invalid choice') + '\n')
+            #     invalid_choice = False
+            # else :
+            #     print('\n')
+
+            # # get the player's choice
+            # match QoL.reps_int(input(QoL.center_justified('Which path will you take?').rstrip() + ' '), -1) :
+            #     case [False, _] : invalid_choice = True
+            #     case [True, choice] : 
+            #         # if choice != len(path_list) : return exec(path_list[choice][1], globals(), locals())
+            #         if choice >= 0 and choice < campaign.current_node.outdegree() :
+            #             campaign.current_node = campaign.current_node.peek(choice)
+            #             campaign.current_node.play(campaign)
+            #             campaign.current_node.type = Event_Type.VISITED
+            #             return
+                    
+            #         # print the player's deck
+            #         QoL.clear()
+            #         print('\n'*5)
+            #         print(QoL.center_justified('Your deck:'))
+            #         campaign.print_deck()
+            #         print()
+            #         input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
+
             QoL.clear()
             print('\n'*5)
             print(f'{card_gap}' + 'teeth: ' + str(campaign.teeth))
             print()
-            for ind in range(campaign.current_node.outdegree()) : print(f'{card_gap}Path {str(ind + 1)}: {campaign.current_node.peek(ind).type.listing()}')
-            print(f'{card_gap}' + str(campaign.current_node.outdegree()+1) + ": View Deck")
+            # for ind in range(campaign.current_node.outdegree()) : print(f'{card_gap}Path {str(ind + 1)}: {campaign.current_node.peek(ind).type.listing()}')
+            match campaign.current_node.outdegree() :
+                case 1 : print(f'{card_gap}' + "1: Continue on the path")
+                case 2 : print(f'{card_gap}' + "1: Take the left path\n" + f'{card_gap}' + "2: Take the right path")
+            print(f'{card_gap}' + str(campaign.current_node.outdegree()+1) + ": View your deck")
+            print(f'{card_gap}' + str(campaign.current_node.outdegree()+2) + ": Look at your map")
 
             if invalid_choice :
-                print(QoL.center_justified('Invalid choice') + '\n')
+                print(QoL.center_justified('Invalid choice'))
                 invalid_choice = False
             else :
                 print('\n')
@@ -1820,13 +1856,21 @@ def split_road(campaign: rogue_campaign) -> None: #REMINDME: format visuals
                         campaign.current_node.type = Event_Type.VISITED
                         return
                     
-                    # print the player's deck
-                    QoL.clear()
-                    print('\n'*5)
-                    print(QoL.center_justified('Your deck:'))
-                    campaign.print_deck()
-                    print()
-                    input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
+                    elif choice == campaign.current_node.outdegree() :
+                        # print the player's deck
+                        QoL.clear()
+                        print('\n'*5)
+                        print(QoL.center_justified('Your deck:'))
+                        campaign.print_deck()
+                        print()
+                        input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
+
+                    elif choice == campaign.current_node.outdegree() + 1 :
+                        # look at the map
+                        campaign.current_node.view_map(first=True)
+
+                    else :
+                        invalid_choice = True
                     
         
     gameplay(campaign) # add flavor text, context, etc.
@@ -1930,27 +1974,13 @@ class Event_Type(Enum):
 
 class Event_Node:
     type: Event_Type
-    # ins: list[Event_Node]
+    merger: bool
     outs: list[Event_Node]
 
     def __init__(self, type: Event_Type) -> None :
         self.type = type
-        # self.ins = []
+        self.merger = False
         self.outs = []
-
-    # def add_in(self, new_in: Event_Node) -> bool :
-    #     if len(self.ins) >= 2 : return False
-
-    #     self.ins.append(new_in)
-
-    #     return True
-    
-    # def rem_in(self) -> bool :
-    #     if len(self.ins) <=0 : return False
-
-    #     self.ins.pop()
-
-    #     return True
 
     def add_out(self, new_out: Event_Node) -> bool :
         if len(self.outs) >= 2 : return False
@@ -1983,6 +2013,33 @@ class Event_Node:
             var_dict[child.__repr__()] = child.var_tree()
 
         return var_dict
+    
+    def view_map(self, first=False) -> bool :
+        '''
+        Recursive fn to let player view the following paths
+
+        Arguments: 
+            first: if this is the player's current location
+
+        Returns
+            if the player chose to put their map away
+        '''
+        input("would be looking at map if it was implemented")
+
+        # say what the events down the available paths are, along with if they join other paths
+        # "Following the left path, you locate {event_name}.
+        # You see that the right path joins with another, leading to {event_name}"
+        # etc. 
+        # offer players the options to look at each of the next paths (recursive), return to the previous junction (if first == False, returns False), or put their map away (returns True)
+
+        put_away = False
+        while not put_away :
+            # all normal behavior in loop
+            break #TODO:
+
+            # recursive call is "put_away = child.view_map()"
+
+        return True
     
 def map_gen(campaign: rogue_campaign, choice_fn: Callable[[rogue_campaign, list[Event_Type]], Event_Type], depth: int = 10, avg_width: float = 4.5) -> tuple[Event_Node, list[list[Event_Node]]] :
     '''
@@ -2042,12 +2099,14 @@ def map_gen(campaign: rogue_campaign, choice_fn: Callable[[rogue_campaign, list[
                 if available_children[max(0, i-1)] >= 1 :
                     merge_node = prev_lyr[i-1].peek(-1)
                     prev_lyr[i].add_out(merge_node)
+                    merge_node.merger = True
                     # no need to update available_children, left node wont be checked again
 
                 # try right
                 elif available_children[min(len(available_children)-1, i+1)] >= 1 :
                     merge_node = prev_lyr[i+1].peek(0)
                     prev_lyr[i].add_out(merge_node)
+                    merge_node.merger = True
                     available_children[i+1] -= 1
 
                 # current setup is unuseable
