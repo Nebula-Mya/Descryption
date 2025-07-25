@@ -1,21 +1,24 @@
+from __future__ import annotations # prevent type hints needing import at runtime
+from typing import TYPE_CHECKING
+
 import card_library
 import deck
 import field
 import QoL
 import ASCII_text
-import random
-import math
-import copy
 import os
-import sys
+import card
 
-def choose_and_play(field) :
+def choose_and_play(field: field.Playmat) -> card.BlankCard | None:
     '''
     the whole process of choosing a card to play and playing it
     player can choose to go back at any time, and if so nothing will happen
 
     Arguments:
         field: the field object to play the card on (field object)
+
+    Returns:
+        the card played or None if no card is played (card object)
     '''
     # get terminal size
     term_cols = os.get_terminal_size().columns
@@ -24,10 +27,11 @@ def choose_and_play(field) :
     # set up variables
     invalid_index = False
     invalid_zone = False
+    on_occupied = False
 
     while True :
         field.print_full_field()
-        if invalid_index : # need to print this after the field is printed so it's not cleared
+        if invalid_index :
             print('Invalid index.')
             invalid_index = False
 
@@ -46,10 +50,14 @@ def choose_and_play(field) :
             QoL.clear()
             field.print_field()
             print(' '*card_gaps + 'Card to play:')
-            field.hand[play_index].explain()
+            card_to_play = field.hand[play_index] # for tracking played cards
+            card_to_play.explain()
             if invalid_zone :
                 print('Invalid zone.')
                 invalid_zone = False
+            if on_occupied :
+                print('Cannot play on top of a card without sacrificing.')
+                on_occupied = False
             zone_to_play = input('Zone to play: (press enter to go back) ')
 
             if zone_to_play == '' : # go back
@@ -57,14 +65,16 @@ def choose_and_play(field) :
 
             (is_int, zone_to_play) = QoL.reps_int(zone_to_play)
 
-            if not is_int or zone_to_play not in range(1, 6) : # guard clause for invalid zone
+            if not is_int or zone_to_play not in range(1, 5) : # guard clause for invalid zone
                 invalid_zone = True
             elif not field.play_card(play_index, zone_to_play) :
+                if field.hand[play_index].saccs == 0 :
+                    on_occupied = True
                 continue
             else :
-                return
+                return card_to_play
 
-def choose_draw(field) :
+def choose_draw(field: field.Playmat) -> None :
     '''
     the whole process of choosing a card to draw and drawing it
 
@@ -88,7 +98,7 @@ def choose_draw(field) :
             print('Invalid choice.')
             invalid_choice = False
 
-        deck_number = input('Draw from resource deck (1) or main deck (2): ')
+        deck_number = input('Draw from resource deck (1) or main deck (2) or view current deck (3): ')
 
         (_, deck_number) = QoL.reps_int(deck_number)
         
@@ -105,35 +115,47 @@ def choose_draw(field) :
                     break
                 except ValueError :
                     main_empty_alert = True
+            case 3 :
+                QoL.clear()
+                print('\n'*5)
+                print(QoL.center_justified('Your deck:'))
+                field.print_remaining()
+                print()
+                input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
             case _ :
                 invalid_choice = True
 
-def winner_check(field) :
+def winner_check(field: field.Playmat, silent: bool=False) -> tuple[bool, str, int, bool] :
     '''
     checks if the game is over and prints the appropriate message
 
     Arguments:
         field: the field object to check (field object)
+        silent: whether to print the message or not, defaults to False (bool)
 
     Returns:
-        True if the game is over, False if not (bool)
+        (win, winner, overkill, deck_out) (tuple)
+        win: whether the game is over (bool)
+        winner: the winner of the game (str)
+        overkill: the amount of overkill (int)
+        deck_out: whether the deck ran out (bool)
     '''
     # get variables from field
     (win, winner, overkill, deck_out) = field.check_win()
     
     if not win : # guard clause for game not being over
-        return False
+        return (win, winner, overkill, deck_out)
     
     # game is over
     QoL.clear()
     match winner :
-        case 'player' :
+        case 'player' if not silent :
             ASCII_text.print_win(overkill)
-        case 'opponent' :
+        case 'opponent' if not silent :
             ASCII_text.print_lose(deck_out)
-    return True
+    return (win, winner, overkill, deck_out)
 
-def view_remaining(field) : 
+def view_remaining(field: field.Playmat) -> None : 
     '''
     displays the remaining cards in the player's deck (sorted so as to not allow cheating), and allows the player to view a card
     
@@ -160,7 +182,7 @@ def view_remaining(field) :
         else :
             invalid_index = True
 
-def view_graveyard(field) :
+def view_graveyard(field: field.Playmat) -> None :
     '''
     displays the cards in the graveyard and allows the player to view a card
     
@@ -187,14 +209,14 @@ def view_graveyard(field) :
         else :
             invalid_index = True
 
-def view_cards(field) :
+def view_cards(field: field.Playmat) -> None :
     '''
     menu for player to choose to view bushes, leshy's field, or player's field, all of which are executed by this function
 
     Arguments:
         field: the field object to view (field object)
     '''
-    def pick_from_row(row) :
+    def pick_from_row(row: dict[int, card.BlankCard]) -> None :
         '''
         allows player to choose a card from a row to view
         
@@ -214,7 +236,7 @@ def view_cards(field) :
                 break
 
             (is_int, col_choice) = QoL.reps_int(col_choice)
-            if is_int and col_choice in range(1, 6) and row[col_choice].species != '' :
+            if is_int and col_choice in range(1, 5) and type(row[col_choice]) != card.BlankCard :
                 field.print_field()
                 row[col_choice].explain()
                 input('Press enter to continue.')
@@ -245,15 +267,19 @@ def view_cards(field) :
             case _ :
                 invalid_choice = True
 
-def view_play_attack(field) :
+def view_play_attack(field: field.Playmat) -> list[card.BlankCard] :
     '''
     menu for player to choose to view deck (will happen), view graveyard (will happen), play a card (will happen), or attack and end turn (won't happen, will be in main loop)
 
     Arguments:
         field: the field object to view (field object)
+
+    Returns:
+        played: the cards played (list of card objects)
     '''
     # set up variables
     invalid_choice = False
+    played = []
 
     while True :
         field.print_field()
@@ -268,7 +294,8 @@ def view_play_attack(field) :
         choice = input('Choose an option: ')
         match choice :
             case '1' :
-                choose_and_play(field)
+                played_card = choose_and_play(field)
+                if played_card : played.append(played_card) # track played cards
             case '2' :
                 view_cards(field)
             case '3' :
@@ -279,14 +306,17 @@ def view_play_attack(field) :
                 break # might add a confirmation later if it's too easy to accidentally end turn
             case _ :
                 invalid_choice = True
+        
+    return played
 
-def deck_gen(possible_cards, size) :
+def deck_gen(possible_cards: list[type[card.BlankCard]] | dict[int, list[type[card.BlankCard]]], size: int, hidden_cost: bool=False) -> deck.Deck :
     '''
     generates a deck from a list of possible cards
     
     Arguments:
         possible_cards: list of cards to choose from (dict)
         size: size of deck (int)
+        hidden_cost: whether to hide the cost of the card, defaults to False (bool)
 
     Returns:
         deck: deck of cards (deck object)
@@ -297,25 +327,11 @@ def deck_gen(possible_cards, size) :
     if not possible_cards :
         raise ValueError('Possible cards dict must not be empty.')
 
-    def random_card(possible_cards, alpha=2.2, beta=3.3) :
-        # get cost
-        max_cost = max(possible_cards.keys())
-        cost = math.floor((max_cost + 1) * random.betavariate(alpha, beta))
-
-        # get card type
-        template_card = random.choice(possible_cards[cost])
-        card_class = type(template_card)
-        if any(type(card) for card in card_library.Rare_Cards) == card_class: # lower chances of rare cards
-            template_card = random.choice(possible_cards[cost])
-            card_class = type(template_card)
-
-        return card_class(getattr(template_card, 'blank_cost', False))
-    
-    deck_list = [random_card(possible_cards) for _ in range(size)]
+    deck_list = [QoL.random_card(possible_cards, hidden_cost) for _ in range(size)]
 
     return deck.Deck(deck_list)
 
-def resource_gen(size) :
+def resource_gen(size: int) -> deck.Deck :
     '''
     generates a resource deck
 
@@ -329,11 +345,28 @@ def resource_gen(size) :
     if size < 1 :
         raise ValueError('Deck size must be at least 1.')
 
-    squirrels = [card_library.Squirrel() for _ in range(size)]
+    squirrels: list[card.BlankCard] = [card_library.Squirrel() for _ in range(size)]
 
     return deck.Deck(squirrels)
 
-def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold) :
+def main(deck_size: int, hand_size: int, Leshy_play_count_median: int, Leshy_play_count_variance: int, Leshy_in_strategy_chance: int, Leshy_strat_change_threshold: int, player_deck_obj: deck.Deck | None=None, squirrels_deck_obj: deck.Deck | None=None, opponent_deck_obj: deck.Deck | None=None, print_results: bool=True)  -> tuple[bool, str, int, bool]:
+    '''
+    main function for deck battles
+    
+    Arguments:
+        deck_size: size of the deck (int)
+        hand_size: size of the hand (int)
+        Leshy_play_count_median: median number of plays for Leshy (int)
+        Leshy_play_count_variance: variance in number of plays for Leshy (int)
+        Leshy_in_strategy_chance: chance of Leshy playing in strategy (int)
+        Leshy_strat_change_threshold: threshold for Leshy changing strategy (int)
+        player_deck_obj: the player's deck object, defaults to None (deck object)
+        squirrels_deck_obj: the squirrel deck object, defaults to None (deck object)
+        opponent_deck_obj: the opponent's deck object, defaults to None (deck object
+        print_results: whether to print the results of the game, defaults to True (bool)
+        
+    Returns:
+        (win, winner, overkill, deck_out) (tuple)'''
     # error handling
     if deck_size < 1 :
         raise ValueError('Deck size must be at least 1.')
@@ -347,15 +380,24 @@ def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_varianc
         raise ValueError('Leshy play count variance must be at least 0.')
     if Leshy_in_strategy_chance < 0 or Leshy_in_strategy_chance > 100 :
         raise ValueError('Leshy in strategy chance must be between 0 and 100.')
-    if Leshy_strat_change_threshold < -8 or Leshy_strat_change_threshold > 8 :
-        raise ValueError('Leshy strategy change threshold must be between -8 and 8.')
+    if Leshy_strat_change_threshold < -5 or Leshy_strat_change_threshold > 5 :
+        raise ValueError('Leshy strategy change threshold must be between -5 and 5.')
 
     # game setup
-    opponent_deck = deck_gen(card_library.Poss_Leshy, deck_size*2)
-    player_deck = deck_gen(card_library.Poss_Playr, deck_size)
-    squirrels_deck = resource_gen(deck_size - hand_size - 1)
+    if player_deck_obj :
+        player_deck = player_deck_obj
+    else :
+        player_deck = deck_gen(card_library.Poss_Playr, deck_size)
+    if opponent_deck_obj :
+        opponent_deck = opponent_deck_obj
+    else :
+        opponent_deck = deck_gen(card_library.Poss_Leshy, deck_size*2, hidden_cost=True)
+    if squirrels_deck_obj :
+        squirrels_deck = squirrels_deck_obj
+    else :
+        squirrels_deck = resource_gen(deck_size)
 
-    playfield = field.Playmat(player_deck.shuffle(), squirrels_deck.shuffle(), opponent_deck.shuffle(), Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold)
+    playfield = field.Playmat(player_deck.shuffle(fair_hand=True), squirrels_deck.shuffle(), opponent_deck.shuffle(), Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold)
 
     # advance from bushes
     playfield.advance()
@@ -369,17 +411,19 @@ def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_varianc
     # game loop
     while True :
         # playtest feature to quick quit
-        if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) :
-            if playfield.active == 'player' :
-                playfield.print_full_field()
-            quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
-            if quit_game == 'y' :
-                QoL.clear()
-                if playfield.score['player'] > playfield.score['opponent'] :
-                    ASCII_text.print_win()
-                else :
-                    ASCII_text.print_lose()
-                break
+        # if not (getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')) :
+        #     if playfield.active == 'player' :
+        #         playfield.print_full_field()
+        #     quit_game = input('(PLAYTEST FEATURE) Quit game? (y/n) ')
+        #     if quit_game == 'y' :
+        #         QoL.clear()
+        #         if playfield.score['player'] > playfield.score['opponent'] :
+        #             if print_results : ASCII_text.print_win()
+        #             (win, winner, overkill, deck_out) = (True, 'player', 0, False)
+        #         else :
+        #             if print_results : ASCII_text.print_lose()
+        #             (win, winner, overkill, deck_out) = (True, 'opponent', 0, False)
+        #         break
             
         # player turn
         if playfield.active == 'player' :
@@ -400,17 +444,9 @@ def main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_varianc
 
         # switch turns
         playfield.switch()
-        if winner_check(playfield) :
+        (win, winner, overkill, deck_out) = winner_check(playfield)
+        if win :
             break
             
-    input('Press enter to return to menu.')
-
-if __name__ == '__main__' :
-    QoL.clear()
-    deck_size = 20
-    hand_size = 5
-    Leshy_play_count_median = 2
-    Leshy_play_count_variance = 1
-    Leshy_in_strategy_chance = 75
-    Leshy_strat_change_threshold = 3
-    main(deck_size, hand_size, Leshy_play_count_median, Leshy_play_count_variance, Leshy_in_strategy_chance, Leshy_strat_change_threshold)
+    if print_results : input('Press enter to continue.')
+    return (win, winner, overkill, deck_out)

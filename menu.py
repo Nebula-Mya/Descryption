@@ -1,33 +1,108 @@
+from __future__ import annotations
+from typing import NoReturn # prevent type hints needing import at runtime
+
 import duel
 import QoL
 import ASCII_text
+import card_library
+import card
+import rogue
 
-version_ID = 'v0.2.0a-alpha'
+version_ID = 'v0.2.0b-alpha'
 
-def reset_oro() :
+def reset_progress() -> None : 
     '''
-    resets Ouroboros to level 1 if the player chooses to
+    resets player progress if the player chooses to
     '''
     # set up variables
-    [oro_level] = QoL.read_data([['ouroboros', 'attack']])
+    data_to_write = [
+        (['progress markers', 'ouro level'], 1),
+        (['progress markers', 'beat prospector'], False),
+        (['progress markers', 'beat angler'], False),
+        (['progress markers', 'beat trapper'], False),
+        (['progress markers', 'beat leshy'], False),
+        (['progress markers', 'wins'], 0),
+        (['progress markers', 'losses'], 0),
+        (['death cards', 'first', 'name'], "Nebby"), # my death card
+        (['death cards', 'first', 'attack'], 2),
+        (['death cards', 'first', 'life'], 1),
+        (['death cards', 'first', 'cost'], 2),
+        (['death cards', 'first', 'sigils'], ["waterborne", ""]),
+        (['death cards', 'first', 'easter'], True),
+        (['death cards', 'second', 'name'], "Glaucus"), # Jacob's death card
+        (['death cards', 'second', 'attack'], 4),
+        (['death cards', 'second', 'life'], 1),
+        (['death cards', 'second', 'cost'], 3),
+        (['death cards', 'second', 'sigils'], ["airborne", "unkillable"]),
+        (['death cards', 'second', 'easter'], True),
+        (['death cards', 'third', 'name'], "A Possum"), # Raina's death card
+        (['death cards', 'third', 'attack'], 2),
+        (['death cards', 'third', 'life'], 3),
+        (['death cards', 'third', 'cost'], 3),
+        (['death cards', 'third', 'sigils'], ["corpse eater", "bees within"]),
+        (['death cards', 'third', 'easter'], True)
+    ]
 
     # print the menu
     QoL.clear()
     print(version_ID)
     print('\n'*2)
     ASCII_text.print_title()
-    print('\n'*6)
-    print(QoL.center_justified('Orouboros level: ' + str(oro_level)))
-    print('\n'*2)
+    print('\n'*8)
 
     # get the user's choice
-    reset_choice = input(QoL.center_justified('Are you sure you want to reset Ouroboros? y/n').rstrip() + ' ')
+    reset_choice = input(QoL.center_justified('Are you sure you want to reset your progress? This cannot be undone. y/n').rstrip() + ' ')
 
     # reset Ouroboros if the user chooses to
     if reset_choice == 'y' :
-        QoL.write_data([(['ouroboros', 'attack'], 1), (['ouroboros', 'life'], 1)])
+        QoL.write_data(data_to_write)
     
-def set_deck_size() :
+def reset_death_card() -> None :
+    '''
+    resets the death cards to the easter egg death cards if the player chooses to
+    '''
+    # set up variables
+    current_death_cards_unfiltered = [card_library.PlyrDeathCard1(), card_library.PlyrDeathCard2(), card_library.PlyrDeathCard3()]
+    current_death_cards = [death_card if not death_card.easter else card.BlankCard() for death_card in current_death_cards_unfiltered]
+    
+    # print the menu
+    QoL.clear()
+    print(version_ID)
+    print('\n'*2)
+    ASCII_text.print_title()
+    print('\n'*4)
+    print(QoL.center_justified('Current death cards: '))
+    QoL.print_deck(current_death_cards, centered=True)
+    print('\n'*2)
+
+    # get the user's choice
+    reset_choice = input(QoL.center_justified('Are you sure you want to delete your death cards? y/n').rstrip() + ' ')
+
+    # reset the death card if the user chooses to
+    if reset_choice == 'y' :
+        data_to_write = [
+                    (['death cards', 'first', 'name'], "Nebby"), # my death card
+                    (['death cards', 'first', 'attack'], 2),
+                    (['death cards', 'first', 'life'], 1),
+                    (['death cards', 'first', 'cost'], 2),
+                    (['death cards', 'first', 'sigils'], ["waterborne", ""]),
+                    (['death cards', 'first', 'easter'], True),
+                    (['death cards', 'second', 'name'], "Glaucus"), # Jacob's death card
+                    (['death cards', 'second', 'attack'], 4),
+                    (['death cards', 'second', 'life'], 1),
+                    (['death cards', 'second', 'cost'], 3),
+                    (['death cards', 'second', 'sigils'], ["airborne", "unkillable"]),
+                    (['death cards', 'second', 'easter'], True),
+                    (['death cards', 'third', 'name'], "A Possum"), # Raina's death card
+                    (['death cards', 'third', 'attack'], 2),
+                    (['death cards', 'third', 'life'], 3),
+                    (['death cards', 'third', 'cost'], 3),
+                    (['death cards', 'third', 'sigils'], ["corpse eater", "bees within"]),
+                    (['death cards', 'third', 'easter'], True)
+                ]
+        QoL.write_data(data_to_write)
+
+def set_deck_size() -> None :
     '''
     sets the deck size to the player's choice between the current hand size and 101
     '''
@@ -46,14 +121,14 @@ def set_deck_size() :
         print(version_ID)
         print('\n'*2)
         ASCII_text.print_title()
-        print('\n'*5)
+        print('\n'*6)
         deck_size_str = 'Current deck size: ' + str(deck_size)
         hand_size_str = 'Current hand size: ' + str(hand_size)
         hand_size_str += ' '*(len(deck_size_str) - len(hand_size_str))
         print(QoL.center_justified(deck_size_str))
         print()
         print(QoL.center_justified(hand_size_str))
-        print('\n')
+        print()
 
         if invalid_choice :
             print(QoL.center_justified('Invalid choice'))
@@ -84,7 +159,7 @@ def set_deck_size() :
                 QoL.write_data([(['settings', 'deck size'], choice)])
                 return
 
-def set_hand_size() :
+def set_hand_size() -> None :
     '''
     sets the hand size to the player's choice between 1 and the current deck size
     '''
@@ -103,14 +178,14 @@ def set_hand_size() :
         print(version_ID)
         print('\n'*2)
         ASCII_text.print_title()
-        print('\n'*5)
+        print('\n'*6)
         deck_size_str = 'Current deck size: ' + str(deck_size)
         hand_size_str = 'Current hand size: ' + str(hand_size)
         hand_size_str += ' '*(len(deck_size_str) - len(hand_size_str))
         print(QoL.center_justified(deck_size_str))
         print()
         print(QoL.center_justified(hand_size_str))
-        print('\n')
+        print()
 
         if invalid_choice :
             print(QoL.center_justified('Invalid choice'))
@@ -141,18 +216,18 @@ def set_hand_size() :
                 QoL.write_data([(['settings', 'hand size'], choice)])
                 return
 
-def set_difficulty() :
+def set_difficulty() -> None :
     '''
     sets the difficulty to the player's choice, chosen from a list of difficulties
     '''
-    def change_difficulty_data(difficulty_index) :
+    def change_difficulty_data(difficulty_index: int) -> None :
         '''
         sets the difficulty
 
         Arguments:
             difficulty_index: the new difficulty's index (int)
         '''
-        def write_difficulty(name, number, median, var, strat, threshold) :
+        def write_difficulty(name: str, number: int, median: int, var: int, strat: int, threshold: int) -> None :
             data_to_write = [
                 (['settings', 'difficulty', 'leshy median plays'], median),
                 (['settings', 'difficulty', 'leshy plays variance'], var),
@@ -166,9 +241,9 @@ def set_difficulty() :
         
         match difficulty_index :
             case 0 :
-                write_difficulty('Very Easy', 0, 1, 0, 40, 10)
+                write_difficulty('Very Easy', 0, 1, 0, 40, 5)
             case 1 :
-                write_difficulty('Easy', 1, 2, 0, 60, 5)
+                write_difficulty('Easy', 1, 2, 0, 60, 4)
             case 2 :
                 write_difficulty('Normal', 2, 2, 1, 75, 3)
             case 3 :
@@ -193,7 +268,7 @@ def set_difficulty() :
         print(QoL.center_justified('3.  Normal' + difficulty_key[2] + ' '*2))
         print(QoL.center_justified('4.   Hard' + difficulty_key[3] + ' '*3))
         print(QoL.center_justified('5. Very Hard' + difficulty_key[4]))
-        print('\n')
+        print()
 
         if invalid_choice :
             print(QoL.center_justified('Invalid choice'))
@@ -218,11 +293,11 @@ def set_difficulty() :
                 change_difficulty_data(choice)
                 return
         
-def settings() :
+def settings() -> None :
     '''
     allows the player to change the difficulty, deck size, hand size, and reset Ouroboros
     '''
-    def print_settings_options() :
+    def print_settings_options() -> None :
         '''
         prints the settings options
         '''
@@ -231,7 +306,8 @@ def settings() :
         print(QoL.center_justified('1.  Change difficulty     '))
         print(QoL.center_justified('2.  Change deck size      '))
         print(QoL.center_justified('3.  Change hand size      '))
-        print(QoL.center_justified('4.  Reset Ouroboros      '))
+        print(QoL.center_justified('4.  Delete death cards   '))
+        print(QoL.center_justified('5.  Reset progress       '))
 
     # set up variables
     invalid_choice = False
@@ -244,7 +320,7 @@ def settings() :
         ASCII_text.print_title()
         print('\n'*5)
         print_settings_options()
-        print('\n')
+        print()
 
         if invalid_choice :
             print(QoL.center_justified('Invalid choice'))
@@ -266,11 +342,13 @@ def settings() :
             case '3' :
                 set_hand_size()
             case '4' :
-                reset_oro()
+                reset_death_card()
+            case '5' :
+                reset_progress()
             case _ :
                 invalid_choice = True
 
-def main_menu() :
+def main_menu() -> NoReturn :
     '''
     displays the main menu and allows the player to start a game, change settings, or exit the game
     '''
@@ -286,10 +364,12 @@ def main_menu() :
         print('\n'*6)
         print(QoL.center_justified('1.  Start a game      '))
         print()
-        print(QoL.center_justified('2.    Settings        '))
+        print(QoL.center_justified('2.  Play a round      '))
         print()
-        print(QoL.center_justified('3.      Quit          '))
-        print('\n')
+        print(QoL.center_justified('3.    Settings        '))
+        print()
+        print(QoL.center_justified('4.      Quit          '))
+        print()
 
         if invalid_choice :
             print(QoL.center_justified('Invalid choice'))
@@ -303,6 +383,8 @@ def main_menu() :
 
         match choice :
             case '1' :
+                rogue.main()
+            case '2' :
                 data_to_read = [
                     ['settings', 'deck size'],
                     ['settings', 'hand size'],
@@ -314,9 +396,9 @@ def main_menu() :
                 [deck_size, hand_size, play_median, play_var, opp_strat, opp_threshold] = QoL.read_data(data_to_read)
 
                 duel.main(deck_size, hand_size, play_median, play_var, opp_strat, opp_threshold)
-            case '2' :
-                settings()
             case '3' :
+                settings()
+            case '4' :
                 exit()
             case _ :
                 invalid_choice = True

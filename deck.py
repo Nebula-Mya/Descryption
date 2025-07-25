@@ -1,3 +1,8 @@
+from __future__ import annotations # prevent type hints needing import at runtime
+from typing import TYPE_CHECKING, Callable
+if TYPE_CHECKING :
+    import card
+
 import QoL
 import random
 import copy
@@ -14,12 +19,16 @@ class Deck() :
         remove_card(index) : removes card from deck
         change_sigil(index, sigil): changes card's sigil
         shuffle(): generates a shuffled list of cards
+        refresh_ASCII(): refreshes ASCII art for all cards in deck
+    
+    Functions:
         print(): prints decklist
+        len(): returns length of deck
     '''
-    def __init__(self, cards) :
-        self.cards = cards
+    def __init__(self, cards: list[card.BlankCard]) :
+        self.cards: list[card.BlankCard] = cards
 
-    def add_card(self, card) :
+    def add_card(self, card: card.BlankCard) -> None :
         '''
         adds card to deck
 
@@ -28,18 +37,18 @@ class Deck() :
         '''
         self.cards.append(card)
     
-    def check_index(self, index) :
+    def check_index(self, index: int) -> None :
         '''
         checks if index is valid
 
         Arguments:
             index: index to check (int)
         '''
-        deck_length = len(self.cards)
+        deck_length = len(self)
         if index >= deck_length or index < 0:
             raise IndexError(f"index {index} is out of range for deck of length {deck_length}")
 
-    def remove_card(self, index) :
+    def remove_card(self, index: int) -> None :
         '''
         removes card from deck
 
@@ -52,14 +61,14 @@ class Deck() :
         card = sorted_deck[index]
         self.cards.remove(card)
 
-    def change_sigil(self, index, sigil, sigil_slot) :
+    def change_sigil(self, index: int, sigil: str, sigil_slot: int) -> None :
         '''
         changes card's sigil
 
         Arguments:
             index: index of card to change (int)
             sigil: sigil to change to (str)
-            sigil_slot: slot to change sigil in, 1 or 2 (int)
+            sigil_slot: slot to change sigil in, 0 or 1 (int)
         '''
         # set up variables
         sorted_deck = QoL.sort_deck(self.cards)
@@ -67,20 +76,20 @@ class Deck() :
 
         # error handling
         self.check_index(index)
-        if sigil_slot not in [1, 2] :
+        if sigil_slot not in [0,1] :
             raise ValueError(f"invalid sigil slot: {sigil_slot}")
         if len(sorted_deck[index].sigils) != 2 :
             raise ValueError('Sigils must be a list of length 2.')
         match sigil_slot :
+            case 0 :
+                same_sigil = (sorted_deck[index].sigils[1] == sigil) or ('hefty' in sorted_deck[index].sigils[1] and 'hefty' in sigil) or ('lane shift' in sorted_deck[index].sigils[1] and 'lane shift' in sigil)
             case 1 :
-                same_sigil = (sorted_deck[index].sigils[1] == sigil) or ('hefty' in sorted_deck[index].sigils[1] and 'hefty' in sigil)
-            case 2 :
-                same_sigil = (sorted_deck[index].sigils[0] == sigil) or ('hefty' in sorted_deck[index].sigils[0] and 'hefty' in sigil)
+                same_sigil = (sorted_deck[index].sigils[0] == sigil) or ('hefty' in sorted_deck[index].sigils[0] and 'hefty' in sigil) or ('lane shift' in sorted_deck[index].sigils[0] and 'lane shift' in sigil)
         if same_sigil :
             match sigil_slot :
-                case 1 :
+                case 0 :
                     remaining_sigil = sorted_deck[index].sigils[1]
-                case 2 :
+                case 1 :
                     remaining_sigil = sorted_deck[index].sigils[0]
                 case _ :
                     remaining_sigil = ''
@@ -88,35 +97,41 @@ class Deck() :
         
         # change sigil
         match sigil_slot :
+            case 0 :
+                sorted_deck[index].sigils = (sigil, sorted_deck[index].sigils[1])
             case 1 :
-                sorted_deck[index].sigils[0] = sigil
-            case 2 :
-                sorted_deck[index].sigils[1] = sigil
+                sorted_deck[index].sigils = (sigil, sorted_deck[index].sigils[0])
         
         sorted_deck[index].update_ASCII()
 
-    def shuffle(self) :
+    def shuffle(self, fair_hand: bool=False) -> list[card.BlankCard]:
         '''
         generates a shuffled list of cards
+
+        Arguments:
+            fair_hand: whether to shuffle the deck in a way that ensures a playable hand (bool)
         '''
-        shuffled_deck = copy.deepcopy(self.cards) # avoid changing original deck
-        random.shuffle(shuffled_deck)
-        return shuffled_deck
+        hand_size = QoL.read_data([['settings', 'hand size']])[0]
+        fair_check: Callable[[list[card.BlankCard]], bool] = lambda list : min([card.saccs for card in list[:hand_size - 1]]) <= (1 + len([card_ for card_ in list[:hand_size - 1] if card_.saccs == 0])) # check if hand is playable
+        
+        while True :
+            shuffled_deck = copy.deepcopy(self.cards) # avoid changing original deck
+            random.shuffle(shuffled_deck)
+            if not fair_hand or fair_check(shuffled_deck) :
+                return shuffled_deck
 
-    def __str__(self) : 
-        return QoL.print_deck(self.cards, sort=True, fruitful=True, numbered=True)
+    def refresh_ASCII(self) -> None:
+        '''
+        refreshes ASCII art for all cards in deck
+        '''
+        for card_ in self.cards :
+            card_.update_ASCII()
 
-if __name__ == '__main__' :
-    import card_library
-    import duel
+    def __str__(self): 
+        return QoL.print_deck(self.cards, sort=True, numbered=True, silent=True)
 
-    test_deck_player = duel.deck_gen(card_library.Poss_Playr, 16)
-    test_deck_opponent = duel.deck_gen(card_library.Poss_Leshy, 16)
-
-    # display decks
-    QoL.clear()
-    print('Possible player deck:')
-    print(test_deck_player)
-    print()
-    print('Possible opponent deck:')
-    print(test_deck_opponent)
+    def __len__(self) :
+        return len(self.cards)
+    
+    def __contains__(self, x) -> bool:
+        return x in self.cards
