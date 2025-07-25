@@ -28,7 +28,7 @@ class rogue_campaign :
         teeth: the player's money
         lives: the player's lives
         dead_campfire : if the survivors have been poisoned
-        map_root : the starting node of the map
+        map_rows : the rows of the map, start to finish, left to right
         current_node : the current node of the map
 
     Methods:
@@ -62,10 +62,9 @@ class rogue_campaign :
         self.teeth: int = start_teeth
         self.lives: int = lives
         self.dead_campfire: bool = False
-        start_node = map_gen(self, event_choice, self.level_length, self.target_width)
-        # store root to be able to display full map
-        self.map_root = start_node
-        self.current_node = start_node
+        map_data = map_gen(self, event_choice, self.level_length, self.target_width)
+        self.map_rows = map_data[1]
+        self.current_node = map_data[0]
 
     def add_teeth(self, amount: int) -> None:
         self.teeth += amount
@@ -1852,7 +1851,7 @@ def main() -> None: # coordinates the game loop, calls split_road, manages losse
 
     # loop is:
     while True :
-            QoL.ping(locals() | campaign.var_dict() | {'Ouroboros level': card_library.Ouroboros.oro_level} | campaign.map_root.var_tree())
+            QoL.ping(locals() | campaign.var_dict() | {'Ouroboros level': card_library.Ouroboros.oro_level} | campaign.map_rows[0][0].var_tree())
 
     ###     check if area boss is next event (campaign.progress >= 10)
             if campaign.progress >= campaign.level_length :
@@ -1985,7 +1984,7 @@ class Event_Node:
 
         return var_dict
     
-def map_gen(campaign: rogue_campaign, choice_fn: Callable[[rogue_campaign, list[Event_Type]], Event_Type], depth: int = 10, avg_width: float = 4.5) -> Event_Node :
+def map_gen(campaign: rogue_campaign, choice_fn: Callable[[rogue_campaign, list[Event_Type]], Event_Type], depth: int = 10, avg_width: float = 4.5) -> tuple[Event_Node, list[list[Event_Node]]] :
     '''
     Generates a directed acyclic graph with a single starting node that is connected to all others. The graph has a diameter defined by the input. Each node represents an event that the player can choose, along with its outgoing edges. Nodes can only have 2 incoming and 2 outgoing edges.
 
@@ -1997,8 +1996,11 @@ def map_gen(campaign: rogue_campaign, choice_fn: Callable[[rogue_campaign, list[
 
     Returns:
         the starting node for the map, which is the only vertex connected to all other vertices
+
+        the entire map, split into rows, from start to end, left to right
     '''
     start = Event_Node(Event_Type.VISITED)
+    rows: list[list[Event_Node]] = []
     prev_lyr: list[Event_Node] = [start]
 
     for _ in range(depth) :
@@ -2062,9 +2064,10 @@ def map_gen(campaign: rogue_campaign, choice_fn: Callable[[rogue_campaign, list[
             if parent.outdegree() == 2 : new_nodes.append(parent.peek(-1))
 
         # replace prev_lyr
+        rows.append(prev_lyr.copy())
         prev_lyr = new_nodes.copy()
 
-    return start
+    return start, rows
 
 def event_choice(campaign: rogue_campaign, prev: list[Event_Type]) -> Event_Type :
     #REMINDME: use instance variables to allow for smarter generation

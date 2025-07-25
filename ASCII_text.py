@@ -446,3 +446,178 @@ _|_ //{life_lines[0]} |
 --------------'""",
     }
 }
+
+# def concat_multiline_strs(strings:list[str]) -> str :
+#     '''
+#     Concatinates strings line by line in the order given.
+#     Supplied strings should be equal in height and should not vary in width within a single string.
+#     '''
+#     string_lines = [string.splitlines() for string in strings]
+#     line_count = min(len(lines) for lines in string_lines)
+#     result_string = ""
+
+#     for i in range(line_count) :
+#         if i != 0 : result_string += "\n"
+
+#         for lines in string_lines :
+#             result_string += lines[i]
+
+#     return result_string
+
+# '''
+# --------------------------------------------------------------------------------------
+#                                  ▀▀▛▛▞▟▟▄▄ ▀▀▛▛▞▟▟▄▄                                 |
+#                                  ▀▀▛▛▞▟▟▄▄ ▀▀▛▛▞▟▟▄▄                                 |
+#                                  ▀▀▛▛▞▟▟▄▄ ▀▀▛▛▞▟▟▄▄                                 |
+#                                                                                      |
+#                                                                                      |
+#                                                                                      |
+#                           ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄                          |
+#                           ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄                          |
+#                           ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄                          |
+#                                                                                      |
+#                                                                                      |
+#                                                                                      |
+#                    ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄                   |
+#                    ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄                   |
+#                    ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄                   |
+#                                                                                      |
+#                                                                                      |
+#                                                                                      |
+#             ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄            |
+#             ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄            |
+#             ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄            |
+#                                                                                      |
+#                                                                                      |
+#                                                                                      |
+#      ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄     |
+#      ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄     |
+#      ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄   ▀▀▛▛▞▟▟▄▄     |
+#                                                                                      |
+#                                                                                      |
+#                                                                                      |
+# █████     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     █████|
+# █████     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     █████|
+# █████     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     █████|
+#                                                                                      |
+#                                                                                      |
+#                                                                                      |
+#        █████     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     █████       |
+#        █████     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     █████       |
+#        █████     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     █████       |
+#                                                                                      |
+#                                                                                      |
+#                                                                                      |
+#               █████     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     █████              |
+#               █████     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     █████              |
+#               █████     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     █████              |
+#                   ░░░░  ░░░░   ░░░░ ░░░░     ░░░░ ░░░░   ░░░░  ░░░░                  |
+#                   ░░░░  ░░░░   ░░░░ ░░░░     ░░░░ ░░░░   ░░░░  ░░░░                  |
+#                   ░░░░  ░░░░   ░░\\ //░░     ░░\\ //░░   ░░░░  ░░░░                  |
+#                      █████     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     █████                     |
+#                      █████     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     █████                     |
+#                      █████     ▀▀▛▛▞▟▟▄▄     ▀▀▛▛▞▟▟▄▄     █████                     |
+#                          \\░░  ░░//   \\░░ ░░//   \\░░  ░░//                         |
+#                          ░\\░  ░//░   ░\\░ ░//░   ░\\░  ░//░                         |
+#                          ░░\\  //░░   ░░\\ //░░   ░░\\  //░░                         |
+#                             █████     ▀▀▛▛▞▟▟▄▄     █████                            |
+#                             █████     ▀▀▛▛▞▟▟▄▄     █████                            |
+#                             █████     ▀▀▛▛▞▟▟▄▄     █████                            |
+#                                 \\░░  ░░// \\░░  ░░//                                |
+#                                 ░\\░  ░//░ ░\\░  ░//░                                |
+#                                 ░░\\  //░░ ░░\\  //░░                                |
+#                                    █████     █████                                   |
+#                                    █████     █████                                   |
+#                                    █████     █████                                   |
+#                                       \\░░ ░░//                                      |
+#                                       ░\\░ ░//░                                      |
+#                                       ░░\\ //░░                                      |
+#                                         █████                                        |
+#                                         █████                                        |
+#                                         █████                                        |
+# --------------------------------------------------------------------------------------
+# '''
+
+# # modular map parts (dont need buffer on edges, will be centered without blocking)
+# event_row_unique = r'''{unique_type[0]}
+# {unique_type[1]}
+# {unique_type[2]}'''
+
+# event_row_pair = r'''{pair_type[0][0]} {pair_type[1][0]}
+# {pair_type[0][1]} {pair_type[1][1]}
+# {pair_type[0][2]} {pair_type[1][2]}'''
+
+# event_row_shared = r'''  {shared_type[0]}  
+#   {shared_type[1]}  
+#   {shared_type[2]}  '''
+
+# # left and right only used when increasing width
+# event_row_left = r'''{left_type[0]}
+# {left_type[1]}
+# {left_type[2]}'''
+
+# event_row_right = r'''{right_type[0]}
+# {right_type[1]}
+# {right_type[2]}'''
+
+# event_row_sep = r'''     
+     
+#      '''
+# ''
+# def gen_event_row(length: int, increasing: bool, shared_pairs: list[list[str]]) -> str :
+#     '''
+#     Generate the string for the map row containing event symbols.
+
+#     Arguments:
+#         length: the number of events in the row
+#         increasing: if the row width is increasing from the previous row (its either decreasing or increasing)
+#         shared_pairs: the events located between previous events, left to right
+#             if the prev pair share a child, that list has one item; if they dont, the list is the left child, then the right child
+#             the strings are the 3 x 5 icons for the events
+
+#     Returns:
+#         the generated string
+#     '''
+#     pass #TODO:
+
+# # 1 space inbetween paths, middle pairs have 2 spaces buffer left and right
+# path_row_end = r'''{left[0]}  {right[0]}
+# {left[1]}  {right[1]}
+# {left[2]}  {right[2]}'''
+
+# path_row_mid = r'''  {left[0]} {right[0]}  
+#   {left[1]} {right[1]}  
+#   {left[2]} {right[2]}  '''
+
+# path_row_sep = r''' 
+ 
+#  '''
+
+# path_left_lines = r'''\\  
+#  \\ 
+#   \\'''.splitlines()
+
+# path_right_lines = r'''  //
+#  //
+# //  '''.splitlines()
+
+# no_path_lines = r'''    
+    
+#     '''.splitlines()
+
+# def gen_path_row(length: int, increasing: bool, out_counts: list[int]) -> str :
+#     '''
+#     Generate the string for the map row containing paths.
+
+#     Arguments:
+#         length: the number of events in the row previous row
+#         increasing: if the row width is increasing from the previous row (its either decreasing or increasing)
+#         out_counts: how many children each event from the previous row has
+
+#     Returns:
+#         the generated string
+#     '''
+#     pass #TODO:
+
+# # event icons:
+# pass #TODO:

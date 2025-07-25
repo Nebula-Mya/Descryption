@@ -1,57 +1,489 @@
+rows: [
+    [
+        <rogue.Event_Node object at 0x7f18041bfc70>
+    ],
+    [
+        <rogue.Event_Node object at 0x7f1804019690>,
+        <rogue.Event_Node object at 0x7f180401a110>
+    ],
+    [
+        <rogue.Event_Node object at 0x7f1804018ca0>,
+        <rogue.Event_Node object at 0x7f180401a230>,
+        <rogue.Event_Node object at 0x7f180401a1d0>
+    ],
+    [
+        <rogue.Event_Node object at 0x7f180401a170>,
+        <rogue.Event_Node object at 0x7f180401a2f0>,
+        <rogue.Event_Node object at 0x7f180401a3b0>,
+        <rogue.Event_Node object at 0x7f180401a350>
+    ],
+    [
+        <rogue.Event_Node object at 0x7f180401a470>,
+        <rogue.Event_Node object at 0x7f180401a4d0>,
+        <rogue.Event_Node object at 0x7f180401a530>,
+        <rogue.Event_Node object at 0x7f180401a590>,
+        <rogue.Event_Node object at 0x7f180401a290>
+    ],
+    [
+        <rogue.Event_Node object at 0x7f180401a410>,
+        <rogue.Event_Node object at 0x7f180401a6b0>,
+        <rogue.Event_Node object at 0x7f180401a710>,
+        <rogue.Event_Node object at 0x7f180401a770>
+    ],
+    [
+        <rogue.Event_Node object at 0x7f180401a800>,
+        <rogue.Event_Node object at 0x7f180401a0b0>,
+        <rogue.Event_Node object at 0x7f180401a8c0>,
+        <rogue.Event_Node object at 0x7f180401a860>
+    ],
+    [
+        <rogue.Event_Node object at 0x7f180401a9e0>,
+        <rogue.Event_Node object at 0x7f180401aa40>,
+        <rogue.Event_Node object at 0x7f180401aaa0>,
+        <rogue.Event_Node object at 0x7f1804019f00>,
+        <rogue.Event_Node object at 0x7f180401a980>
+    ],
+    [
+        <rogue.Event_Node object at 0x7f180401ac80>,
+        <rogue.Event_Node object at 0x7f180401ac20>,
+        <rogue.Event_Node object at 0x7f180401ace0>,
+        <rogue.Event_Node object at 0x7f180401a920>,
+        <rogue.Event_Node object at 0x7f180401abc0>
+    ],
+    [
+        <rogue.Event_Node object at 0x7f180401ae90>,
+        <rogue.Event_Node object at 0x7f180401ae30>,
+        <rogue.Event_Node object at 0x7f180401a5f0>,
+        <rogue.Event_Node object at 0x7f180401add0>
+    ]
+]
+
 type: Event_Type.VISITED
 
 outs: [
-    <rogue.Event_Node object at 0x7f3e18672290>,
-    <rogue.Event_Node object at 0x7f3e186ab8b0>
+    <rogue.Event_Node object at 0x7f1804019690>,
+    <rogue.Event_Node object at 0x7f180401a110>
 ]
 
-<rogue.Event_Node object at 0x7f3e18672290>: {
+<rogue.Event_Node object at 0x7f1804019690>: {
     type: Event_Type.CARD_BATTLE,
     outs: [
-        <rogue.Event_Node object at 0x7f3e186aae30>
+        <rogue.Event_Node object at 0x7f1804018ca0>,
+        <rogue.Event_Node object at 0x7f180401a230>
     ],
-    <rogue.Event_Node object at 0x7f3e186aae30>: {
-        type: Event_Type.CARD_CHOICE,
+    <rogue.Event_Node object at 0x7f1804018ca0>: {
+        type: Event_Type.CARD_BATTLE,
         outs: [
-            <rogue.Event_Node object at 0x7f3e186aac50>
+            <rogue.Event_Node object at 0x7f180401a170>
         ],
-        <rogue.Event_Node object at 0x7f3e186aac50>: {
-            type: Event_Type.CAMPFIRE,
+        <rogue.Event_Node object at 0x7f180401a170>: {
+            type: Event_Type.CARD_BATTLE,
             outs: [
-                <rogue.Event_Node object at 0x7f3e186a9090>
+                <rogue.Event_Node object at 0x7f180401a470>,
+                <rogue.Event_Node object at 0x7f180401a4d0>
             ],
-            <rogue.Event_Node object at 0x7f3e186a9090>: {
-                type: Event_Type.CARD_BATTLE,
+            <rogue.Event_Node object at 0x7f180401a470>: {
+                type: Event_Type.CARD_CHOICE,
                 outs: [
-                    <rogue.Event_Node object at 0x7f3e186a8520>
+                    <rogue.Event_Node object at 0x7f180401a410>,
+                    <rogue.Event_Node object at 0x7f180401a6b0>
                 ],
-                <rogue.Event_Node object at 0x7f3e186a8520>: {
-                    type: Event_Type.CARD_BATTLE,
+                <rogue.Event_Node object at 0x7f180401a410>: {
+                    type: Event_Type.PELT_SHOP,
                     outs: [
-                        <rogue.Event_Node object at 0x7f3e186aa860>
+                        <rogue.Event_Node object at 0x7f180401a800>
                     ],
-                    <rogue.Event_Node object at 0x7f3e186aa860>: {
+                    <rogue.Event_Node object at 0x7f180401a800>: {
+                        type: Event_Type.CAMPFIRE,
+                        outs: [
+                            <rogue.Event_Node object at 0x7f180401a9e0>
+                        ],
+                        <rogue.Event_Node object at 0x7f180401a9e0>: {
+                            type: Event_Type.PELT_SHOP,
+                            outs: [
+                                <rogue.Event_Node object at 0x7f180401ac80>
+                            ],
+                            <rogue.Event_Node object at 0x7f180401ac80>: {
+                                type: Event_Type.CAMPFIRE,
+                                outs: [
+                                    <rogue.Event_Node object at 0x7f180401ae90>
+                                ],
+                                <rogue.Event_Node object at 0x7f180401ae90>: {
+                                    type: Event_Type.CARD_BATTLE,
+                                    outs: [
+                                        <rogue.Event_Node object at 0x7f180401af80>
+                                    ],
+                                    <rogue.Event_Node object at 0x7f180401af80>: {
+                                        type: Event_Type.CAMPFIRE,
+                                        outs: [
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                <rogue.Event_Node object at 0x7f180401a6b0>: {
+                    type: Event_Type.SIGIL_SACRIFICE,
+                    outs: [
+                        <rogue.Event_Node object at 0x7f180401a0b0>,
+                        <rogue.Event_Node object at 0x7f180401a8c0>
+                    ],
+                    <rogue.Event_Node object at 0x7f180401a0b0>: {
+                        type: Event_Type.MERGE_CARDS,
+                        outs: [
+                            <rogue.Event_Node object at 0x7f180401aa40>
+                        ],
+                        <rogue.Event_Node object at 0x7f180401aa40>: {
+                            type: Event_Type.SIGIL_SACRIFICE,
+                            outs: [
+                                <rogue.Event_Node object at 0x7f180401ac80>
+                            ],
+                            <rogue.Event_Node object at 0x7f180401ac80>: {
+                                type: Event_Type.CAMPFIRE,
+                                outs: [
+                                    <rogue.Event_Node object at 0x7f180401ae90>
+                                ],
+                                <rogue.Event_Node object at 0x7f180401ae90>: {
+                                    type: Event_Type.CARD_BATTLE,
+                                    outs: [
+                                        <rogue.Event_Node object at 0x7f180401af80>
+                                    ],
+                                    <rogue.Event_Node object at 0x7f180401af80>: {
+                                        type: Event_Type.CAMPFIRE,
+                                        outs: [
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    <rogue.Event_Node object at 0x7f180401a8c0>: {
                         type: Event_Type.PELT_SHOP,
                         outs: [
-                            <rogue.Event_Node object at 0x7f3e186a8340>
+                            <rogue.Event_Node object at 0x7f180401aaa0>
                         ],
-                        <rogue.Event_Node object at 0x7f3e186a8340>: {
+                        <rogue.Event_Node object at 0x7f180401aaa0>: {
+                            type: Event_Type.BREAK_ROCKS,
+                            outs: [
+                                <rogue.Event_Node object at 0x7f180401ac20>
+                            ],
+                            <rogue.Event_Node object at 0x7f180401ac20>: {
+                                type: Event_Type.CARD_CHOICE,
+                                outs: [
+                                    <rogue.Event_Node object at 0x7f180401ae30>
+                                ],
+                                <rogue.Event_Node object at 0x7f180401ae30>: {
+                                    type: Event_Type.SIGIL_SACRIFICE,
+                                    outs: [
+                                        <rogue.Event_Node object at 0x7f180401af20>,
+                                        <rogue.Event_Node object at 0x7f180401b040>
+                                    ],
+                                    <rogue.Event_Node object at 0x7f180401af20>: {
+                                        type: Event_Type.CARD_BATTLE,
+                                        outs: [
+                                        ]
+                                    },
+                                    <rogue.Event_Node object at 0x7f180401b040>: {
+                                        type: Event_Type.SIGIL_SACRIFICE,
+                                        outs: [
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            <rogue.Event_Node object at 0x7f180401a4d0>: {
+                type: Event_Type.PELT_SHOP,
+                outs: [
+                    <rogue.Event_Node object at 0x7f180401a6b0>
+                ],
+                <rogue.Event_Node object at 0x7f180401a6b0>: {
+                    type: Event_Type.SIGIL_SACRIFICE,
+                    outs: [
+                        <rogue.Event_Node object at 0x7f180401a0b0>,
+                        <rogue.Event_Node object at 0x7f180401a8c0>
+                    ],
+                    <rogue.Event_Node object at 0x7f180401a0b0>: {
+                        type: Event_Type.MERGE_CARDS,
+                        outs: [
+                            <rogue.Event_Node object at 0x7f180401aa40>
+                        ],
+                        <rogue.Event_Node object at 0x7f180401aa40>: {
+                            type: Event_Type.SIGIL_SACRIFICE,
+                            outs: [
+                                <rogue.Event_Node object at 0x7f180401ac80>
+                            ],
+                            <rogue.Event_Node object at 0x7f180401ac80>: {
+                                type: Event_Type.CAMPFIRE,
+                                outs: [
+                                    <rogue.Event_Node object at 0x7f180401ae90>
+                                ],
+                                <rogue.Event_Node object at 0x7f180401ae90>: {
+                                    type: Event_Type.CARD_BATTLE,
+                                    outs: [
+                                        <rogue.Event_Node object at 0x7f180401af80>
+                                    ],
+                                    <rogue.Event_Node object at 0x7f180401af80>: {
+                                        type: Event_Type.CAMPFIRE,
+                                        outs: [
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    <rogue.Event_Node object at 0x7f180401a8c0>: {
+                        type: Event_Type.PELT_SHOP,
+                        outs: [
+                            <rogue.Event_Node object at 0x7f180401aaa0>
+                        ],
+                        <rogue.Event_Node object at 0x7f180401aaa0>: {
+                            type: Event_Type.BREAK_ROCKS,
+                            outs: [
+                                <rogue.Event_Node object at 0x7f180401ac20>
+                            ],
+                            <rogue.Event_Node object at 0x7f180401ac20>: {
+                                type: Event_Type.CARD_CHOICE,
+                                outs: [
+                                    <rogue.Event_Node object at 0x7f180401ae30>
+                                ],
+                                <rogue.Event_Node object at 0x7f180401ae30>: {
+                                    type: Event_Type.SIGIL_SACRIFICE,
+                                    outs: [
+                                        <rogue.Event_Node object at 0x7f180401af20>,
+                                        <rogue.Event_Node object at 0x7f180401b040>
+                                    ],
+                                    <rogue.Event_Node object at 0x7f180401af20>: {
+                                        type: Event_Type.CARD_BATTLE,
+                                        outs: [
+                                        ]
+                                    },
+                                    <rogue.Event_Node object at 0x7f180401b040>: {
+                                        type: Event_Type.SIGIL_SACRIFICE,
+                                        outs: [
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    <rogue.Event_Node object at 0x7f180401a230>: {
+        type: Event_Type.CAMPFIRE,
+        outs: [
+            <rogue.Event_Node object at 0x7f180401a2f0>,
+            <rogue.Event_Node object at 0x7f180401a3b0>
+        ],
+        <rogue.Event_Node object at 0x7f180401a2f0>: {
+            type: Event_Type.MERGE_CARDS,
+            outs: [
+                <rogue.Event_Node object at 0x7f180401a530>,
+                <rogue.Event_Node object at 0x7f180401a590>
+            ],
+            <rogue.Event_Node object at 0x7f180401a530>: {
+                type: Event_Type.MERGE_CARDS,
+                outs: [
+                    <rogue.Event_Node object at 0x7f180401a710>
+                ],
+                <rogue.Event_Node object at 0x7f180401a710>: {
+                    type: Event_Type.CARD_CHOICE,
+                    outs: [
+                        <rogue.Event_Node object at 0x7f180401a8c0>
+                    ],
+                    <rogue.Event_Node object at 0x7f180401a8c0>: {
+                        type: Event_Type.PELT_SHOP,
+                        outs: [
+                            <rogue.Event_Node object at 0x7f180401aaa0>
+                        ],
+                        <rogue.Event_Node object at 0x7f180401aaa0>: {
+                            type: Event_Type.BREAK_ROCKS,
+                            outs: [
+                                <rogue.Event_Node object at 0x7f180401ac20>
+                            ],
+                            <rogue.Event_Node object at 0x7f180401ac20>: {
+                                type: Event_Type.CARD_CHOICE,
+                                outs: [
+                                    <rogue.Event_Node object at 0x7f180401ae30>
+                                ],
+                                <rogue.Event_Node object at 0x7f180401ae30>: {
+                                    type: Event_Type.SIGIL_SACRIFICE,
+                                    outs: [
+                                        <rogue.Event_Node object at 0x7f180401af20>,
+                                        <rogue.Event_Node object at 0x7f180401b040>
+                                    ],
+                                    <rogue.Event_Node object at 0x7f180401af20>: {
+                                        type: Event_Type.CARD_BATTLE,
+                                        outs: [
+                                        ]
+                                    },
+                                    <rogue.Event_Node object at 0x7f180401b040>: {
+                                        type: Event_Type.SIGIL_SACRIFICE,
+                                        outs: [
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            <rogue.Event_Node object at 0x7f180401a590>: {
+                type: Event_Type.BREAK_ROCKS,
+                outs: [
+                    <rogue.Event_Node object at 0x7f180401a710>
+                ],
+                <rogue.Event_Node object at 0x7f180401a710>: {
+                    type: Event_Type.CARD_CHOICE,
+                    outs: [
+                        <rogue.Event_Node object at 0x7f180401a8c0>
+                    ],
+                    <rogue.Event_Node object at 0x7f180401a8c0>: {
+                        type: Event_Type.PELT_SHOP,
+                        outs: [
+                            <rogue.Event_Node object at 0x7f180401aaa0>
+                        ],
+                        <rogue.Event_Node object at 0x7f180401aaa0>: {
+                            type: Event_Type.BREAK_ROCKS,
+                            outs: [
+                                <rogue.Event_Node object at 0x7f180401ac20>
+                            ],
+                            <rogue.Event_Node object at 0x7f180401ac20>: {
+                                type: Event_Type.CARD_CHOICE,
+                                outs: [
+                                    <rogue.Event_Node object at 0x7f180401ae30>
+                                ],
+                                <rogue.Event_Node object at 0x7f180401ae30>: {
+                                    type: Event_Type.SIGIL_SACRIFICE,
+                                    outs: [
+                                        <rogue.Event_Node object at 0x7f180401af20>,
+                                        <rogue.Event_Node object at 0x7f180401b040>
+                                    ],
+                                    <rogue.Event_Node object at 0x7f180401af20>: {
+                                        type: Event_Type.CARD_BATTLE,
+                                        outs: [
+                                        ]
+                                    },
+                                    <rogue.Event_Node object at 0x7f180401b040>: {
+                                        type: Event_Type.SIGIL_SACRIFICE,
+                                        outs: [
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        <rogue.Event_Node object at 0x7f180401a3b0>: {
+            type: Event_Type.BREAK_ROCKS,
+            outs: [
+                <rogue.Event_Node object at 0x7f180401a290>
+            ],
+            <rogue.Event_Node object at 0x7f180401a290>: {
+                type: Event_Type.CARD_BATTLE,
+                outs: [
+                    <rogue.Event_Node object at 0x7f180401a770>
+                ],
+                <rogue.Event_Node object at 0x7f180401a770>: {
+                    type: Event_Type.CARD_BATTLE,
+                    outs: [
+                        <rogue.Event_Node object at 0x7f180401a860>
+                    ],
+                    <rogue.Event_Node object at 0x7f180401a860>: {
+                        type: Event_Type.BREAK_ROCKS,
+                        outs: [
+                            <rogue.Event_Node object at 0x7f1804019f00>,
+                            <rogue.Event_Node object at 0x7f180401a980>
+                        ],
+                        <rogue.Event_Node object at 0x7f1804019f00>: {
                             type: Event_Type.CARD_BATTLE,
                             outs: [
-                                <rogue.Event_Node object at 0x7f3e186a8100>
+                                <rogue.Event_Node object at 0x7f180401ac20>,
+                                <rogue.Event_Node object at 0x7f180401ace0>
                             ],
-                            <rogue.Event_Node object at 0x7f3e186a8100>: {
+                            <rogue.Event_Node object at 0x7f180401ac20>: {
+                                type: Event_Type.CARD_CHOICE,
+                                outs: [
+                                    <rogue.Event_Node object at 0x7f180401ae30>
+                                ],
+                                <rogue.Event_Node object at 0x7f180401ae30>: {
+                                    type: Event_Type.SIGIL_SACRIFICE,
+                                    outs: [
+                                        <rogue.Event_Node object at 0x7f180401af20>,
+                                        <rogue.Event_Node object at 0x7f180401b040>
+                                    ],
+                                    <rogue.Event_Node object at 0x7f180401af20>: {
+                                        type: Event_Type.CARD_BATTLE,
+                                        outs: [
+                                        ]
+                                    },
+                                    <rogue.Event_Node object at 0x7f180401b040>: {
+                                        type: Event_Type.SIGIL_SACRIFICE,
+                                        outs: [
+                                        ]
+                                    }
+                                }
+                            },
+                            <rogue.Event_Node object at 0x7f180401ace0>: {
+                                type: Event_Type.MERGE_CARDS,
+                                outs: [
+                                    <rogue.Event_Node object at 0x7f180401a5f0>
+                                ],
+                                <rogue.Event_Node object at 0x7f180401a5f0>: {
+                                    type: Event_Type.MERGE_CARDS,
+                                    outs: [
+                                        <rogue.Event_Node object at 0x7f180401ab60>
+                                    ],
+                                    <rogue.Event_Node object at 0x7f180401ab60>: {
+                                        type: Event_Type.BREAK_ROCKS,
+                                        outs: [
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        <rogue.Event_Node object at 0x7f180401a980>: {
+                            type: Event_Type.CARD_SHOP,
+                            outs: [
+                                <rogue.Event_Node object at 0x7f180401a920>,
+                                <rogue.Event_Node object at 0x7f180401abc0>
+                            ],
+                            <rogue.Event_Node object at 0x7f180401a920>: {
                                 type: Event_Type.CARD_BATTLE,
                                 outs: [
-                                    <rogue.Event_Node object at 0x7f3e186abbe0>
+                                    <rogue.Event_Node object at 0x7f180401add0>
                                 ],
-                                <rogue.Event_Node object at 0x7f3e186abbe0>: {
+                                <rogue.Event_Node object at 0x7f180401add0>: {
                                     type: Event_Type.CARD_CHOICE,
                                     outs: [
-                                        <rogue.Event_Node object at 0x7f3e186abb80>
+                                        <rogue.Event_Node object at 0x7f180401afe0>
                                     ],
-                                    <rogue.Event_Node object at 0x7f3e186abb80>: {
-                                        type: Event_Type.CARD_BATTLE,
+                                    <rogue.Event_Node object at 0x7f180401afe0>: {
+                                        type: Event_Type.CARD_SHOP,
+                                        outs: [
+                                        ]
+                                    }
+                                }
+                            },
+                            <rogue.Event_Node object at 0x7f180401abc0>: {
+                                type: Event_Type.SIGIL_SACRIFICE,
+                                outs: [
+                                    <rogue.Event_Node object at 0x7f180401add0>
+                                ],
+                                <rogue.Event_Node object at 0x7f180401add0>: {
+                                    type: Event_Type.CARD_CHOICE,
+                                    outs: [
+                                        <rogue.Event_Node object at 0x7f180401afe0>
+                                    ],
+                                    <rogue.Event_Node object at 0x7f180401afe0>: {
+                                        type: Event_Type.CARD_SHOP,
                                         outs: [
                                         ]
                                     }
@@ -65,215 +497,119 @@ outs: [
     }
 }
 
-<rogue.Event_Node object at 0x7f3e186ab8b0>: {
-    type: Event_Type.CARD_SHOP,
+<rogue.Event_Node object at 0x7f180401a110>: {
+    type: Event_Type.SIGIL_SACRIFICE,
     outs: [
-        <rogue.Event_Node object at 0x7f3e186a9030>,
-        <rogue.Event_Node object at 0x7f3e186a91e0>
+        <rogue.Event_Node object at 0x7f180401a1d0>
     ],
-    <rogue.Event_Node object at 0x7f3e186a9030>: {
-        type: Event_Type.SIGIL_SACRIFICE,
+    <rogue.Event_Node object at 0x7f180401a1d0>: {
+        type: Event_Type.CARD_SHOP,
         outs: [
-            <rogue.Event_Node object at 0x7f3e186aac50>,
-            <rogue.Event_Node object at 0x7f3e186a9360>
+            <rogue.Event_Node object at 0x7f180401a350>
         ],
-        <rogue.Event_Node object at 0x7f3e186aac50>: {
-            type: Event_Type.CAMPFIRE,
+        <rogue.Event_Node object at 0x7f180401a350>: {
+            type: Event_Type.CARD_SHOP,
             outs: [
-                <rogue.Event_Node object at 0x7f3e186a9090>
+                <rogue.Event_Node object at 0x7f180401a290>
             ],
-            <rogue.Event_Node object at 0x7f3e186a9090>: {
+            <rogue.Event_Node object at 0x7f180401a290>: {
                 type: Event_Type.CARD_BATTLE,
                 outs: [
-                    <rogue.Event_Node object at 0x7f3e186a8520>
+                    <rogue.Event_Node object at 0x7f180401a770>
                 ],
-                <rogue.Event_Node object at 0x7f3e186a8520>: {
+                <rogue.Event_Node object at 0x7f180401a770>: {
                     type: Event_Type.CARD_BATTLE,
                     outs: [
-                        <rogue.Event_Node object at 0x7f3e186aa860>
+                        <rogue.Event_Node object at 0x7f180401a860>
                     ],
-                    <rogue.Event_Node object at 0x7f3e186aa860>: {
-                        type: Event_Type.PELT_SHOP,
+                    <rogue.Event_Node object at 0x7f180401a860>: {
+                        type: Event_Type.BREAK_ROCKS,
                         outs: [
-                            <rogue.Event_Node object at 0x7f3e186a8340>
+                            <rogue.Event_Node object at 0x7f1804019f00>,
+                            <rogue.Event_Node object at 0x7f180401a980>
                         ],
-                        <rogue.Event_Node object at 0x7f3e186a8340>: {
+                        <rogue.Event_Node object at 0x7f1804019f00>: {
                             type: Event_Type.CARD_BATTLE,
                             outs: [
-                                <rogue.Event_Node object at 0x7f3e186a8100>
+                                <rogue.Event_Node object at 0x7f180401ac20>,
+                                <rogue.Event_Node object at 0x7f180401ace0>
                             ],
-                            <rogue.Event_Node object at 0x7f3e186a8100>: {
-                                type: Event_Type.CARD_BATTLE,
+                            <rogue.Event_Node object at 0x7f180401ac20>: {
+                                type: Event_Type.CARD_CHOICE,
                                 outs: [
-                                    <rogue.Event_Node object at 0x7f3e186abbe0>
+                                    <rogue.Event_Node object at 0x7f180401ae30>
                                 ],
-                                <rogue.Event_Node object at 0x7f3e186abbe0>: {
-                                    type: Event_Type.CARD_CHOICE,
+                                <rogue.Event_Node object at 0x7f180401ae30>: {
+                                    type: Event_Type.SIGIL_SACRIFICE,
                                     outs: [
-                                        <rogue.Event_Node object at 0x7f3e186abb80>
+                                        <rogue.Event_Node object at 0x7f180401af20>,
+                                        <rogue.Event_Node object at 0x7f180401b040>
                                     ],
-                                    <rogue.Event_Node object at 0x7f3e186abb80>: {
+                                    <rogue.Event_Node object at 0x7f180401af20>: {
                                         type: Event_Type.CARD_BATTLE,
                                         outs: [
                                         ]
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        <rogue.Event_Node object at 0x7f3e186a9360>: {
-            type: Event_Type.CARD_CHOICE,
-            outs: [
-                <rogue.Event_Node object at 0x7f3e186a9240>,
-                <rogue.Event_Node object at 0x7f3e186aacb0>
-            ],
-            <rogue.Event_Node object at 0x7f3e186a9240>: {
-                type: Event_Type.MERGE_CARDS,
-                outs: [
-                    <rogue.Event_Node object at 0x7f3e186aace0>
-                ],
-                <rogue.Event_Node object at 0x7f3e186aace0>: {
-                    type: Event_Type.MERGE_CARDS,
-                    outs: [
-                        <rogue.Event_Node object at 0x7f3e186aa8f0>
-                    ],
-                    <rogue.Event_Node object at 0x7f3e186aa8f0>: {
-                        type: Event_Type.MERGE_CARDS,
-                        outs: [
-                            <rogue.Event_Node object at 0x7f3e186a8640>
-                        ],
-                        <rogue.Event_Node object at 0x7f3e186a8640>: {
-                            type: Event_Type.SIGIL_SACRIFICE,
-                            outs: [
-                                <rogue.Event_Node object at 0x7f3e186abb20>
-                            ],
-                            <rogue.Event_Node object at 0x7f3e186abb20>: {
-                                type: Event_Type.SIGIL_SACRIFICE,
-                                outs: [
-                                    <rogue.Event_Node object at 0x7f3e186aba90>
-                                ],
-                                <rogue.Event_Node object at 0x7f3e186aba90>: {
-                                    type: Event_Type.CARD_BATTLE,
-                                    outs: [
-                                        <rogue.Event_Node object at 0x7f3e186abca0>,
-                                        <rogue.Event_Node object at 0x7f3e186abd00>
-                                    ],
-                                    <rogue.Event_Node object at 0x7f3e186abca0>: {
+                                    },
+                                    <rogue.Event_Node object at 0x7f180401b040>: {
                                         type: Event_Type.SIGIL_SACRIFICE,
                                         outs: [
                                         ]
-                                    },
-                                    <rogue.Event_Node object at 0x7f3e186abd00>: {
-                                        type: Event_Type.CAMPFIRE,
+                                    }
+                                }
+                            },
+                            <rogue.Event_Node object at 0x7f180401ace0>: {
+                                type: Event_Type.MERGE_CARDS,
+                                outs: [
+                                    <rogue.Event_Node object at 0x7f180401a5f0>
+                                ],
+                                <rogue.Event_Node object at 0x7f180401a5f0>: {
+                                    type: Event_Type.MERGE_CARDS,
+                                    outs: [
+                                        <rogue.Event_Node object at 0x7f180401ab60>
+                                    ],
+                                    <rogue.Event_Node object at 0x7f180401ab60>: {
+                                        type: Event_Type.BREAK_ROCKS,
                                         outs: [
                                         ]
                                     }
                                 }
                             }
-                        }
-                    }
-                }
-            },
-            <rogue.Event_Node object at 0x7f3e186aacb0>: {
-                type: Event_Type.CARD_SHOP,
-                outs: [
-                    <rogue.Event_Node object at 0x7f3e186aace0>
-                ],
-                <rogue.Event_Node object at 0x7f3e186aace0>: {
-                    type: Event_Type.MERGE_CARDS,
-                    outs: [
-                        <rogue.Event_Node object at 0x7f3e186aa8f0>
-                    ],
-                    <rogue.Event_Node object at 0x7f3e186aa8f0>: {
-                        type: Event_Type.MERGE_CARDS,
-                        outs: [
-                            <rogue.Event_Node object at 0x7f3e186a8640>
-                        ],
-                        <rogue.Event_Node object at 0x7f3e186a8640>: {
-                            type: Event_Type.SIGIL_SACRIFICE,
+                        },
+                        <rogue.Event_Node object at 0x7f180401a980>: {
+                            type: Event_Type.CARD_SHOP,
                             outs: [
-                                <rogue.Event_Node object at 0x7f3e186abb20>
+                                <rogue.Event_Node object at 0x7f180401a920>,
+                                <rogue.Event_Node object at 0x7f180401abc0>
                             ],
-                            <rogue.Event_Node object at 0x7f3e186abb20>: {
-                                type: Event_Type.SIGIL_SACRIFICE,
+                            <rogue.Event_Node object at 0x7f180401a920>: {
+                                type: Event_Type.CARD_BATTLE,
                                 outs: [
-                                    <rogue.Event_Node object at 0x7f3e186aba90>
+                                    <rogue.Event_Node object at 0x7f180401add0>
                                 ],
-                                <rogue.Event_Node object at 0x7f3e186aba90>: {
-                                    type: Event_Type.CARD_BATTLE,
+                                <rogue.Event_Node object at 0x7f180401add0>: {
+                                    type: Event_Type.CARD_CHOICE,
                                     outs: [
-                                        <rogue.Event_Node object at 0x7f3e186abca0>,
-                                        <rogue.Event_Node object at 0x7f3e186abd00>
+                                        <rogue.Event_Node object at 0x7f180401afe0>
                                     ],
-                                    <rogue.Event_Node object at 0x7f3e186abca0>: {
-                                        type: Event_Type.SIGIL_SACRIFICE,
-                                        outs: [
-                                        ]
-                                    },
-                                    <rogue.Event_Node object at 0x7f3e186abd00>: {
-                                        type: Event_Type.CAMPFIRE,
+                                    <rogue.Event_Node object at 0x7f180401afe0>: {
+                                        type: Event_Type.CARD_SHOP,
                                         outs: [
                                         ]
                                     }
                                 }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    },
-    <rogue.Event_Node object at 0x7f3e186a91e0>: {
-        type: Event_Type.PELT_SHOP,
-        outs: [
-            <rogue.Event_Node object at 0x7f3e186a9300>
-        ],
-        <rogue.Event_Node object at 0x7f3e186a9300>: {
-            type: Event_Type.MERGE_CARDS,
-            outs: [
-                <rogue.Event_Node object at 0x7f3e186aacb0>
-            ],
-            <rogue.Event_Node object at 0x7f3e186aacb0>: {
-                type: Event_Type.CARD_SHOP,
-                outs: [
-                    <rogue.Event_Node object at 0x7f3e186aace0>
-                ],
-                <rogue.Event_Node object at 0x7f3e186aace0>: {
-                    type: Event_Type.MERGE_CARDS,
-                    outs: [
-                        <rogue.Event_Node object at 0x7f3e186aa8f0>
-                    ],
-                    <rogue.Event_Node object at 0x7f3e186aa8f0>: {
-                        type: Event_Type.MERGE_CARDS,
-                        outs: [
-                            <rogue.Event_Node object at 0x7f3e186a8640>
-                        ],
-                        <rogue.Event_Node object at 0x7f3e186a8640>: {
-                            type: Event_Type.SIGIL_SACRIFICE,
-                            outs: [
-                                <rogue.Event_Node object at 0x7f3e186abb20>
-                            ],
-                            <rogue.Event_Node object at 0x7f3e186abb20>: {
+                            },
+                            <rogue.Event_Node object at 0x7f180401abc0>: {
                                 type: Event_Type.SIGIL_SACRIFICE,
                                 outs: [
-                                    <rogue.Event_Node object at 0x7f3e186aba90>
+                                    <rogue.Event_Node object at 0x7f180401add0>
                                 ],
-                                <rogue.Event_Node object at 0x7f3e186aba90>: {
-                                    type: Event_Type.CARD_BATTLE,
+                                <rogue.Event_Node object at 0x7f180401add0>: {
+                                    type: Event_Type.CARD_CHOICE,
                                     outs: [
-                                        <rogue.Event_Node object at 0x7f3e186abca0>,
-                                        <rogue.Event_Node object at 0x7f3e186abd00>
+                                        <rogue.Event_Node object at 0x7f180401afe0>
                                     ],
-                                    <rogue.Event_Node object at 0x7f3e186abca0>: {
-                                        type: Event_Type.SIGIL_SACRIFICE,
-                                        outs: [
-                                        ]
-                                    },
-                                    <rogue.Event_Node object at 0x7f3e186abd00>: {
-                                        type: Event_Type.CAMPFIRE,
+                                    <rogue.Event_Node object at 0x7f180401afe0>: {
+                                        type: Event_Type.CARD_SHOP,
                                         outs: [
                                         ]
                                     }
