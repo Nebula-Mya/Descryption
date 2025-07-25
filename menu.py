@@ -8,7 +8,7 @@ import card_library
 import card
 import rogue
 
-version_ID = 'v0.2.0b-alpha'
+version_ID = 'v0.2.0-alpha'
 
 def reset_progress() -> None : 
     '''
