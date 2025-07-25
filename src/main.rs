@@ -36,7 +36,7 @@ fn main() {
 
     // run app until close or error
     if let Err(err) = eframe::run_native(
-        "Shark Pauldrons",
+        "Descryption",
         native_options,
         Box::new(|cc| Ok(Box::new(EguiApp::new(cc, input_tx, output_rx, context_tx)))),
     ) {

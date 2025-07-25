@@ -1,4 +1,3 @@
-use directories::ProjectDirs;
 use eframe::egui;
 use std::sync::mpsc;
 
@@ -54,14 +53,14 @@ pub struct EguiApp {
 impl Default for EguiApp {
     fn default() -> Self {
         // get path for the cache directory and the png saved by nannou
-        let project_dirs = ProjectDirs::from(
-            "",
-            "Shark Pauldrons",
-            "nannou application",
-        )
-        .expect("Could not find cache directory");
+        // let project_dirs = ProjectDirs::from(
+        //     "",
+        //     "Shark Pauldrons",
+        //     "nannou application",
+        // )
+        // .expect("Could not find cache directory");
 
-        let cache_dir = project_dirs.cache_dir().to_owned();
+        // let cache_dir = project_dirs.cache_dir().to_owned();
 
         Self {
             debug_uis: DebugUi::None,
@@ -70,7 +69,7 @@ impl Default for EguiApp {
             current_input: "".to_string(),
             input_tx: None,
             output_rx: None,
-            context_tx: None
+            context_tx: None,
         }
     }
 }
@@ -78,7 +77,12 @@ impl Default for EguiApp {
 impl EguiApp {
     /// Called once before the first frame.
     /// Responsible for initializing the app.
-    pub fn new(cc: &eframe::CreationContext<'_>, input_tx: mpsc::Sender<String>, output_rx: mpsc::Receiver<String>, context_tx: mpsc::Sender<egui::Context>) -> Self {
+    pub fn new(
+        cc: &eframe::CreationContext<'_>,
+        input_tx: mpsc::Sender<String>,
+        output_rx: mpsc::Receiver<String>,
+        context_tx: mpsc::Sender<egui::Context>,
+    ) -> Self {
         // load previous app state if possible
         // REMINDME: not working; can't give correct channels in default
         // if let Some(storage) = cc.storage {
@@ -108,9 +112,18 @@ impl eframe::App for EguiApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         self.tick_count += 1;
 
-        let _ = self.context_tx.as_ref().unwrap().send(ctx.clone());
+        let _ = self
+            .context_tx
+            .as_ref()
+            .unwrap()
+            .send(ctx.clone());
 
-        if let Ok(msg) = self.output_rx.as_ref().unwrap().try_recv() {
+        if let Ok(msg) = self
+            .output_rx
+            .as_ref()
+            .unwrap()
+            .try_recv()
+        {
             self.recent_msg = msg;
         }
 
@@ -187,17 +200,25 @@ impl eframe::App for EguiApp {
             let mut text_full = self.recent_msg.clone() + &self.current_input;
 
             let text_response = ui.text_edit_multiline(&mut text_full);
-            
-            // TODO: allow moving *after* recent_msg
-            if let Some(mut state) = egui::TextEdit::load_state(ui.ctx(), text_response.id) {
-                    let ccursor = egui::text::CCursor::new(text_full.chars().count());
-                    state
-                        .cursor
-                        .set_char_range(Some(egui::text::CCursorRange::one(ccursor)));
-                    state.store(ui.ctx(), text_response.id);
-                }
 
-            self.current_input = text_full[std::cmp::min(self.recent_msg.len(), text_full.len())..].to_string();
+            if let Some(mut state) = egui::TextEdit::load_state(ui.ctx(), text_response.id) {
+                if let Some(mut range) = state.cursor.char_range() {
+                    range.primary.index = std::cmp::max(
+                        range.primary.index,
+                        self.recent_msg.chars().count(),
+                    );
+                    range.secondary.index = std::cmp::max(
+                        range.secondary.index,
+                        self.recent_msg.chars().count(),
+                    );
+                    // let ccursor = egui::text::CCursor::new(0);
+                    state.cursor.set_char_range(Some(range));
+                    state.store(ui.ctx(), text_response.id)
+                }
+            }
+
+            self.current_input =
+                text_full[std::cmp::min(self.recent_msg.len(), text_full.len())..].to_string();
         });
     }
 }
