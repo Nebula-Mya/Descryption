@@ -1,20 +1,33 @@
-- [X] add typing to all functions, search: 
+ - [X] create event node class (use enum for event type)
 
-      def [^\n\)]+([,\(] ?(?!self)(?!cls)[a-z0-9_]+[, =\)]).*?.+: ?\n|( +)def __init__.+(:?\n\1\1.+){0,}(:?\n\1\1self\.\S* ?=)|(def(?! __.+__) .*?\) ?:)|[^:\]\n]+ = lambda
+   - 1-3 outgoing, 1-2 ingoing
 
-  - [X] ASCII_text.py
-  - [X] bosses.py
-  - [X] card_library.py
-  - [X] card.py
-  - [X] deck.py
-  - [X] duel.py
-  - [X] field.py
-  - [X] menu.py
-  - [X] QoL.py
-  - [X] rogue.py
-  - [X] sigils.py
-  - [X] remove any easily removed Any annotations
-- [X] allow sigil_sacrifice to replace sigils
-- [X] allow sigil_sacrifice to sacc cards without sigils
-- [X] prevent softlock if merging with no duplicates
-- [X] refactor testing into unit tests
+   - ingoing not strictly necessary, but may make graphics easier with merging
+
+   - need a varient for occupied node, such as where the player starts
+
+
+
+ - [X] implement generation of map
+
+   - can't just use l-system: need to allow for merging of different paths
+
+   - will need to heavily rely on ping.txt
+
+
+
+ - [X] integrate map into rogue_campaign functionality
+
+   - should only need to store the current node (event most recently chosen)
+
+   - map gen balancing should be done with rogue_campaign instance variables and the event_weight function (or really the choice_fn in general)
+
+
+
+ - [X] implement map UI
+
+   - text based
+
+   - you have options: either left or right or you just continue straight
+   
+     - in addition to a path or looking at deck, you can "look at map", which lets you see what is on each path and what follows

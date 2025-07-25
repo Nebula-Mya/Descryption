@@ -319,7 +319,7 @@ def init_boss_playfield(campaign: rogue.rogue_campaign, Poss_Leshy: dict[int, li
 
     # add starting field cards
     for zone in range(1, 5) : 
-        if field_cards.__len__ == 0: 
+        if len(field_cards) == 0: 
             break
         playfield.summon_card(card=field_cards.pop(), zone=zone, field=playfield.opponent_field)
 
@@ -1080,6 +1080,10 @@ def boss_fight_leshy(campaign: rogue.rogue_campaign)  -> bool: # boss fight 4 (s
                     time.sleep(3)
                     print('\n'*2)
                     input(QoL.center_justified('Press enter to continue...').rstrip() + ' ')
+                    
+                    # reset stats
+                    playfield.score = {'player': 0, 'opponent': 0}
+                    playfield.active = 'player'
 
                     # play first death cards
                     playfield.advance()
@@ -1126,6 +1130,10 @@ def boss_fight_leshy(campaign: rogue.rogue_campaign)  -> bool: # boss fight 4 (s
                     # change deck to be Leshy's third phase deck (empty)
                     playfield.opponent_deck = []
 
+                    # reset stats
+                    playfield.score = {'player': 0, 'opponent': 0}
+                    playfield.active = 'player'
+
                     playfield.print_field()
                     input('Press enter to continue.')
 
@@ -1166,7 +1174,7 @@ def boss_fight_leshy(campaign: rogue.rogue_campaign)  -> bool: # boss fight 4 (s
             # gameplay
             (win, winner, overkill, deck_out, played_new) = turn_structure(playfield)
             played += played_new
-            if win : # playtest feature to quick quit
+            if win :
                 result = winner == 'player'
                 post_boss_flavor(campaign, result)
                 if result :
@@ -1177,7 +1185,6 @@ def boss_fight_leshy(campaign: rogue.rogue_campaign)  -> bool: # boss fight 4 (s
 
             # switch turns
             playfield.switch()
-            if playfield.active == 'opponent' : duel_state.mask(playfield, played)
             (win, winner, overkill, deck_out) = duel.winner_check(playfield, silent=True)
 
             if win and winner == 'opponent' :
@@ -1189,6 +1196,8 @@ def boss_fight_leshy(campaign: rogue.rogue_campaign)  -> bool: # boss fight 4 (s
                 post_boss_flavor(campaign, True, overkill=overkill)
                 QoL.write_data([(['progress markers', 'beat leshy'], True)])
                 break
+
+            if playfield.active == 'opponent' : duel_state.mask(playfield, played)
 
         return (win, winner, overkill, deck_out)
 

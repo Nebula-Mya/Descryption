@@ -1,4 +1,5 @@
 from __future__ import annotations
+from enum import Enum
 from typing import TYPE_CHECKING
 if TYPE_CHECKING :
     from typing import Callable, Any
@@ -27,6 +28,8 @@ class rogue_campaign :
         teeth: the player's money
         lives: the player's lives
         dead_campfire : if the survivors have been poisoned
+        map_rows : the rows of the map, start to finish, left to right
+        current_node : the current node of the map
 
     Methods:
         add_teeth: adds teeth to the player's total
@@ -40,6 +43,9 @@ class rogue_campaign :
         has_lost: checks if the player has lost
         var_dict: returns a dictionary of the campaign's variables
     '''
+    level_length = 15
+    target_width = 4.5
+
     def __init__(self, start_decklist: list[card.BlankCard], start_teeth: int=0, lives: int=2) -> None:
         '''
         initializes the campaign object
@@ -56,6 +62,7 @@ class rogue_campaign :
         self.teeth: int = start_teeth
         self.lives: int = lives
         self.dead_campfire: bool = False
+        self.current_node = map_gen(self, event_choice, self.level_length, self.target_width)
 
     def add_teeth(self, amount: int) -> None:
         self.teeth += amount
@@ -496,6 +503,8 @@ def get_sigils(card1: card.BlankCard, card2: card.BlankCard) -> tuple[str, str]:
     while True :
         # print the sacrifice card
         QoL.clear()
+        card1.explain()
+        print()
         card2.explain()
 
         if invalid_choice :
@@ -508,7 +517,7 @@ def get_sigils(card1: card.BlankCard, card2: card.BlankCard) -> tuple[str, str]:
         i = 0
         for combo in poss_combos :
             i += 1
-            print("{idx}) {s1}, {s2}".format(idx=i, s1=combo[0], s2=combo[1]))
+            print("{idx}) {s1}, {s2}".format(idx=i, s1=sigils.sigil_title(combo[0]), s2=sigils.sigil_title(combo[1])))
 
         (is_int, sigil_index) = QoL.reps_int( input(QoL.center_justified(f'What sigil combination would you like?').rstrip() + ' ' ), -1)
 
@@ -609,6 +618,8 @@ def sigil_sacrifice(campaign: rogue_campaign) -> None: #REMINDME: format visuals
         # print the equation
         QoL.clear()
         print(QoL.center_justified(equation, blocked=True))
+        print()
+        result_card.explain()
 
         # get confirmation from the player
         confirm_input = input(QoL.center_justified('Are you sure these are the cards you want to use? (y/n)').rstrip() + ' ')
@@ -649,7 +660,6 @@ def sigil_sacrifice(campaign: rogue_campaign) -> None: #REMINDME: format visuals
     gameplay(campaign) # add flavor text, context, etc.
 
 def merge_cards(campaign: rogue_campaign) -> None: #REMINDME: format visuals
-    #FIXME: use sigil helpers from sacrifice
     '''
     allows the player to merge two cards of the same species into one, with the new card having combined stats and sigils
     
@@ -759,6 +769,8 @@ def merge_cards(campaign: rogue_campaign) -> None: #REMINDME: format visuals
         # print the equation
         QoL.clear()
         print(QoL.center_justified(equation, blocked=True))
+        print()
+        card_result.explain()
 
         # get confirmation from the player
         confirm_input = input(QoL.center_justified('Are you sure these are the cards you want to use? (y/n)').rstrip() + ' ')
@@ -800,16 +812,24 @@ def merge_cards(campaign: rogue_campaign) -> None: #REMINDME: format visuals
 
     for c in campaign.player_deck.cards :
         if type(c) in prev_types :
-            QoL.clear()
-            QoL.print_deck(campaign.player_deck.cards, numbered=True, centered=True, blocked=True)
-            print('\n')
-            print(QoL.center_justified("You don't have any cards to merge. (press enter to continue)"))
+            # QoL.clear()
+            # QoL.print_deck(QoL.sort_deck(campaign.player_deck.cards), numbered=True, centered=True, blocked=True)
+            # print('\n')
+            # print(QoL.center_justified("You don't have any cards to merge. (press enter to continue)"))
+            # input('')
+            gameplay(campaign) # add flavor text, context, etc.
 
             return
         
         prev_types.append(type(c))
 
-    gameplay(campaign) # add flavor text, context, etc.
+    # gameplay(campaign) # add flavor text, context, etc.
+
+    QoL.clear()
+    QoL.print_deck(QoL.sort_deck(campaign.player_deck.cards), numbered=True, centered=True, blocked=True)
+    print('\n')
+    print(QoL.center_justified("You don't have any cards to merge. (press enter to continue)"))
+    input('')
 
 def pelt_shop(campaign: rogue_campaign) -> None: #REMINDME: format visuals
     '''
@@ -824,11 +844,12 @@ def pelt_shop(campaign: rogue_campaign) -> None: #REMINDME: format visuals
     '''
     def display_shop(campaign: rogue_campaign, pelt_dict: dict[str, tuple[int, type[card.BlankCard]]], new_pelts: list[card.BlankCard]) -> None:
         # set up variables
-        card_gap_spaces = ' '*((os.get_terminal_size().columns*55 // 100) // 5 - 15)
+        card_gaps = (os.get_terminal_size().columns*55 // 100) // 5 - 15
+        card_gap_spaces = ' '*(card_gaps)
         price_tags = QoL.center_justified(card_gap_spaces.join([f'{pelt_name.title()}: {str(pelt_dict[pelt_name][0]).ljust(13 - len(pelt_name))}' for pelt_name in pelt_dict]))
-        pelt_displays = QoL.print_deck([pelt_dict[pelt_name][1]() for pelt_name in pelt_dict], centered=True, blocked=True, silent=True)
+        pelt_displays = QoL.print_deck([pelt_dict[pelt_name][1]() for pelt_name in pelt_dict], centered=True, blocked=True, silent=True, exact_card_gap=card_gaps, beginning_space=False)
         shop_display = f'{price_tags}{pelt_displays}'
-        cart = QoL.print_deck(new_pelts, silent=True)
+        cart = QoL.print_deck(new_pelts, silent=True, beginning_space=False)
 
         # print the shop
         if campaign.teeth == 1 : 
@@ -1582,6 +1603,7 @@ def add_death_card(campaign: rogue_campaign) -> None: #REMINDME: format visuals
         cost_dialogue = 'Choose a card to take the cost from:'
         stat_dialogue = 'Choose a card to take the attack and life from:'
         sigil_dialogue = 'Choose a card to take the sigils from:'
+        #REMINDME: too wide
         flavor_pic = '''
     After you finish your work, Leshy hands you a blank card and takes a picture. The last thing you remember is the flash of the camera and this card in your hand.
 '''
@@ -1669,82 +1691,82 @@ def beat_leshy(campaign: rogue_campaign) -> None: #REMINDME: format visuals
 
     gameplay() # add flavor text, context, etc.
 
-def event_weights(campaign: rogue_campaign, previous_events: list[int]) -> list[int]: # outside of split_road for testing purposes
-    '''
-    generate weights for event paths
+# def event_weights(campaign: rogue_campaign, previous_events: list[int]) -> list[int]: # outside of split_road for testing purposes
+#     '''
+#     generate weights for event paths
     
-    could change weights depending on campaign level, etc.
+#     could change weights depending on campaign level, etc.
 
-    Arguments:
-        campaign: the current campaign object (rogue_campaign object)
-        previous_events: the events that have already been generated (list[int])
+#     Arguments:
+#         campaign: the current campaign object (rogue_campaign object)
+#         previous_events: the events that have already been generated (list[int])
     
-    Returns:
-        list[int]: the weights
-    '''
-    # set up functions
-    bool_to_bin: Callable[[bool, int], int] = lambda bool_, int_=1 : int_ if bool_ else 0
+#     Returns:
+#         list[int]: the weights
+#     '''
+#     # set up functions
+#     bool_to_bin: Callable[[bool, int], int] = lambda bool_, int_=1 : int_ if bool_ else 0
 
-    # set up variables
-    weights = [
-        # card choice
-        bool_to_bin(1 not in previous_events), 
+#     # set up variables
+#     weights = [
+#         # card choice
+#         bool_to_bin(1 not in previous_events), 
         
-        # sigil sacrifice
-        bool_to_bin(2 not in previous_events and len(campaign.player_deck) > 4 and any(card_.has_sigil('') for card_ in campaign.player_deck.cards)), 
+#         # sigil sacrifice
+#         bool_to_bin(2 not in previous_events and len(campaign.player_deck) > 4 and any(card_.has_sigil('') for card_ in campaign.player_deck.cards)), 
         
-        # merge cards
-        bool_to_bin(any(type(card_1) == type(card_2) and card_1 != card_2 for card_1 in campaign.player_deck.cards for card_2 in campaign.player_deck.cards) and 3 not in previous_events and len(campaign.player_deck) > 4), 
+#         # merge cards
+#         bool_to_bin(any(type(card_1) == type(card_2) and card_1 != card_2 for card_1 in campaign.player_deck.cards for card_2 in campaign.player_deck.cards) and 3 not in previous_events and len(campaign.player_deck) > 4), 
         
-        # pelt shop
-        bool_to_bin(4 not in previous_events), 
+#         # pelt shop
+#         bool_to_bin(4 not in previous_events), 
         
-        # card shop
-        bool_to_bin(any(type(card_) in [card_library.WolfPelt, card_library.RabbitPelt, card_library.GoldenPelt] for card_ in campaign.player_deck.cards) and 5 not in previous_events), 
+#         # card shop
+#         bool_to_bin(any(type(card_) in [card_library.WolfPelt, card_library.RabbitPelt, card_library.GoldenPelt] for card_ in campaign.player_deck.cards) and 5 not in previous_events), 
         
-        # break rocks
-        bool_to_bin(6 not in previous_events), 
+#         # break rocks
+#         bool_to_bin(6 not in previous_events), 
         
-        # campfire
-        bool_to_bin(7 not in previous_events), 
-    ]
-    # 50% chance for card battle
-    weights.append(bool_to_bin(8 not in previous_events and len(campaign.player_deck) > 3, int_=sum(weights)))
+#         # campfire
+#         bool_to_bin(7 not in previous_events), 
+#     ]
+#     # 50% chance for card battle
+#     weights.append(bool_to_bin(8 not in previous_events and len(campaign.player_deck) > 3, int_=sum(weights)))
 
-    return weights
+#     return weights
 
 def split_road(campaign: rogue_campaign) -> None: #REMINDME: format visuals
     '''
-    presents the player with a choice from 1-3 paths, each with a different event, which will be known to the player before they choose
+    presents the player with a choice from 1-2 paths, each with a different event, which will be known to the player before they choose
     
     Arguments:
         campaign: the current campaign object (rogue_campaign object)
     '''
-    def get_event(campaign: rogue_campaign, previous_events: list[int]=[]) -> tuple[str, str, int]:
-        '''
-        generate an event for a path according to weights
+    # def get_event(campaign: rogue_campaign, previous_events: list[int]=[]) -> tuple[str, str, int]:
+    #     '''
+    #     generate an event for a path according to weights
         
-        could change weights depending on campaign level, etc.
+    #     could change weights depending on campaign level, etc.
 
-        Arguments:
-            campaign: the current campaign object (rogue_campaign object)
-            previous_events: the events that have already been generated (list[int])
+    #     Arguments:
+    #         campaign: the current campaign object (rogue_campaign object)
+    #         previous_events: the events that have already been generated (list[int])
         
-        Returns:
-            list[str, str, int]: the event to run, the function to run it, and the number of the event
-        '''
-        # set up variables
-        weights = event_weights(campaign, previous_events)
+    #     Returns:
+    #         list[str, str, int]: the event to run, the function to run it, and the number of the event
+    #     '''
+    #     # set up variables
+    #     weights = event_weights(campaign, previous_events)
 
-        match random.choices(range(1, 9), weights=weights)[0] :
-            case 1 : return 'A choice of cards', 'card_choice(campaign)', 1
-            case 2 : return 'A set of mysterious stones', 'sigil_sacrifice(campaign)', 2
-            case 3 : return 'The Mycologists', 'merge_cards(campaign)', 3
-            case 4 : return 'The Trapper', 'pelt_shop(campaign)', 4
-            case 5 : return 'The Trader', 'card_shop(campaign)', 5
-            case 6 : return 'The Prospector', 'break_rocks(campaign)', 6
-            case 7 : return 'Survivors huddled around a campfire', 'campfire(campaign)', 7
-            case _ : return 'A card battle', 'card_battle(campaign)', 8
+    #     match random.choices(range(1, 9), weights=weights)[0] :
+    #         case 1 : return 'A choice of cards', 'card_choice(campaign)', 1
+    #         case 2 : return 'A set of mysterious stones', 'sigil_sacrifice(campaign)', 2
+    #         case 3 : return 'The Mycologists', 'merge_cards(campaign)', 3
+    #         case 4 : return 'The Trapper', 'pelt_shop(campaign)', 4
+    #         case 5 : return 'The Trader', 'card_shop(campaign)', 5
+    #         case 6 : return 'The Prospector', 'break_rocks(campaign)', 6
+    #         case 7 : return 'Survivors huddled around a campfire', 'campfire(campaign)', 7
+    #         case _ : return 'A card battle', 'card_battle(campaign)', 8
 
     def gameplay(campaign: rogue_campaign) -> None:
         # set up variables
@@ -1753,34 +1775,70 @@ def split_road(campaign: rogue_campaign) -> None: #REMINDME: format visuals
 
         # get the paths
         ## 50% chance for two paths, 25% for one and three
-        match random.randint(1, 4) :
-            case 1 : # one path
-                path_list = [get_event(campaign)]
-            case 2 : # three paths
-                # path_list = [get_event(campaign), get_event(campaign), get_event(campaign)]
-                path_list = [get_event(campaign)]
-                previous_events = [path_list[0][2]]
-                path_list.append(get_event(campaign, previous_events))
-                previous_events.append(path_list[1][2])
-                path_list.append(get_event(campaign, previous_events))
-            case _ : # two paths
-                path_list = [get_event(campaign)]
-                previous_events = [path_list[0][2]]
-                path_list.append(get_event(campaign, previous_events))
+        # match random.randint(1, 4) :
+        #     case 1 : # one path
+        #         path_list = [get_event(campaign)]
+        #     case 2 : # three paths
+        #         # path_list = [get_event(campaign), get_event(campaign), get_event(campaign)]
+        #         path_list = [get_event(campaign)]
+        #         previous_events = [path_list[0][2]]
+        #         path_list.append(get_event(campaign, previous_events))
+        #         previous_events.append(path_list[1][2])
+        #         path_list.append(get_event(campaign, previous_events))
+        #     case _ : # two paths
+        #         path_list = [get_event(campaign)]
+        #         previous_events = [path_list[0][2]]
+        #         path_list.append(get_event(campaign, previous_events))
 
         invalid_choice = False
         while True :
 
             # display the paths
+            # QoL.clear()
+            # print('\n'*5)
+            # print(f'{card_gap}' + 'teeth: ' + str(campaign.teeth))
+            # print()
+            # for ind in range(campaign.current_node.outdegree()) : print(f'{card_gap}Path {str(ind + 1)}: {campaign.current_node.peek(ind).type.map_descr()}')
+            # print(f'{card_gap}' + str(campaign.current_node.outdegree()+1) + ": View Deck")
+
+            # if invalid_choice :
+            #     print(QoL.center_justified('Invalid choice') + '\n')
+            #     invalid_choice = False
+            # else :
+            #     print('\n')
+
+            # # get the player's choice
+            # match QoL.reps_int(input(QoL.center_justified('Which path will you take?').rstrip() + ' '), -1) :
+            #     case [False, _] : invalid_choice = True
+            #     case [True, choice] : 
+            #         # if choice != len(path_list) : return exec(path_list[choice][1], globals(), locals())
+            #         if choice >= 0 and choice < campaign.current_node.outdegree() :
+            #             campaign.current_node = campaign.current_node.peek(choice)
+            #             campaign.current_node.play(campaign)
+            #             campaign.current_node.type = Event_Type.VISITED
+            #             return
+                    
+            #         # print the player's deck
+            #         QoL.clear()
+            #         print('\n'*5)
+            #         print(QoL.center_justified('Your deck:'))
+            #         campaign.print_deck()
+            #         print()
+            #         input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
+
             QoL.clear()
             print('\n'*5)
             print(f'{card_gap}' + 'teeth: ' + str(campaign.teeth))
             print()
-            for ind in range(len(path_list)) : print(f'{card_gap}Path {str(ind + 1)}: {path_list[ind][0]}')
-            print(f'{card_gap}' + str(len(path_list)+1) + ": View Deck")
+            # for ind in range(campaign.current_node.outdegree()) : print(f'{card_gap}Path {str(ind + 1)}: {campaign.current_node.peek(ind).type.map_descr()}')
+            match campaign.current_node.outdegree() :
+                case 1 : print(f'{card_gap}' + "1: Continue on the path")
+                case 2 : print(f'{card_gap}' + "1: Take the left path\n" + f'{card_gap}' + "2: Take the right path")
+            print(f'{card_gap}' + str(campaign.current_node.outdegree()+1) + ": View your deck")
+            print(f'{card_gap}' + str(campaign.current_node.outdegree()+2) + ": Look at your map")
 
             if invalid_choice :
-                print(QoL.center_justified('Invalid choice') + '\n')
+                print(QoL.center_justified('Invalid choice'))
                 invalid_choice = False
             else :
                 print('\n')
@@ -1789,15 +1847,28 @@ def split_road(campaign: rogue_campaign) -> None: #REMINDME: format visuals
             match QoL.reps_int(input(QoL.center_justified('Which path will you take?').rstrip() + ' '), -1) :
                 case [False, _] : invalid_choice = True
                 case [True, choice] : 
-                    if choice != len(path_list) : return exec(path_list[choice][1], globals(), locals())
+                    # if choice != len(path_list) : return exec(path_list[choice][1], globals(), locals())
+                    if choice >= 0 and choice < campaign.current_node.outdegree() :
+                        campaign.current_node = campaign.current_node.peek(choice)
+                        campaign.current_node.play(campaign)
+                        campaign.current_node.type = Event_Type.VISITED
+                        return
                     
-                    # print the player's deck
-                    QoL.clear()
-                    print('\n'*5)
-                    print(QoL.center_justified('Your deck:'))
-                    campaign.print_deck()
-                    print()
-                    input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
+                    elif choice == campaign.current_node.outdegree() :
+                        # print the player's deck
+                        QoL.clear()
+                        print('\n'*5)
+                        print(QoL.center_justified('Your deck:'))
+                        campaign.print_deck()
+                        print()
+                        input(QoL.center_justified('Press Enter to go back...').rstrip() + ' ')
+
+                    elif choice == campaign.current_node.outdegree() + 1 :
+                        # look at the map
+                        campaign.current_node.view_map(campaign, first=True)
+
+                    else :
+                        invalid_choice = True
                     
         
     gameplay(campaign) # add flavor text, context, etc.
@@ -1822,10 +1893,11 @@ def main() -> None: # coordinates the game loop, calls split_road, manages losse
 
     # loop is:
     while True :
-            QoL.ping(locals() | campaign.var_dict() | {'Ouroboros level': card_library.Ouroboros.oro_level})
+            QoL.ping(locals() | campaign.var_dict() | {'Ouroboros level': card_library.Ouroboros.oro_level} | campaign.current_node.var_tree())
 
     ###     check if area boss is next event (campaign.progress >= 10)
-            if campaign.progress >= 15 :
+            # if campaign.progress >= campaign.level_length :
+            if campaign.current_node.outdegree() == 0 :
     ###         if it is, and its Leshy (campaign.level == 3), check if player has won
                 if campaign.level == 3 and bosses.boss_fight_leshy(campaign) :
     ###             if they have, run beat_leshy, and return (to main menu)
@@ -1861,5 +1933,287 @@ def main() -> None: # coordinates the game loop, calls split_road, manages losse
                 campaign.progress += 1
                 campaign.player_deck.refresh_ASCII()
 
-if __name__ == '__main__' :
-    main()
+class Event_Type(Enum):
+    VISITED = 0
+    CARD_CHOICE = 1
+    SIGIL_SACRIFICE = 2
+    MERGE_CARDS = 3
+    PELT_SHOP = 4
+    CARD_SHOP = 5
+    BREAK_ROCKS = 6
+    CAMPFIRE = 7
+    CARD_BATTLE = 8
+
+    def __eq__(self, other: Event_Type) :
+        return self.value == other.value
+    
+    def run(self, campaign: rogue_campaign) :
+        match self.value :
+            case 0 : pass
+            case 1 : card_choice(campaign)
+            case 2 : sigil_sacrifice(campaign)
+            case 3 : merge_cards(campaign)
+            case 4 : pelt_shop(campaign)
+            case 5 : card_shop(campaign)
+            case 6 : break_rocks(campaign)
+            case 7 : campfire(campaign)
+            case 8 : card_battle(campaign)
+
+    def map_descr(self) -> str :
+        #REMINDME: rename to better fit with map
+        match self.value :
+            case 0 : return ""
+            case 1 : return 'a choice of cards.'
+            case 2 : return 'a set of mysterious stones.'
+            case 3 : return 'the Mycologists.'
+            case 4 : return 'the Trapper.'
+            case 5 : return 'the Trader.'
+            case 6 : return 'the Prospector.'
+            case 7 : return 'survivors huddled around a campfire.'
+            case _ : return 'a card battle.'
+
+class Event_Node:
+    type: Event_Type
+    merger: bool
+    outs: list[Event_Node]
+
+    def __init__(self, type: Event_Type) -> None :
+        self.type = type
+        self.merger = False
+        self.outs = []
+
+    def add_out(self, new_out: Event_Node) -> bool :
+        if len(self.outs) >= 2 : return False
+
+        self.outs.append(new_out)
+
+        return True
+    
+    def clear_outs(self) -> None :
+        self.outs.clear()
+
+    def outdegree(self) -> int:
+        return len(self.outs)
+    
+    def peek(self, idx: int) -> Event_Node:
+        return self.outs[idx]
+    
+    def play(self, campaign: rogue_campaign) :
+        self.type.run(campaign)
+        self.type = Event_Type(0)
+
+    def var_tree(self) -> dict[str, Any] :
+        var_dict: dict[str, Any]= {}
+
+        # var_dict[self.__repr__()] = vars(self)
+        var_dict["type"] = self.type
+        var_dict["outs"] = self.outs
+
+        for child in self.outs :
+            var_dict[child.__repr__()] = child.var_tree()
+
+        return var_dict
+    
+    def view_map(self, campaign: rogue_campaign, first=False) -> bool :
+        '''
+        Recursive fn to let player view the following paths
+
+        Arguments: 
+            campaign: the current campaign
+            first: if this is the player's current location
+
+        Returns
+            if the player chose to put their map away
+        '''
+        # say what the events down the available paths are, along with if they join other paths
+        # "Following the left path, you locate {event_name}.
+        # You see that the right path joins with another, leading to {event_name}"
+        # etc. 
+        # offer players the options to look at each of the next paths (recursive), return to the previous junction (if first == False, returns False), or put their map away (returns True)
+
+        # set up variables
+        term_cols = os.get_terminal_size().columns
+        card_gap: str = ((term_cols*55 // 100) // 5 - 15) * ' '
+
+        invalid_choice = False
+        while True :
+            # all normal behavior in loop
+            QoL.clear()
+            print('\n'*5)
+            
+            # tell player whats along the paths (centered)
+            descr_str = ""
+            match self.outdegree() :
+                case 0 : 
+                    # leads to the level's boss
+                    descr_str += "The path you're following, along with the other paths, ends at "
+                    match campaign.level :
+                        case 0 : descr_str += "the entrance of a mine."
+                        case 1 : descr_str += "a pier on the water."
+                        case 2 : descr_str += "the tent of a hunter."
+                        case 3 : descr_str += "an ominous cabin in the woods."
+
+                case 1 :
+                    # path continues to ???
+                    descr_str += "The path you're following leads to " + self.outs[0].type.map_descr()
+
+                case 2 :
+                    # path splits, describe
+                    descr_str += "The path you're following splits into two. "
+                    if self.outs[0].merger :
+                        # left path joins another
+                        descr_str += "You see that the path to the left joins with another, leading to " + self.outs[0].type.map_descr()
+                    else :
+                        descr_str += "Down the path to the left, you find " + self.outs[0].type.map_descr()
+
+                    if self.outs[1].merger : 
+                        # right path joins another
+                        descr_str += " After joining with another path, the right path offers " + self.outs[1].type.map_descr()
+                    else :
+                        descr_str += " On the other side, the path leads to " + self.outs[1].type.map_descr()
+            
+            print(QoL.center_justified(descr_str))
+            print()
+
+            # ask the player what they want to do
+            if self.outdegree() == 1 :
+                print(f'{card_gap}' + "1: Follow the path")
+
+            elif self.outdegree() == 2 :
+                print(f'{card_gap}' + "1: Follow the left path\n" + f'{card_gap}' + "2: Follow the right path")
+
+            if first :
+                print(f'{card_gap}' + str(self.outdegree() + 1) + ": Put the map away")
+            else :
+                print(f'{card_gap}' + str(self.outdegree() + 1) + ": Return to previous junction")
+                print(f'{card_gap}' + str(self.outdegree() + 2) + ": Put the map away")
+
+            if invalid_choice :
+                print(QoL.center_justified('Invalid choice'))
+                invalid_choice = False
+            else :
+                print('\n')
+
+            # get the player's choice
+            match QoL.reps_int(input(QoL.center_justified('What will you do?').rstrip() + ' '), -1) :
+                case [False, _] : invalid_choice = True
+                case [True, choice] : 
+                    if choice >= 0 and choice < self.outdegree() :
+                        if self.outs[choice].view_map(campaign) : return True
+
+                    elif choice == self.outdegree() and not first:
+                        return False
+                    
+                    elif (choice == self.outdegree() + 1 and not first) or (choice == self.outdegree() and first) :
+                        return True
+                    
+                    else :
+                        invalid_choice = True
+    
+def map_gen(campaign: rogue_campaign, choice_fn: Callable[[rogue_campaign, list[Event_Type]], Event_Type], depth: int = 10, avg_width: float = 4.5) -> Event_Node :
+    '''
+    Generates a directed acyclic graph with a single starting node that is connected to all others. The graph has a diameter defined by the input. Each node represents an event that the player can choose, along with its outgoing edges. Nodes can only have 2 incoming and 2 outgoing edges.
+
+    Arguments:
+        campaign: the current campaign object
+        choice_fn: the function that generates possible events based on the campaign object and previously selected events
+        depth: defines the diameter of the graph, which is 1 + depth. Also the number of events the player will encounter before the level boss
+        avg_width: the desired amount of events possible for a certain layer, regardless of individual paths
+
+    Returns:
+        the starting node for the map, which is the only vertex connected to all other vertices
+    '''
+    start = Event_Node(Event_Type.VISITED)
+    prev_lyr: list[Event_Node] = [start]
+
+    for _ in range(depth) :
+        # set up / clean
+        new_nodes: list[Event_Node] = []
+        width_weights: list[float] = []
+
+        # get layer width
+        poss_widths = list(range(len(prev_lyr) - 1, len(prev_lyr) + 2))
+        for width in poss_widths: 
+            width_weights.append(max(0, (avg_width - 1) - abs(width - avg_width))**2)
+        layer_width = random.choices(poss_widths, width_weights)[0]
+
+        while True :
+            # set up / clean
+            invalid = False
+            parent_weights = [2]*len(prev_lyr)
+            cur_lyr: list[Event_Type] = []
+            for node in prev_lyr : node.clear_outs()
+
+            # get layer events
+            for _ in range(layer_width) :
+                new_event = choice_fn(campaign, cur_lyr)
+                cur_lyr.append(new_event)
+                new_child = Event_Node(new_event)
+                parent = random.choices(prev_lyr, parent_weights)[0]
+                parent.add_out(new_child)
+                parent_weights[prev_lyr.index(parent)] -= 1
+
+            # try to use merges to make useable, if not, continue loop
+            available_children: list[int] = []
+            for weight in parent_weights :
+                available_children.append(2-weight)
+            for i in range(len(prev_lyr)) : 
+                # only if childless
+                if prev_lyr[i].outdegree() != 0 : continue
+
+                # try left
+                if available_children[max(0, i-1)] >= 1 :
+                    merge_node = prev_lyr[i-1].peek(-1)
+                    prev_lyr[i].add_out(merge_node)
+                    merge_node.merger = True
+                    # no need to update available_children, left node wont be checked again
+
+                # try right
+                elif available_children[min(len(available_children)-1, i+1)] >= 1 :
+                    merge_node = prev_lyr[i+1].peek(0)
+                    prev_lyr[i].add_out(merge_node)
+                    merge_node.merger = True
+                    available_children[i+1] -= 1
+
+                # current setup is unuseable
+                else : invalid = True ; break
+
+            if invalid : continue
+            break
+
+        # add children to new nodes
+        for parent in prev_lyr :
+            if new_nodes.count(parent.peek(0)) == 0 : new_nodes.append(parent.peek(0))
+
+            # a second child couldnt be merged to the left
+            if parent.outdegree() == 2 : new_nodes.append(parent.peek(-1))
+
+        # replace prev_lyr
+        prev_lyr = new_nodes.copy()
+
+    return start
+
+def event_choice(campaign: rogue_campaign, prev: list[Event_Type]) -> Event_Type :
+    #REMINDME: use instance variables to allow for smarter generation
+    # also avoid events repeating immediately along a path
+    bool_to_bin: Callable[[bool, int], int] = lambda bool_, int_=1 : int_ if bool_ else 0
+
+    weights: list[int] = [
+        bool_to_bin(Event_Type.CARD_CHOICE not in prev),
+
+        bool_to_bin(Event_Type.SIGIL_SACRIFICE not in prev),
+
+        bool_to_bin(Event_Type.MERGE_CARDS not in prev),
+        
+        bool_to_bin(Event_Type.PELT_SHOP not in prev),
+        
+        bool_to_bin(Event_Type.CARD_SHOP not in prev),
+        
+        bool_to_bin(Event_Type.BREAK_ROCKS not in prev),
+        
+        bool_to_bin(Event_Type.CAMPFIRE not in prev)
+    ]
+
+    weights.append(bool_to_bin(Event_Type.CARD_BATTLE not in prev, int_=sum(weights)))
+
+    return Event_Type(random.choices(range(1,9), weights=weights)[0])

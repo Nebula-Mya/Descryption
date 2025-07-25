@@ -1,4 +1,6 @@
-from __future__ import annotations # prevent type hints needing import at runtime
+from __future__ import annotations
+
+import QoL # prevent type hints needing import at runtime
 
 Dict = {    
     '' : [ # sigil name
@@ -668,3 +670,14 @@ on_damages = ['mighty leap', 'waterborne', 'bees within']
 on_sacrifices = ['many lives', 'unkillable']
 movers = ['lane shift right','lane shift left','hefty (right)','hefty (left)']
 misc = ['corpse eater', 'worthy sacrifice'] # these need to be hardcoded
+
+def sigil_title(sigil: str) -> str :
+    match sigil :
+        case '' :
+            return 'No Sigil'
+        case _ if 'hefty' in sigil:
+            return 'Hefty'
+        case _ if 'lane shift' in sigil:
+            return 'Sprinter'
+        case _ :
+            return QoL.title_case(sigil)

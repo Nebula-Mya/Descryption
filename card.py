@@ -197,15 +197,8 @@ class BlankCard() :
                 sigil_ind = 0
 
             # get sigil name
-            match self.sigils[sigil_ind] :
-                case '' :
-                    sigil_text = 'No Sigil'
-                case _ if 'hefty' in self.sigils[sigil_ind]:
-                    sigil_text = 'Hefty:'
-                case _ if 'lane shift' in self.sigils[sigil_ind]:
-                    sigil_text = 'Sprinter:'
-                case _ :
-                    sigil_text = QoL.title_case(self.sigils[sigil_ind]) + ':'
+            sigil_text = sigils.sigil_title(self.sigils[sigil_ind])
+            if self.sigils[sigil_ind] != '' : sigil_text += ":"
 
             # get parameters for sigil description
             max_desc_first = term_cols - 16 - max(card_gaps + 2, 2) - len(sigil_text)
@@ -235,20 +228,8 @@ class BlankCard() :
                             explanation += ' '*(card_gaps) + ' '*2 + self.species + ' has an attack power of ' + str(self.current_attack) + ' and life points of ' + str(self.current_life) + ' of ' + str(self.base_life) + '.'
 
         else : # two sigils
-            match self.sigils[0] :
-                case _ if 'hefty' in self.sigils[0]:
-                    sigil1_text = 'Hefty:'
-                case _ if 'lane shift' in self.sigils[0]:
-                    sigil1_text = 'Sprinter:'
-                case _ :
-                    sigil1_text = QoL.title_case(self.sigils[0]) + ':'
-            match self.sigils[1] :
-                case _ if 'hefty' in self.sigils[1]:
-                    sigil2_text = 'Hefty:'
-                case _ if 'lane shift' in self.sigils[1]:
-                    sigil2_text = 'Sprinter:'
-                case _ :
-                    sigil2_text = QoL.title_case(self.sigils[1]) + ':'
+            sigil1_text = sigils.sigil_title(self.sigils[0]) + ":"
+            sigil2_text = sigils.sigil_title(self.sigils[1]) + ":"
 
             # get parameters for sigil description
             s1_max_desc_first = term_cols - 16 - max(card_gaps + 2, 2) - len(sigil1_text)

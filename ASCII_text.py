@@ -35,11 +35,16 @@ def print_scales(score: dict[str, int], score_gap: int) -> None :
             opponent_weight = 'O'*5
     
 
+#     scales = '''{spc}PLAYER  LESHY
+# {spc}{plr}   {lsh}
+# {spc}‾‾‾‾‾/‾\\‾‾‾‾‾
+# {spc}    /___\\'''.format(plr=player_weight, lsh=opponent_weight, spc=' '*score_gap)
+#     print(scales)
     scales = '''{spc}PLAYER  LESHY
 {spc}{plr}   {lsh}
 {spc}‾‾‾‾‾/‾\\‾‾‾‾‾
-{spc}    /___\\'''.format(plr=player_weight, lsh=opponent_weight, spc=' '*score_gap)
-    print(scales)
+{spc}    /___\\'''.format(plr=player_weight, lsh=opponent_weight, spc='')
+    print(QoL.center_justified(scales, blocked=True))
 
 def print_win(overkill: int=0)  -> None:
     '''
@@ -441,3 +446,20 @@ _|_ //{life_lines[0]} |
 --------------'""",
     }
 }
+
+# def concat_multiline_strs(strings:list[str]) -> str :
+#     '''
+#     Concatinates strings line by line in the order given.
+#     Supplied strings should be equal in height and should not vary in width within a single string.
+#     '''
+#     string_lines = [string.splitlines() for string in strings]
+#     line_count = min(len(lines) for lines in string_lines)
+#     result_string = ""
+
+#     for i in range(line_count) :
+#         if i != 0 : result_string += "\n"
+
+#         for lines in string_lines :
+#             result_string += lines[i]
+
+#     return result_string

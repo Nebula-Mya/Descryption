@@ -1,9 +1,15 @@
+from __future__ import annotations
+import random
 import unittest
+from typing import TYPE_CHECKING
+if TYPE_CHECKING :
+    from typing import Callable
 
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 
+import sigils
 import card
 import card_library
 import duel
@@ -15,15 +21,19 @@ import ASCII_text
 class Test_ASCII(unittest.TestCase):
 
     def test_title(self) -> None:
+        print()
         ASCII_text.print_title()
 
     def test_win(self) -> None:
+        print()
         ASCII_text.print_win(3)
 
     def test_lose(self) -> None:
+        print()
         ASCII_text.print_lose()
         
     def test_score(self) -> None:
+        print()
         term_cols = os.get_terminal_size().columns
         card_gaps = (term_cols*55 // 100) // 5 - 15
         if card_gaps <= 0 :
@@ -33,10 +43,21 @@ class Test_ASCII(unittest.TestCase):
         ASCII_text.print_scales({'player': 6, 'opponent': 2}, score_gap)
 
     def test_WiP(self) -> None:
+        print()
         ASCII_text.print_WiP()
 
     def test_lives(self) -> None:
+        print()
         ASCII_text.print_candelabra((2,3,0))
+
+    def test_sigils(self) -> None:
+        print()
+        sigil_cards: list[card.BlankCard] = []
+
+        for sigil in sigils.Dict.keys():
+            sigil_cards.append(card.BlankCard(sigils=(sigil,"")))
+        
+        QoL.print_deck(sigil_cards)
         
 class Test_Bosses(unittest.TestCase):
 
@@ -187,6 +208,35 @@ class Test_Events(unittest.TestCase):
     def test_split(self) -> None:
         self.buy_split_setUp()
         rogue.split_road(self.campaign)
+
+    def test_map(self) -> None:
+        
+        def event_choice(campaign: rogue.rogue_campaign, prev: list[rogue.Event_Type]) -> rogue.Event_Type:
+            bool_to_bin: Callable[[bool, int], int] = lambda bool_, int_=1 : int_ if bool_ else 0
+
+            weights: list[int] = [
+                bool_to_bin(rogue.Event_Type.CARD_CHOICE not in prev),
+
+                bool_to_bin(rogue.Event_Type.SIGIL_SACRIFICE not in prev),
+
+                bool_to_bin(rogue.Event_Type.MERGE_CARDS not in prev),
+                
+                bool_to_bin(rogue.Event_Type.PELT_SHOP not in prev),
+                
+                bool_to_bin(rogue.Event_Type.CARD_SHOP not in prev),
+                
+                bool_to_bin(rogue.Event_Type.BREAK_ROCKS not in prev),
+                
+                bool_to_bin(rogue.Event_Type.CAMPFIRE not in prev)
+            ]
+
+            weights.append(bool_to_bin(rogue.Event_Type.CARD_BATTLE not in prev, int_=sum(weights)))
+
+            return rogue.Event_Type(random.choices(range(1,9), weights=weights)[0])
+
+        start_node = rogue.map_gen(self.campaign, event_choice)
+
+        QoL.ping(start_node.var_tree())
 
 class Test_Deck(unittest.TestCase):
     def test_print(self) -> None :
