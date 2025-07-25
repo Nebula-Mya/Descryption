@@ -91,7 +91,7 @@ impl EguiApp {
                 output_rx: Some(output_rx),
                 context_tx: Some(context_tx),
                 ..old_data
-            }
+            };
         }
 
         // if no previous app state, use the default config
@@ -200,7 +200,20 @@ impl eframe::App for EguiApp {
         egui::CentralPanel::default().show(ctx, |ui| {
             let mut text_full = self.recent_msg.clone() + &self.current_input;
 
-            let text_response = ui.text_edit_multiline(&mut text_full);
+            let text_response = ui
+                .scope(|ui| {
+                    egui::ScrollArea::vertical()
+                        .stick_to_bottom(true)
+                        .scroll_bar_visibility(egui::scroll_area::ScrollBarVisibility::AlwaysHidden)
+                        .show(ui, |ui| {
+                            ui.add_sized(
+                                ui.available_size(),
+                                egui::TextEdit::multiline(&mut text_full),
+                            )
+                        })
+                        .inner
+                })
+                .inner;
 
             if let Some(mut state) = egui::TextEdit::load_state(ui.ctx(), text_response.id) {
                 if let Some(mut range) = state.cursor.char_range() {
@@ -224,8 +237,17 @@ impl eframe::App for EguiApp {
 
         // send user input
         if self.current_input.contains('\n') {
-            let input_str = self.current_input.split('\n').next().unwrap().to_string();
-            let _ = self.input_tx.as_ref().unwrap().send(input_str);
+            let input_str = self
+                .current_input
+                .split('\n')
+                .next()
+                .unwrap()
+                .to_string();
+            let _ = self
+                .input_tx
+                .as_ref()
+                .unwrap()
+                .send(input_str);
             self.current_input.clear();
         }
     }

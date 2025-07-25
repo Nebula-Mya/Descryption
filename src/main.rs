@@ -1,11 +1,8 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
-use descryption::{EguiApp, terminal_fn};
+use descryption::{terminal_fn, EguiApp};
 
-use std::{
-    sync::mpsc,
-    thread
-};
+use std::{sync::mpsc, thread};
 
 fn main() {
     // Log to stderr (if ran with `RUST_LOG=debug`)
@@ -38,7 +35,11 @@ fn main() {
     if let Err(err) = eframe::run_native(
         "Descryption",
         native_options,
-        Box::new(|cc| Ok(Box::new(EguiApp::new(cc, input_tx, output_rx, context_tx)))),
+        Box::new(|cc| {
+            Ok(Box::new(EguiApp::new(
+                cc, input_tx, output_rx, context_tx,
+            )))
+        }),
     ) {
         println!("{err}");
         std::process::exit(1);
