@@ -1,13 +1,6 @@
-// TODO: revamp to reuse frame
 use directories::ProjectDirs;
 use eframe::egui;
-use std::{
-    path::PathBuf,
-    sync::Arc,
-};
-
-// NOTE: may be dependent on font
-const WIN_TITLE_HEIGHT: f32 = 32.7;
+use std::sync::mpsc;
 
 /// The enum for toggling which debug UI is currently visible.
 #[derive(Debug, PartialEq)]
@@ -17,38 +10,6 @@ enum DebugUi {
     Memory,
     Texture,
     Inspection,
-}
-
-/// The enum for keeping track of what the single [file dialog](egui_file_dialog::FileDialog) instance is being used for.
-#[derive(PartialEq)]
-enum ExplorerState {
-    /// The [file explorer](egui_file_dialog) is not being used.
-    Closed,
-
-    /// The [file explorer](egui_file_dialog) is being used to create a new save file.
-    SaveAs,
-
-    /// The [file explorer](egui_file_dialog) is being used to load an existing save file.
-    Open,
-
-    /// The [file explorer](egui_file_dialog) is being used to create a new png.
-    Export,
-}
-
-/// The enum for keeping track of what [`Modal`] is being shown.
-#[derive(PartialEq)]
-enum Modals {
-    /// No [modal](egui::containers::Modal) is being shown.
-    None,
-
-    /// The [modal](egui::containers::Modal) prompting user to confirm node deletion.
-    Delete,
-
-    /// The [modal](egui::containers::Modal) prompting user to rename a node.
-    Rename,
-
-    /// The [modal](egui::containers::Modal) informing the user that the file selected to load does not contain valid save data.
-    BadOpen,
 }
 
 // We derive Deserialize/Serialize so we can persist app state on shutdown.
@@ -67,7 +28,27 @@ pub struct EguiApp {
     /// Only used for calling [nannou](crate::nannou_app::Model) on launch and for debugging.
     /// Always `0` on launch
     #[serde(skip)]
-    tick_count: u32
+    tick_count: u32,
+
+    /// The message recieved most recently
+    #[serde(skip)]
+    recent_msg: String,
+
+    /// The user's input text
+    #[serde(skip)]
+    current_input: String,
+
+    /// The sender for the input channel
+    #[serde(skip)]
+    input_tx: Option<mpsc::Sender<String>>,
+
+    /// The receiver for the output channel
+    #[serde(skip)]
+    output_rx: Option<mpsc::Receiver<String>>,
+
+    /// The sender for the context channel
+    #[serde(skip)]
+    context_tx: Option<mpsc::Sender<egui::Context>>,
 }
 
 impl Default for EguiApp {
@@ -85,6 +66,11 @@ impl Default for EguiApp {
         Self {
             debug_uis: DebugUi::None,
             tick_count: 0,
+            recent_msg: "".to_string(),
+            current_input: "".to_string(),
+            input_tx: None,
+            output_rx: None,
+            context_tx: None
         }
     }
 }
@@ -92,14 +78,24 @@ impl Default for EguiApp {
 impl EguiApp {
     /// Called once before the first frame.
     /// Responsible for initializing the app.
-    pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
+    pub fn new(cc: &eframe::CreationContext<'_>, input_tx: mpsc::Sender<String>, output_rx: mpsc::Receiver<String>, context_tx: mpsc::Sender<egui::Context>) -> Self {
         // load previous app state if possible
-        if let Some(storage) = cc.storage {
-            return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
-        }
+        // REMINDME: not working; can't give correct channels in default
+        // if let Some(storage) = cc.storage {
+        //     return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
+        // }
 
         // if no previous app state, use the default config
-        Default::default()
+        Self {
+            input_tx: Some(input_tx),
+            output_rx: Some(output_rx),
+            context_tx: Some(context_tx),
+            // ..Default::default()
+            debug_uis: DebugUi::None,
+            tick_count: 0,
+            recent_msg: "".to_string(),
+            current_input: "".to_string(),
+        }
     }
 }
 
@@ -111,6 +107,12 @@ impl eframe::App for EguiApp {
 
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         self.tick_count += 1;
+
+        let _ = self.context_tx.as_ref().unwrap().send(ctx.clone());
+
+        if let Ok(msg) = self.output_rx.as_ref().unwrap().try_recv() {
+            self.recent_msg = msg;
+        }
 
         // bottom panel, only holds useful information if in debug mode, may not display at all in release, TBD
         egui::TopBottomPanel::bottom("bottom_panel")
@@ -182,7 +184,20 @@ impl eframe::App for EguiApp {
 
         // the main region of the app's GUI
         egui::CentralPanel::default().show(ctx, |ui| {
-            todo!();
+            let mut text_full = self.recent_msg.clone() + &self.current_input;
+
+            let text_response = ui.text_edit_multiline(&mut text_full);
+            
+            // TODO: allow moving *after* recent_msg
+            if let Some(mut state) = egui::TextEdit::load_state(ui.ctx(), text_response.id) {
+                    let ccursor = egui::text::CCursor::new(text_full.chars().count());
+                    state
+                        .cursor
+                        .set_char_range(Some(egui::text::CCursorRange::one(ccursor)));
+                    state.store(ui.ctx(), text_response.id);
+                }
+
+            self.current_input = text_full[std::cmp::min(self.recent_msg.len(), text_full.len())..].to_string();
         });
     }
 }

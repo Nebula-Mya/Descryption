@@ -7,3 +7,6 @@ pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 mod egui_app;
 pub use egui_app::EguiApp;
+
+mod terminal_test;
+pub use terminal_test::main as terminal_fn;
