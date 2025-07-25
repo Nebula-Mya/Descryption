@@ -23,12 +23,6 @@ pub struct EguiApp {
     #[serde(skip)]
     debug_uis: DebugUi,
 
-    /// The number of times [`update()`](eframe::App::update) has been ran, including the current iteration.
-    /// Only used for calling [nannou](crate::nannou_app::Model) on launch and for debugging.
-    /// Always `0` on launch
-    #[serde(skip)]
-    tick_count: u32,
-
     /// The message recieved most recently
     #[serde(skip)]
     recent_msg: String,
@@ -48,6 +42,10 @@ pub struct EguiApp {
     /// The sender for the context channel
     #[serde(skip)]
     context_tx: Option<mpsc::Sender<egui::Context>>,
+
+    /// Flag for loading fonts
+    #[serde(skip)]
+    load_fonts: bool,
 }
 
 impl Default for EguiApp {
@@ -64,12 +62,12 @@ impl Default for EguiApp {
 
         Self {
             debug_uis: DebugUi::None,
-            tick_count: 0,
             recent_msg: "".to_string(),
             current_input: "".to_string(),
             input_tx: None,
             output_rx: None,
             context_tx: None,
+            load_fonts: true,
         }
     }
 }
@@ -111,7 +109,27 @@ impl eframe::App for EguiApp {
     }
 
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        self.tick_count += 1;
+        if self.load_fonts {
+            let mut fonts = egui::FontDefinitions::default();
+
+            fonts.font_data.insert(
+                "Consolas".to_owned(),
+                std::sync::Arc::new(egui::FontData::from_static(
+                    include_bytes!("../assets/consola.ttf"),
+                )),
+            );
+
+            // make default for monospaced
+            fonts
+                .families
+                .get_mut(&egui::FontFamily::Monospace)
+                .unwrap()
+                .insert(0, "Consolas".to_owned());
+
+            ctx.set_fonts(fonts);
+
+            self.load_fonts = false;
+        }
 
         let _ = self
             .context_tx
@@ -182,18 +200,6 @@ impl eframe::App for EguiApp {
                         }
                     }
                 };
-
-                // this is always connected to the bottom of the window
-                ui.with_layout(
-                    egui::Layout::bottom_up(egui::Align::LEFT),
-                    |ui| {
-                        powered_by_egui_and_nannou(ui);
-                        egui::warn_if_debug_build(ui);
-                        if cfg!(debug_assertions) {
-                            ui.label(format!("tick: {}", self.tick_count));
-                        }
-                    },
-                );
             });
 
         // the main region of the app's GUI
@@ -208,7 +214,13 @@ impl eframe::App for EguiApp {
                         .show(ui, |ui| {
                             ui.add_sized(
                                 ui.available_size(),
-                                egui::TextEdit::multiline(&mut text_full),
+                                egui::TextEdit::multiline(&mut text_full)
+                                    .frame(false)
+                                    .lock_focus(true)
+                                    .font(egui::FontId::new(
+                                        16.0,
+                                        egui::FontFamily::Monospace,
+                                    )),
                             )
                         })
                         .inner
@@ -251,19 +263,4 @@ impl eframe::App for EguiApp {
             self.current_input.clear();
         }
     }
-}
-
-/// Helper function to draw credit text at bottom. Honestly quite unnecessary.
-fn powered_by_egui_and_nannou(ui: &mut egui::Ui) {
-    ui.horizontal(|ui| {
-        ui.spacing_mut().item_spacing.x = 0.0;
-        ui.label("Powered by ");
-        ui.hyperlink_to("egui", "https://github.com/emilk/egui");
-        ui.label(" and ");
-        ui.hyperlink_to(
-            "nannou",
-            "https://github.com/nannou-org/nannou",
-        );
-        ui.label(".");
-    });
 }
