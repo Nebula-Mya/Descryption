@@ -221,6 +221,13 @@ impl eframe::App for EguiApp {
             self.current_input =
                 text_full[std::cmp::min(self.recent_msg.len(), text_full.len())..].to_string();
         });
+
+        // send user input
+        if self.current_input.contains('\n') {
+            let input_str = self.current_input.split('\n').next().unwrap().to_string();
+            let _ = self.input_tx.as_ref().unwrap().send(input_str);
+            self.current_input.clear();
+        }
     }
 }
 
