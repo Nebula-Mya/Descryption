@@ -109,6 +109,7 @@ impl eframe::App for EguiApp {
     }
 
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        // load Consolas
         if self.load_fonts {
             let mut fonts = egui::FontDefinitions::default();
 
@@ -131,12 +132,19 @@ impl eframe::App for EguiApp {
             self.load_fonts = false;
         }
 
+        // close if Ctrl+D
+        if ctx.input(|i| i.key_pressed(egui::Key::D) && i.modifiers.ctrl) {
+            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+        }
+
+        // send context to secondary thread
         let _ = self
             .context_tx
             .as_ref()
             .unwrap()
             .send(ctx.clone());
 
+        // get output from secondary thread if updated
         if let Ok(msg) = self
             .output_rx
             .as_ref()
@@ -202,7 +210,7 @@ impl eframe::App for EguiApp {
                 };
             });
 
-        // the main region of the app's GUI
+        // the terminal display
         egui::CentralPanel::default().show(ctx, |ui| {
             let mut text_full = self.recent_msg.clone() + &self.current_input;
 
@@ -227,6 +235,7 @@ impl eframe::App for EguiApp {
                 })
                 .inner;
 
+            // restrict cursor to input portion
             if let Some(mut state) = egui::TextEdit::load_state(ui.ctx(), text_response.id) {
                 if let Some(mut range) = state.cursor.char_range() {
                     range.primary.index = std::cmp::max(
