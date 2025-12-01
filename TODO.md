@@ -5,4 +5,8 @@
 
  - [ ] update text cursor graphics
 
+ - [x] add MSDOS font
+
+ - [ ] allow font to be changed in settings
+
  - [ ] (FOR LATER ISSUE) allow text size to be change in settings

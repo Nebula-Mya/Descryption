@@ -8,7 +8,31 @@ enum DebugUi {
     Settings,
     Memory,
     Texture,
-    Inspection,
+    Inspection
+}
+
+/// The enum for font selection.
+#[derive(serde::Deserialize, serde::Serialize)]
+#[derive(Debug, PartialEq)]
+enum FontOptions {
+    Consolas,
+    MSDOS
+}
+
+impl FontOptions {
+    fn key(&self) -> String{
+        match self {
+            Self::Consolas => "Consolas".to_owned(),
+            Self::MSDOS => "MS-DOS".to_owned()
+        }
+    }
+
+    fn asset(&self) -> &'static [u8] {
+        match self {
+            Self::Consolas => include_bytes!("../assets/consola.ttf"),
+            Self::MSDOS => include_bytes!("../assets/LessPerfectDOSVGA.ttf")
+        }
+    }
 }
 
 // We derive Deserialize/Serialize so we can persist app state on shutdown.
@@ -43,6 +67,9 @@ pub struct EguiApp {
     #[serde(skip)]
     context_tx: Option<mpsc::Sender<egui::Context>>,
 
+    /// Currently loaded font
+    loaded_font: FontOptions,
+
     /// Flag for loading fonts
     #[serde(skip)]
     load_fonts: bool,
@@ -67,6 +94,7 @@ impl Default for EguiApp {
             input_tx: None,
             output_rx: None,
             context_tx: None,
+            loaded_font: FontOptions::Consolas,
             load_fonts: true,
         }
     }
@@ -109,14 +137,14 @@ impl eframe::App for EguiApp {
     }
 
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        // load Consolas
+        // load font
         if self.load_fonts {
             let mut fonts = egui::FontDefinitions::default();
 
             fonts.font_data.insert(
-                "Consolas".to_owned(),
+                self.loaded_font.key(),
                 std::sync::Arc::new(egui::FontData::from_static(
-                    include_bytes!("../assets/consola.ttf"),
+                    self.loaded_font.asset(),
                 )),
             );
 
@@ -125,7 +153,7 @@ impl eframe::App for EguiApp {
                 .families
                 .get_mut(&egui::FontFamily::Monospace)
                 .unwrap()
-                .insert(0, "Consolas".to_owned());
+                .insert(0, self.loaded_font.key());
 
             ctx.set_fonts(fonts);
 
@@ -160,6 +188,23 @@ impl eframe::App for EguiApp {
             .default_height(1.0)
             .show(ctx, |ui| {
                 if cfg!(debug_assertions) {
+                    let prev_font = self.loaded_font.key();
+
+                    egui::ComboBox::from_label("Font")
+                        .selected_text(format!("{:?}", self.loaded_font))
+                        .show_ui(ui, |ui| {
+                            ui.selectable_value(&mut self.loaded_font, 
+                                FontOptions::Consolas, 
+                                "Consolas");
+                            ui.selectable_value(&mut self.loaded_font, 
+                                FontOptions::MSDOS, 
+                                "MS-DOS");
+                        });
+
+                    if prev_font != self.loaded_font.key() {
+                        self.load_fonts = true;
+                    }
+                    
                     // select a debug ui to show
                     egui::ComboBox::from_label("Debug Menu")
                         .selected_text(format!("{:?}", self.debug_uis))
